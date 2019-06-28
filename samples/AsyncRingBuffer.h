@@ -19,7 +19,7 @@ class AsyncRingBuffer {
   }
 
   enum class BufferState { EMPTY, FILLING, FULL, TAKEN };
-  size_t batch_size = 16;
+  const size_t batch_size_;
 
   DataProcessing* p_;
   OutputCollector* c_;
@@ -57,7 +57,7 @@ class AsyncRingBuffer {
     std::vector<BufferState> buffer_state;
     std::vector<int> input_task_id_for_buffers_;
 
-    // TODO: if there is alignment requirement, this buffer need do padding between the tensors.
+    // TODO: if there is an alignment requirement, this buffer need do padding between the tensors.
     std::vector<uint8_t> buffer_;
 
     BufferManager(size_t capacity, size_t item_size_in_bytes):
@@ -122,21 +122,21 @@ class AsyncRingBuffer {
   size_t current_running_downloders = 0;
   size_t current_task_id = 0;
 
-  AsyncRingBuffer(size_t capacity1, GThreadPool* threadpool1,
+  AsyncRingBuffer(size_t batch_size, size_t capacity1, GThreadPool* threadpool1,
                   const std::vector<std::string>& input_tasks, DataProcessing* p, OutputCollector* c)
-        :p_(p),
-         c_(c),
-        capacity_((capacity1 + batch_size - 1) / batch_size * batch_size),
+      : batch_size_(batch_size),
+        p_(p),
+        c_(c),
+        capacity_((capacity1 + batch_size_ - 1) / batch_size_ * batch_size_),
         input_tasks_(input_tasks),
-        queue_(capacity_ / batch_size),
+        queue_(capacity_ / batch_size_),
         threadpool(threadpool1),
-        buffer_(capacity_, p->GetOutputSizeInBytes(1))
-        {
+        buffer_(capacity_, p->GetOutputSizeInBytes(1)) {
     OrtAllocatorInfo* allocator_info;
     ORT_THROW_ON_ERROR(OrtCreateCpuAllocatorInfo(OrtArenaAllocator, OrtMemTypeDefault, &allocator_info));
     uint8_t* output_data = buffer_.data();
-    size_t off =  p->GetOutputSizeInBytes(batch_size);
-    std::vector<int64_t> input_shape = p_->GetOutputShape(batch_size);
+    size_t off = p->GetOutputSizeInBytes(batch_size_);
+    std::vector<int64_t> input_shape = p_->GetOutputShape(batch_size_);
     queue_.Init([allocator_info, off, &output_data, &input_shape](TensorListEntry& e) {
       ORT_THROW_ON_ERROR(OrtCreateTensorWithDataAsOrtValue(allocator_info, output_data, off, input_shape.data(),
                                                            input_shape.size(), ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT,
@@ -150,11 +150,10 @@ class AsyncRingBuffer {
     std::lock_guard<std::mutex> g(m);
     if (input_tensor != nullptr) {
       size_t tensor_id = queue_.Return(input_tensor);
-      size_t buffer_id = tensor_id * batch_size;
-      if(!buffer_.CompareAndSet(buffer_id, buffer_id + batch_size, BufferState::TAKEN, BufferState::EMPTY)){
-        throw std::runtime_error("internal state error");
+      size_t buffer_id = tensor_id * batch_size_;
+      if (!buffer_.CompareAndSet(buffer_id, buffer_id + batch_size_, BufferState::TAKEN, BufferState::EMPTY)) {
+        throw std::runtime_error("ReturnAndTake: internal state error");
       }
-
     }
     input_tensor = queue_.Take();
   }
@@ -167,12 +166,12 @@ class AsyncRingBuffer {
     {
       std::lock_guard<std::mutex> g(m);
       if(!buffer_.CompareAndSet(buffer_id, BufferState::FILLING, BufferState::FULL)){
-        throw std::runtime_error("internal state error");
+        throw std::runtime_error("ReturnAndTake: internal state error");
       }
-      size_t tensor_id = buffer_id / batch_size;
+      size_t tensor_id = buffer_id / batch_size_;
       std::vector<int> task_id_list;
-      buffer_id = tensor_id * batch_size;
-      if (buffer_.TakeRange(buffer_id, buffer_id + batch_size, task_id_list)) {
+      buffer_id = tensor_id * batch_size_;
+      if (buffer_.TakeRange(buffer_id, buffer_id + batch_size_, task_id_list)) {
         queue_.Put(tensor_id)->value.taskid_list = task_id_list;
         input_tensor = queue_.Take();
       }

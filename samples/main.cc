@@ -102,14 +102,14 @@ class Validator: public OutputCollector{
     std::unique_lock<std::mutex> l(m_);
     while(!is_done_)
       cond_var_.wait(l);
+    { printf("Top-1 Accuracy %f\n", ((float)top_1_correct_count / image_file_paths_.size())); }
   }
 
-  Validator(OrtEnv* env,std::vector<TCharString> image_file_paths,
-      const TCharString& model_path, const TCharString& label_file_path,const TCharString& validation_file_path)
-  :image_file_paths_(image_file_paths), labels_(readFileToVec(label_file_path, 1000)),
-  validation_data_(readFileToVec(validation_file_path, image_file_paths_.size()))
-  {
-
+  Validator(OrtEnv* env, const std::vector<TCharString>& image_file_paths, const TCharString& model_path,
+            const TCharString& label_file_path, const TCharString& validation_file_path)
+      : image_file_paths_(image_file_paths),
+        labels_(readFileToVec(label_file_path, 1000)),
+        validation_data_(readFileToVec(validation_file_path, image_file_paths_.size())) {
     OrtSessionOptions* session_option;
     ORT_ABORT_ON_ERROR(OrtCreateSessionOptions(&session_option));
 #ifdef USE_CUDA
@@ -175,6 +175,8 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
   // imagenet_lsvrc_2015_synsets.txt
   TCharString label_file_path = argv[3];
   TCharString validation_file_path = argv[4];
+  const int batch_size = 16;
+
   // TODO: remove the slash at the end of data_dir string
   LoopDir(data_dir, [&data_dir, &image_file_paths](const ORTCHAR_T* filename, OrtFileType filetype) -> bool {
     if (filetype != OrtFileType::TYPE_REG) return true;
@@ -196,14 +198,8 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
   });
 
   std::vector<uint8_t> data;
-  OrtEnv* env;
-  ORT_ABORT_ON_ERROR(OrtCreateEnv(ORT_LOGGING_LEVEL_WARNING, "test", &env));
+  Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Default");
 
-  const int output_class_count = 1001;
-  OrtAllocatorInfo* allocator_info;
-  ORT_ABORT_ON_ERROR(OrtCreateCpuAllocatorInfo(OrtArenaAllocator, OrtMemTypeDefault, &allocator_info));
-
-  const int batch_size = 16;
   GError* err = NULL;
   GThreadPool* threadpool = g_thread_pool_new(thread_pool_dispatcher, nullptr, 8, TRUE, &err);
   if (err != NULL) {
@@ -218,23 +214,13 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
   int image_size = v.GetImageSize();
   const int channels = 3;
   std::atomic<int> finished(0);
-  // printf("loading %s\n", s.c_str());
-  size_t remain = std::min<size_t>(image_file_paths.size(), batch_size);
-  auto file_names_begin = image_file_paths.data();
 
   InceptionPreprocessing prepro(image_size, image_size, channels);
 
-
-  AsyncRingBuffer buffer(160, threadpool, image_file_paths, &prepro, &v);
+  AsyncRingBuffer buffer(batch_size, 160, threadpool, image_file_paths, &prepro, &v);
   buffer.StartDownloadTasks();
-  sleep(100000L);
-  // if ((completed) % 160 == 0) {
-  // printf("Top-1 Accuracy: %f\n", ((float)top_1_correct_count / completed));
-  // printf("finished %f\n", ((float)completed / image_file_paths.size()));
-  //}
-  //printf("Top-1 Accuracy %f\n", ((float)top_1_correct_count / image_file_paths.size()));
+  v.Wait();
 
-  OrtReleaseEnv(env);
   return 0;
 }
 
