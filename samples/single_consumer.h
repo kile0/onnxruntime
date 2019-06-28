@@ -14,27 +14,29 @@ template <typename ValueType>
 class SingleConsumerFIFO {
  public:
   struct ListEntry {
-    ValueType* value = nullptr;
+    ValueType value;
     ListEntry* next = nullptr;
   };
  private:
   // fixed size
-  std::vector<ListEntry> values_;
+  ListEntry* values_;
   ListEntry* free_list_ = nullptr;
   // whenever free_list_ is nullptr, free_list_tail_ should equal to &free_list_;
   ListEntry** free_list_tail_ = &free_list_;
   bool is_consumer_running_ = false;
-  std::function<void(ValueType* )> deleter_;
+  size_t len_;
 
  public:
-  explicit SingleConsumerFIFO(size_t len, const std::function<void(ValueType* )>& deleter) : values_(len),
-                                                                                             deleter_(deleter){
-
+  explicit SingleConsumerFIFO(size_t len) : values_(new ListEntry[len]), len_(len){
   }
+  ~SingleConsumerFIFO() noexcept{
+    delete[] values_;
+  }
+
   template <typename T>
   void Init(const T& t) {
-    for (ListEntry& e : values_) {
-      t(e);
+    for(size_t i=0;i!=len_;++i){
+      t(values_[i]);
     }
   }
 
@@ -45,15 +47,17 @@ class SingleConsumerFIFO {
    */
   size_t Return(ListEntry *e) {
     is_consumer_running_ = false;
-    return e - values_.data();
+    return e - values_;
   }
 
-  void Put(size_t element_id) {
+  ListEntry* Put(size_t element_id) {
+    assert(element_id < len_);
     // printf("Append %zd to the free list\n", element_id);
     ListEntry* t = &values_[element_id];
     t->next = nullptr;
     (*free_list_tail_) = t;
     free_list_tail_ = &t;
+    return t;
   }
 
   ListEntry* Take() {
@@ -66,11 +70,5 @@ class SingleConsumerFIFO {
     is_consumer_running_ = true;
     if ((free_list_ = free_list_->next) == nullptr) free_list_tail_ = &free_list_;
     return input_tensor;
-  }
-
-  ~SingleConsumerFIFO() {
-    for (const ListEntry& t : values_) {
-      deleter_(t.value);
-    }
   }
 };

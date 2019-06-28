@@ -34,7 +34,10 @@ static std::vector<std::string> readFileToVec(const std::string& file_path, size
     if (!line.empty()) labels.push_back(line);
   }
   if (labels.size() != expected_line_count) {
-    throw std::runtime_error("line count mismatch");
+    std::ostringstream oss;
+    oss << "line count mismatch, expect " << expected_line_count << " from " << file_path
+     << ", got " << labels.size();
+    throw std::runtime_error(oss.str());
   }
   return labels;
 }
@@ -62,6 +65,108 @@ static void verify_input_output_count(OrtSession* session) {
 
 void thread_pool_dispatcher(void* data, void* user_data) { (*(RunnableTask*)data)(); }
 
+class Validator: public OutputCollector{
+ private:
+  OrtSession* session_ = nullptr;
+  const int output_class_count_ = 1001;
+  std::vector<TCharString> image_file_paths_;
+  std::vector<std::string> labels_;
+  std::vector<std::string> validation_data_;
+  int top_1_correct_count=0;
+  int image_size_;
+
+  std::mutex m_;
+  std::condition_variable cond_var_;
+  bool is_done_ = false;
+
+ public:
+  int GetImageSize() const{
+    return image_size_;
+  }
+
+  ~Validator(){
+    OrtReleaseSession(session_);
+  }
+
+  void Finish(const char* errmsg) override{
+    if(errmsg != nullptr)
+      fprintf(stderr, "%s\n", errmsg);
+    {
+      std::lock_guard<std::mutex> l(m_);
+      is_done_ = true;
+    }
+    cond_var_.notify_all();
+  }
+
+  void Wait(){
+    std::unique_lock<std::mutex> l(m_);
+    while(!is_done_)
+      cond_var_.wait(l);
+  }
+
+  Validator(OrtEnv* env,std::vector<TCharString> image_file_paths,
+      const TCharString& model_path, const TCharString& label_file_path,const TCharString& validation_file_path)
+  :image_file_paths_(image_file_paths), labels_(readFileToVec(label_file_path, 1000)),
+  validation_data_(readFileToVec(validation_file_path, image_file_paths_.size()))
+  {
+
+    OrtSessionOptions* session_option;
+    ORT_ABORT_ON_ERROR(OrtCreateSessionOptions(&session_option));
+#ifdef USE_CUDA
+    ORT_ABORT_ON_ERROR(OrtSessionOptionsAppendExecutionProvider_CUDA(session_option, 0));
+#endif
+    ORT_ABORT_ON_ERROR(OrtCreateSession(env, model_path.c_str(), session_option, &session_));
+    OrtReleaseSessionOptions(session_option);
+    verify_input_output_count(session_);
+
+    OrtTypeInfo* info;
+    ORT_ABORT_ON_ERROR(OrtSessionGetInputTypeInfo(session_, 0, &info));
+    const OrtTensorTypeAndShapeInfo* tensor_info;
+    ORT_ABORT_ON_ERROR(OrtCastTypeInfoToTensorInfo(info, &tensor_info));
+    size_t dim_count;
+    ORT_ABORT_ON_ERROR(OrtGetDimensionsCount(tensor_info, &dim_count));
+    assert(dim_count == 4);
+    std::vector<int64_t> dims(dim_count);
+    ORT_ABORT_ON_ERROR(OrtGetDimensions(tensor_info, dims.data(), dims.size()));
+    if (dims[1] != dims[2] || dims[3] != 3) {
+      throw std::runtime_error("This model is not supported by this program. input tensor need be in NHWC format");
+    }
+
+    image_size_ = static_cast<int>(dims[1]);
+  }
+
+  void operator()(const std::vector<int>& task_id_list, const OrtValue* input_tensor) override {
+    const size_t remain = task_id_list.size();
+    const char* input_name = "input:0";
+    const char* output_name = "InceptionV4/Logits/Predictions:0";
+    OrtValue* output_tensor = nullptr;
+    ORT_ABORT_ON_ERROR(OrtRun(session_, nullptr, &input_name, &input_tensor, 1, &output_name, 1, &output_tensor));
+    float* probs;
+    ORT_ABORT_ON_ERROR(OrtGetTensorMutableData(output_tensor, (void**)&probs));
+    for (size_t i = 0; i != remain; ++i) {
+      float max_prob = probs[1];
+      int max_prob_index = 1;
+      for (int j = max_prob_index + 1; j != output_class_count_; ++j) {
+        if (probs[j] > max_prob) {
+          max_prob = probs[j];
+          max_prob_index = j;
+        }
+      }
+      // TODO:extract number from filename, to index validation_data
+      const auto& s = image_file_paths_[i];
+      int test_data_id = ExtractImageNumberFromFileName(s);
+      // printf("%d\n",(int)max_prob_index);
+      // printf("%s\n",labels[max_prob_index - 1].c_str());
+      // printf("%s\n",validation_data[test_data_id - 1].c_str());
+      if (labels_[max_prob_index - 1] == validation_data_[test_data_id - 1]) {
+        ++top_1_correct_count;
+      }
+      probs += output_class_count_;
+    }
+    OrtReleaseValue(output_tensor);
+  }
+};
+
 int real_main(int argc, ORTCHAR_T* argv[]) {
   if (argc < 5) return -1;
   std::vector<TCharString> image_file_paths;
@@ -70,7 +175,6 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
   // imagenet_lsvrc_2015_synsets.txt
   TCharString label_file_path = argv[3];
   TCharString validation_file_path = argv[4];
-  std::vector<std::string> labels = readFileToVec(label_file_path, 1000);
   // TODO: remove the slash at the end of data_dir string
   LoopDir(data_dir, [&data_dir, &image_file_paths](const ORTCHAR_T* filename, OrtFileType filetype) -> bool {
     if (filetype != OrtFileType::TYPE_REG) return true;
@@ -90,39 +194,14 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
     image_file_paths.emplace_back(v);
     return true;
   });
-  std::vector<std::string> validation_data = readFileToVec(validation_file_path, image_file_paths.size());
 
   std::vector<uint8_t> data;
   OrtEnv* env;
   ORT_ABORT_ON_ERROR(OrtCreateEnv(ORT_LOGGING_LEVEL_WARNING, "test", &env));
-  OrtSessionOptions* session_option;
-  ORT_ABORT_ON_ERROR(OrtCreateSessionOptions(&session_option));
-#ifdef USE_CUDA
-  ORT_ABORT_ON_ERROR(OrtSessionOptionsAppendExecutionProvider_CUDA(session_option, 0));
-#endif
-  OrtSession* session;
-  ORT_ABORT_ON_ERROR(OrtCreateSession(env, model_path.c_str(), session_option, &session));
 
-  verify_input_output_count(session);
-
-  OrtTypeInfo* info;
-  ORT_ABORT_ON_ERROR(OrtSessionGetInputTypeInfo(session, 0, &info));
-  const OrtTensorTypeAndShapeInfo* tensor_info;
-  ORT_ABORT_ON_ERROR(OrtCastTypeInfoToTensorInfo(info, &tensor_info));
-  size_t dim_count;
-  ORT_ABORT_ON_ERROR(OrtGetDimensionsCount(tensor_info, &dim_count));
-  assert(dim_count == 4);
-  std::vector<int64_t> dims(dim_count);
-  ORT_ABORT_ON_ERROR(OrtGetDimensions(tensor_info, dims.data(), dims.size()));
-  if (dims[1] != dims[2] || dims[3] != 3) {
-    printf("This model is not supported by this program. input tensor need be in NHWC format");
-    return -1;
-  }
-  const int image_size = dims[1];
   const int output_class_count = 1001;
   OrtAllocatorInfo* allocator_info;
   ORT_ABORT_ON_ERROR(OrtCreateCpuAllocatorInfo(OrtArenaAllocator, OrtMemTypeDefault, &allocator_info));
-  std::atomic<size_t> top_1_correct_count(0);
 
   const int batch_size = 16;
   GError* err = NULL;
@@ -134,28 +213,27 @@ int real_main(int argc, ORTCHAR_T* argv[]) {
   }
   assert(threadpool != nullptr);
 
-  const int channels = 3;
-  size_t output_data_len = image_size * image_size * channels;
-  float* output_data = new float[output_data_len * batch_size];
+  Validator v(env, image_file_paths, model_path,label_file_path,validation_file_path);
 
-  std::mutex m;
-  std::condition_variable cond_var;
+  int image_size = v.GetImageSize();
+  const int channels = 3;
   std::atomic<int> finished(0);
   // printf("loading %s\n", s.c_str());
   size_t remain = std::min<size_t>(image_file_paths.size(), batch_size);
   auto file_names_begin = image_file_paths.data();
 
   InceptionPreprocessing prepro(image_size, image_size, channels);
-  AsyncRingBuffer buffer(160, threadpool, image_file_paths, &prepro);
+
+
+  AsyncRingBuffer buffer(160, threadpool, image_file_paths, &prepro, &v);
   buffer.StartDownloadTasks();
   sleep(100000L);
   // if ((completed) % 160 == 0) {
   // printf("Top-1 Accuracy: %f\n", ((float)top_1_correct_count / completed));
   // printf("finished %f\n", ((float)completed / image_file_paths.size()));
   //}
-  printf("Top-1 Accuracy %f\n", ((float)top_1_correct_count / image_file_paths.size()));
-  OrtReleaseSessionOptions(session_option);
-  OrtReleaseSession(session);
+  //printf("Top-1 Accuracy %f\n", ((float)top_1_correct_count / image_file_paths.size()));
+
   OrtReleaseEnv(env);
   return 0;
 }

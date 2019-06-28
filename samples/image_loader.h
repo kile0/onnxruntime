@@ -40,6 +40,12 @@ class DataProcessing {
   virtual std::vector<int64_t> GetOutputShape(size_t batch_size) = 0;
 };
 
+class OutputCollector{
+ public:
+  virtual void operator()(const std::vector<int>& task_id_list, const OrtValue* tensor) = 0;
+  virtual void Finish(const char* errmsg) = 0;
+};
+
 class InceptionPreprocessing : public DataProcessing {
  private:
   int out_height_;
