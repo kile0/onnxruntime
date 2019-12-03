@@ -5,6 +5,8 @@
 #include <cassert> // for assert
 #include <limits>  // for max_size
 
+#pragma warning(disable: 4100)
+
 template <class T>
 struct allocator_mimalloc {
   typedef T value_type;
@@ -14,11 +16,22 @@ struct allocator_mimalloc {
   typedef const T& const_reference;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
+  
+  using propagate_on_container_copy_assignment = std::true_type; // for consistency
+	using propagate_on_container_move_assignment = std::true_type; // to avoid the pessimization
+	using propagate_on_container_swap = std::true_type; // to avoid the undefined behavior
+
+	// to get the C++17 optimization: add this line for non-empty allocators which are always equal
+	// using is_always_equal = std::true_type;
 
   allocator_mimalloc() noexcept {}
-  allocator_mimalloc(const allocator_mimalloc& other) noexcept {}
+  allocator_mimalloc(const allocator_mimalloc& other) noexcept {
+    //ORT_UNUSED_PARAMETER(other);
+  }
+
   template <class U>
-  allocator_mimalloc(const allocator_mimalloc<U>& other) noexcept {}
+  allocator_mimalloc(const allocator_mimalloc<U>& other) noexcept {
+  }
 
   pointer address(reference x) const noexcept { return &x; }
   const_pointer address(const_reference x) const noexcept { return &x; }
@@ -53,16 +66,24 @@ void allocator_mimalloc<T>::deallocate(T* p, std::size_t n) {
 }
 
 template <class T1, class T2>
-bool operator==(const allocator_mimalloc<T1>& lhs, const allocator_mimalloc<T2>& rhs) noexcept { return true; }
+bool operator==(const allocator_mimalloc<T1>& lhs, const allocator_mimalloc<T2>& rhs) noexcept { 
+  return true; }
 template <class T1, class T2>
 bool operator!=(const allocator_mimalloc<T1>& lhs, const allocator_mimalloc<T2>& rhs) noexcept { return false; }
 
 template <typename T>
-using Tensor_Alloc = allocator_mimalloc<T>;
+using Ty_Alloc = allocator_mimalloc<T>;
+
+template <typename T>
+using Vector = std::vector<T,allocator_mimalloc<T>>;
 
 #else
 template <typename T>
-using Tensor_Alloc = std::allocator;
+using Ty_Alloc = std::allocator<T>;
+
+template <typename T>
+using Vector = std::vector<T,std::allocator<T>>;
+
 #endif
 
 // std::vector<int, Tensor_Alloc<int> > x;
