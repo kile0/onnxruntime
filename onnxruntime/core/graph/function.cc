@@ -14,9 +14,9 @@ void IOTypeConstraintHelper(const ONNX_NAMESPACE::FunctionProto& onnx_func_proto
                             std::unique_ptr<ONNX_NAMESPACE::OpSchema>& op_schema_,
                             const std::unordered_map<std::string, int>& input_name_idx_map,
                             const std::unordered_map<std::string, int>& output_name_idx_map) {
-  std::vector<std::pair<std::string, std::string>> input_types_list(onnx_func_proto_.input_size());
-  std::vector<std::pair<std::string, std::string>> output_types_list(onnx_func_proto_.output_size());
-  std::unordered_map<std::string, std::vector<std::string>> type_constraint_map;
+  Vector<std::pair<std::string, std::string>> input_types_list(onnx_func_proto_.input_size());
+  Vector<std::pair<std::string, std::string>> output_types_list(onnx_func_proto_.output_size());
+  std::unordered_map<std::string, Vector<std::string>> type_constraint_map;
   std::unordered_map<std::string, ONNX_NAMESPACE::AttributeProto_AttributeType> attribute_type_map;
   auto schema_registry = ONNX_NAMESPACE::OpSchemaRegistry::Instance();
   for (auto& node : onnx_func_proto_.node()) {
@@ -162,7 +162,7 @@ FunctionImpl::FunctionImpl(const onnxruntime::Graph& graph,
   op_schema_->SetDoc(meta_def->doc_string);
   op_schema_->SinceVersion(meta_def->since_version);
   int i = 0;
-  std::vector<const NodeArg*> function_body_graph_inputs;
+  Vector<const NodeArg*> function_body_graph_inputs;
   function_body_graph_inputs.resize(meta_def->inputs.size());
   for (auto& input : meta_def->inputs) {
     auto input_arg = parent_graph_->GetNodeArg(input);
@@ -173,7 +173,7 @@ FunctionImpl::FunctionImpl(const onnxruntime::Graph& graph,
     ++i;
   }
   i = 0;
-  std::vector<const NodeArg*> function_body_graph_outputs;
+  Vector<const NodeArg*> function_body_graph_outputs;
   function_body_graph_outputs.resize(meta_def->outputs.size());
   for (auto& output : meta_def->outputs) {
     auto output_arg = parent_graph_->GetNodeArg(output);
@@ -191,8 +191,8 @@ FunctionImpl::FunctionImpl(const onnxruntime::Graph& graph,
   //instead of create new nodes.
   for (auto& node_index : customized_func_body_->nodes) {
     auto node = parent_graph_->GetNode(node_index);
-    std::vector<onnxruntime::NodeArg*> inputs;
-    std::vector<onnxruntime::NodeArg*> outputs;
+    Vector<onnxruntime::NodeArg*> inputs;
+    Vector<onnxruntime::NodeArg*> outputs;
     for (auto input : node->InputDefs()) {
       auto& n_input = function_body_graph.GetOrCreateNodeArg(input->Name(), input->TypeAsProto());
       inputs.push_back(&n_input);
@@ -311,8 +311,8 @@ FunctionImpl::FunctionImpl(const onnxruntime::Graph& graph,
 
   // iterate over each node in the FunctionProto and fix inputs/outputs
   for (auto node = onnx_func_proto_.mutable_node()->begin(); node != onnx_func_proto_.mutable_node()->end(); ++node) {
-    std::vector<onnxruntime::NodeArg*> inputs;
-    std::vector<onnxruntime::NodeArg*> outputs;
+    Vector<onnxruntime::NodeArg*> inputs;
+    Vector<onnxruntime::NodeArg*> outputs;
     std::string uniq_identifier = (*node).name();
     if (!utils::HasName(*node)) {
       std::stringstream ss;

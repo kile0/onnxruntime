@@ -93,7 +93,7 @@ TEST(GraphTransformationTests, DropoutElimination) {
 }
 
 TEST(GraphTransformationTests, SliceElimination) {
-  std::vector<std::basic_string<ORTCHAR_T> > model_names = {ORT_TSTR("slice-v1-elim.onnx"), ORT_TSTR("slice-v11-elim.onnx")};
+  Vector<std::basic_string<ORTCHAR_T> > model_names = {ORT_TSTR("slice-v1-elim.onnx"), ORT_TSTR("slice-v11-elim.onnx")};
   for (const auto& model_name : model_names) {
     auto model_uri = MODEL_FOLDER + model_name;
     std::shared_ptr<Model> model;
@@ -245,8 +245,8 @@ TEST(GraphTransformationTests, SubgraphWithConstantInputs) {
   NameMLValMap feeds;
   RunOptions run_options;
 
-  std::vector<std::string> output_names = {"output"};
-  std::vector<OrtValue> fetches;
+  Vector<std::string> output_names = {"output"};
+  Vector<OrtValue> fetches;
 
   ASSERT_TRUE(session_object.Run(run_options, feeds, output_names, &fetches).IsOK());
 }
@@ -314,7 +314,7 @@ TEST(GraphTransformationTests, DontFuseConvWithBNWithOptionalOutputs) {
 }
 
 TEST(GraphTransformationTests, FuseConvBNMulAddUnsqueeze) {
-  std::vector<std::basic_string<ORTCHAR_T> > test_models = {ORT_TSTR("fusion/fuse-conv-bn-mul-add-unsqueeze.onnx"),
+  Vector<std::basic_string<ORTCHAR_T> > test_models = {ORT_TSTR("fusion/fuse-conv-bn-mul-add-unsqueeze.onnx"),
                                                             ORT_TSTR("fusion/fuse-conv-bn-mul-add-unsqueeze.negative_axes.onnx"),
                                                             ORT_TSTR("fusion/fuse-conv-bn-mul-add-unsqueeze-no-bias.onnx")};
   for (const auto& model : test_models) {
@@ -609,8 +609,8 @@ TEST(GraphTransformationTests, FuseConvBnAddMulFloat16) {
   OrtValue ml_value_x;
 
   auto x_f = MLFloat16(math::floatToHalf(1.0));
-  std::vector<int64_t> dims_x = {1, 1, 3, 3};
-  std::vector<MLFloat16> values_x;
+  Vector<int64_t> dims_x = {1, 1, 3, 3};
+  Vector<MLFloat16> values_x;
   for (int i = 0; i < 9; ++i) {
     values_x.push_back(x_f);
   }
@@ -618,15 +618,15 @@ TEST(GraphTransformationTests, FuseConvBnAddMulFloat16) {
                            dims_x, values_x, &ml_value_x);
   feeds.insert(std::make_pair("X", ml_value_x));
 
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("PROD");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   ASSERT_TRUE(session_object.Run(run_options, feeds, output_names, &fetches).IsOK());
 
   auto prod_f = MLFloat16(math::floatToHalf(6.0));
-  std::vector<int64_t> expected_dims_prod = {1, 1, 2, 2};
-  std::vector<MLFloat16> expected_values_prod;
+  Vector<int64_t> expected_dims_prod = {1, 1, 2, 2};
+  Vector<MLFloat16> expected_values_prod;
   for (int i = 0; i < 4; ++i) {
     expected_values_prod.push_back(prod_f);
   }
@@ -635,7 +635,7 @@ TEST(GraphTransformationTests, FuseConvBnAddMulFloat16) {
   auto& rtensor = fetches.front().Get<Tensor>();
   TensorShape expected_shape(expected_dims_prod);
   ASSERT_EQ(expected_shape, rtensor.Shape());
-  const std::vector<MLFloat16> found(rtensor.template Data<MLFloat16>(),
+  const Vector<MLFloat16> found(rtensor.template Data<MLFloat16>(),
                                      rtensor.template Data<MLFloat16>() + expected_dims_prod.size());
   ASSERT_EQ(expected_values_prod, found);
 }
@@ -646,8 +646,8 @@ TEST(GraphTransformationTests, ReluClip6Fusion) {
   Model model("ReluClip6Fusion", true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), {{"", 10}}, {}, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto input_tensor_type;
   input_tensor_type.mutable_tensor_type()->set_elem_type(TensorProto_DataType_FLOAT);
@@ -714,8 +714,8 @@ TEST(GraphTransformationTests, ReluClip11Fusion) {
   Model model("ReluClip6Fusion", false, DefaultLoggingManager().DefaultLogger());  //, true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), {{"", 11}}, {});
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto input_tensor_type;
   input_tensor_type.mutable_tensor_type()->set_elem_type(TensorProto_DataType_FLOAT);
@@ -917,7 +917,7 @@ static void ValidateAttention(Graph& graph) {
       EXPECT_EQ(initializer->size(), 192);
 
       // Validate two rows (2x24 items) for sanity check.
-      std::vector<double> expected_value = {
+      Vector<double> expected_value = {
           -0.10791015625,
           -0.04193115234375,
           0.09051513671875,
@@ -980,7 +980,7 @@ static void ValidateAttention(Graph& graph) {
       auto initializer2 = onnxruntime::make_unique<Initializer>(*tensor_proto);
       EXPECT_EQ(initializer2->size(), 24);
 
-      std::vector<double> expected_value2 = {
+      Vector<double> expected_value2 = {
           -0.23681640625,
           -0.16552734375,
           0.2191162109375,

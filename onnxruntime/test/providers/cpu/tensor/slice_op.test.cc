@@ -10,14 +10,14 @@ namespace test {
 // Disable TensorRT on the tests because axis=0 is not supported
 
 template <typename T>
-void RunSliceTest(const std::vector<int64_t>& input_dims,
-                  const std::vector<T>& input_vals,
-                  const std::vector<int64_t>& starts,
-                  const std::vector<int64_t>& ends,
-                  const std::vector<int64_t>& axes,
-                  const std::vector<int64_t>& steps,
-                  const std::vector<int64_t>& output_dims,
-                  const std::vector<T>& output_vals,
+void RunSliceTest(const Vector<int64_t>& input_dims,
+                  const Vector<T>& input_vals,
+                  const Vector<int64_t>& starts,
+                  const Vector<int64_t>& ends,
+                  const Vector<int64_t>& axes,
+                  const Vector<int64_t>& steps,
+                  const Vector<int64_t>& output_dims,
+                  const Vector<T>& output_vals,
                   bool v10_only = false) {
   // V1-9
   if (!v10_only) {
@@ -79,8 +79,8 @@ TEST(SliceTest, Slice1D_Regular) {
 }
 
 TEST(SliceTest, Slice1D_Perf) {
-  std::vector<float> input(1000, 2.0f);
-  std::vector<float> output(500, 2.0f);
+  Vector<float> input(1000, 2.0f);
+  Vector<float> output(500, 2.0f);
   RunSliceTest<float>({1000},
                       input,
                       {2},
@@ -529,12 +529,12 @@ TEST(SliceTest, Slice2D_ImplicitCopyBySlicingADimensionFully) {
 }
 
 TEST(SliceTest, OptionalAxesInputAloneMissing) {
-  std::vector<int64_t> input_dims = {6};
+  Vector<int64_t> input_dims = {6};
   auto input_vals = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
   std::initializer_list<int64_t> starts = {2};
   std::initializer_list<int64_t> ends = {4};
   std::initializer_list<int64_t> steps = {1};
-  std::vector<int64_t> output_dims = {2};
+  Vector<int64_t> output_dims = {2};
   auto output_vals = {2.0f, 3.0f};
 
   OpTester testv10("Slice", 10);

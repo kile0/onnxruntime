@@ -53,7 +53,7 @@ Status MaxUnpool::Compute(OpKernelContext* context) const {
   ORT_RETURN_IF_NOT(I_shape == X_shape, "Index tensor shape should be same as that of the input data tensor to unpool.");
 
   // Calculate output tensor shape from attributes
-  std::vector<int64_t> inferred_output_dims(X_shape.NumDimensions());
+  Vector<int64_t> inferred_output_dims(X_shape.NumDimensions());
 
   // Copy batch and channel dims
   inferred_output_dims[0] = X_shape[0];
@@ -76,7 +76,7 @@ Status MaxUnpool::Compute(OpKernelContext* context) const {
 
     // Turn the shape tensor data into an actual shape
     const auto* p_shape = tensor_shape->template Data<int64_t>();
-    std::vector<int64_t> given_output_dims(p_shape, p_shape + tensor_shape->Shape().Size());
+    Vector<int64_t> given_output_dims(p_shape, p_shape + tensor_shape->Shape().Size());
     TensorShape given_shape(given_output_dims);
 
     ORT_RETURN_IF_NOT(given_shape.Size() >= shape.Size(),

@@ -31,8 +31,8 @@ namespace ml {
 ONNX_CPU_OPERATOR_ML_KERNEL(
     ZipMap,
     1,
-    KernelDefBuilder().TypeConstraint("T", {DataTypeImpl::GetType<std::vector<std::map<std::string, float>>>(),
-                                            DataTypeImpl::GetType<std::vector<std::map<std::int64_t, float>>>()}),
+    KernelDefBuilder().TypeConstraint("T", {DataTypeImpl::GetType<Vector<std::map<std::string, float>>>(),
+                                            DataTypeImpl::GetType<Vector<std::map<std::int64_t, float>>>()}),
     ZipMapOp);
 
 ZipMapOp::ZipMapOp(const OpKernelInfo& info)
@@ -75,10 +75,10 @@ common::Status ZipMapOp::Compute(OpKernelContext* context) const {
                     "Input features_per_batch[" + std::to_string(features_per_batch) +
                         "] != number of classlabels[" + std::to_string(classlabels_strings_.size()) + "]");
     }
-    auto* y_data = context->Output<std::vector<std::map<std::string, float>>>(0);
+    auto* y_data = context->Output<Vector<std::map<std::string, float>>>(0);
     if (y_data == nullptr) return Status(common::ONNXRUNTIME, common::FAIL, "input count mismatch");
 
-    //auto* y_data = Y->template MutableData<std::vector<std::map<std::string, float>>>();
+    //auto* y_data = Y->template MutableData<Vector<std::map<std::string, float>>>();
     y_data->resize(batch_size);
     int64_t current_weight_0 = 0;
     for (int64_t n = 0; n < batch_size; n++) {
@@ -96,9 +96,9 @@ common::Status ZipMapOp::Compute(OpKernelContext* context) const {
                     "Input features_per_batch[" + std::to_string(features_per_batch) +
                         "] != number of classlabels[" + std::to_string(classlabels_int64s_.size()) + "]");
     }
-    auto* y_data = context->Output<std::vector<std::map<std::int64_t, float>>>(0);
+    auto* y_data = context->Output<Vector<std::map<std::int64_t, float>>>(0);
     if (y_data == nullptr) return Status(common::ONNXRUNTIME, common::FAIL, "input count mismatch");
-    //auto* y_data = Y->template MutableData<std::vector<std::map<int64_t, float>>>();
+    //auto* y_data = Y->template MutableData<Vector<std::map<int64_t, float>>>();
     y_data->resize(batch_size);
     int64_t current_weight_0 = 0;
     for (int n = 0; n < batch_size; n++) {

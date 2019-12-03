@@ -13,10 +13,10 @@ ONNX_CPU_OPERATOR_VERSIONED_ML_KERNEL(
     LabelEncoder,
     1, 1,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>(),
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>(),
                                                               DataTypeImpl::GetTensorType<int64_t>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>(),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>(),
                                                 DataTypeImpl::GetTensorType<int64_t>()})
         .SinceVersion(1, 2),
     LabelEncoder);
@@ -73,9 +73,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     float_string,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<float>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<float>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()}),
     LabelEncoder_2<float, std::string>);
 
 template <>
@@ -90,9 +90,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     string_float,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<float>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<float>()}),
     LabelEncoder_2<std::string, float>);
 
 template <>
@@ -107,9 +107,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     int64_float,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<float>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<float>()}),
     LabelEncoder_2<std::int64_t, float>);
 
 template <>
@@ -124,9 +124,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     float_int64,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<float>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<float>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()}),
     LabelEncoder_2<float, std::int64_t>);
 
 template <>
@@ -141,9 +141,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     int64_string,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()}),
     LabelEncoder_2<std::int64_t, std::string>)
 
 template <>
@@ -158,9 +158,9 @@ ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(
     2,
     string_int64,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()})
+                                      Vector<MLDataType>{DataTypeImpl::GetTensorType<std::string>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()}),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<std::int64_t>()}),
     LabelEncoder_2<std::string, std::int64_t>)
 
 template <>

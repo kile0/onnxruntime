@@ -19,7 +19,7 @@ namespace test {
 
 TEST(MathOpTest, AffineDefaultAttributes) {
   OpTester test("Affine");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("A", dims, {0.0f, 1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("B", dims, {0.0f, 1.0f, 2.0f, 3.0f});
   test.Run();
@@ -27,7 +27,7 @@ TEST(MathOpTest, AffineDefaultAttributes) {
 
 TEST(MathOpTest, Affine) {
   OpTester test("Affine");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddAttribute("alpha", 2.0f);
   test.AddAttribute("beta", 1.0f);
   test.AddInput<float>("A", dims, {0.0f, 1.0f, 2.0f, 3.0f});
@@ -37,7 +37,7 @@ TEST(MathOpTest, Affine) {
 
 TEST(MathOpTest, Scale) {
   OpTester test("Scale");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddAttribute("scale", 2.0f);
   test.AddInput<float>("A", dims, {0.0f, 1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("B", dims, {0.0f, 2.0f, 4.0f, 6.0f});
@@ -46,18 +46,18 @@ TEST(MathOpTest, Scale) {
 
 TEST(MathOpTest, Scale_Default) {
   OpTester test("Scale");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("A", dims, {0.0f, 1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("B", dims, {0.0f, 1.0f, 2.0f, 3.0f});
   test.Run();
 }
 
-std::vector<float> Add_Simple(const std::vector<float>& input_a_data, const std::vector<float>& input_b_data) {
+Vector<float> Add_Simple(const Vector<float>& input_a_data, const Vector<float>& input_b_data) {
   EXPECT_TRUE(input_a_data.size() % input_b_data.size() == 0 || input_b_data.size() % input_a_data.size() == 0);
-  const std::vector<float>& input_large_size = input_a_data.size() >= input_b_data.size() ? input_a_data : input_b_data;
-  const std::vector<float>& input_small_size = input_a_data.size() < input_b_data.size() ? input_a_data : input_b_data;
+  const Vector<float>& input_large_size = input_a_data.size() >= input_b_data.size() ? input_a_data : input_b_data;
+  const Vector<float>& input_small_size = input_a_data.size() < input_b_data.size() ? input_a_data : input_b_data;
 
-  std::vector<float> output(input_large_size.size());
+  Vector<float> output(input_large_size.size());
   for (size_t iter = 0; iter < input_large_size.size() / input_small_size.size(); iter++) {
     std::transform(input_large_size.begin() + iter * input_small_size.size(),
                    input_large_size.begin() + (iter + 1) * input_small_size.size(),
@@ -70,8 +70,8 @@ std::vector<float> Add_Simple(const std::vector<float>& input_a_data, const std:
   return output;
 }
 
-const std::vector<float> ComputeGeluWithErf(const std::vector<float>& input_data) {
-  std::vector<float> output(input_data.size());
+const Vector<float> ComputeGeluWithErf(const Vector<float>& input_data) {
+  Vector<float> output(input_data.size());
 
   std::transform(input_data.begin(),
                  input_data.end(),
@@ -85,16 +85,16 @@ const std::vector<float> ComputeGeluWithErf(const std::vector<float>& input_data
 }
 
 static void RunBiasGeluTest(
-    const std::vector<float>& input_a_data,
-    const std::vector<float>& input_b_data,
-    const std::vector<int64_t>& input_a_dims,
-    const std::vector<int64_t>& input_b_dims) {
+    const Vector<float>& input_a_data,
+    const Vector<float>& input_b_data,
+    const Vector<int64_t>& input_a_dims,
+    const Vector<int64_t>& input_b_dims) {
   if (HasCudaEnvironment(0)) {
-    std::vector<float> output_data = ComputeGeluWithErf(Add_Simple(input_a_data, input_b_data));
+    Vector<float> output_data = ComputeGeluWithErf(Add_Simple(input_a_data, input_b_data));
 
     OpTester tester("BiasGelu", 1, onnxruntime::kMSDomain);
 
-    const std::vector<int64_t>& output_dims = input_a_dims.size() >= input_b_dims.size() ? input_a_dims : input_b_dims;
+    const Vector<int64_t>& output_dims = input_a_dims.size() >= input_b_dims.size() ? input_a_dims : input_b_dims;
     tester.AddInput<float>("A", input_a_dims, input_a_data);
     tester.AddInput<float>("B", input_b_dims, input_b_data);
     tester.AddOutput<float>("C", output_dims, output_data);
@@ -104,11 +104,11 @@ static void RunBiasGeluTest(
 }
 
 TEST(BiasGeluTest, Two_One_Dim) {
-  std::vector<float> input_a_data = {
+  Vector<float> input_a_data = {
       0.8f, -0.5f, 0.0f, 1.f,
       0.5f, 0.2f, 0.3f, -0.6f};
 
-  std::vector<float> input_b_data = {
+  Vector<float> input_b_data = {
       -0.5f, 0.6f, 1.2f, 2.1f};
 
   RunBiasGeluTest(input_a_data, input_b_data, {2, 4}, {4});

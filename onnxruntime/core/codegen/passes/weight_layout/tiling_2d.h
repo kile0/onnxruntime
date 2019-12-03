@@ -30,7 +30,7 @@ class WeightLayoutTiling2D : public WeightLayout {
   CoordTransFunc ToNominal(const tvm::Tensor& X) const override;
   CoordTransFunc ToActual(const tvm::Tensor& X) const override;
   tvm::Array<tvm::Expr> ToActualShape(const tvm::Tensor& X) const override;
-  std::vector<int64_t> ToActualShape(const Tensor* X) const override;
+  Vector<int64_t> ToActualShape(const Tensor* X) const override;
 
  private:
   int vector_width_;

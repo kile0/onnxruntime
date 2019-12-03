@@ -32,7 +32,7 @@ class CustomRegistry final {
 
   common::Status RegisterCustomKernel(KernelCreateInfo&);
 
-  common::Status RegisterOpSet(std::vector<ONNX_NAMESPACE::OpSchema>& schemas, const std::string& domain, 
+  common::Status RegisterOpSet(Vector<ONNX_NAMESPACE::OpSchema>& schemas, const std::string& domain, 
                                int baseline_opset_version, int opset_version); 
 
   const std::shared_ptr<KernelRegistry>& GetKernelRegistry();

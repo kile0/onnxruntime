@@ -20,7 +20,7 @@ class Record {
 
   Record() = default;
 
-  Record(const std::vector<std::string>& names, const Values& values) {
+  Record(const Vector<std::string>& names, const Values& values) {
     ORT_ENFORCE(std::tuple_size<Values>::value == names.size(),
                 "Parameter sizes do not match. %d != %d", std::tuple_size<Values>::value, names.size());
     names_ = names;
@@ -46,7 +46,7 @@ class Record {
   }
 
  private:
-  std::vector<std::string> names_;
+  Vector<std::string> names_;
 
   Values values_;
 };

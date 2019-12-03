@@ -59,7 +59,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
     // Calculates the spatial dimensions from input dimensions and a kernel. The non-spatial (leading)
     // dimensions will be initialized to match the input dimensions. This assumes the spatial dimensions
     // are ordered such that they are at the end (e.g. NCHW or NCDHW).
-    std::vector<DimensionType> InitializeKernelOutputDimensions(
+    Vector<DimensionType> InitializeKernelOutputDimensions(
         gsl::span<const DimensionType> inputDimensions,
         const KernelArgs& args
     )
@@ -67,7 +67,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         ML_CHECK_VALID_ARGUMENT(gsl::narrow_cast<uint32_t>(inputDimensions.size()) >= args.spatialDimensionCount);
         int dimOffset = gsl::narrow_cast<int>(inputDimensions.size()) - args.spatialDimensionCount;
 
-        std::vector<DimensionType> outputDimensions(inputDimensions.begin(), inputDimensions.end());
+        Vector<DimensionType> outputDimensions(inputDimensions.begin(), inputDimensions.end());
 
         for (size_t dim = 0; dim < args.spatialDimensionCount; ++dim)
         {
@@ -85,7 +85,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
     }
 
     // Calculates required input spatial dimensions to produce the given output dimensions.
-    std::vector<DimensionType> InitializeKernelOutputDimsTranspose(
+    Vector<DimensionType> InitializeKernelOutputDimsTranspose(
         gsl::span<const DimensionType> inputDimensions,
         const KernelArgs& args
     )
@@ -93,7 +93,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         ML_CHECK_VALID_ARGUMENT(gsl::narrow_cast<uint32_t>(inputDimensions.size()) >= args.spatialDimensionCount);
         int dimOffset = gsl::narrow_cast<int>(inputDimensions.size()) - args.spatialDimensionCount;
 
-        std::vector<DimensionType> outputDimensions(inputDimensions.begin(), inputDimensions.end());
+        Vector<DimensionType> outputDimensions(inputDimensions.begin(), inputDimensions.end());
 
         for (size_t dim = 0; dim < args.spatialDimensionCount; ++dim)
         {
@@ -149,7 +149,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
 
         if (kernelInfo.HasAttribute(AttrName::Strides, MLOperatorAttributeType::IntArray))
         {
-            std::vector<int> kernelStrides = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Strides);
+            Vector<int> kernelStrides = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Strides);
             ML_CHECK_VALID_ARGUMENT(kernelStrides.size() >= spatialDimensionCount);
 
             std::copy(kernelStrides.begin(), kernelStrides.begin() + spatialDimensionCount, args.strides);
@@ -161,7 +161,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
 
         if (kernelInfo.HasAttribute(AttrName::Dilations, MLOperatorAttributeType::IntArray))
         {
-            std::vector<int> kernelDilations = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Dilations);
+            Vector<int> kernelDilations = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Dilations);
             ML_CHECK_VALID_ARGUMENT(kernelDilations.size() >= spatialDimensionCount);
 
             std::copy(kernelDilations.begin(), kernelDilations.begin() + spatialDimensionCount, args.dilations);
@@ -171,7 +171,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
             std::fill(args.dilations, args.dilations + spatialDimensionCount, 1);
         }
 
-        std::vector<int> kernelShape;
+        Vector<int> kernelShape;
 
         if (kernelInfo.HasAttribute(AttrName::KernelShape, MLOperatorAttributeType::IntArray))
         {
@@ -198,7 +198,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         if (autoPad == AttrValue::NotSet)
         {
             // Use the pad values in the pads argument.
-            std::vector<int> pads = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Pads);
+            Vector<int> pads = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::Pads);
 
             // if pads are not specified, assume all pad values are 0
             if (pads.empty())
@@ -225,7 +225,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
 
         if (kernelInfo.HasAttribute(AttrName::OutputPadding, MLOperatorAttributeType::IntArray))
         {
-            std::vector<int> outputPadding = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::OutputPadding);
+            Vector<int> outputPadding = kernelInfo.GetOptionalAttributeVectorInt32(AttrName::OutputPadding);
             ML_CHECK_VALID_ARGUMENT(outputPadding.size() >= 2);
         
             std::copy(outputPadding.begin(), outputPadding.begin() + spatialDimensionCount, args.outputPadding);
@@ -288,28 +288,28 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> GetOutputShapeAsInputShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> GetOutputShapeAsInputShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         assert(shapeInfo.GetInputCount() >= 1);
-        std::vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
         return { std::move(outputDimensions) };
     }
 
-    std::vector<EdgeShapes> GetBroadcastedOutputShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> GetBroadcastedOutputShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         ML_CHECK_VALID_ARGUMENT(shapeInfo.GetInputCount() >= 1);
 
-        std::vector<DimensionType> accumulatedInputShape = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> accumulatedInputShape = shapeInfo.GetInputTensorShape(0);
         for (uint32_t i = 1, ci = shapeInfo.GetInputCount(); i < ci; ++i)
         {
-            std::vector<DimensionType> nextInputShape = shapeInfo.GetInputTensorShape(i);
+            Vector<DimensionType> nextInputShape = shapeInfo.GetInputTensorShape(i);
             accumulatedInputShape = BroadcastTensorShape(accumulatedInputShape, nextInputShape);
         }
 
         return { std::move(accumulatedInputShape) };
     }
 
-    std::vector<DimensionType> BroadcastTensorShape(
+    Vector<DimensionType> BroadcastTensorShape(
         gsl::span<const DimensionType> inputShape0,
         gsl::span<const DimensionType> inputShape1
         )
@@ -320,7 +320,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
 
         const auto outputRank = std::max(inputShape0.size(), inputShape1.size());
-        std::vector<DimensionType> outputShape(outputRank);
+        Vector<DimensionType> outputShape(outputRank);
 
         // Walk backwards through both input shapes and broadcast each dimension
         auto inDim0Iter = inputShape0.rbegin();
@@ -353,7 +353,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         ResolveAutoPadding(m_kernel, inputDimensions);
     }
 
-    std::vector<EdgeShapes> GemmHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> GemmHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputShapeA = shapeInfo.GetInputTensorShape(IN_A);
         auto inputShapeB = shapeInfo.GetInputTensorShape(IN_B);
@@ -378,14 +378,14 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         m_split = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Split);
     }
 
-    std::vector<EdgeShapes> SplitHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> SplitHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        const std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        const Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(m_axis < gsl::narrow_cast<int>(inputDimensions.size()));
 
         const uint32_t outputCount = shapeInfo.GetOutputCount();
         ML_CHECK_VALID_ARGUMENT(outputCount > 0);
-        std::vector<std::vector<DimensionType>> outputDimensionsList(outputCount);
+        Vector<Vector<DimensionType>> outputDimensionsList(outputCount);
 
         if (!m_split.empty())
         {
@@ -421,7 +421,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
             }
         }
 
-        std::vector<EdgeShapes> edgeShapes;
+        Vector<EdgeShapes> edgeShapes;
         for (uint32_t i = 0; i != outputCount; ++i)
         {
             edgeShapes.push_back(outputDimensionsList[i]);
@@ -437,9 +437,9 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
     {
         const uint32_t dimCount = gsl::narrow_cast<int32_t>(inputDimensions.size());
 
-        std::vector<int32_t> starts = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Starts);
-        std::vector<int32_t> ends = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Ends);
-        std::vector<int32_t> axes = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Axes);
+        Vector<int32_t> starts = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Starts);
+        Vector<int32_t> ends = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Ends);
+        Vector<int32_t> axes = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Axes);
         HandleNegativeAxes(/*inout*/ axes, dimCount);
 
         ML_CHECK_VALID_ARGUMENT(starts.size() == ends.size(), "'starts' must equal 'ends' in size.");
@@ -481,7 +481,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> SliceHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> SliceHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         return { m_outputDimensions };
     }
@@ -489,7 +489,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
     void PaddingHelper::Initialize(const MLOperatorAttributes& operatorAttributes)
     {
         // Convert padding.
-        std::vector<int> padding = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Pads);
+        Vector<int> padding = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Pads);
         ML_CHECK_VALID_ARGUMENT(padding.size() % 2 == 0, "Padding must be even count, including begin/end pairs.");
 
         uint32_t dimCount = gsl::narrow_cast<uint32_t>(padding.size() / 2);
@@ -499,9 +499,9 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         std::copy(padding.begin() + dimCount, padding.begin() + dimCount * 2, m_endPadding.begin());
     }
 
-    std::vector<EdgeShapes> PaddingHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> PaddingHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        std::vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(
             m_startPadding.size() == outputDimensions.size() &&
             m_endPadding.size()   == outputDimensions.size()
@@ -515,13 +515,13 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(outputDimensions) };
     }
 
-    std::vector<EdgeShapes> MultinomialHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> MultinomialHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         int32_t sampleSize = gsl::narrow_cast<int32_t>(shapeInfo.GetOptionalAttribute<int64_t>(AttrName::SampleSize, -1));
         ML_CHECK_VALID_ARGUMENT(sampleSize > 0);
 
         // Set last dimension to sample size.
-        std::vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
         uint32_t rank = gsl::narrow_cast<uint32_t>(outputDimensions.size());
         ML_CHECK_VALID_ARGUMENT(rank == 2);
         outputDimensions[rank - 1] = sampleSize;
@@ -545,17 +545,17 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> GatherHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> GatherHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
-        std::vector<DimensionType> indicesDimensions = shapeInfo.GetInputTensorShape(1);
+        Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> indicesDimensions = shapeInfo.GetInputTensorShape(1);
 
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() >= 1);
         ML_CHECK_VALID_ARGUMENT(indicesDimensions.size() >= 0);
         int outDimCount = gsl::narrow_cast<int>(inputDimensions.size() + indicesDimensions.size() - 1);
         ML_CHECK_VALID_ARGUMENT(outDimCount > 0 && outDimCount <= NchwDimensionCount);
 
-        std::vector<DimensionType> outputDimensions(outDimCount, 1);
+        Vector<DimensionType> outputDimensions(outDimCount, 1);
 
         // The input dimensions following the gather axis determine the final output dimensions.
         int outputDim = outDimCount - 1;
@@ -608,13 +608,13 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> TransposeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> TransposeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(m_permutations.size() == inputDimensions.size());
 
         // Permute the shape.
-        std::vector<DimensionType> outputDimensions(inputDimensions.size());
+        Vector<DimensionType> outputDimensions(inputDimensions.size());
         for (int dimInput = 0, dimCount = gsl::narrow_cast<int>(inputDimensions.size()); dimInput < dimCount; ++dimInput)
         {
             auto dimPermuted = gsl::narrow_cast<size_t>(m_permutations[dimInput]);
@@ -625,7 +625,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { EdgeShapes(std::move(outputDimensions)) };
     }
 
-    std::vector<EdgeShapes> ReduceHelperBase::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ReduceHelperBase::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         // Example:
         // Input dims   : {3,2,5}
@@ -637,10 +637,10 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         // Pruned dims  : {2}
         // Dim Offset   : 1
 
-        std::vector<DimensionType> reducedDims = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> reducedDims = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(reducedDims.size() <= NchwDimensionCount);
 
-        std::vector<bool> reduced(reducedDims.size(), false);
+        Vector<bool> reduced(reducedDims.size(), false);
 
         for (auto& dim : m_axes)
         {
@@ -658,7 +658,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
             // Can't simply prune dims of size 1, because they may have been
             // size 1 in the input but not listed in the axes to reduce. This
             // is the reason for the reduced bool array.
-            std::vector<DimensionType> prunedDims;
+            Vector<DimensionType> prunedDims;
             for (int i = 0, ci = gsl::narrow_cast<int>(reducedDims.size()); i < ci; ++i)
             {
                 if (!reduced[i])
@@ -671,7 +671,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    void ReduceHelperBase::AdjustAxesAndOutputShape(const std::vector<uint32_t>& inputShape)
+    void ReduceHelperBase::AdjustAxesAndOutputShape(const Vector<uint32_t>& inputShape)
     {
         ML_CHECK_VALID_ARGUMENT(inputShape.size() <= NchwDimensionCount);
 
@@ -683,7 +683,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
     
-    std::vector<EdgeShapes> MatMulHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> MatMulHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         ML_CHECK_VALID_ARGUMENT(shapeInfo.GetInputCount() >= 2);
 
@@ -700,7 +700,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         ML_CHECK_VALID_ARGUMENT(inputShape0.size() >= 1);
         ML_CHECK_VALID_ARGUMENT(inputShape1.size() >= 1);
 
-        std::vector<uint32_t> outputMatrixDims;
+        Vector<uint32_t> outputMatrixDims;
 
         // Modify the input and truncated output shapes per the above comments.
         // The extra dimensions of the output beyond the two matrix dimensions
@@ -724,11 +724,11 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
 
         // Remove the matrix dimensions from each input, resulting in broadcastable shapes
-        std::vector<uint32_t> batchDims0(inputShape0.begin(), inputShape0.end() - 2);
-        std::vector<uint32_t> batchDims1(inputShape1.begin(), inputShape1.end() - 2);
+        Vector<uint32_t> batchDims0(inputShape0.begin(), inputShape0.end() - 2);
+        Vector<uint32_t> batchDims1(inputShape1.begin(), inputShape1.end() - 2);
 
         // Broadcast the extra dimensions of each input, then add the truncated matrix dimensions
-        std::vector<uint32_t> outputDims = BroadcastTensorShape(batchDims0, batchDims1);
+        Vector<uint32_t> outputDims = BroadcastTensorShape(batchDims0, batchDims1);
         for (uint32_t matrixDim : outputMatrixDims)
         {
             outputDims.push_back(matrixDim);
@@ -737,11 +737,11 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return {std::move(outputDims)};
     }
     
-    std::vector<EdgeShapes> TopKHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> TopKHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         assert(m_axis >= 0);
 
-        std::vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<DimensionType> outputDimensions = shapeInfo.GetInputTensorShape(0);
         outputDimensions[m_axis] = m_k;
 
         EdgeShapes outputShape(outputDimensions);
@@ -750,7 +750,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { outputShape, outputShape };
     }
 
-    std::vector<EdgeShapes> RecurrentHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> RecurrentHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         // X = [SEQ_LENGTH, BATCH_SIZE, ...]
         // W = [NUM_DIRECTIONS, ...]
@@ -777,7 +777,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
         case 2:
         {
-            std::vector<EdgeShapes> outputShapes = {
+            Vector<EdgeShapes> outputShapes = {
                 EdgeShapes(outputDimensionsSequence),
                 EdgeShapes(outputDimensionsSingle)
             };
@@ -786,7 +786,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
         case 3:
         {
-            std::vector<EdgeShapes> outputShapes = {
+            Vector<EdgeShapes> outputShapes = {
                 EdgeShapes(outputDimensionsSequence),
                 EdgeShapes(outputDimensionsSingle),
                 EdgeShapes(cellOutputDimensionsSingle)
@@ -802,13 +802,13 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
     
-    std::vector<EdgeShapes> RandomUniformHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> RandomUniformHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         EdgeShapes outputShape(m_tensorShape);
         return { std::move(outputShape) };
     }
 
-    std::vector<EdgeShapes> RandomNormalHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> RandomNormalHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         EdgeShapes outputShape(m_tensorShape);
         return { std::move(outputShape) };
@@ -824,7 +824,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         ML_CHECK_VALID_ARGUMENT(m_axis < inputDimensions.size());
     }
 
-    std::vector<EdgeShapes> ConcatHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ConcatHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto outputShape = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(outputShape.size() <= NchwDimensionCount);
@@ -851,7 +851,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         gsl::span<const DimensionType> inputDimensions
     )
     {
-        std::vector<int> border = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Border);
+        Vector<int> border = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Border);
         ML_CHECK_VALID_ARGUMENT(border.size() == 4u, "Border must be size 4.");
 
         m_offsets[N] = 0;
@@ -862,7 +862,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         if (operatorAttributes.HasAttribute(AttrName::Scale, MLOperatorAttributeType::IntArray))
         {
             // Scale overrides whatever is in the border right/bottom.
-            std::vector<int> scale = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Scale);
+            Vector<int> scale = operatorAttributes.GetOptionalAttributeVectorInt32(AttrName::Scale);
             m_sizes[Height] = scale[Height];
             m_sizes[Width] = scale[Width];
         }
@@ -874,7 +874,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> CropHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> CropHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputDimensions = shapeInfo.GetInputTensorShape(0);
 
@@ -889,7 +889,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(outputDimensions)) };
     }
 
-    std::vector<EdgeShapes> DepthToSpaceHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> DepthToSpaceHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() == 4, "Wrong number of dimensions.");
@@ -918,11 +918,11 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         m_axis = (axis == inputDimCount) ? axis : HandleNegativeAxis(axis, inputDimCount);
     }
 
-    std::vector<EdgeShapes> FlattenHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> FlattenHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputDimensions = shapeInfo.GetInputTensorShape(0);
 
-        std::vector<DimensionType> outputDimensions;
+        Vector<DimensionType> outputDimensions;
 
         // Axis indicates which input dimensions should be flattened to
         // the first dimension of the output. The default axis is 1, which
@@ -939,16 +939,16 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(outputDimensions) };
     }
 
-    std::vector<EdgeShapes> PoolingHelperBase::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> PoolingHelperBase::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputShape = shapeInfo.GetInputTensorShape(0);
-        std::vector<DimensionType> outputDimensions = InitializeKernelOutputDimensions(inputShape, m_kernel);
+        Vector<DimensionType> outputDimensions = InitializeKernelOutputDimensions(inputShape, m_kernel);
 
         // MaxPool may have both an output and an indices tensor (both the same size).
         const uint32_t outputCount = shapeInfo.GetOutputCount();
         assert(outputCount == 1 || outputCount == 2);
 
-        std::vector<EdgeShapes> outputShapes;
+        Vector<EdgeShapes> outputShapes;
         for (uint32_t i = 0; i < outputCount; ++i)
         {
             outputShapes.push_back(outputDimensions);
@@ -956,7 +956,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return outputShapes;
     }
 
-    std::vector<EdgeShapes> RoiPoolingHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> RoiPoolingHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto roiShape = shapeInfo.GetInputTensorShape(InputTensors::ROIS);
         auto inputShape = shapeInfo.GetInputTensorShape(InputTensors::INPUT);
@@ -973,7 +973,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(outputDimensions)) };
     }
 
-    std::vector<EdgeShapes> SqueezeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> SqueezeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto outputDimensions = shapeInfo.GetInputTensorShape(0);
         auto inputDimCount = gsl::narrow_cast<int>(outputDimensions.size());
@@ -1006,10 +1006,10 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(outputDimensions) };
     }
 
-    std::vector<EdgeShapes> UnsqueezeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> UnsqueezeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputDimensions = shapeInfo.GetInputTensorShape(0);
-        std::vector<DimensionType> outputDimensions(m_axes.size() + inputDimensions.size());
+        Vector<DimensionType> outputDimensions(m_axes.size() + inputDimensions.size());
 
         outputDimensions.assign(inputDimensions.begin(), inputDimensions.end());
 
@@ -1023,7 +1023,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(outputDimensions) };
     }
     
-    std::vector<EdgeShapes> SpaceToDepthHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> SpaceToDepthHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         auto inputDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() == 4, "Wrong number of dimensions.");
@@ -1041,15 +1041,15 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(outputDimensions)) };
     }
         
-    std::vector<EdgeShapes> ReshapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ReshapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         // Fill in the output dimensions. The shape may have -1 in a single dimension,
         // which means to infer the size from the remaining elements. For example, if
         // the input has 16 elements and the shape is {2,2,-1}, then the last dimension
         // must be 4 (2*2*4 = 16 elements).
-        const std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        const Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
 
-        std::vector<DimensionType> outputDimensions(m_shapeDims.size());
+        Vector<DimensionType> outputDimensions(m_shapeDims.size());
 
         DimensionType outElementCount = 1;
         int inferDim = -1;
@@ -1086,16 +1086,16 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(outputDimensions)) };
     }
 
-    std::vector<EdgeShapes> ExpandHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ExpandHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        std::vector<uint32_t> outputDimensions;
+        Vector<uint32_t> outputDimensions;
 
         // The 'shape' tensor is a 1D tensor holding the new shape to expand to,
         // and the first element of its own shape holds how many dimensions there
         // will be for the output.
 
-        std::vector<uint32_t> actualInputTensorShape = shapeInfo.GetInputTensorShape(0);
-        std::vector<uint32_t> shapeTensorDimensions = shapeInfo.GetInputTensorShape(1);
+        Vector<uint32_t> actualInputTensorShape = shapeInfo.GetInputTensorShape(0);
+        Vector<uint32_t> shapeTensorDimensions = shapeInfo.GetInputTensorShape(1);
         ML_CHECK_VALID_ARGUMENT(shapeTensorDimensions.size() == 1, "Expand's shape tensor must be 1D.");
         const size_t dimCount = shapeTensorDimensions[0];
 
@@ -1103,7 +1103,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         const int64_t* shapeData = shapeTensor.GetData<int64_t>();
 
         // First element of shape tensor is how many dims to expand to.
-        std::vector<uint32_t> desiredTensorShape;
+        Vector<uint32_t> desiredTensorShape;
         for (int64_t dim : gsl::make_span(shapeData, dimCount))
         {
             desiredTensorShape.push_back(gsl::narrow_cast<uint32_t>(dim));
@@ -1115,15 +1115,15 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(outputDimensions)) };
     }
     
-    std::vector<EdgeShapes> ConstantOfShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ConstantOfShapeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
-        std::vector<uint32_t> outputDimensions;
+        Vector<uint32_t> outputDimensions;
 
         // The 'shape' tensor is a 1D tensor holding the new shape to expand to,
         // and the first element of its own shape holds how many dimensions there
         // will be for the output.
 
-        std::vector<uint32_t> shapeTensorDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<uint32_t> shapeTensorDimensions = shapeInfo.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(shapeTensorDimensions.size() == 1, "ConstantOfShapeHelper's shape tensor must be 1D.");
         const size_t dimCount = shapeTensorDimensions[0];
 
@@ -1131,7 +1131,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         const int64_t* shapeData = shapeTensor.GetData<int64_t>();
 
         // First element of shape tensor is how many dims to expand to.
-        std::vector<uint32_t> desiredTensorShape;
+        Vector<uint32_t> desiredTensorShape;
         for (int64_t dim : gsl::make_span(shapeData, dimCount))
         {
             desiredTensorShape.push_back(gsl::narrow_cast<uint32_t>(dim));
@@ -1140,7 +1140,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         return { std::move(EdgeShapes(desiredTensorShape)) };
     }
 
-    std::vector<EdgeShapes> TileHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> TileHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         return { std::move(EdgeShapes(m_outputDimensions)) };
     }
@@ -1151,7 +1151,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         )
     {
         m_inputDimensions.assign(inputDimensions.begin(), inputDimensions.end());
-        m_scales = operatorAttributes.GetOptionalAttribute<std::vector<float>>(AttrName::Scales, std::vector<float>());
+        m_scales = operatorAttributes.GetOptionalAttribute<Vector<float>>(AttrName::Scales, Vector<float>());
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() == m_scales.size(), "Input dimensions and scales must have same rank.");
         InitializeOutputDimensions(m_scales, inputDimensions);
     }
@@ -1164,7 +1164,7 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         m_inputDimensions.assign(inputDimensions.begin(), inputDimensions.end());
 
         // Read the input shape and scale factors.
-        const std::vector<uint32_t> scalesTensorDimensions = scalesTensor.GetShape();
+        const Vector<uint32_t> scalesTensorDimensions = scalesTensor.GetShape();
         ML_CHECK_VALID_ARGUMENT(scalesTensorDimensions.size() == 1, "Resize's scales tensor must be 1D.");
         size_t dimCount = scalesTensorDimensions[0];
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() == dimCount, "Input dimensions and scales must have same rank.");
@@ -1191,12 +1191,12 @@ int64_t ReadAsInt64(MLOperatorTensorDataType tensorDataType, const void* p)
         }
     }
 
-    std::vector<EdgeShapes> ResizeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> ResizeHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         return { m_outputDimensions };
     }
 
-    std::vector<EdgeShapes> OneHotHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    Vector<EdgeShapes> OneHotHelper::GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         return { std::move(EdgeShapes(m_outputDimensions)) };
     }

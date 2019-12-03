@@ -65,8 +65,8 @@ class KernelRegistryManager {
    * @return It returns all the possible results. The returned value may contain garbage that doesn't belong to
    *         this provider. Caller should do the filtering. The returned value won't have no nullptrs.
    */
-  std::vector<const KernelRegistry*> GetKernelRegistriesByProviderType(const std::string& type) const {
-    std::vector<const KernelRegistry*> result;
+  Vector<const KernelRegistry*> GetKernelRegistriesByProviderType(const std::string& type) const {
+    Vector<const KernelRegistry*> result;
     for (auto& registry : custom_kernel_registries_) {
       result.push_back(registry.get());
     }

@@ -15,9 +15,9 @@ static tvm::Tensor PadTensor1D(const tvm::Tensor& input,
   auto pad_left = padding[0];
   auto pad_right = padding[1];
 
-  tvm::Array<tvm::Expr> pad_before(std::vector<tvm::Expr>(input->shape.size(), 0));
+  tvm::Array<tvm::Expr> pad_before(Vector<tvm::Expr>(input->shape.size(), 0));
   pad_before.Set(width_axis, pad_left);
-  tvm::Array<tvm::Expr> pad_after(std::vector<tvm::Expr>(input->shape.size(), 0));
+  tvm::Array<tvm::Expr> pad_after(Vector<tvm::Expr>(input->shape.size(), 0));
   pad_after.Set(width_axis, pad_right);
 
   const int64_t* padding_w0 = tvm::as_const_int(pad_left);
@@ -81,11 +81,11 @@ static tvm::Tensor PadTensor2D(const tvm::Tensor& input,
   auto pad_bottom = padding[2];
   auto pad_right = padding[3];
 
-  tvm::Array<tvm::Expr> pad_before(std::vector<tvm::Expr>(input->shape.size(), 0));
+  tvm::Array<tvm::Expr> pad_before(Vector<tvm::Expr>(input->shape.size(), 0));
   pad_before.Set(height_axis, pad_top);
   pad_before.Set(width_axis, pad_left);
 
-  tvm::Array<tvm::Expr> pad_after(std::vector<tvm::Expr>(input->shape.size(), 0));
+  tvm::Array<tvm::Expr> pad_after(Vector<tvm::Expr>(input->shape.size(), 0));
   pad_after.Set(height_axis, pad_bottom);
   pad_after.Set(width_axis, pad_right);
 
@@ -154,7 +154,7 @@ tvm::Tensor Conv2D_gemm(const tvm::Tensor& input,
 
   auto input_padded = PadTensor2D(input, padding, height_axis, width_axis, name);
 
-  tvm::Array<tvm::Expr> img_col_tmp(std::vector<tvm::Expr>(6, 0));
+  tvm::Array<tvm::Expr> img_col_tmp(Vector<tvm::Expr>(6, 0));
   img_col_tmp.Set(0, out_shape[0]);
   img_col_tmp.Set(1, out_shape[2]);
   img_col_tmp.Set(2, out_shape[3]);
@@ -174,12 +174,12 @@ tvm::Tensor Conv2D_gemm(const tvm::Tensor& input,
       },
       name);
 
-  tvm::Array<tvm::Expr> input_col_shape(std::vector<tvm::Expr>(2, 0));
+  tvm::Array<tvm::Expr> input_col_shape(Vector<tvm::Expr>(2, 0));
   input_col_shape.Set(0, img_col_tmp[1] * img_col_tmp[2]);
   input_col_shape.Set(1, img_col_tmp[3] * img_col_tmp[4] * img_col_tmp[5]);
   auto input_col = Reshape(img_col, input_col_shape);
 
-  tvm::Array<tvm::Expr> filter_row_shape(std::vector<tvm::Expr>(2, 0));
+  tvm::Array<tvm::Expr> filter_row_shape(Vector<tvm::Expr>(2, 0));
   filter_row_shape.Set(0, filter->shape[0]);
   filter_row_shape.Set(1, filter->shape[1] * filter->shape[2] * filter->shape[3]);
   auto filter_row = Reshape(filter, filter_row_shape, name);

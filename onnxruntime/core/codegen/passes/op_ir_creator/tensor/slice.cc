@@ -16,13 +16,13 @@ namespace tvm_codegen {
 Status SliceCommon(const tvm::Array<tvm::Tensor>& inputs,
                    const Node& node,
                    tvm::Array<tvm::Tensor>& outputs,
-                   const std::vector<int64_t>& starts,
-                   const std::vector<int64_t>& ends,
-                   const std::vector<int64_t>& axes1,
-                   const std::vector<int64_t>& steps1) {
+                   const Vector<int64_t>& starts,
+                   const Vector<int64_t>& ends,
+                   const Vector<int64_t>& axes1,
+                   const Vector<int64_t>& steps1) {
   ORT_RETURN_IF_NOT(nullptr != node.InputDefs()[0]);
 
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   if (axes1.size() == 0) {
     for (size_t i = 0; i < starts.size(); ++i) {
       axes.push_back(gsl::narrow_cast<int64_t>(i));
@@ -31,7 +31,7 @@ Status SliceCommon(const tvm::Array<tvm::Tensor>& inputs,
     axes = axes1;
   }
 
-  std::vector<int64_t> steps;
+  Vector<int64_t> steps;
   if (steps1.size() == 0) {
     steps.resize(starts.size(), 1);
   } else {
@@ -57,7 +57,7 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Slice)::Evaluate(
   int version = ctx_codegen.GetCodeGenHandle()->domain_version_lookup_func(node.Domain());
   ORT_RETURN_IF_NOT(version <= 9, "Dynamic Slice is not supported yet");
 
-  std::vector<int64_t> starts, ends, steps;
+  Vector<int64_t> starts, ends, steps;
   ORT_RETURN_IF_ERROR(info.GetAttrs<int64_t>("starts", starts));
   ORT_RETURN_IF_ERROR(info.GetAttrs<int64_t>("ends", ends));
   ORT_RETURN_IF_NOT(starts.size() == ends.size());

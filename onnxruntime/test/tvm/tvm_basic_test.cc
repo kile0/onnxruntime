@@ -54,7 +54,7 @@ class UnionSet {
     }
   }
 
-  std::vector<int> farthers_;
+  Vector<int> farthers_;
 };
 
 static DLDataType GetDataType(ONNXTensorElementDataType type) {
@@ -78,11 +78,11 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
   explicit FuseExecutionProviderX(const CPUExecutionProviderInfo& info) : CPUExecutionProvider(info) {
   }
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                const std::vector<const KernelRegistry*>& /*kernel_registries*/) const override {
-    std::vector<std::unique_ptr<ComputeCapability>> result;
-    std::vector<onnxruntime::NodeIndex> fused_nodes;
+                const Vector<const KernelRegistry*>& /*kernel_registries*/) const override {
+    Vector<std::unique_ptr<ComputeCapability>> result;
+    Vector<onnxruntime::NodeIndex> fused_nodes;
     for (auto& node : graph_viewer.Nodes()) {
       if (node.OpType() == "Mul") {
         fused_nodes.push_back(node.Index());
@@ -100,7 +100,7 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
       }
     }
 
-    std::vector<std::vector<onnxruntime::NodeIndex>> groups;
+    Vector<Vector<onnxruntime::NodeIndex>> groups;
     groups.resize(fused_nodes.size());
     for (int i = 0; i < set.farthers_.size(); ++i) {
       groups[set.get(i)].push_back(fused_nodes[i]);
@@ -153,8 +153,8 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
     return std::move(result);
   }
 
-  common::Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                         std::vector<NodeComputeInfo>& node_compute_funcs) override {
+  common::Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                         Vector<NodeComputeInfo>& node_compute_funcs) override {
     for (auto* fused_node : fused_nodes) {
       auto func_body = fused_node->GetFunctionBody();
       if (!func_body)
@@ -164,7 +164,7 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
       //2. Create schedule for the built tvm IRs
       auto s = CreateSchedule(demo_tvm_tensor_ctx);
       //3. Build tvm module
-      std::vector<tvm::Tensor> tvm_args;
+      Vector<tvm::Tensor> tvm_args;
       for (auto& t : demo_tvm_tensor_ctx.inputs) {
         tvm_args.push_back(t);
       }
@@ -172,7 +172,7 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
         tvm_args.push_back(t);
       }
 
-      std::vector<std::string> func_names;
+      Vector<std::string> func_names;
       auto module_ptr = std::make_shared<tvm::runtime::Module>();
       *module_ptr = BuildStackVMModule(s, tvm::build_config(), tvm_args, func_names);
       modules_[fused_node->Name()] = module_ptr;
@@ -197,17 +197,17 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
 
         TVMFuncState* tvm_state = reinterpret_cast<TVMFuncState*>(state);
 
-        std::vector<std::vector<int64_t>> input_shapes;
-        std::vector<std::vector<int64_t>> output_shapes;
+        Vector<Vector<int64_t>> input_shapes;
+        Vector<Vector<int64_t>> output_shapes;
 
         auto eval_func_name = "func";
         DLContext cpu_context = {kDLCPU, 0};
         size_t num_inputs = ort.KernelContext_GetInputCount(context);
         size_t num_outputs = ort.KernelContext_GetOutputCount(context);
         size_t n_args = num_inputs + num_outputs;
-        std::vector<DLTensor> dl_tensors(n_args);
-        std::vector<TVMValue> tvm_values(n_args);
-        std::vector<int> tvm_type_codes(n_args);
+        Vector<DLTensor> dl_tensors(n_args);
+        Vector<TVMValue> tvm_values(n_args);
+        Vector<int> tvm_type_codes(n_args);
         for (auto i = 0; i < num_inputs; i++) {
           const OrtValue* input_tensor = ort.KernelContext_GetInput(context, i);
           auto tensor_info = ort.GetTensorTypeAndShape(input_tensor);
@@ -272,10 +272,10 @@ class FuseExecutionProviderX : public CPUExecutionProvider {
 
 static void RunSession(InferenceSession& session_object,
                        RunOptions& run_options,
-                       std::vector<int64_t>& dims_x,
-                       std::vector<double>& values_x,
-                       std::vector<int64_t>& dims_y,
-                       std::vector<double>& values_y) {
+                       Vector<int64_t>& dims_x,
+                       Vector<double>& values_x,
+                       Vector<int64_t>& dims_y,
+                       Vector<double>& values_y) {
   // prepare inputs
   OrtValue ml_value;
   CreateMLValue<double>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_x, values_x, &ml_value);
@@ -283,9 +283,9 @@ static void RunSession(InferenceSession& session_object,
   feeds.insert(std::make_pair("X1", ml_value));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("Y4");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // Now run
   common::Status st = session_object.Run(run_options, feeds, output_names, &fetches);
@@ -297,7 +297,7 @@ static void RunSession(InferenceSession& session_object,
   auto& rtensor = fetches.front().Get<Tensor>();
   TensorShape expected_shape(dims_y);
   EXPECT_EQ(expected_shape, rtensor.Shape());
-  const std::vector<double> found(rtensor.template Data<double>(), rtensor.template Data<double>() + expected_shape.Size());
+  const Vector<double> found(rtensor.template Data<double>(), rtensor.template Data<double>() + expected_shape.Size());
   ASSERT_EQ(found.size(), values_y.size());
   for (size_t i = 0; i < found.size(); i++)
     ASSERT_EQ(found[i], values_y[i]);
@@ -321,17 +321,17 @@ TEST(TVMTest, CodeGen_Demo_for_Fuse_Mul) {
   run_options.run_tag = "one session/one tag";
 
   // prepare inputs
-  std::vector<int64_t> dims_x = {
+  Vector<int64_t> dims_x = {
       6,
   };
-  std::vector<double> values_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+  Vector<double> values_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {
+  Vector<int64_t> expected_dims_y = {
       6,
   };
   // now the expected value should be Mul's result.
-  std::vector<double> expected_values_y = {1.0, 32.0, 243.0, 1024.0, 3125.0, 7776.0};
+  Vector<double> expected_values_y = {1.0, 32.0, 243.0, 1024.0, 3125.0, 7776.0};
 
   // Now run
   RunSession(session_object, run_options, dims_x, values_x, expected_dims_y, expected_values_y);
@@ -380,13 +380,13 @@ TEST(TVMTest, Native_TVM) {
   ctx.device_type = DLDeviceType::kDLCPU;
   ctx.device_id = 0;
 
-  std::vector<double> v = {1.0, 2.0, 3.0};
+  Vector<double> v = {1.0, 2.0, 3.0};
   int64_t len = 3;
   DLTensor tensor_A = {&v[0], ctx, 1, dtype, &len, nullptr, 0};
   DLTensor tensor_B = {&v[0], ctx, 1, dtype, &len, nullptr, 0};
   DLTensor tensor_D = {&v[0], ctx, 1, dtype, &len, nullptr, 0};
 
-  std::vector<double> r;
+  Vector<double> r;
   r.resize(len);
   DLTensor tensor_E = {&r[0], ctx, 1, dtype, &len, nullptr, 0};
 

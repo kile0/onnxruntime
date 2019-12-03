@@ -59,7 +59,7 @@ class RewriteRule {
   /** Returns the node op types for which this rule will be triggered. If the op type of a node is not included in the
       target op types of a rule, that rule would not be considered at all. Returning an empty list indicates that we
       will attempt to trigger the rule for every op type. */
-  virtual std::vector<std::string> TargetOpTypes() const noexcept = 0;
+  virtual Vector<std::string> TargetOpTypes() const noexcept = 0;
 
   /** Checks if the condition of the rule is satisfied, and if so applies the body of the rule.
       @param[in] graph The Graph.

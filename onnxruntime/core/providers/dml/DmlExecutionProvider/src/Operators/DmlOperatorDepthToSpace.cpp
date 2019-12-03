@@ -15,8 +15,8 @@ public:
     {
         DmlOperator::Initialize(kernelCreationContext);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         ML_CHECK_VALID_ARGUMENT(inputDescs.size() == 1);
         ML_CHECK_VALID_ARGUMENT(outputDescs.size() == 1);
 

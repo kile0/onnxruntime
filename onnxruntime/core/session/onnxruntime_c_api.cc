@@ -210,7 +210,7 @@ ORT_API_STATUS_IMPL(OrtApis::DisableTelemetryEvents, _In_ const OrtEnv* ort_env)
 template <typename T>
 OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, OrtAllocator* allocator,
                             std::unique_ptr<Tensor>* out) {
-  std::vector<int64_t> shapes(shape_len);
+  Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     shapes[i] = shape[i];
   }
@@ -222,7 +222,7 @@ OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, OrtAllocator
 template <typename T>
 OrtStatus* CreateTensorImplForSeq(const int64_t* shape, size_t shape_len,
                                   Tensor& out) {
-  std::vector<int64_t> shapes(shape_len);
+  Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     shapes[i] = shape[i];
   }
@@ -246,7 +246,7 @@ template <typename T>
 OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, const OrtMemoryInfo* info,
                             void* p_data, size_t p_data_len, std::unique_ptr<Tensor>* out) {
   size_t elem_count = 1;
-  std::vector<int64_t> shapes(shape_len);
+ Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     elem_count *= shape[i];
     shapes[i] = shape[i];
@@ -450,7 +450,7 @@ OrtStatus* CreateSessionImpl(_In_ const OrtEnv* env, _In_ const OrtSessionOption
   // we need to disable mem pattern if DML is one of the providers since DML doesn't have the concept of
   // byte addressable memory
   auto session_options = options == nullptr ? onnxruntime::SessionOptions() : options->value;
-  std::vector<std::unique_ptr<IExecutionProvider>> provider_list;
+  Vector<std::unique_ptr<IExecutionProvider>> provider_list;
   if (options) {
     for (auto& factory : options->provider_factories) {
       auto provider = factory->CreateProvider();
@@ -524,8 +524,8 @@ ORT_API_STATUS_IMPL(OrtApis::Run, _Inout_ OrtSession* sess,
   auto session = reinterpret_cast<::onnxruntime::InferenceSession*>(sess);
   const int queue_id = 0;
 
-  std::vector<std::string> feed_names(input_len);
-  std::vector<OrtValue> feeds(input_len);
+  Vector<std::string> feed_names(input_len);
+  Vector<OrtValue> feeds(input_len);
 
   for (size_t i = 0; i != input_len; ++i) {
     if (input_names[i] == nullptr || input_names[i][0] == '\0') {
@@ -539,7 +539,7 @@ ORT_API_STATUS_IMPL(OrtApis::Run, _Inout_ OrtSession* sess,
   }
 
   // Create output feed
-  std::vector<std::string> output_names(output_names_len);
+  Vector<std::string> output_names(output_names_len);
   for (size_t i = 0; i != output_names_len; ++i) {
     if (output_names1[i] == nullptr || output_names1[i][0] == '\0') {
       return OrtApis::CreateStatus(ORT_INVALID_ARGUMENT, "output name cannot be empty");
@@ -547,7 +547,7 @@ ORT_API_STATUS_IMPL(OrtApis::Run, _Inout_ OrtSession* sess,
     output_names[i] = output_names1[i];
   }
 
-  std::vector<OrtValue> fetches(output_names_len);
+  Vector<OrtValue> fetches(output_names_len);
   for (size_t i = 0; i != output_names_len; ++i) {
     if (output[i] != nullptr) {
       ::OrtValue& value = *(output[i]);
@@ -950,23 +950,23 @@ static OrtStatus* OrtGetValueImplMapHelper(const OrtValue* p_ml_value, int index
   int64_t num_kv_pairs = data.size();
   switch (index) {
     case 0: {  // user is requesting keys
-      std::vector<TKey> vec;
+      Vector<TKey> vec;
       vec.reserve(num_kv_pairs);
       for (const auto& kv : data) {
         vec.push_back(kv.first);
       }
-      std::vector<int64_t> dims{num_kv_pairs};
+      Vector<int64_t> dims{num_kv_pairs};
       OrtStatus* st = OrtApis::CreateTensorAsOrtValue(allocator, dims.data(), dims.size(),
                                                       GetONNXTensorElementDataType<TKey>(), out);
       return st ? st : PopulateTensorWithData<TKey>(*out, vec.data(), num_kv_pairs);
     }
     case 1: {  // user is requesting values
-      std::vector<TVal> vec;
+      Vector<TVal> vec;
       vec.reserve(num_kv_pairs);
       for (const auto& kv : data) {
         vec.push_back(kv.second);
       }
-      std::vector<int64_t> dims{num_kv_pairs};
+      Vector<int64_t> dims{num_kv_pairs};
       OrtStatus* st = OrtApis::CreateTensorAsOrtValue(allocator, dims.data(), dims.size(),
                                                       GetONNXTensorElementDataType<TVal>(), out);
       return st ? st : PopulateTensorWithData<TVal>(*out, vec.data(), num_kv_pairs);
@@ -1029,7 +1029,7 @@ ORT_API_STATUS_IMPL(OrtApis::GetValue, const OrtValue* value, int index, OrtAllo
 // OrtCreateValue
 template <typename T>
 static OrtStatus* OrtCreateValueImplSeqHelperMap(const OrtValue* const* in, size_t num_values, OrtValue** out) {
-  using SeqType = std::vector<T>;
+  using SeqType = Vector<T>;
   auto seq_ptr = onnxruntime::make_unique<SeqType>();
   seq_ptr->reserve(num_values);
   for (size_t idx = 0; idx < num_values; ++idx) {

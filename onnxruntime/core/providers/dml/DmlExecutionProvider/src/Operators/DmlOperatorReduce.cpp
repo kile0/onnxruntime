@@ -28,8 +28,8 @@ public:
             m_zeroOperator = InitializeZeroInt64Tensor(m_outputTensorDescs[0].GetBufferSizeInBytes());
         }
 
-        std::vector<uint32_t> dmlAxes;
-        std::vector<DimensionType> reducedDims = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(0);
+        Vector<uint32_t> dmlAxes;
+        Vector<DimensionType> reducedDims = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(0);
         int dimOffset = gsl::narrow_cast<int>(OperatorHelper::NchwDimensionCount - reducedDims.size());
         for (auto& dim : m_axes)
         {
@@ -59,8 +59,8 @@ public:
                 reducedDims);
         }
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_REDUCE_OPERATOR_DESC reduceDesc = {};
         reduceDesc.InputTensor = inputDescs.data();
@@ -75,8 +75,8 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext) override
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
 
         if (m_zeroOperator)
         {

@@ -19,9 +19,9 @@ using namespace onnxruntime::common;
 
 namespace onnxruntime {
 
-IExecutionFrame::IExecutionFrame(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
+IExecutionFrame::IExecutionFrame(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
                                  const std::unordered_map<int, OrtValue>& initializers,
-                                 const std::vector<int>& fetch_mlvalue_idxs, const std::vector<OrtValue>& fetches,
+                                 const Vector<int>& fetch_mlvalue_idxs, const Vector<OrtValue>& fetches,
                                  const OrtValueNameIdxMap& ort_value_idx_map, const NodeIndexInfo& node_index_info)
     : node_index_info_(node_index_info),
       all_values_size_(static_cast<size_t>(ort_value_idx_map.MaxIdx()) + 1),
@@ -105,9 +105,9 @@ int IExecutionFrame::GetNodeIdxToMLValueIdx(int index) const {
   return ort_value_idx;
 }
 
-void IExecutionFrame::Init(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
+void IExecutionFrame::Init(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
                            const std::unordered_map<int, OrtValue>& initializers,
-                           const std::vector<OrtValue>& fetches) {
+                           const Vector<OrtValue>& fetches) {
   // 1. resize the all_value_ vector
   all_values_.resize(all_values_size_);
 
@@ -141,7 +141,7 @@ void IExecutionFrame::Init(const std::vector<int>& feed_mlvalue_idxs, const std:
   }
 }
 
-Status IExecutionFrame::GetOutputs(std::vector<OrtValue>& fetches) {
+Status IExecutionFrame::GetOutputs(Vector<OrtValue>& fetches) {
   auto num_fetches = fetch_mlvalue_idxs_.size();
 
   if (fetches.empty()) {
@@ -166,8 +166,8 @@ bool IExecutionFrame::IsOutput(int ort_value_idx) const {
   return std::find(fetch_mlvalue_idxs_.begin(), fetch_mlvalue_idxs_.end(), ort_value_idx) != fetch_mlvalue_idxs_.end();
 }
 
-ExecutionFrame::ExecutionFrame(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
-                               const std::vector<int>& fetch_mlvalue_idxs, const std::vector<OrtValue>& fetches,
+ExecutionFrame::ExecutionFrame(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
+                               const Vector<int>& fetch_mlvalue_idxs, const Vector<OrtValue>& fetches,
                                const std::unordered_map<size_t, IExecutor::CustomAllocator>& fetch_allocators,
                                const SessionState& session_state)
     : IExecutionFrame(feed_mlvalue_idxs, feeds, session_state.GetInitializedTensors(), fetch_mlvalue_idxs, fetches,
@@ -191,7 +191,7 @@ ExecutionFrame::ExecutionFrame(const std::vector<int>& feed_mlvalue_idxs, const 
   // and we have execution plan generated, try to setup
   // memory pattern optimization.
   if (session_state.GetEnableMemoryPattern() && session_state.GetExecutionPlan()) {
-    std::vector<std::reference_wrapper<const TensorShape>> input_shapes;
+    Vector<std::reference_wrapper<const TensorShape>> input_shapes;
     bool all_tensors = true;
     // Reserve mem to avoid re-allocation.
     input_shapes.reserve(feeds.size());

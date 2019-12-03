@@ -192,10 +192,10 @@ static const std::string OPTIONAL_MODEL1_URI = "testdata/optional_1.onnx";
 
 void RunSession(InferenceSession& session_object,
                 RunOptions& run_options,
-                std::vector<int64_t>& dims_x,
-                std::vector<float>& values_x,
-                std::vector<int64_t>& dims_y,
-                std::vector<float>& values_y) {
+                Vector<int64_t>& dims_x,
+                Vector<float>& values_x,
+                Vector<int64_t>& dims_y,
+                Vector<float>& values_y) {
   // prepare inputs
   OrtValue ml_value;
   CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_x, values_x, &ml_value);
@@ -203,9 +203,9 @@ void RunSession(InferenceSession& session_object,
   feeds.insert(std::make_pair("X", ml_value));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("Y");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // Now run
   common::Status st = session_object.Run(run_options, feeds, output_names, &fetches);
@@ -215,7 +215,7 @@ void RunSession(InferenceSession& session_object,
   auto& rtensor = fetches.front().Get<Tensor>();
   TensorShape expected_shape(dims_y);
   EXPECT_EQ(expected_shape, rtensor.Shape());
-  const std::vector<float> found(rtensor.template Data<float>(), rtensor.template Data<float>() + expected_shape.Size());
+  const Vector<float> found(rtensor.template Data<float>(), rtensor.template Data<float>() + expected_shape.Size());
   ASSERT_EQ(values_y, found);
 }
 
@@ -240,13 +240,13 @@ TEST(CustomKernelTests, CustomKernelWithBuildInSchema) {
   run_options.run_tag = "one session/one tag";
 
   // prepare inputs
-  std::vector<int64_t> dims_x = {3, 2};
-  std::vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_x = {3, 2};
+  Vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
+  Vector<int64_t> expected_dims_y = {3, 2};
   // now the expected value should be Add's result.
-  std::vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
+  Vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
 
   // Now run
   RunSession(session_object, run_options, dims_x, values_x, expected_dims_y, expected_values_y);
@@ -264,7 +264,7 @@ TEST(CustomKernelTests, CustomKernelWithCustomSchema) {
 
   //register foo schema
   auto foo_schema = GetFooSchema();
-  std::vector<OpSchema> schemas = {foo_schema};
+  Vector<OpSchema> schemas = {foo_schema};
   EXPECT_TRUE(registry->RegisterOpSet(schemas, onnxruntime::kOnnxDomain, 5, 7).IsOK());
   auto def = FooKernelDef("Foo");
   //Register a foo kernel which is doing Add, but bind to Mul.
@@ -277,13 +277,13 @@ TEST(CustomKernelTests, CustomKernelWithCustomSchema) {
   run_options.run_tag = "one session/one tag";
 
   // prepare inputs
-  std::vector<int64_t> dims_x = {3, 2};
-  std::vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_x = {3, 2};
+  Vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
+  Vector<int64_t> expected_dims_y = {3, 2};
   // now the expected value should be Add's result.
-  std::vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
+  Vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
 
   // Now run
   RunSession(session_object, run_options, dims_x, values_x, expected_dims_y, expected_values_y);
@@ -296,7 +296,7 @@ TEST(CustomKernelTests, CustomKernelWithOptionalOutput) {
 
   //reigster optional schema
   auto optional_schema = GetOptionalOpSchema();
-  std::vector<OpSchema> schemas = {optional_schema};
+  Vector<OpSchema> schemas = {optional_schema};
 
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
 
@@ -314,13 +314,13 @@ TEST(CustomKernelTests, CustomKernelWithOptionalOutput) {
   run_options.run_tag = "one session/one tag";
 
   // prepare inputs
-  std::vector<int64_t> dims_x = {3, 2};
-  std::vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_x = {3, 2};
+  Vector<float> values_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
+  Vector<int64_t> expected_dims_y = {3, 2};
   // now the expected value should be equal result.
-  std::vector<float> expected_values_y = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<float> expected_values_y = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // Now run
   RunSession(session_object, run_options, dims_x, values_x, expected_dims_y, expected_values_y);

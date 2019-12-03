@@ -28,7 +28,7 @@ Status ConcatFromSequence::Compute(OpKernelContext* ctx) const {
   // Hold pointers to the input tensors to be used in the PrepareForCompute() step
   const auto& input_tensors = X->tensors;
 
-  std::vector<const Tensor*> input_tensor_pointers;
+  Vector<const Tensor*> input_tensor_pointers;
   input_tensor_pointers.reserve(input_count);
   for (int i = 0; i < input_count; ++i) {
     input_tensor_pointers.push_back(&input_tensors[i]);

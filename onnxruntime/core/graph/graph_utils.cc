@@ -139,8 +139,8 @@ static void UpdateImplicitInputNameInSubgraph(Node& node,
 }
 
 /** Returns a vector of the input GraphEdges of a node. */
-static std::vector<GraphEdge> GetNodeInputEdges(const Node& node) {
-  std::vector<GraphEdge> input_edges;
+static Vector<GraphEdge> GetNodeInputEdges(const Node& node) {
+  Vector<GraphEdge> input_edges;
   for (auto it = node.InputEdgesBegin(), end = node.InputEdgesEnd(); it != end; ++it) {
     input_edges.push_back(GraphEdge::CreateGraphEdge(node, *it, true));
   }
@@ -149,8 +149,8 @@ static std::vector<GraphEdge> GetNodeInputEdges(const Node& node) {
 }
 
 /** Returns a vector of the output GraphEdges of a node. */
-static std::vector<GraphEdge> GetNodeOutputEdges(const Node& node) {
-  std::vector<GraphEdge> output_edges;
+static Vector<GraphEdge> GetNodeOutputEdges(const Node& node) {
+  Vector<GraphEdge> output_edges;
   for (auto it = node.OutputEdgesBegin(), end = node.OutputEdgesEnd(); it != end; ++it) {
     output_edges.push_back(GraphEdge::CreateGraphEdge(node, *it, false));
   }
@@ -159,8 +159,8 @@ static std::vector<GraphEdge> GetNodeOutputEdges(const Node& node) {
 }
 
 /** Returns a vector of output GraphEdges of a node for the provided output index. */
-static std::vector<GraphEdge> GetNodeOutputEdges(const Node& node, size_t index) {
-  std::vector<GraphEdge> output_edges;
+static Vector<GraphEdge> GetNodeOutputEdges(const Node& node, size_t index) {
+  Vector<GraphEdge> output_edges;
   for (auto it = node.OutputEdgesBegin(), end = node.OutputEdgesEnd(); it != end; ++it) {
     if (static_cast<size_t>(it->GetSrcArgIndex()) == index) {
       output_edges.push_back(GraphEdge::CreateGraphEdge(node, *it, false));
@@ -171,7 +171,7 @@ static std::vector<GraphEdge> GetNodeOutputEdges(const Node& node, size_t index)
 }
 
 /** Removes a set of GraphEdges from the graph. */
-static void RemoveGraphEdges(Graph& graph, const std::vector<GraphEdge>& edges) {
+static void RemoveGraphEdges(Graph& graph, const Vector<GraphEdge>& edges) {
   for (const auto& edge_to_remove : edges) {
     graph.RemoveEdge(edge_to_remove.src_node,
                      edge_to_remove.dst_node,
@@ -184,7 +184,7 @@ static void RemoveGraphEdges(Graph& graph, const std::vector<GraphEdge>& edges) 
     to a subgraph. If so, it checks if there is no clash of the given NodeArg name in each of the subgraphs. 
     This is important when removing a node with this NodeArg as input. */
 static bool CanUpdateImplicitInputNameInSubgraphs(const Graph& graph,
-                                                  const std::vector<GraphEdge>& output_edges,
+                                                  const Vector<GraphEdge>& output_edges,
                                                   const std::string& new_arg_name, const logging::Logger& logger) {
   for (const auto& output_edge : output_edges) {
     if (OutputEdgeProvidesImplicitInput(graph, output_edge)) {
@@ -203,7 +203,7 @@ static bool CanUpdateImplicitInputNameInSubgraphs(const Graph& graph,
 /** Removes a node with a single incoming node and connects the incoming node with the output node/s.*/
 static bool RemoveNodeWithSingleNodeInSingleUsedOutput(Graph& graph, Node& node) {
   // Store info for input and output edges.
-  std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
+  Vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
 
   if (!output_edges.empty()) {
     // get non-const incoming Node
@@ -287,7 +287,7 @@ bool MatchesOpSinceVersion(const Node& node, const std::initializer_list<ONNX_NA
   return std::find(versions.begin(), versions.end(), node.Op()->SinceVersion()) != versions.end();
 }
 
-bool MatchesOpSinceVersion(const Node& node, const std::vector<ONNX_NAMESPACE::OperatorSetVersion>& versions) {
+bool MatchesOpSinceVersion(const Node& node, const Vector<ONNX_NAMESPACE::OperatorSetVersion>& versions) {
   return std::find(versions.begin(), versions.end(), node.Op()->SinceVersion()) != versions.end();
 }
 
@@ -389,7 +389,7 @@ bool CanRemoveNode(const Graph& graph, const Node& node, const logging::Logger& 
 
   if (new_name) {
     // Check that changing the current output name to the new name won't break any subgraphs that consume it
-    std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
+    Vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
     can_remove = CanUpdateImplicitInputNameInSubgraphs(graph, output_edges, *new_name, logger);
   }
 
@@ -440,7 +440,7 @@ bool CanReplaceNodeWithInitializer(const Graph& graph, const Node& node, const s
   if (output_name_is_changing) {
     // Check that changing the current output name to the new name won't break any subgraphs
     // that consume the current name
-    std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
+    Vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
     can_remove = CanUpdateImplicitInputNameInSubgraphs(graph, output_edges, initializer_name, logger);
   }
 
@@ -449,7 +449,7 @@ bool CanReplaceNodeWithInitializer(const Graph& graph, const Node& node, const s
 
 bool ReplaceNodeWithInitializer(Graph& graph, Node& node, NodeArg& replacement) {
   // We have to remove the output edges before we create replacement ones, so save the current output edge information
-  std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
+  Vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
 
   // Remove the output edges of the node and then the node (this will remove any input edges).
   RemoveNodeOutputEdges(graph, node);
@@ -473,7 +473,7 @@ bool ReplaceNodeWithInitializer(Graph& graph, Node& node, NodeArg& replacement) 
 }
 
 bool IsGraphInput(const Graph& graph, const NodeArg* input) {
-  const std::vector<const NodeArg*>& graph_inputs = graph.GetInputsIncludingInitializers();
+  const Vector<const NodeArg*>& graph_inputs = graph.GetInputsIncludingInitializers();
   return std::find(graph_inputs.begin(), graph_inputs.end(), input) != graph_inputs.end();
 }
 
@@ -588,7 +588,7 @@ NodeArg& AddInitializer(Graph& graph, const ONNX_NAMESPACE::TensorProto& new_ini
 }
 
 size_t RemoveNodeOutputEdges(Graph& graph, Node& node) {
-  std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
+  Vector<GraphEdge> output_edges = GetNodeOutputEdges(node);
   RemoveGraphEdges(graph, output_edges);
 
   return output_edges.size();
@@ -596,7 +596,7 @@ size_t RemoveNodeOutputEdges(Graph& graph, Node& node) {
 
 void ReplaceDownstreamNodeInput(Graph& graph, Node& node, int output_idx, Node& replacement, int replacement_output_idx) {
   // get the output edges from node for output_idx
-  std::vector<GraphEdge> output_edges = GetNodeOutputEdges(node, output_idx);
+  Vector<GraphEdge> output_edges = GetNodeOutputEdges(node, output_idx);
 
   if (!output_edges.empty()) {
     const auto& replacement_name = replacement.MutableOutputDefs()[replacement_output_idx]->Name();
@@ -655,7 +655,7 @@ void FinalizeNodeFusion(Graph& graph, Node& first_node, Node& second_node) {
   graph.RemoveNode(second_node.Index());
 }
 
-void FinalizeNodeFusion(Graph& graph, const std::vector<std::reference_wrapper<Node>>& nodes, Node& replacement_node) {
+void FinalizeNodeFusion(Graph& graph, const Vector<std::reference_wrapper<Node>>& nodes, Node& replacement_node) {
   MoveAllNodeInputEdges(graph, nodes.front(), replacement_node);
   MoveAllNodeOutputs(graph, nodes.back(), replacement_node);
 
@@ -683,7 +683,7 @@ const Node* GetInputNode(const Node& node, int arg_index) {
   return &(edge->GetNode());
 }
 
-inline std::string ToString(const std::vector<ONNX_NAMESPACE::OperatorSetVersion>& versions) {
+inline std::string ToString(const Vector<ONNX_NAMESPACE::OperatorSetVersion>& versions) {
   std::ostringstream output;
   if (!versions.empty()) {
     // Convert all but the last element to avoid a trailing ";"
@@ -695,7 +695,7 @@ inline std::string ToString(const std::vector<ONNX_NAMESPACE::OperatorSetVersion
   return output.str();
 }
 
-bool FindPath(const Node& node, bool is_input_edge, const std::vector<EdgeEndToMatch>& edges_to_match, std::vector<const Node::EdgeEnd*>& result, const logging::Logger& logger) {
+bool FindPath(const Node& node, bool is_input_edge, const Vector<EdgeEndToMatch>& edges_to_match, Vector<const Node::EdgeEnd*>& result, const logging::Logger& logger) {
   result.clear();
   result.reserve(edges_to_match.size());
 

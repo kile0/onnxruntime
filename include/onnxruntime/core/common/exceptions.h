@@ -64,7 +64,7 @@ class OnnxRuntimeException : public std::exception {
 
  private:
   const CodeLocation location_;
-  const std::vector<std::string> stacktrace_;
+  const Vector<std::string> stacktrace_;
   std::string what_;
 };
 

@@ -47,10 +47,10 @@ ONNX_CPU_OPERATOR_ML_KERNEL(
     CastMap,
     1,
     KernelDefBuilder().TypeConstraint("T1",
-                                      std::vector<MLDataType>{DataTypeImpl::GetType<std::map<int64_t, std::string>>(),
+                                      Vector<MLDataType>{DataTypeImpl::GetType<std::map<int64_t, std::string>>(),
                                                               DataTypeImpl::GetType<std::map<int64_t, float>>()})
         .TypeConstraint("T2",
-                        std::vector<MLDataType>{DataTypeImpl::GetTensorType<float>(),
+                        Vector<MLDataType>{DataTypeImpl::GetTensorType<float>(),
                                                 DataTypeImpl::GetTensorType<int64_t>(),
                                                 DataTypeImpl::GetTensorType<std::string>()}),
     CastMap);

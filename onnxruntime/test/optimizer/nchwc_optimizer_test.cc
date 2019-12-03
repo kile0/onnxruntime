@@ -42,7 +42,7 @@ struct NchwcTestHelper {
   NchwcTestHelper(Graph& graph) : graph_(graph), fill_value_(0) {
   }
 
-  NodeArg* MakeInput(const std::vector<int64_t>& shape, const ONNX_NAMESPACE::TypeProto& type_proto) {
+  NodeArg* MakeInput(const Vector<int64_t>& shape, const ONNX_NAMESPACE::TypeProto& type_proto) {
     int64_t num_elements = 1;
     for (auto& dim : shape) {
       num_elements *= dim;
@@ -57,7 +57,7 @@ struct NchwcTestHelper {
     return &graph_.GetOrCreateNodeArg(name, &type_proto);
   }
 
-  NodeArg* MakeInput(const std::vector<int64_t>& shape) {
+  NodeArg* MakeInput(const Vector<int64_t>& shape) {
     ONNX_NAMESPACE::TypeProto type_proto;
     type_proto.mutable_tensor_type()->set_elem_type(ONNX_NAMESPACE::TensorProto_DataType_FLOAT);
 
@@ -79,7 +79,7 @@ struct NchwcTestHelper {
     return &graph_.GetOrCreateNodeArg(name, nullptr);
   }
 
-  NodeArg* MakeInitializer(const std::vector<int64_t>& shape, const std::vector<float>& data) {
+  NodeArg* MakeInitializer(const Vector<int64_t>& shape, const Vector<float>& data) {
     std::string name = graph_.GenerateNodeArgName("constant");
     ONNX_NAMESPACE::TensorProto tensor_proto;
     tensor_proto.set_name(name);
@@ -97,14 +97,14 @@ struct NchwcTestHelper {
     return &graph_.GetOrCreateNodeArg(name, nullptr);
   }
 
-  NodeArg* MakeInitializer(const std::vector<int64_t>& shape) {
+  NodeArg* MakeInitializer(const Vector<int64_t>& shape) {
     int64_t num_elements = std::accumulate(shape.begin(), shape.end(), int64_t(1), std::multiplies<int64_t>{});
     return MakeInitializer(shape, FillRandomData(static_cast<size_t>(num_elements)));
   }
 
   Node& AddNode(const std::string& op_type,
-                const std::vector<NodeArg*>& input_args,
-                const std::vector<NodeArg*>& output_args) {
+                const Vector<NodeArg*>& input_args,
+                const Vector<NodeArg*>& output_args) {
     return graph_.AddNode(graph_.GenerateNodeName("node"),
                           op_type,
                           "description",
@@ -112,9 +112,9 @@ struct NchwcTestHelper {
                           output_args);
   }
 
-  Node& AddConvNode(NodeArg* input_arg, NodeArg* output_arg, const std::vector<int64_t>& weights_shape, bool no_bias = false) {
+  Node& AddConvNode(NodeArg* input_arg, NodeArg* output_arg, const Vector<int64_t>& weights_shape, bool no_bias = false) {
     auto* weights_arg = MakeInitializer(weights_shape);
-    std::vector<NodeArg*> input_args = {input_arg, weights_arg};
+    Vector<NodeArg*> input_args = {input_arg, weights_arg};
     if (!no_bias) {
       auto* biases_arg = MakeInitializer({weights_shape[0]});
       input_args.push_back(biases_arg);
@@ -124,7 +124,7 @@ struct NchwcTestHelper {
 
   Node& AddClipNode(NodeArg* input_arg, NodeArg* output_arg, float min, float max) {
     int opset_version = graph_.DomainToVersionMap().find(kOnnxDomain)->second;
-    std::vector<NodeArg*> input_args = {input_arg};
+    Vector<NodeArg*> input_args = {input_arg};
     if (opset_version >= 11) {
       input_args.push_back(MakeInitializer({1}, {min}));
       input_args.push_back(MakeInitializer({1}, {max}));
@@ -137,11 +137,11 @@ struct NchwcTestHelper {
     return node;
   }
 
-  std::vector<float> FillRandomData(size_t count) {
+  Vector<float> FillRandomData(size_t count) {
     constexpr int min_fill_value = -23;
     constexpr int max_fill_value = 23;
 
-    std::vector<float> random_data;
+    Vector<float> random_data;
     random_data.resize(count);
     for (size_t n = 0; n < count; n++) {
       random_data[n] = static_cast<float>(fill_value_);
@@ -155,7 +155,7 @@ struct NchwcTestHelper {
 
   Graph& graph_;
   NameMLValMap feeds_;
-  std::vector<std::string> output_names_;
+  Vector<std::string> output_names_;
   int fill_value_;
 };
 
@@ -180,7 +180,7 @@ void NchwcOptimizerTester(const std::function<void(NchwcTestHelper& helper)>& bu
   std::string model_data;
   model.ToProto().SerializeToString(&model_data);
 
-  auto run_model = [&](TransformerLevel level, std::vector<OrtValue>& fetches) {
+  auto run_model = [&](TransformerLevel level, Vector<OrtValue>& fetches) {
     SessionOptions session_options;
     session_options.graph_optimization_level = level;
     session_options.session_logid = "NchwcOptimizerTests";
@@ -200,10 +200,10 @@ void NchwcOptimizerTester(const std::function<void(NchwcTestHelper& helper)>& bu
     }
   };
 
-  std::vector<OrtValue> level2_fetches;
+  Vector<OrtValue> level2_fetches;
   run_model(TransformerLevel::Level2, level2_fetches);
 
-  std::vector<OrtValue> level3_fetches;
+  Vector<OrtValue> level3_fetches;
   run_model(TransformerLevel::Level3, level3_fetches);
 
   size_t num_outputs = level2_fetches.size();
@@ -241,8 +241,8 @@ TEST(NchwcOptimizerTests, ConvNchw) {
       }
 
       auto& conv_node = helper.AddConvNode(input_arg, conv_output_arg, {130, 3, 3, 3});
-      conv_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
-      conv_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
+      conv_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
+      conv_node.AddAttribute("strides", Vector<int64_t>{2, 2});
     };
 
     auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -258,7 +258,7 @@ TEST(NchwcOptimizerTests, ConvNchw) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu", "Clip"};
+  Vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu", "Clip"};
   for (auto& activation_op_type : activation_op_types) {
     test_case(activation_op_type);
   }
@@ -296,7 +296,7 @@ TEST(NchwcOptimizerTests, ConvNchwc) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu", "Clip"};
+  Vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu", "Clip"};
   for (auto& activation_op_type : activation_op_types) {
     test_case(activation_op_type);
   }
@@ -331,7 +331,7 @@ TEST(NchwcOptimizerTests, ConvNchwcGrouped) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
+  Vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
   for (auto& activation_op_type : activation_op_types) {
     test_case(activation_op_type);
   }
@@ -366,7 +366,7 @@ TEST(NchwcOptimizerTests, ConvDepthwise) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
+  Vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
   for (auto& activation_op_type : activation_op_types) {
     test_case(activation_op_type);
   }
@@ -400,7 +400,7 @@ TEST(NchwcOptimizerTests, ConvPointwise) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
+  Vector<std::string> activation_op_types = {"", "Relu", "LeakyRelu"};
   for (auto& activation_op_type : activation_op_types) {
     test_case(activation_op_type);
   }
@@ -415,8 +415,8 @@ TEST(NchwcOptimizerTests, ConvMaxPool) {
     helper.AddConvNode(input_arg, conv_output_arg, {160, 48, 5, 5});
 
     auto& pool_node = helper.AddNode("MaxPool", {conv_output_arg}, {output_arg});
-    pool_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
-    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{5, 5});
+    pool_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
+    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{5, 5});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -439,8 +439,8 @@ TEST(NchwcOptimizerTests, ConvMaxPoolDilations) {
     helper.AddConvNode(input_arg, conv_output_arg, {160, 48, 5, 5});
 
     auto& pool_node = helper.AddNode("MaxPool", {conv_output_arg}, {output_arg});
-    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
-    pool_node.AddAttribute("dilations", std::vector<int64_t>{2, 2});
+    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
+    pool_node.AddAttribute("dilations", Vector<int64_t>{2, 2});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -465,7 +465,7 @@ TEST(NchwcOptimizerTests, ConvAveragePool) {
 
       auto& pool_node = helper.AddNode("AveragePool", {conv_output_arg}, {output_arg});
       pool_node.AddAttribute("auto_pad", "SAME_UPPER");
-      pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{4, 4});
+      pool_node.AddAttribute("kernel_shape", Vector<int64_t>{4, 4});
       if (count_include_pad) {
         pool_node.AddAttribute("count_include_pad", static_cast<int64_t>(1));
       }
@@ -494,7 +494,7 @@ TEST(NchwcOptimizerTests, ConvGlobalPool) {
       auto* output_arg = helper.MakeOutput();
 
       auto& conv_node = helper.AddConvNode(input_arg, conv_output_arg, {160, 96, 3, 3});
-      conv_node.AddAttribute("dilations", std::vector<int64_t>{2, 2});
+      conv_node.AddAttribute("dilations", Vector<int64_t>{2, 2});
 
       helper.AddNode(op_type, {conv_output_arg}, {output_arg});
     };
@@ -510,7 +510,7 @@ TEST(NchwcOptimizerTests, ConvGlobalPool) {
     NchwcOptimizerTester(build_test_case, check_nchwc_graph);
   };
 
-  std::vector<std::string> op_types = {"GlobalMaxPool", "GlobalAveragePool"};
+  Vector<std::string> op_types = {"GlobalMaxPool", "GlobalAveragePool"};
   for (auto& op_type : op_types) {
     test_case(op_type);
   }
@@ -550,7 +550,7 @@ TEST(NchwcOptimizerTests, ConvAddFusion) {
 
   // Verify that Add or Sum can be fused into a preceding NCHWc Conv node,
   // with an optional Relu node following.
-  std::vector<std::string> op_types = {"Add", "Sum"};
+  Vector<std::string> op_types = {"Add", "Sum"};
   static const int opset_versions[] = {7, 10, 11};
   for (auto& op_type : op_types) {
     for (auto opset_version : opset_versions) {
@@ -676,7 +676,7 @@ TEST(NchwcOptimizerTests, ConvReuseWeightsOIHWBiBo) {
     auto* output2_arg = helper.MakeOutput();
     auto* output3_arg = helper.MakeOutput();
 
-    std::vector<int64_t> weights_shape = {60, 64, 3, 3};
+    Vector<int64_t> weights_shape = {60, 64, 3, 3};
     auto* weights_arg = helper.MakeInitializer(weights_shape);
     auto* biases_arg = helper.MakeInitializer({weights_shape[0]});
 
@@ -721,7 +721,7 @@ TEST(NchwcOptimizerTests, ConvReuseWeightsOIHWBo) {
     auto* output3_arg = helper.MakeOutput();
     auto* output4_arg = helper.MakeOutput();
 
-    std::vector<int64_t> weights_shape = {64, 1, 3, 3};
+    Vector<int64_t> weights_shape = {64, 1, 3, 3};
     auto* weights_arg = helper.MakeInitializer(weights_shape);
     auto* biases_arg = helper.MakeInitializer({weights_shape[0]});
 
@@ -776,21 +776,21 @@ TEST(NchwcOptimizerTests, ShapeInferencing) {
     // dimension is unchanged.
     auto* conv1_output_arg = helper.MakeIntermediate();
     auto& conv1_node = helper.AddConvNode(input_arg, conv1_output_arg, {48, 3, 3, 3});
-    conv1_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
+    conv1_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
 
     auto* pool2a_output_arg = helper.MakeIntermediate();
     auto& pool2a_node = helper.AddNode("MaxPool", {conv1_output_arg}, {pool2a_output_arg});
-    pool2a_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
-    pool2a_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
+    pool2a_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
+    pool2a_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
 
     auto* pool2b_output_arg = helper.MakeIntermediate();
     auto& pool2b_node = helper.AddNode("MaxPool", {conv1_output_arg}, {pool2b_output_arg});
-    pool2b_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
+    pool2b_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
     pool2b_node.AddAttribute("auto_pad", "SAME_LOWER");
 
     auto* conv3a_output_arg = helper.MakeIntermediate();
     auto& conv3a_node = helper.AddConvNode(pool2a_output_arg, conv3a_output_arg, {64, 48, 3, 3});
-    conv3a_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
+    conv3a_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
 
     auto* conv3b_output_arg = helper.MakeIntermediate();
     auto& conv3b_node = helper.AddConvNode(pool2b_output_arg, conv3b_output_arg, {64, 48, 3, 3});
@@ -833,8 +833,8 @@ TEST(NchwcOptimizerTests, ShapeInferencing2) {
 
     auto* conv2a1_output_arg = helper.MakeIntermediate();
     auto& conv2a1_node = helper.AddConvNode(conv1_output_arg, conv2a1_output_arg, {16, 16, 2, 2});
-    conv2a1_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 0, 0});
-    conv2a1_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
+    conv2a1_node.AddAttribute("pads", Vector<int64_t>{1, 1, 0, 0});
+    conv2a1_node.AddAttribute("strides", Vector<int64_t>{2, 2});
 
     auto* conv2a_output_arg = helper.MakeIntermediate();
     auto& conv2a2_node = helper.AddConvNode(conv2a1_output_arg, conv2a_output_arg, {16, 16, 2, 2});
@@ -842,7 +842,7 @@ TEST(NchwcOptimizerTests, ShapeInferencing2) {
 
     auto* conv2b_output_arg = helper.MakeIntermediate();
     auto& conv2b_node = helper.AddConvNode(conv1_output_arg, conv2b_output_arg, {16, 16, 1, 1});
-    conv2b_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
+    conv2b_node.AddAttribute("strides", Vector<int64_t>{2, 2});
 
     helper.AddNode("Add", {conv2a_output_arg, conv2b_output_arg}, {output_arg});
   };
@@ -915,7 +915,7 @@ TEST(NchwcOptimizerTests, TensorAlignment) {
     auto* input4_arg = helper.MakeInput({1, 60, 12, 12});
     auto* output4_arg = helper.MakeOutput();
     auto& pool_node = helper.AddNode("MaxPool", {input4_arg}, {output4_arg});
-    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{2, 2});
+    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{2, 2});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {

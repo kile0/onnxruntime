@@ -273,7 +273,7 @@ TEST(GraphUtils, TestMultiEdgeRemovalNodes) {
   auto& id_3_out = graph.GetOrCreateNodeArg("id_3_out", &float_tensor);
   auto& id_4_out = graph.GetOrCreateNodeArg("id_4_out", &float_tensor);
 
-  std::vector<Node*> nodes;
+  Vector<Node*> nodes;
   nodes.push_back(&graph.AddNode("id_0", "Identity", "Identity node 0", {&id_0_in}, {&id_0_out}));
   nodes.push_back(&graph.AddNode("id_1", "Identity", "Identity node 1", {&id_0_out}, {&id_1_out}));
   nodes.push_back(&graph.AddNode("id_2", "Identity", "Identity node 2", {&id_0_out}, {&id_2_out}));
@@ -326,12 +326,12 @@ TEST(GraphUtils, TestMultiOutputRemoveNode) {
   auto& id_1_out = graph.GetOrCreateNodeArg("id_1_out", &float_tensor);
   auto& id_2_out = graph.GetOrCreateNodeArg("id_2_out", &bool_tensor);
 
-  std::vector<Node*> nodes;
+  Vector<Node*> nodes;
   nodes.push_back(&graph.AddNode("do_0", "Dropout", "Dropout node 0", {&do_0_in}, {&do_0_out, &do_0_out1}));
   nodes.push_back(&graph.AddNode("id_1", "Identity", "Identity node 1", {&do_0_out}, {&id_1_out}));
   nodes.push_back(&graph.AddNode("id_2", "Identity", "Identity node 2", {&do_0_out1}, {&id_2_out}));
 
-  std::vector<const NodeArg*> graph_outputs;
+  Vector<const NodeArg*> graph_outputs;
   graph_outputs.push_back(&id_2_out);
   graph.SetOutputs(graph_outputs);
 

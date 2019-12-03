@@ -35,8 +35,8 @@ namespace detail {
 // Resizes 'devices' if needed, defaulting to CPU as the OrtDevice.
 // Use 'start_at' to skip entries in 'names' and 'devices'.
 common::Status FindDevicesForValues(const SessionState& session_state,
-                                    const std::vector<std::string>& names,
-                                    std::vector<OrtDevice>& devices,
+                                    const Vector<std::string>& names,
+                                    Vector<OrtDevice>& devices,
                                     size_t start_at = 0);
 
 }  // namespace detail

@@ -29,15 +29,15 @@ struct IndexedSubGraph {
 
     ONNX_NAMESPACE::OperatorStatus status;  ///< Status of customized SubGraph/FunctionProto.
 
-    std::vector<std::string> inputs;   ///< Inputs of customized SubGraph/FunctionProto.
-    std::vector<std::string> outputs;  ///< Outputs of customized SubGraph/FunctionProto.
+    Vector<std::string> inputs;   ///< Inputs of customized SubGraph/FunctionProto.
+    Vector<std::string> outputs;  ///< Outputs of customized SubGraph/FunctionProto.
     NodeAttributes attributes;         ///< Attributes of customized SubGraph/FunctionProto.
 
     std::string doc_string;  ///< Doc string of customized SubGraph/FunctionProto.
   };
 
   /** Nodes covered by this subgraph. The NodeIndex values are from the parent Graph.*/
-  std::vector<onnxruntime::NodeIndex> nodes;
+  Vector<onnxruntime::NodeIndex> nodes;
 
   /** Set the meta definition needed to represent this subgraph as a FunctionProto
   It's needed IF AND ONLY IF there are multiple indexes contained in #nodes. */

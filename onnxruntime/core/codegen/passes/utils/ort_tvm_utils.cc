@@ -111,7 +111,7 @@ struct event_in_bracket_and_id {
   size_t id;
 };
 std::unordered_map<std::string, event_in_bracket_and_id> g_codegen_profiler_event_ids;
-std::vector<std::pair<std::string, TimePoint>> g_codegen_profiler_events(1024);
+Vector<std::pair<std::string, TimePoint>> g_codegen_profiler_events(1024);
 
 TVM_REGISTER_GLOBAL("tvm.contrib.onnxruntime.profile_event")
     .set_body([](tvm::TVMArgs args, tvm::TVMRetValue* ret) {

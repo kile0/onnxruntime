@@ -27,8 +27,8 @@ public:
             kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0)
             );
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         std::optional<ActivationOperatorDesc> fusedActivation = FusionHelpers::TryGetFusedActivationDesc(kernelInfo);
         DML_OPERATOR_DESC fusedActivationDmlDesc = fusedActivation ? fusedActivation->GetDmlDesc() : DML_OPERATOR_DESC();

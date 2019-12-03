@@ -26,8 +26,8 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
                         mkldnn::engine& cpu_engine,
-                        std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
+                        Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
     Ort::CustomOpApi ort{*api};
     stream_ = onnxruntime::make_unique<mkldnn::stream>(mkldnn::stream(cpu_engine));
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
@@ -66,7 +66,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
       return;
     }
 
-    std::vector<int64_t> kernel_shape;
+    Vector<int64_t> kernel_shape;
     primitive_created_status_ = ComputeKernelShape(w_shape, kernel_shape);
     if (!primitive_created_status_.IsOK()) {
       return;
@@ -90,22 +90,22 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
       }
     }
 
-    std::vector<int64_t> pads(pads_);
+    Vector<int64_t> pads(pads_);
     if (pads.empty()) {
       pads.resize(kernel_rank * 2, 0);
     }
-    std::vector<int64_t> dilations(dilations_);
+    Vector<int64_t> dilations(dilations_);
     if (dilations.empty()) {
       dilations.resize(kernel_rank, 1);
     }
-    std::vector<int64_t> strides(strides_);
+    Vector<int64_t> strides(strides_);
     if (strides.empty()) {
       strides.resize(kernel_rank, 1);
     }
 
     const int64_t N = x_shape[0];
     const int64_t M = w_shape[0];
-    std::vector<int64_t> y_dims;
+    Vector<int64_t> y_dims;
     y_dims.insert(y_dims.begin(), {N, M});
     TensorShape input_shape = x_shape.Slice(2);
     primitive_created_status_ = InferOutputShape(input_shape, kernel_shape, strides, dilations, &pads, &y_dims);
@@ -301,7 +301,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
     }
   }
 
-  void GamaInverseVariance(const OrtCustomOpApi* api, OrtKernelContext* context, std::vector<float>& inv_scale_factor, size_t O) {
+  void GamaInverseVariance(const OrtCustomOpApi* api, OrtKernelContext* context, Vector<float>& inv_scale_factor, size_t O) {
     Ort::CustomOpApi ort{*api};
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
     int batchNormIndix = (mklnode_ptr_->num_inputs == 7) ? input_index + 3 : input_index + 2;
@@ -310,7 +310,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
     const OrtValue* var_input_tensor = ort.KernelContext_GetInput(context, batchNormIndix + 3);
     const T* bn_var_data = reinterpret_cast<const T*>(ort.GetTensorData<T>(var_input_tensor));
 
-    std::vector<float> inv_scale;
+    Vector<float> inv_scale;
     inv_scale.assign(static_cast<size_t>(O), 0.0f);
 
     float* data = inv_scale_factor.data();
@@ -320,7 +320,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
   }
 
   void WeightsScaleByAxix(const OrtCustomOpApi* api, OrtKernelContext* context,
-                          std::vector<float>& weights_scaled, std::vector<float> inv_scale,
+                          Vector<float>& weights_scaled, Vector<float> inv_scale,
                           TensorShape& W) {
     Ort::CustomOpApi ort{*api};
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
@@ -378,13 +378,13 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
       filter_dims_mkl.insert(filter_dims_mkl.end(), W.GetDims().begin() + 1, W.GetDims().end());
     }
 
-    std::vector<float> inv_scale_factor;
+    Vector<float> inv_scale_factor;
     const auto& w_dims = W.GetDims();
     const size_t O = w_dims[0];
     inv_scale_factor.assign(static_cast<size_t>(O), 0.0f);
     GamaInverseVariance(api, context, inv_scale_factor, O);
 
-    std::vector<float> weights_scaled_by_axis;
+    Vector<float> weights_scaled_by_axis;
     weights_scaled_by_axis.assign(static_cast<size_t>(O), 0.0f);
     auto w_size = std::accumulate(w_dims.begin(), w_dims.end(), static_cast<int64_t>(1), std::multiplies<int64_t>{});
     weights_scaled_by_axis.assign(static_cast<size_t>(w_size), 0.0f);
@@ -602,7 +602,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
   IAllocatorUniquePtr<void> dst_reorder_buffer_;
 
  private:
-  Status ComputeKernelShape(const TensorShape& weight_shape, std::vector<int64_t>& kernel_shape) const {
+  Status ComputeKernelShape(const TensorShape& weight_shape, Vector<int64_t>& kernel_shape) const {
     if (kernel_shape_specified_) {
       kernel_shape = kernel_shape_;
       if (kernel_shape.size() + 2 != weight_shape.NumDimensions()) {
@@ -619,7 +619,7 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
       }
     } else {
       auto& weight_dims = weight_shape.GetDims();
-      kernel_shape = std::vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
+      kernel_shape = Vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
     }
 
     return Status::OK();
@@ -652,11 +652,11 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
 
   template <bool ForceSymmetricAutoPadding = false>
   Status InferOutputShape(const TensorShape& input_shape,
-                          const std::vector<int64_t>& kernel_shape,
-                          const std::vector<int64_t>& strides,
-                          const std::vector<int64_t>& dilations,
-                          std::vector<int64_t>* pads,
-                          std::vector<int64_t>* output_shape) const {
+                          const Vector<int64_t>& kernel_shape,
+                          const Vector<int64_t>& strides,
+                          const Vector<int64_t>& dilations,
+                          Vector<int64_t>* pads,
+                          Vector<int64_t>* output_shape) const {
     size_t rank = gsl::narrow_cast<int>(input_shape.NumDimensions());
     for (size_t dim = 0; dim < rank; ++dim) {
       if (dim >= strides.size() || dim >= kernel_shape.size() ||
@@ -684,13 +684,13 @@ class MklDnnConvBatchNorm : public MklDnnKernel {
 
  private:
   std::unique_ptr<mkldnn::stream> stream_;
-  std::vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
+  Vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
   AutoPadType auto_pad_;
   int64_t group_;
   bool kernel_shape_specified_;
-  std::vector<int64_t> strides_;
-  std::vector<int64_t> pads_;
-  std::vector<int64_t> dilations_;
+  Vector<int64_t> strides_;
+  Vector<int64_t> pads_;
+  Vector<int64_t> dilations_;
   std::string activation_;
   float alpha_;
   float epsilon_ = 1e-5f;  // attribute of fused batchnorm.

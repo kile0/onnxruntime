@@ -29,7 +29,7 @@ void FindScaleAndZeroPoint(float min, float max, float* scale, uint8_t* zero_poi
 }
 
 void Quantize(float scale, uint8_t zero_point,
-              const std::vector<float>& input, std::vector<uint8_t>* input_quantized) {
+              const Vector<float>& input, Vector<uint8_t>* input_quantized) {
   for (size_t i = 0; i < input.size(); i++) {
     const float clamped_val = std::max(0.f, std::min(255.f, std::round(static_cast<float>(input[i]) / scale) + zero_point));
     (*input_quantized)[i] = static_cast<uint8_t>(clamped_val);

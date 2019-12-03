@@ -280,7 +280,7 @@ const char* ElementTypeToString(MLDataType type) {
 }
 
 // The expected_shape could contain unknown dimensions, but the real_shape cannot
-bool AreShapesEqual(const std::vector<int64_t>& real_shape, const ::ONNX_NAMESPACE::TensorShapeProto& expected_shape) {
+bool AreShapesEqual(const Vector<int64_t>& real_shape, const ::ONNX_NAMESPACE::TensorShapeProto& expected_shape) {
   const int len = expected_shape.dim_size();
   if (len < 0) return false;
   if (real_shape.size() != static_cast<size_t>(len)) return false;
@@ -307,7 +307,7 @@ bool AreShapesEqual(const std::vector<int64_t>& real_shape, const ::ONNX_NAMESPA
 }
 
 template <typename T>
-std::ostringstream& VectorToString(const std::vector<T>& input, std::ostringstream& oss) {
+std::ostringstream& VectorToString(const Vector<T>& input, std::ostringstream& oss) {
   size_t len = input.size();
   oss << "[";
   if (len > 0) {
@@ -374,7 +374,7 @@ std::pair<COMPARE_RESULT, std::string> VerifyValueInfo(const ONNX_NAMESPACE::Val
 
       return std::make_pair(COMPARE_RESULT::TYPE_MISMATCH, oss.str());
     }
-    std::vector<int64_t> shape = info.GetShape();
+    Vector<int64_t> shape = info.GetShape();
     const auto& tensor_shape_proto = t.shape();
     if (!AreShapesEqual(shape, tensor_shape_proto)) {
       std::ostringstream oss;

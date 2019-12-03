@@ -7,13 +7,13 @@ using namespace std;
 namespace onnxruntime {
 namespace test {
 template <typename T>
-void TestHelper(const std::vector<T>& classes,
+void TestHelper(const Vector<T>& classes,
                 const std::string& type,
                 const vector<int64_t>& input_dims,
                 OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess) {
   OpTester test("ZipMap", 1, onnxruntime::kMLDomain);
 
-  std::vector<float> input{1.f, 0.f, 3.f, 44.f, 23.f, 11.3f};
+  Vector<float> input{1.f, 0.f, 3.f, 44.f, 23.f, 11.3f};
 
   if (type == "string") {
     test.AddAttribute("classlabels_strings", classes);
@@ -26,7 +26,7 @@ void TestHelper(const std::vector<T>& classes,
   int64_t batch_size = (input_dims.size() > 1) ? input_dims[0] : 1;
 
   // prepare expected output
-  std::vector<std::map<T, float>> expected_output;
+  Vector<std::map<T, float>> expected_output;
   if (expect_result == OpTester::ExpectResult::kExpectSuccess) {
     for (int64_t i = 0; i < batch_size; ++i) {
       std::map<T, float> var_map;

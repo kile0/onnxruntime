@@ -9,9 +9,9 @@
 namespace onnxruntime {
 namespace test {
 
-static void RunTest(const std::vector<float>& x_vals,
-                    const std::vector<float>& expected_vals,
-                    const std::vector<int64_t>& dimensions,
+static void RunTest(const Vector<float>& x_vals,
+                    const Vector<float>& expected_vals,
+                    const Vector<int64_t>& dimensions,
                     int64_t axis = 1,
                     bool is_tensorrt_supported = true,
                     OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
@@ -38,9 +38,9 @@ TEST(LogSoftmaxOperator, Simple) {
   // x = np.array([[-1, 0, 1]]).astype(np.float32)
   // # expected output[[-2.40760589, -1.40760589, -0.40760589]]
 
-  std::vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
-  std::vector<float> expected_vals = {-2.40760589f, -1.40760589f, -0.40760589f};
-  std::vector<int64_t> dimensions = {1, 3};
+  Vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
+  Vector<float> expected_vals = {-2.40760589f, -1.40760589f, -0.40760589f};
+  Vector<int64_t> dimensions = {1, 3};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
@@ -51,19 +51,19 @@ TEST(LogSoftmaxOperator, LargeNumber) {
   // expected output[[-3.4401896, -2.4401896, -1.44018972, -0.44018969],
   //                 [-3.4401896, -2.4401896, -1.44018972, -0.44018969]]
 
-  std::vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f,
+  Vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f,
                                10000.0f, 10001.0f, 10002.0f, 10003.0f};
-  std::vector<float> expected_vals = {-3.4401896f, -2.4401896f, -1.44018972f, -0.44018969f,
+  Vector<float> expected_vals = {-3.4401896f, -2.4401896f, -1.44018972f, -0.44018969f,
                                       -3.4401896f, -2.4401896f, -1.44018972f, -0.44018969f};
-  std::vector<int64_t> dimensions = {2, 4};
+  Vector<int64_t> dimensions = {2, 4};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
 
 //np.random.seed(123)   # Use a seed so we can replicate the input and expected values here and in python
 //x = np.abs(np.random.randn(3, 4, 5).astype(np.float32))
-static std::vector<int64_t> three_dimensions = {3, 4, 5};
-static std::vector<float> x_vals_3dims = {
+static Vector<int64_t> three_dimensions = {3, 4, 5};
+static Vector<float> x_vals_3dims = {
     1.0856307f, 0.99734545f, 0.2829785f, 1.5062947f, 0.5786002f,
     1.6514366f, 2.4266791f, 0.42891264f, 1.2659363f, 0.8667404f,
     0.6788862f, 0.09470897f, 1.4913896f, 0.638902f, 0.44398195f,
@@ -86,7 +86,7 @@ TEST(LogSoftmaxOperator, ThreeDimsAxis0) {
   // expect(node, inputs = [x], outputs = [y],
   //        name = 'test_logsoftmax_axis_0')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       -4.2514257f, -4.339711f, -5.054078f, -3.8307617f, -4.758456f,
       -3.6856198f, -2.9103773f, -4.908144f, -4.0711203f, -4.470316f,
       -4.65817f, -5.2423477f, -3.845667f, -4.6981544f, -4.8930745f,
@@ -112,7 +112,7 @@ TEST(LogSoftmaxOperator, ThreeDimsAxis1) {
   // expect(node, inputs = [x], outputs = [y],
   //        name = 'test_logsoftmax_axis_1')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       -3.1908588f, -3.2791443f, -3.9935112f, -2.770195f, -3.6978893f,
       -2.625053f, -1.8498105f, -3.847577f, -3.0105534f, -3.409749f,
       -3.5976033f, -4.181781f, -2.7851f, -3.6375875f, -3.8325076f,
@@ -138,7 +138,7 @@ TEST(LogSoftmaxOperator, ThreeDimsAxis2) {
   // expect(node, inputs = [x], outputs = [y],
   //       name = 'test_logsoftmax_axis_2')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       -1.5016061f, -1.5898913f, -2.3042583f, -1.080942f, -2.0086365f,
       -1.5264852f, -0.7512426f, -2.7490091f, -1.9119854f, -2.3111813f,
       -1.716058f, -2.3002353f, -0.9035546f, -1.7560422f, -1.9509623f,
@@ -164,7 +164,7 @@ TEST(LogSoftmaxOperator, ThreeDimsNegativeAxis) {
   // expect(node, inputs = [x], outputs = [y],
   //       name = 'test_logsoftmax_axis_2')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       -1.5016061f, -1.5898913f, -2.3042583f, -1.080942f, -2.0086365f,
       -1.5264852f, -0.7512426f, -2.7490091f, -1.9119854f, -2.3111813f,
       -1.716058f, -2.3002353f, -0.9035546f, -1.7560422f, -1.9509623f,
@@ -185,9 +185,9 @@ TEST(LogSoftmaxOperator, ThreeDimsNegativeAxis) {
 }
 
 TEST(LogSoftmaxOperator, InvalidAxis) {
-  std::vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
-  std::vector<float> expected_vals = {0.0f, 0.0f, 0.0f};
-  std::vector<int64_t> dimensions = {1, 3};
+  Vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
+  Vector<float> expected_vals = {0.0f, 0.0f, 0.0f};
+  Vector<int64_t> dimensions = {1, 3};
 
   RunTest(x_vals,
           expected_vals,

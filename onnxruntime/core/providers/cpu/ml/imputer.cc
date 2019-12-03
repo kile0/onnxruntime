@@ -67,7 +67,7 @@ ImputerOp::ImputerOp(const OpKernelInfo& info) : OpKernel(info),
 template <typename T>
 common::Status ComputeByType(OpKernelContext* context,
                              T replaced_value,
-                             const std::vector<T>& imputed_values) {
+                             const Vector<T>& imputed_values) {
   if (imputed_values.empty()) {
     return Status(ONNXRUNTIME, FAIL, "Empty value of imputed values.");
   }

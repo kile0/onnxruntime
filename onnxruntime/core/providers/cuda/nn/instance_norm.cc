@@ -61,7 +61,7 @@ Status InstanceNorm<T>::ComputeInternal(OpKernelContext* p_op_kernel_context) co
     // as the mean/variance would be computed from input
 
     CudnnTensor data_desc;
-    std::vector<int64_t> new_dims;
+    Vector<int64_t> new_dims;
     BatchNormHelper::NormalizeDims(x_shape, new_dims);
     ORT_RETURN_IF_ERROR(data_desc.Set(new_dims, CudnnTensor::GetDataType<CudaT>()));
 

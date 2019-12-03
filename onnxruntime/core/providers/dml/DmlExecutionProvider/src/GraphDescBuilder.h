@@ -32,10 +32,10 @@ namespace Dml
 
         struct GraphDesc
         {
-            std::vector<NodeInfo> nodes;
-            std::vector<DML_PREVIEW_INPUT_GRAPH_EDGE> inputEdges;
-            std::vector<DML_PREVIEW_OUTPUT_GRAPH_EDGE> outputEdges;
-            std::vector<DML_PREVIEW_INTERMEDIATE_GRAPH_EDGE> intermediateEdges;
+            Vector<NodeInfo> nodes;
+            Vector<DML_PREVIEW_INPUT_GRAPH_EDGE> inputEdges;
+            Vector<DML_PREVIEW_OUTPUT_GRAPH_EDGE> outputEdges;
+            Vector<DML_PREVIEW_INTERMEDIATE_GRAPH_EDGE> intermediateEdges;
             bool reuseCommandList;
         };
 
@@ -44,8 +44,8 @@ namespace Dml
             gsl::span<const uint8_t> isConstGpuGraphInput,
             std::unordered_map<std::string, onnx::TensorProto>& transferredInitializerMap,
             const onnxruntime::Graph& graph,
-            const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
-            const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
+            const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
+            const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
             const std::unordered_map<std::string, GraphNodeProperties>& graphNodePropertyMap,
             IDMLDevice* device,
             const void* executionHandle);

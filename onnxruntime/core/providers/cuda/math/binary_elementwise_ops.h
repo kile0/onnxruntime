@@ -67,7 +67,7 @@ struct BinaryElementwisePreparation {
         int64_t N = output_shape.SizeToDimension(dim_C);
         int64_t H = (dim_C < out_rank - 1 ? output_shape.SizeFromDimension(dim_C + 1) : 1);
 
-        std::vector<int64_t> new_output_dims;
+        Vector<int64_t> new_output_dims;
         if (N == 1) {
           output_rank_or_simple_broadcast = static_cast<size_t>(SimpleBroadcast::RightPerChannelBatch1);
           fdm_H = fast_divmod(gsl::narrow_cast<int>(H));

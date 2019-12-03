@@ -16,7 +16,7 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelInfo.GetInputCount() >= 1);
         ML_CHECK_VALID_ARGUMENT(kernelInfo.GetOutputCount() == 1);
 
-        std::vector<std::optional<uint32_t>> kernelInputOutputIndices  = {0};
+        Vector<std::optional<uint32_t>> kernelInputOutputIndices  = {0};
 
         Initialize(kernelInfo, kernelInputOutputIndices);
 
@@ -34,8 +34,8 @@ public:
 
         if (contextPrivate->IsDmlGraphNode())
         {
-            std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-            std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+            Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+            Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
             DML_ELEMENT_WISE_IDENTITY_OPERATOR_DESC opDesc = {};
             opDesc.InputTensor = inputDescs.data();

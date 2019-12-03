@@ -144,9 +144,9 @@ class MLOperatorTensorShapeDescription
         return ret;
     }
 
-    std::vector<uint32_t> GetInputTensorShape(uint32_t inputIndex) const
+    Vector<uint32_t> GetInputTensorShape(uint32_t inputIndex) const
     {
-        std::vector<uint32_t> ret;
+        Vector<uint32_t> ret;
         uint32_t dimensionCount = GetInputTensorDimensionCount(inputIndex);
         ret.resize(dimensionCount);
 
@@ -166,9 +166,9 @@ class MLOperatorTensorShapeDescription
         return ret;
     }
 
-    std::vector<uint32_t> GetOutputTensorShape(uint32_t outputIndex) const
+    Vector<uint32_t> GetOutputTensorShape(uint32_t outputIndex) const
     {
-        std::vector<uint32_t> ret;
+        Vector<uint32_t> ret;
         uint32_t dimensionCount = GetOutputTensorDimensionCount(outputIndex);
         ret.resize(dimensionCount);
 
@@ -222,10 +222,10 @@ class MLOperatorAttributes
     }
 
     template <typename T>
-    std::vector<T> GetAttributeVector(_In_z_ MLConstStringParam name) const
+    Vector<T> GetAttributeVector(_In_z_ MLConstStringParam name) const
     {
         uint32_t count = GetAttributeElementCount(name, MLTypeTraits<T>::AttributeVectorType);
-        std::vector<T> values(count);
+        Vector<T> values(count);
 
         THROW_IF_FAILED(m_impl->GetAttribute(
                 name,
@@ -242,10 +242,10 @@ class MLOperatorAttributes
         return GetAttributeElement(name, 0);
     }
 
-    std::vector<std::string> GetAttributeVector(_In_z_ MLConstStringParam name) const
+    Vector<std::string> GetAttributeVector(_In_z_ MLConstStringParam name) const
     {
         uint32_t count = GetAttributeElementCount(name, MLOperatorAttributeType::StringArray);
-        std::vector<std::string> values;
+        Vector<std::string> values;
         values.resize(count);
 
         for (uint32_t i = 0; i < count; ++i)
@@ -263,15 +263,15 @@ class MLOperatorAttributes
 
         // Construct a string by copying a character array.    The copy can be removed with C++17
         // using the non-const std::basic_string::data method.
-        std::vector<char> temp(length);
+        Vector<char> temp(length);
         THROW_IF_FAILED(m_impl->GetStringAttributeElement(name, elementIndex, length, temp.data()));
         std::string value(temp.data());
         return value;
     }
 
-    std::vector<int32_t> GetOptionalAttributeVectorInt32(MLConstStringParam attributeName) const
+    Vector<int32_t> GetOptionalAttributeVectorInt32(MLConstStringParam attributeName) const
     {
-        std::vector<int32_t> vector32Bit;
+        Vector<int32_t> vector32Bit;
         if (HasAttribute(attributeName, MLOperatorAttributeType::IntArray))
         {
             auto vector64Bit = GetAttributeVector<int64_t>(attributeName);
@@ -282,11 +282,11 @@ class MLOperatorAttributes
         return vector32Bit;
     }
 
-    std::vector<std::string> GetOptionalStringAttributeVector(MLConstStringParam attributeName) const
+    Vector<std::string> GetOptionalStringAttributeVector(MLConstStringParam attributeName) const
     {
         return HasAttribute(attributeName, MLOperatorAttributeType::StringArray)
             ?  GetAttributeVector(attributeName)
-            :  std::vector<std::string>{}; // Empty vector if attribute absent.
+            :  Vector<std::string>{}; // Empty vector if attribute absent.
     }
     
     // Not implemented
@@ -325,7 +325,7 @@ class MLOperatorAttributes
     }
 
     template <>
-    std::vector<float> GetOptionalAttribute<std::vector<float>>(MLConstStringParam attributeName, std::vector<float> defaultValue) const
+    Vector<float> GetOptionalAttribute<Vector<float>>(MLConstStringParam attributeName, Vector<float> defaultValue) const
     {
         return HasAttribute(attributeName, MLOperatorAttributeType::FloatArray)
             ?  GetAttributeVector<float>(attributeName)
@@ -374,7 +374,7 @@ public:
         return m_impl->GetDimensionCount();
     }
 
-    const std::vector<uint32_t>& GetShape() const
+    const Vector<uint32_t>& GetShape() const
     {
         if (m_dimensionsCache.empty())
         {
@@ -457,7 +457,7 @@ public:
 
  private:
     Microsoft::WRL::ComPtr<IMLOperatorTensor> m_impl;
-    std::vector<uint32_t> m_dimensionsCache;
+    Vector<uint32_t> m_dimensionsCache;
 };
 
 class MLOperatorKernelCreationContext : public MLOperatorAttributes
@@ -578,9 +578,9 @@ public:
         return ret;
     }
 
-    std::vector<uint32_t> GetInputTensorShape(uint32_t inputIndex) const
+    Vector<uint32_t> GetInputTensorShape(uint32_t inputIndex) const
     {
-        std::vector<uint32_t> ret;
+        Vector<uint32_t> ret;
         uint32_t dimensionCount = GetInputTensorDimensionCount(inputIndex);
         ret.resize(dimensionCount);
 
@@ -588,7 +588,7 @@ public:
         return ret;
     }
 
-    void SetOutputTensorShape(uint32_t outputIndex, const std::vector<uint32_t>& outputDimensions)
+    void SetOutputTensorShape(uint32_t outputIndex, const Vector<uint32_t>& outputDimensions)
     {
         THROW_IF_FAILED(m_impl->SetOutputTensorShape(outputIndex, static_cast<uint32_t>(outputDimensions.size()), outputDimensions.data()));
     }
@@ -671,7 +671,7 @@ public:
         return tensor.Get();
     }
 
-    MLOperatorTensor GetOutputTensor(uint32_t outputIndex, const std::vector<uint32_t> dimensionSizes) const
+    MLOperatorTensor GetOutputTensor(uint32_t outputIndex, const Vector<uint32_t> dimensionSizes) const
     {
         Microsoft::WRL::ComPtr<IMLOperatorTensor> tensor;
         THROW_IF_FAILED(m_impl->GetOutputTensor(outputIndex, static_cast<uint32_t>(dimensionSizes.size()), dimensionSizes.data(), &tensor));

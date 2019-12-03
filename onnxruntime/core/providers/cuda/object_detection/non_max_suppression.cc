@@ -51,7 +51,7 @@ Status NonMaxSuppression::ComputeInternal(OpKernelContext* ctx) const {
   // TODO: use cub::DeviceSegmentedRadixSort::SortPairsDescending instead of cub::DeviceRadixSort::SortPairsDescending
   //       to deal with multi batch/class parallelly
 
-  std::vector<std::tuple<IAllocatorUniquePtr<void>, int>> all_selected_indices;
+  Vector<std::tuple<IAllocatorUniquePtr<void>, int>> all_selected_indices;
   int total_num_saved_outputs = 0;
 
   for (int64_t batch_index = 0; batch_index < pc.num_batches_; ++batch_index) {

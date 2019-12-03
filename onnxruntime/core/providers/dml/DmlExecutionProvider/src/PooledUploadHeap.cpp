@@ -256,7 +256,7 @@ namespace Dml
                 return lhs.offsetInChunk < rhs.offsetInChunk;
             };
 
-            std::vector<Allocation> allocationsSortedByOffset(chunk.allocations.begin(), chunk.allocations.end());
+            Vector<Allocation> allocationsSortedByOffset(chunk.allocations.begin(), chunk.allocations.end());
             std::sort(allocationsSortedByOffset.begin(), allocationsSortedByOffset.end(), allocOffsetComparer);
 
             for (size_t i = 1; i < allocationsSortedByOffset.size(); ++i)

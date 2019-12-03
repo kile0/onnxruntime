@@ -91,7 +91,7 @@ PYOP_EXPORT const char* GetLastErrorMessage(std::string& err) {
 }
 
 PyObject* MakePyObj(const void* data, int32_t type, const vector<int64_t>& dim) {
-    std::vector<npy_intp> np_dim;
+    Vector<npy_intp> np_dim;
     for (auto d: dim) {
         np_dim.push_back(static_cast<npy_intp>(d));
     }

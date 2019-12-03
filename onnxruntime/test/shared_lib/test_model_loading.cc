@@ -174,7 +174,7 @@ TEST_F(CApiTest, model_with_external_data) {
 
 TEST_F(CApiTest, model_from_array) {
   const char* model_path = "testdata/matmul_1.onnx";
-  std::vector<char> buffer;
+  Vector<char> buffer;
   {
     std::ifstream file(model_path, std::ios::binary | std::ios::ate);
     if (!file)

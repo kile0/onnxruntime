@@ -13,7 +13,7 @@ TEST(MathOpTest, Clip_6) {
   test.AddAttribute("min", -10.0f);
   test.AddAttribute("max", 10.0f);
 
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("X", dims,
                        {11.0f, 4.4f, 432.3f,
                         -1.3f, 3.5f, 64.0f,
@@ -28,7 +28,7 @@ TEST(MathOpTest, Clip_6) {
 TEST(MathOpTest, Clip_Default) {
   OpTester test("Clip", 11);
 
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("X", dims,
                        {11.0f, 4.4f, 432.3f,
                         -1.3f, 3.5f, 64.0f,
@@ -45,7 +45,7 @@ TEST(MathOpTest, Clip_Default) {
 TEST(MathOpTest, Clip) {
   OpTester test("Clip", 11);
 
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("X", dims,
                        {-1.0f, 0.0f, 1.0f,
                         -6.0f, 0.0f, 6.0f,
@@ -62,7 +62,7 @@ TEST(MathOpTest, Clip) {
 }
 
 TEST(MathOpTest, ClipDimWithZero) {
-  std::vector<int64_t> dims{3, 0};  // dim with value of zero should be handled
+  Vector<int64_t> dims{3, 0};  // dim with value of zero should be handled
 
   OpTester test("Clip", -1);  // latest opset
   test.AddInput<float>("X", dims, {});

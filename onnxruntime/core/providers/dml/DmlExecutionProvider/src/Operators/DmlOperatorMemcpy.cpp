@@ -22,8 +22,8 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensors(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensors(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensors(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensors(kernelContext);
         assert(inputTensors.size() == 1);
         assert(outputTensors.size() == 1);
 

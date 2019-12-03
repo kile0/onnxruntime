@@ -53,11 +53,11 @@ class SparseTensorSample final {
   SparseTensorSample(SparseTensorSample&&) = default;
   SparseTensorSample& operator=(SparseTensorSample&&) = default;
 
-  const std::vector<int64_t>& Values() const {
+  const Vector<int64_t>& Values() const {
     return values_;
   }
 
-  const std::vector<int64_t>& Indicies() const {
+  const Vector<int64_t>& Indicies() const {
     return indicies_;
   }
 
@@ -65,11 +65,11 @@ class SparseTensorSample final {
     return size_;
   }
 
-  std::vector<int64_t>& Values() {
+  Vector<int64_t>& Values() {
     return values_;
   }
 
-  std::vector<int64_t>& Indicies() {
+  Vector<int64_t>& Indicies() {
     return indicies_;
   }
 
@@ -78,8 +78,8 @@ class SparseTensorSample final {
   }
 
  private:
-  std::vector<int64_t> values_;
-  std::vector<int64_t> indicies_;
+  Vector<int64_t> values_;
+  Vector<int64_t> indicies_;
   int64_t size_;  // The value of a single dimension
 };
 
@@ -287,7 +287,7 @@ TEST_F(OpaqueTypeTests, RunModel) {
 
   auto ops_schema = GetConstructSparseTensorSchema();
   auto shape_schema = GetFetchSparseShapeSchema();
-  std::vector<OpSchema> schemas = {ops_schema, shape_schema};
+  Vector<OpSchema> schemas = {ops_schema, shape_schema};
   EXPECT_TRUE(registry->RegisterOpSet(schemas, onnxruntime::kMLDomain, 8, 9).IsOK());
   // Register our kernels here
   auto ctor_def = ConstructSparseTensorDef();
@@ -301,8 +301,8 @@ TEST_F(OpaqueTypeTests, RunModel) {
   Model model("SparseTensorTest", false, ModelMetaData(), custom_schema_registries_, domain_to_version, {}, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<onnxruntime::NodeArg*> inputs;
-  std::vector<onnxruntime::NodeArg*> outputs;
+  Vector<onnxruntime::NodeArg*> inputs;
+  Vector<onnxruntime::NodeArg*> outputs;
 
   TypeProto input_tensor_proto(*DataTypeImpl::GetTensorType<int64_t>()->GetTypeProto());
 
@@ -360,19 +360,19 @@ TEST_F(OpaqueTypeTests, RunModel) {
   RunOptions run_options;
 
   // Prepare inputs/outputs
-  std::vector<int64_t> val_dims = {2};
-  std::vector<int64_t> values = {1, 2};
+  Vector<int64_t> val_dims = {2};
+  Vector<int64_t> values = {1, 2};
   // prepare inputs
   OrtValue ml_values;
   CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), val_dims, values, &ml_values);
 
-  std::vector<int64_t> ind_dims = {2};
-  std::vector<int64_t> indicies = {1, 4};
+  Vector<int64_t> ind_dims = {2};
+  Vector<int64_t> indicies = {1, 4};
   OrtValue ml_indicies;
   CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), ind_dims, indicies, &ml_indicies);
 
-  std::vector<int64_t> shape_dims = {1};
-  std::vector<int64_t> shape = {5};
+  Vector<int64_t> shape_dims = {1};
+  Vector<int64_t> shape = {5};
   OrtValue ml_shape;
   CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), shape_dims, shape, &ml_shape);
 
@@ -382,12 +382,12 @@ TEST_F(OpaqueTypeTests, RunModel) {
   feeds.insert(std::make_pair("sparse_shape", ml_shape));
 
   // Output
-  std::vector<int64_t> output_shape_dims = {1};
-  std::vector<int64_t> output_shape = {0};
+  Vector<int64_t> output_shape_dims = {1};
+  Vector<int64_t> output_shape = {0};
 
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("sparse_tensor_shape");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   EXPECT_TRUE(session_object.Run(run_options, feeds, output_names, &fetches).IsOK());
   ASSERT_EQ(1, fetches.size());

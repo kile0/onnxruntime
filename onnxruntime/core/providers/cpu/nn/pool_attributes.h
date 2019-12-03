@@ -79,20 +79,20 @@ struct PoolAttributes {
   bool count_include_pad{};
   int64_t storage_order{0};  // MaxPool_8 only. 0 is row major, and 1 is column major. Default is 0.
   int64_t ceil_mode{0};      // Introduced in MaxPool_10
-  std::vector<int64_t> kernel_shape;
-  std::vector<int64_t> pads;
-  std::vector<int64_t> strides;
-  std::vector<int64_t> dilations;  // Introduced in MaxPool_10
+  Vector<int64_t> kernel_shape;
+  Vector<int64_t> pads;
+  Vector<int64_t> strides;
+  Vector<int64_t> dilations;  // Introduced in MaxPool_10
   // default_dilations is true if dilations is not set or all dilations are 1
   bool default_dilations;
   AutoPadType auto_pad;
 
-  std::vector<int64_t> SetOutputSize(const TensorShape& input_shape,
+  Vector<int64_t> SetOutputSize(const TensorShape& input_shape,
                                      int64_t output_channel,
-                                     std::vector<int64_t>* actual_pads) const {
+                                     Vector<int64_t>* actual_pads) const {
     ORT_ENFORCE(input_shape.Size() > 0 || input_shape[0] == 0,
                 "Invalid input shape. Only N can be zero. Got:", input_shape);
-    std::vector<int64_t> output_dims;
+    Vector<int64_t> output_dims;
     int64_t N = input_shape[0];
     InferOutputSize(input_shape.GetDims(), &output_dims, actual_pads);
 
@@ -101,9 +101,9 @@ struct PoolAttributes {
     return output_dims;
   }
 
-  void InferOutputSize(const std::vector<int64_t>& input_dims,
-                       std::vector<int64_t>* output_dims,
-                       std::vector<int64_t>* actual_pads) const {
+  void InferOutputSize(const Vector<int64_t>& input_dims,
+                       Vector<int64_t>* output_dims,
+                       Vector<int64_t>* actual_pads) const {
     ORT_ENFORCE(input_dims.size() >= 2);
     if (global_pooling) {
       output_dims->assign(input_dims.size() - 2, 1);

@@ -148,7 +148,7 @@ void SessionState::SetProfiler(profiling::Profiler& profiler) { profiler_ = &pro
 
 ::onnxruntime::profiling::Profiler& SessionState::Profiler() const { return *profiler_; }
 
-static int64_t CalculateMemoryPatternsKey(const std::vector<std::reference_wrapper<const TensorShape>>& shapes) {
+static int64_t CalculateMemoryPatternsKey(const Vector<std::reference_wrapper<const TensorShape>>& shapes) {
   int64_t key = 0;
   for (auto shape : shapes) {
     for (auto dim : shape.get().GetDims()) key ^= dim;
@@ -157,7 +157,7 @@ static int64_t CalculateMemoryPatternsKey(const std::vector<std::reference_wrapp
 }
 
 const MemoryPatternGroup* SessionState::GetMemoryPatternGroup(
-    const std::vector<std::reference_wrapper<const TensorShape>>& input_shapes) const {
+    const Vector<std::reference_wrapper<const TensorShape>>& input_shapes) const {
   int64_t key = CalculateMemoryPatternsKey(input_shapes);
 
   std::lock_guard<OrtMutex> lock(mem_patterns_lock_);
@@ -168,7 +168,7 @@ const MemoryPatternGroup* SessionState::GetMemoryPatternGroup(
 }
 
 Status SessionState::UpdateMemoryPatternGroupCache(
-    const std::vector<std::reference_wrapper<const TensorShape>>& input_shapes,
+    const Vector<std::reference_wrapper<const TensorShape>>& input_shapes,
     std::unique_ptr<MemoryPatternGroup> mem_patterns) const {
   int64_t key = CalculateMemoryPatternsKey(input_shapes);
 
@@ -224,7 +224,7 @@ common::Status SessionState::AddInputNameToNodeInfoMapping(const std::string& in
 }
 
 common::Status SessionState::GetInputNodeInfo(const std::string& input_name,
-                                              std::vector<NodeInfo>& node_info_vec) const {
+                                              Vector<NodeInfo>& node_info_vec) const {
   auto entry = input_names_to_nodeinfo_mapping_.find(input_name);
   if (entry == input_names_to_nodeinfo_mapping_.cend()) {
     return Status(ONNXRUNTIME, FAIL, "Failed to find input name in the mapping: " + input_name);
@@ -247,7 +247,7 @@ void SessionState::AddOutputNameToNodeInfoMapping(const std::string& output_name
 }
 
 common::Status SessionState::GetOutputNodeInfo(const std::string& output_name,
-                                               std::vector<NodeInfo>& node_info_vec) const {
+                                               Vector<NodeInfo>& node_info_vec) const {
   auto entry = output_names_to_nodeinfo_mapping_.find(output_name);
   if (entry == output_names_to_nodeinfo_mapping_.cend()) {
     return Status(ONNXRUNTIME, FAIL, "Failed to find output name in the mapping: " + output_name);

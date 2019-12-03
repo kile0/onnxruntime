@@ -15,8 +15,8 @@ namespace controlflow {
 namespace detail {
 
 common::Status FindDevicesForValues(const SessionState& session_state,
-                                    const std::vector<std::string>& names,
-                                    std::vector<OrtDevice>& devices,
+                                    const Vector<std::string>& names,
+                                    Vector<OrtDevice>& devices,
                                     size_t start_at) {
   devices.resize(names.size());
 

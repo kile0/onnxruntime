@@ -23,7 +23,7 @@ class TfIdfVectorizer final : public OpKernel {
   Status ComputeImpl(OpKernelContext* ctx) const;
 
   // Apply weighing criteria and output
-  void OutputResult(OpKernelContext* ctx, size_t b_dim, const std::vector<uint32_t>& frequences) const;
+  void OutputResult(OpKernelContext* ctx, size_t b_dim, const Vector<uint32_t>& frequences) const;
 
   struct Impl;
   std::unique_ptr<Impl> impl_;

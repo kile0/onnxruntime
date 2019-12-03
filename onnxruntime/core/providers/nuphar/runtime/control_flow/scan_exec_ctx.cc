@@ -32,7 +32,7 @@ void ScanExecCtx::Advance(const ControlFlowInfo* cf_info) {
   const ScanExecInfo* scan_info = Promote<ScanExecInfo>(cf_info);
   ORT_ENFORCE_DEBUG(nullptr != scan_info);
   size_t num_state_variables = gsl::narrow<size_t>(scan_info->num_state_variables);
-  const std::vector<int>& state_to_output_indices = scan_info->state_to_output_indices;
+  const Vector<int>& state_to_output_indices = scan_info->state_to_output_indices;
 
   // update input and output states
   if (current_loop_step_ == (max_loop_step_ - 1)) {
@@ -81,7 +81,7 @@ void ScanExecCtx::Advance(const ControlFlowInfo* cf_info) {
 void ScanExecCtx::InitIteration(KernelComputeCtx* kernel_compute_ctx,
                                 const NupharFuncInfo* func_info) {
   FuncComputeCtx& subgraph_compute_ctx = kernel_compute_ctx->GetFuncComputeCtx(func_info);
-  std::vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
+  Vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
 
   size_t arg_index = 0;
   // update func inputs
@@ -113,11 +113,11 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
   size_t tvm_output_count = func_info->func_output_count;
   size_t tvm_num_args = tvm_input_count + tvm_output_count;
 
-  std::vector<TVMValue>& lvalues = subgraph_compute_ctx.lvalues;
+  Vector<TVMValue>& lvalues = subgraph_compute_ctx.lvalues;
   lvalues.resize(tvm_num_args);
-  std::vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
+  Vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
   dl_tensors.resize(tvm_num_args);
-  std::vector<std::vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
+  Vector<Vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
   dl_output_shapes.resize(tvm_output_count);
 
   // control flow info
@@ -127,10 +127,10 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
   int64_t num_scan_inputs = scan_info->num_scan_inputs;
   int64_t num_scan_outputs = scan_info->num_scan_outputs;
 
-  const std::vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
-  const std::vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
-  const std::vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
-  const std::vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
+  const Vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
+  const Vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
+  const Vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
+  const Vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
 
   // a common lambda utility function for fill-in inputs and initializers
   auto fill_input = [&](size_t tvm_idx, const void* input_data, const int64_t* shape, size_t rank, MLDataType data_type) {
@@ -202,7 +202,7 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
       ORT_ENFORCE_DEBUG(scan_input_idx < scan_input_axes.size());
       size_t input_scan_axis = gsl::narrow<size_t>(scan_input_axes[scan_input_idx]);
 
-      std::vector<int64_t>& shape = scan_input_in_subgraph_shapes_[scan_input_idx];
+      Vector<int64_t>& shape = scan_input_in_subgraph_shapes_[scan_input_idx];
       ShapeRemoveAxis(shape, ort_input_shape, arg_shape_rank + 1, input_scan_axis);
 
       // Check whether it is backward Scan
@@ -229,7 +229,7 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
   }
 
   // Handle Initializers
-  const std::vector<const Tensor*>& intializers = func_info->intializers;
+  const Vector<const Tensor*>& intializers = func_info->intializers;
   for (const Tensor* t : intializers) {
     fill_input(tvm_input_idx++, t->DataRaw(), t->Shape().GetDims().data(), t->Shape().NumDimensions(), t->DataType());
   }
@@ -238,11 +238,11 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
   current_func_output_ptrs_.resize(tvm_output_count);
   size_t tvm_output_idx = 0;
   for (const auto& output_meta : func_info->output_metas) {
-    std::vector<int64_t>& realized_shape = dl_output_shapes[tvm_output_idx];
+    Vector<int64_t>& realized_shape = dl_output_shapes[tvm_output_idx];
     // Update static dim
     realized_shape = output_meta.inferred_shape;
     // Update dynamic dim
-    const std::vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
+    const Vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
     kernel_compute_ctx->UpdateRealizedDims(symbols, realized_shape);
 
     // Fill in output DLTensor
@@ -271,7 +271,7 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
     } else {
       // if ith varialbe is an output, we need to remove an axis for DLTesnor
       size_t scan_output_idx = gsl::narrow<size_t>(ort_output_idx) - gsl::narrow<size_t>(num_state_variables);
-      std::vector<int64_t>& shape = scan_output_shapes_[scan_output_idx];
+      Vector<int64_t>& shape = scan_output_shapes_[scan_output_idx];
       ORT_ENFORCE_DEBUG(scan_output_idx < scan_output_axes.size());
       size_t output_scan_axis = gsl::narrow<size_t>(scan_output_axes[scan_output_idx]);
       ShapeInsertAxis(shape, realized_shape.data(), realized_shape.size(), output_scan_axis, seq_length_);
@@ -307,7 +307,7 @@ void ScanExecCtx::InitContext(KernelComputeCtx* kernel_compute_ctx,
   }
 
   // Handle alias state outputs
-  const std::vector<std::pair<int, size_t>>& ort_aliased_output_to_func_indices = func_info->ort_aliased_output_to_func_indices;
+  const Vector<std::pair<int, size_t>>& ort_aliased_output_to_func_indices = func_info->ort_aliased_output_to_func_indices;
   for (const auto& p : ort_aliased_output_to_func_indices) {
     // p is a std::pair<int, size_t>. A pair of (ort dst idx, tvm src idx)
     // Note ort dst idx is always a state output
@@ -336,10 +336,10 @@ void ScanExecCtx::UpdateContext(KernelComputeCtx* kernel_compute_ctx,
   ORT_ENFORCE_DEBUG(nullptr != scan_info);
   int64_t num_state_variables = scan_info->num_state_variables;
   int64_t num_scan_inputs = scan_info->num_scan_inputs;
-  const std::vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
-  const std::vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
-  const std::vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
-  const std::vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
+  const Vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
+  const Vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
+  const Vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
+  const Vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
 
   // Handle Scan's control flow ctx
   seq_length_ = 0;
@@ -436,7 +436,7 @@ void ScanExecCtx::UpdateContext(KernelComputeCtx* kernel_compute_ctx,
   // No need to update initializer in UpdateContext
 
   // Handle outputs and state
-  std::vector<std::vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
+  Vector<Vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
   size_t tvm_output_idx = 0;
   for (const auto& output_meta : func_info->output_metas) {
     size_t tvm_idx = tvm_output_idx + tvm_input_count;
@@ -462,7 +462,7 @@ void ScanExecCtx::UpdateContext(KernelComputeCtx* kernel_compute_ctx,
     }
     kernel_compute_ctx->UpdateRealizedDims(symbols, dl_output_shapes[tvm_output_idx]);
 
-    std::vector<int64_t>& ort_output_shape =
+    Vector<int64_t>& ort_output_shape =
         is_scan_output ? scan_output_shapes_[scan_output_idx] : dl_output_shapes[tvm_output_idx];
 
     // update ptr
@@ -503,7 +503,7 @@ void ScanExecCtx::UpdateContext(KernelComputeCtx* kernel_compute_ctx,
   }
 
   // Handle alias state outputs
-  const std::vector<std::pair<int, size_t>>& ort_aliased_output_to_func_indices = func_info->ort_aliased_output_to_func_indices;
+  const Vector<std::pair<int, size_t>>& ort_aliased_output_to_func_indices = func_info->ort_aliased_output_to_func_indices;
   for (const auto& p : ort_aliased_output_to_func_indices) {
     // p is a std::pair<int, size_t>. A pair of (ort dst idx, tvm src idx)
     // Note ort dst idx is always a state output

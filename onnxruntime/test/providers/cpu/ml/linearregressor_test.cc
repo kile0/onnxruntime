@@ -9,9 +9,9 @@ namespace test {
 
 struct LinearRegressorParam {
   const char* post_transform;
-  std::vector<float> expected_value;
+  Vector<float> expected_value;
   int64_t targets;
-  LinearRegressorParam(const char* post_transform1, const std::vector<float>& expected_value1, int targets1)
+  LinearRegressorParam(const char* post_transform1, const Vector<float>& expected_value1, int targets1)
       : post_transform(post_transform1), expected_value(expected_value1), targets(targets1) {}
 };
 
@@ -51,7 +51,7 @@ array([[ 1., 32.],[ 3., 14.],[ 23., -166.]])
 TEST_P(LinearRegressorTest, LinearRegressorUniTarget) {
   const LinearRegressorParam& param = GetParam();
   OpTester test("LinearRegressor", 1, onnxruntime::kMLDomain);
-  std::vector<float> coefficients, intercepts;
+  Vector<float> coefficients, intercepts;
   if (param.targets == 1) {
     coefficients = {-9.00000000f, -1.99600736e-16f};
     intercepts = {41.0000000f};

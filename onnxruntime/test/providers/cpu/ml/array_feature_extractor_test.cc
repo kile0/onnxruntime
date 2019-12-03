@@ -17,14 +17,14 @@ class ArrayFeatureExtractorTest : public ::testing::Test {
 
 TEST_F(ArrayFeatureExtractorTest, Basic) {
   const int N = 3;
-  const std::vector<float> X = {0.8f, -1.5f, 2.0f, 3.8f, -4.0f, 5.0f,
+  const Vector<float> X = {0.8f, -1.5f, 2.0f, 3.8f, -4.0f, 5.0f,
                                 6.8f, -7.5f, 8.0f, 9.8f, -9.0f, 4.0f,
                                 4.8f, -4.5f, 4.0f, 4.8f, -4.0f, 4.0f};
   const int kCols = 6;
   const vector<int64_t> x_dims = {N, kCols};
   test_.AddInput<float>("X", x_dims, X);
 
-  const std::vector<int64_t> Y = {1L, 2L, 4L};
+  const Vector<int64_t> Y = {1L, 2L, 4L};
   const vector<int64_t> y_dims = {1, 3};
   test_.AddInput<int64_t>("Y", y_dims, Y);
 
@@ -43,31 +43,31 @@ TEST_F(ArrayFeatureExtractorTest, Basic) {
 }
 
 TEST_F(ArrayFeatureExtractorTest, HigherDimensionalX) {
-  const std::vector<int64_t> x_dims{2, 3, 4, 5};
+  const Vector<int64_t> x_dims{2, 3, 4, 5};
   const int64_t x_size = std::accumulate(
       x_dims.begin(), x_dims.end(), static_cast<int64_t>(1), std::multiplies<int64_t>());
-  const std::vector<int32_t> X = [x_size]() {
-    std::vector<int32_t> v(x_size);
+  const Vector<int32_t> X = [x_size]() {
+    Vector<int32_t> v(x_size);
     std::iota(v.begin(), v.end(), 0);
     return v;
   }();
   test_.AddInput("X", x_dims, X);
 
-  const std::vector<int64_t> Y{0, 1, 1, 2};
+  const Vector<int64_t> Y{0, 1, 1, 2};
   const int64_t y_size = gsl::narrow_cast<int64_t>(Y.size());
-  const std::vector<int64_t> y_dims{1, y_size};
+  const Vector<int64_t> y_dims{1, y_size};
   test_.AddInput("Y", y_dims, Y);
 
   // prepare expected output
-  const std::vector<int64_t> z_dims = [&x_dims, y_size]() {
-    std::vector<int64_t> v{x_dims};
+  const Vector<int64_t> z_dims = [&x_dims, y_size]() {
+    Vector<int64_t> v{x_dims};
     v[v.size() - 1] = y_size;
     return v;
   }();
-  const std::vector<int32_t> Z = [&x_dims, x_size, y_size, &X, &Y]() {
+  const Vector<int32_t> Z = [&x_dims, x_size, y_size, &X, &Y]() {
     const int64_t x_last_dim_size = x_dims.back();  // stride
     const int64_t x_leading_dims_size = x_size / x_last_dim_size;
-    std::vector<int32_t> v(x_leading_dims_size * y_size);
+    Vector<int32_t> v(x_leading_dims_size * y_size);
     int32_t* v_output = v.data();
     for (int64_t x_idx = 0; x_idx < x_size; x_idx += x_last_dim_size) {
       for (int64_t y_idx = 0; y_idx < y_size; ++y_idx) {

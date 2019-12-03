@@ -9,7 +9,7 @@ namespace onnxruntime {
 namespace tvm_codegen {
 
 tvm::Tensor Tile(const tvm::Tensor& t,
-                 const std::vector<int64_t>& repeats,
+                 const Vector<int64_t>& repeats,
                  const std::string& name) {
   MTI_ASSERT(repeats.size() == t->shape.size());
   tvm::Array<tvm::Expr> output_shape;

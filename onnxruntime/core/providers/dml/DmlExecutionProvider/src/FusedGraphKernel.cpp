@@ -59,8 +59,8 @@ namespace Dml
         void TranslateAndCompileGraph(
             const onnxruntime::OpKernelInfo& kernelInfo,
             const onnxruntime::Graph& graph,
-            const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
-            const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
+            const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
+            const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
             const std::unordered_map<std::string, GraphNodeProperties>& graphNodePropertyMap,
             std::unordered_map<std::string, onnx::TensorProto>& transferredInitializerMap
         )
@@ -137,10 +137,10 @@ namespace Dml
             }
 
             // Populate input bindings for operator initialization
-            std::vector<ComPtr<ID3D12Resource>> initInputResources; // For lifetime control
-            std::vector<DML_BUFFER_BINDING> initInputBindings(graphInputCount);
+            Vector<ComPtr<ID3D12Resource>> initInputResources; // For lifetime control
+            Vector<DML_BUFFER_BINDING> initInputBindings(graphInputCount);
             m_nonOwnedGraphInputsFromInitializers.resize(graphInputCount);
-            std::vector<ComPtr<ID3D12Resource>> initializeResourceRefs;
+            Vector<ComPtr<ID3D12Resource>> initializeResourceRefs;
 
             for (uint32_t i = 0; i < initInputBindings.size(); i++)
             {
@@ -227,12 +227,12 @@ namespace Dml
             // All initializers should have been consumed and freed above
             assert(transferredInitializerMap.empty());
 
-            std::vector<DML_PREVIEW_OPERATOR_GRAPH_NODE> dmlOperatorGraphNodes(graphDesc.nodes.size());
-            std::vector<DML_PREVIEW_GRAPH_NODE> dmlGraphNodes(graphDesc.nodes.size());
+            Vector<DML_PREVIEW_OPERATOR_GRAPH_NODE> dmlOperatorGraphNodes(graphDesc.nodes.size());
+            Vector<DML_PREVIEW_GRAPH_NODE> dmlGraphNodes(graphDesc.nodes.size());
 
-            std::vector<DML_PREVIEW_GRAPH_EDGE> dmlInputEdges(graphDesc.inputEdges.size());
-            std::vector<DML_PREVIEW_GRAPH_EDGE> dmlOutputEdges(graphDesc.outputEdges.size());
-            std::vector<DML_PREVIEW_GRAPH_EDGE> dmlIntermediateEdges(graphDesc.intermediateEdges.size());
+            Vector<DML_PREVIEW_GRAPH_EDGE> dmlInputEdges(graphDesc.inputEdges.size());
+            Vector<DML_PREVIEW_GRAPH_EDGE> dmlOutputEdges(graphDesc.outputEdges.size());
+            Vector<DML_PREVIEW_GRAPH_EDGE> dmlIntermediateEdges(graphDesc.intermediateEdges.size());
 
             for (size_t i = 0; i < graphDesc.nodes.size(); ++i)
             {
@@ -336,8 +336,8 @@ namespace Dml
 
                 // Get input resources for execution, excluding those which were specified as owned by DML and provided 
                 // at initialization instead.
-                std::vector<ComPtr<IMLOperatorTensor>> inputTensors(kernelContext->InputCount());
-                std::vector<ID3D12Resource*> inputPtrs(kernelContext->InputCount());
+                Vector<ComPtr<IMLOperatorTensor>> inputTensors(kernelContext->InputCount());
+                Vector<ID3D12Resource*> inputPtrs(kernelContext->InputCount());
 
                 for (int i = 0; i < kernelContext->InputCount(); ++i)
                 {
@@ -421,15 +421,15 @@ namespace Dml
                 }
             };
 
-            std::vector<DML_BUFFER_BINDING> inputBufferBindings;
+            Vector<DML_BUFFER_BINDING> inputBufferBindings;
             inputBufferBindings.reserve(inputTensors.size());
-            std::vector<DML_BINDING_DESC> inputBindings;
+            Vector<DML_BINDING_DESC> inputBindings;
             inputBindings.reserve(inputTensors.size());
             FillBindingsFromBuffers(inputBufferBindings, inputBindings, inputTensors);
 
-            std::vector<DML_BUFFER_BINDING> outputBufferBindings;
+            Vector<DML_BUFFER_BINDING> outputBufferBindings;
             outputBufferBindings.reserve(outputTensors.size());
-            std::vector<DML_BINDING_DESC> outputBindings;
+            Vector<DML_BINDING_DESC> outputBindings;
             outputBindings.reserve(outputTensors.size());
             FillBindingsFromTensors(outputBufferBindings, outputBindings, outputTensors);
 
@@ -504,8 +504,8 @@ namespace Dml
         {
             DML_BINDING_PROPERTIES execBindingProps = m_compiledExecutionPlanOperator->GetBindingProperties();
                 
-            std::vector<DML_BUFFER_BINDING> inputBindings(kernelContext->InputCount());
-            std::vector<DML_BINDING_DESC> inputBindingDescs(kernelContext->InputCount());
+            Vector<DML_BUFFER_BINDING> inputBindings(kernelContext->InputCount());
+            Vector<DML_BINDING_DESC> inputBindingDescs(kernelContext->InputCount());
 
             OpKernelContextWrapper contextWrapper(
                 kernelContext,
@@ -549,15 +549,15 @@ namespace Dml
             }
 
             // Populate Output bindings
-            std::vector<DML_BUFFER_BINDING> outputBindings(kernelContext->OutputCount());
-            std::vector<DML_BINDING_DESC> outputBindingDescs(kernelContext->OutputCount());
+            Vector<DML_BUFFER_BINDING> outputBindings(kernelContext->OutputCount());
+            Vector<DML_BINDING_DESC> outputBindingDescs(kernelContext->OutputCount());
 
             m_outputBindingAllocIds.resize(outputBindings.size());
             bool outputBindingsChanged = false;
             
             for (uint32_t i = 0; i < outputBindings.size(); ++i)
             {
-                std::vector<int64_t> outputDims;
+                Vector<int64_t> outputDims;
                 outputDims.reserve(m_outputShapes.GetShape(i).size());
                 for (uint32_t dimSize : m_outputShapes.GetShape(i))
                 {
@@ -724,7 +724,7 @@ namespace Dml
         }
 
         ComPtr<IDMLCompiledOperator> m_compiledExecutionPlanOperator;
-        std::vector<bool> m_inputsUsed;
+        Vector<bool> m_inputsUsed;
         const void* m_executionHandle = nullptr;
         ComPtr<winrt::Windows::AI::MachineLearning::implementation::IWinmlExecutionProvider> m_winmlProvider;
         ComPtr<Dml::IExecutionProvider> m_provider;
@@ -739,8 +739,8 @@ namespace Dml
         ComPtr<IUnknown> m_persistentResourceAllocatorUnk; // Controls when the persistent resource is returned to the allocator
         
         // Bindings from previous executions of a re-used command list
-        mutable std::vector<uint64_t> m_inputBindingAllocIds;
-        mutable std::vector<uint64_t> m_outputBindingAllocIds;
+        mutable Vector<uint64_t> m_inputBindingAllocIds;
+        mutable Vector<uint64_t> m_outputBindingAllocIds;
         mutable uint64_t m_tempBindingAllocId = 0;
 
         // Fence tracking the status of the command list's last execution, and whether its descriptor heap 
@@ -748,8 +748,8 @@ namespace Dml
         mutable ComPtr<ID3D12Fence> m_fence;
         mutable uint64_t m_completionValue = 0;
 
-        std::vector<uint8_t> m_inputsConstant;
-        std::vector<ComPtr<ID3D12Resource>> m_nonOwnedGraphInputsFromInitializers;
+        Vector<uint8_t> m_inputsConstant;
+        Vector<ComPtr<ID3D12Resource>> m_nonOwnedGraphInputsFromInitializers;
     };
 
     onnxruntime::OpKernel* CreateFusedGraphKernel(

@@ -192,7 +192,7 @@ struct Session : Base<OrtSession> {
   Session(Env& env, const void* model_data, size_t model_data_length, const SessionOptions& options);
 
   // Run that will allocate the output values
-  std::vector<Value> Run(const RunOptions& run_options, const char* const* input_names, const Value* input_values, size_t input_count,
+  Vector<Value> Run(const RunOptions& run_options, const char* const* input_names, const Value* input_values, size_t input_count,
                          const char* const* output_names, size_t output_count);
   // Run for when there is a list of prealloated outputs
   void Run(const RunOptions& run_options, const char* const* input_names, const Value* input_values, size_t input_count,
@@ -222,7 +222,7 @@ struct TensorTypeAndShapeInfo : Base<OrtTensorTypeAndShapeInfo> {
   void GetDimensions(int64_t* values, size_t values_count) const;
   void GetSymbolicDimensions(const char** values, size_t values_count) const;
 
-  std::vector<int64_t> GetShape() const;
+  Vector<int64_t> GetShape() const;
 };
 
 struct TypeInfo : Base<OrtTypeInfo> {
@@ -243,7 +243,7 @@ struct Value : Base<OrtValue> {
   static Value CreateTensor(OrtAllocator* allocator, const int64_t* shape, size_t shape_len, ONNXTensorElementDataType type);
 
   static Value CreateMap(Value& keys, Value& values);
-  static Value CreateSequence(std::vector<Value>& values);
+  static Value CreateSequence(Vector<Value>& values);
 
   template <typename T>
   static Value CreateOpaque(const char* domain, const char* type_name, const T&);
@@ -316,7 +316,7 @@ struct CustomOpApi {
   template <typename T>
   const T* GetTensorData(_Inout_ const OrtValue* value);
 
-  std::vector<int64_t> GetTensorShape(const OrtTensorTypeAndShapeInfo* info);
+  Vector<int64_t> GetTensorShape(const OrtTensorTypeAndShapeInfo* info);
   void ReleaseTensorTypeAndShapeInfo(OrtTensorTypeAndShapeInfo* input);
   size_t KernelContext_GetInputCount(const OrtKernelContext* context);
   const OrtValue* KernelContext_GetInput(const OrtKernelContext* context, _In_ size_t index);

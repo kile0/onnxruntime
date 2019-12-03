@@ -165,8 +165,8 @@ std::string CreateModel() {
   Model model("ModelWithOpaque", false, logging::LoggingManager::DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<onnxruntime::NodeArg*> inputs;
-  std::vector<onnxruntime::NodeArg*> outputs;
+  Vector<onnxruntime::NodeArg*> inputs;
+  Vector<onnxruntime::NodeArg*> outputs;
 
   {
     TypeProto exp_type_proto(*DataTypeImpl::GetType<ExperimentalType>()->GetTypeProto());
@@ -227,7 +227,7 @@ TEST_F(OpaqueApiTest, RunModelWithOpaqueInputOutput) {
     const std::string expected_output{"_i, _ello, _ig_, _ig_est"};
 
     // Place a string into Tensor OrtValue and assign to the container
-    std::vector<int64_t> input_dims{1};
+    Vector<int64_t> input_dims{1};
     Ort::Value container_str = Ort::Value::CreateTensor(allocator, input_dims.data(), input_dims.size(), ONNX_TENSOR_ELEMENT_DATA_TYPE_STRING);
 
     // No C++ Api to either create a string Tensor or to fill one with string, so we use C

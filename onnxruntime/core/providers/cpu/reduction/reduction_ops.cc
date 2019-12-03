@@ -125,11 +125,11 @@ REGISTER_UNARY_ELEMENTWISE_KERNEL(ArgMin, 11);
 //               size of each reduce.
 template <typename T>
 bool PrepareForReduce(OpKernelContext* ctx,
-                      std::vector<T>& transposedInputData,
+                      Vector<T>& transposedInputData,
                       Tensor** reducedTensor,
                       int64_t& block_size,
                       int64_t& blocks,
-                      const std::vector<int64_t>& axes_,
+                      const Vector<int64_t>& axes_,
                       bool keepdims_,
                       bool check_no_transpose = false) {
   const auto* input_tensor_ptr = ctx->Input<Tensor>(0);
@@ -137,7 +137,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
   const Tensor& input = *input_tensor_ptr;
 
   size_t ndim = input.Shape().GetDims().size();
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   axes.reserve(axes_.size());
   for (int64_t axis : axes_) {
     axes.push_back(HandleNegativeAxis(axis, static_cast<int64_t>(ndim)));
@@ -198,7 +198,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
 
   //set to-be-reduced axes to one. squeeze is keepdims_ is false
   int64_t first_dim = 1;
-  std::vector<int64_t> reduced_dims;
+  Vector<int64_t> reduced_dims;
   reduced_dims.reserve(in_dims.size());
 
   for (size_t i = 0; i < in_dims.size(); i++) {
@@ -249,7 +249,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
   int itr_axes = num_axes - n_shared_idxs;
 
   // Calculate strides
-  std::vector<int64_t> stride_x(itr_axes, 0);
+  Vector<int64_t> stride_x(itr_axes, 0);
   for (size_t i = 0; static_cast<int>(i) < itr_axes; i++) {
     stride_x[i] = 1;
     for (size_t j = transposed_axes[i] + 1; static_cast<int>(j) < itr_axes; j++) {
@@ -257,7 +257,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
     }
   }
 
-  std::vector<int64_t> itr_idxs(itr_axes, 0);
+  Vector<int64_t> itr_idxs(itr_axes, 0);
 
   // Branch here to avoid branching within the loop
   if (blocksize > 1) {
@@ -307,7 +307,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
 
 template <typename T>
 Status ReduceL1<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -323,7 +323,7 @@ Status ReduceL1<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceL2<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -339,7 +339,7 @@ Status ReduceL2<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceLogSum<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -359,7 +359,7 @@ Status ReduceLogSum<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceLogSumExp<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -383,7 +383,7 @@ Status ReduceLogSumExp<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceMax<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -407,7 +407,7 @@ Status ReduceMax<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceMean<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -434,7 +434,7 @@ Status ReduceMean<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceMin<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -458,7 +458,7 @@ Status ReduceMin<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceProd<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -474,7 +474,7 @@ Status ReduceProd<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceSum<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -501,7 +501,7 @@ Status ReduceSum<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ReduceSumSquare<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -517,7 +517,7 @@ Status ReduceSumSquare<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ArgMax<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;
@@ -537,7 +537,7 @@ Status ArgMax<T>::Compute(OpKernelContext* ctx) const {
 
 template <typename T>
 Status ArgMin<T>::Compute(OpKernelContext* ctx) const {
-  std::vector<T> transposedInputData;
+  Vector<T> transposedInputData;
   int64_t block_size;
   int64_t blocks;
   Tensor* reduced;

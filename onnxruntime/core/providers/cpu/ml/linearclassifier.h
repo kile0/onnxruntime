@@ -22,10 +22,10 @@ class LinearClassifier final : public OpKernel {
   int64_t class_count_;
   POST_EVAL_TRANSFORM post_transform_;
   bool using_strings_;
-  std::vector<float> coefficients_;
-  std::vector<float> intercepts_;
-  std::vector<std::string> classlabels_strings_;
-  std::vector<int64_t> classlabels_ints_;
+  Vector<float> coefficients_;
+  Vector<float> intercepts_;
+  Vector<std::string> classlabels_strings_;
+  Vector<int64_t> classlabels_ints_;
 };
 
 }  // namespace ml

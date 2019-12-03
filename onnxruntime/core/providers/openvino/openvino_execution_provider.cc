@@ -487,10 +487,10 @@ void CheckGraphSupported(const onnxruntime::GraphViewer& graph_viewer, std::stri
   }
 }
 
-std::vector<std::unique_ptr<ComputeCapability>> OpenVINOExecutionProvider::GetCapability(
+Vector<std::unique_ptr<ComputeCapability>> OpenVINOExecutionProvider::GetCapability(
     const onnxruntime::GraphViewer& graph_viewer,
-    const std::vector<const KernelRegistry*>& /*kernel_registries*/) const {
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+    const Vector<const KernelRegistry*>& /*kernel_registries*/) const {
+  Vector<std::unique_ptr<ComputeCapability>> result;
   bool precision_fp32 = true;
   std::string device_id = "CPU";
 
@@ -635,8 +635,8 @@ std::vector<std::unique_ptr<ComputeCapability>> OpenVINOExecutionProvider::GetCa
 }
 
 common::Status OpenVINOExecutionProvider::Compile(
-    const std::vector<onnxruntime::Node*>& fused_nodes,
-    std::vector<NodeComputeInfo>& node_compute_funcs) {
+    const Vector<onnxruntime::Node*>& fused_nodes,
+    Vector<NodeComputeInfo>& node_compute_funcs) {
   for (auto fused_node : fused_nodes) {
     std::shared_ptr<openvino_ep::OpenVINOGraph> openvino_graph;
     try {

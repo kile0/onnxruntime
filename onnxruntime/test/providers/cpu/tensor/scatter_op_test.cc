@@ -10,7 +10,7 @@ namespace test {
 static void scatter_without_axis_tests(const char* op_name, int op_version) {
   OpTester test(op_name, op_version);
 
-  std::vector<float> input;
+  Vector<float> input;
   input.resize(3 * 3);
   std::fill(input.begin(), input.end(), .0f);
   test.AddInput<float>("data", {3, 3}, input);

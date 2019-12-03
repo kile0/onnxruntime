@@ -101,7 +101,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
       continue;
     }
     // Find ReduceSum --> Attention
-    std::vector<const Node::EdgeEnd*> edges;
+    Vector<const Node::EdgeEnd*> edges;
     if (!graph_utils::FindPath(attention_node, true, {{0, 3, "ReduceSum", {1, 11}, kOnnxDomain}}, edges, logger)) {
       continue;
     }
@@ -114,7 +114,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
     Node& layer_norm_add_node = *graph.GetNode(edges[0]->GetNode().Index());
 
     // Traceback the SkipLayerNormalization node to find Gather --> SkipLayerNormalization
-    std::vector<graph_utils::EdgeEndToMatch> segment_embedding_path{
+    Vector<graph_utils::EdgeEndToMatch> segment_embedding_path{
         {0, 1, "Gather", {1, 11}, kOnnxDomain}};
     if (!graph_utils::FindPath(layer_norm_add_node, true, segment_embedding_path, edges, logger)) {
       continue;
@@ -130,7 +130,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
     }
 
     // Traceback the SkipLayerNormalization node to find Gather --> Add --> SkipLayerNormalization
-    std::vector<graph_utils::EdgeEndToMatch> word_embedding_path{
+    Vector<graph_utils::EdgeEndToMatch> word_embedding_path{
         {0, 0, "Add", {7}, kOnnxDomain},
         {0, 0, "Gather", {1, 11}, kOnnxDomain}};
     if (!graph_utils::FindPath(layer_norm_add_node, true, word_embedding_path, edges, logger)) {
@@ -150,7 +150,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
     // Traceback the Add node to find (Shape --> Expand -->) Gather --> Add.
     // Constant folding removes Shape and Expand nodes when input does not have symbolic shape. In that
     // case just look for Gather --> Add.
-    std::vector<graph_utils::EdgeEndToMatch> position_embedding_path{
+    Vector<graph_utils::EdgeEndToMatch> position_embedding_path{
         {0, 1, "Gather", {1, 11}, kOnnxDomain}};
     if (!graph_utils::FindPath(add_node, true, position_embedding_path, edges, logger)) {
       continue;
@@ -166,7 +166,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
     }
 
     // Match Shape --> Expand path if needed.
-    std::vector<graph_utils::EdgeEndToMatch> position_embedding_path_symbolic{
+    Vector<graph_utils::EdgeEndToMatch> position_embedding_path_symbolic{
         {0, 1, "Expand", {8}, kOnnxDomain},
         {0, 1, "Shape", {1}, kOnnxDomain}};
     Node* p_expand_node = nullptr;
@@ -199,7 +199,7 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
       continue;
     }
 
-    const std::vector<NodeArg*> embed_layer_norm_input_defs{
+    const Vector<NodeArg*> embed_layer_norm_input_defs{
         input_ids,
         segment_ids,
         word_gather_node.MutableInputDefs()[0],
@@ -221,12 +221,12 @@ Status EmbedLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_l
     // move input edges to gather (first in list) across to the embed_layer_norm_node.
     // move output definitions and output edges to embed_layer_norm_node.
     // remove all the other nodes.
-    std::vector<NodeIndex> nodes_to_remove;
+    Vector<NodeIndex> nodes_to_remove;
     if (p_shape_node != nullptr && p_expand_node != nullptr) {
       // Match Shape --> Gather --> Unsqueeze --> ConstantOfShape --> NonZero --> Transpose --> Squeeze --> Cast --> Unsqueeze --> Expand
       if (p_expand_node != nullptr) {
         Node& expand_node = *graph.GetNode(p_expand_node->Index());
-        std::vector<graph_utils::EdgeEndToMatch> expand_parent_path{
+        Vector<graph_utils::EdgeEndToMatch> expand_parent_path{
             {0, 0, "Unsqueeze", {1, 11}, kOnnxDomain},
             {0, 0, "Cast", {9}, kOnnxDomain},
             {0, 0, "Squeeze", {1}, kOnnxDomain},

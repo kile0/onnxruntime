@@ -49,7 +49,7 @@ class SequentialPlanner {
  public:
   // This API allows user to provide a custom planner context.
   static Status CreatePlan(const Node* parent_node, const onnxruntime::GraphViewer& graph,
-                           const std::vector<const NodeArg*>& outer_scope_node_args,
+                           const Vector<const NodeArg*>& outer_scope_node_args,
                            const ExecutionProviders& providers, const KernelRegistryManager& kernel_registry,
                            const OrtValueNameIdxMap& ort_value_name_idx_map, const ISequentialPlannerContext& context,
                            std::unique_ptr<SequentialExecutionPlan>& plan);

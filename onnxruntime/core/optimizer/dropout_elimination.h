@@ -18,7 +18,7 @@ class EliminateDropout : public RewriteRule {
  public:
   EliminateDropout() noexcept : RewriteRule("EliminateDropout") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Dropout"};
   }
 

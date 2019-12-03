@@ -59,13 +59,13 @@ tvm::Array<tvm::Expr> WeightLayoutVerticalStripe2D::ToActualShape(const tvm::Ten
   return new_shape;
 }
 
-std::vector<int64_t> WeightLayoutVerticalStripe2D::ToActualShape(const Tensor* X) const {
+Vector<int64_t> WeightLayoutVerticalStripe2D::ToActualShape(const Tensor* X) const {
   ORT_ENFORCE(X != nullptr);
   auto old_shape = X->Shape().GetDims();
 
   ORT_ENFORCE(old_shape.size() == 2);
 
-  std::vector<int64_t> new_shape = {
+  Vector<int64_t> new_shape = {
       (old_shape[1] + stripe_width_ - 1) / stripe_width_,
       old_shape[0],
       stripe_width_};

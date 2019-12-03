@@ -15,11 +15,11 @@ void TestSizeOp(const std::initializer_list<int64_t>& dims) {
   for (auto dim : dims)
     actual_size *= dim;
 
-  std::vector<int64_t> dim_vector(dims);
-  std::vector<T> input(actual_size);
+  Vector<int64_t> dim_vector(dims);
+  Vector<T> input(actual_size);
   test.AddInput<T>("A", dim_vector, input);
 
-  std::vector<int64_t> scalar_dims;
+  Vector<int64_t> scalar_dims;
   test.AddOutput<int64_t>("B", scalar_dims, {actual_size});
 
   //Run tests. Disable TensorRT EP because of dynamic shape or unsupported data types

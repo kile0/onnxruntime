@@ -51,13 +51,13 @@ IExecutionProvider* TestNnapiExecutionProvider();
 #endif
 
 template <typename T>
-inline void CopyVectorToTensor(const std::vector<T>& value, Tensor& tensor) {
+inline void CopyVectorToTensor(const Vector<T>& value, Tensor& tensor) {
   gsl::copy(gsl::make_span(value), tensor.MutableDataAsSpan<T>());
 }
 
 // vector<bool> is specialized so we need to handle it separately
 template <>
-inline void CopyVectorToTensor<bool>(const std::vector<bool>& value, Tensor& tensor) {
+inline void CopyVectorToTensor<bool>(const Vector<bool>& value, Tensor& tensor) {
   auto output_span = tensor.MutableDataAsSpan<bool>();
   for (size_t i = 0, end = value.size(); i < end; ++i) {
     output_span[i] = value[i];
@@ -65,7 +65,7 @@ inline void CopyVectorToTensor<bool>(const std::vector<bool>& value, Tensor& ten
 }
 
 template <typename T>
-void CreateMLValue(AllocatorPtr alloc, const std::vector<int64_t>& dims, const std::vector<T>& value,
+void CreateMLValue(AllocatorPtr alloc, const Vector<int64_t>& dims, const Vector<T>& value,
                    OrtValue* p_mlvalue) {
   TensorShape shape(dims);
   auto element_type = DataTypeImpl::GetType<T>();
@@ -82,7 +82,7 @@ void CreateMLValue(AllocatorPtr alloc, const std::vector<int64_t>& dims, const s
 }
 
 template <typename T>
-void AllocateMLValue(AllocatorPtr alloc, const std::vector<int64_t>& dims, OrtValue* p_mlvalue) {
+void AllocateMLValue(AllocatorPtr alloc, const Vector<int64_t>& dims, OrtValue* p_mlvalue) {
   TensorShape shape(dims);
   auto element_type = DataTypeImpl::GetType<T>();
   std::unique_ptr<Tensor> p_tensor = onnxruntime::make_unique<Tensor>(element_type,

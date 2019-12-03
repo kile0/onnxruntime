@@ -109,13 +109,13 @@ TEST(MathOpTest, Sign_uint64) {
   using namespace test_sign_internal;
   OpTester test("Sign", 9);
 
-  std::vector<int64_t> input_dims{7};
-  std::vector<uint64_t> input;
+  Vector<int64_t> input_dims{7};
+  Vector<uint64_t> input;
   GenerateSequence<uint64_t>(std::back_inserter(input));
   ASSERT_EQ(input.size(), 7U);
   test.AddInput<uint64_t>("input", input_dims, input);
 
-  std::vector<uint64_t> output;
+  Vector<uint64_t> output;
   TestImpl<uint64_t>(input.cbegin(), input.cend(), std::back_inserter(output));
   test.AddOutput<uint64_t>("output", input_dims, output);
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -125,13 +125,13 @@ TEST(MathOpTest, Sign_int64) {
   using namespace test_sign_internal;
   OpTester test("Sign", 9);
 
-  std::vector<int64_t> input_dims{7};
-  std::vector<int64_t> input;
+  Vector<int64_t> input_dims{7};
+  Vector<int64_t> input;
   GenerateSequence<int64_t>(std::back_inserter(input));
   ASSERT_EQ(input.size(), 7U);
   test.AddInput<int64_t>("input", input_dims, input);
 
-  std::vector<int64_t> output;
+  Vector<int64_t> output;
   TestImpl<int64_t>(input.cbegin(), input.cend(), std::back_inserter(output));
   test.AddOutput<int64_t>("output", input_dims, output);
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -141,13 +141,13 @@ TEST(MathOpTest, Sign_float) {
   using namespace test_sign_internal;
   OpTester test("Sign", 9);
 
-  std::vector<int64_t> input_dims{7};
-  std::vector<float> input;
+  Vector<int64_t> input_dims{7};
+  Vector<float> input;
   GenerateSequence<float>(std::back_inserter(input));
   ASSERT_EQ(input.size(), 7U);
   test.AddInput<float>("input", input_dims, input);
 
-  std::vector<float> output;
+  Vector<float> output;
   TestImpl<float>(input.cbegin(), input.cend(), std::back_inserter(output));
   test.AddOutput<float>("output", input_dims, output);
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -157,13 +157,13 @@ TEST(MathOpTest, Sign_double) {
   using namespace test_sign_internal;
   OpTester test("Sign", 9);
 
-  std::vector<int64_t> input_dims{7};
-  std::vector<double> input;
+  Vector<int64_t> input_dims{7};
+  Vector<double> input;
   GenerateSequence<double>(std::back_inserter(input));
   ASSERT_EQ(input.size(), 7U);
   test.AddInput<double>("input", input_dims, input);
 
-  std::vector<double> output;
+  Vector<double> output;
   TestImpl<double>(input.cbegin(), input.cend(), std::back_inserter(output));
   test.AddOutput<double>("output", input_dims, output);
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -172,13 +172,13 @@ TEST(MathOpTest, Sign_MLFloat16) {
   using namespace test_sign_internal;
   OpTester test("Sign", 9);
 
-  std::vector<int64_t> input_dims{7};
-  std::vector<MLFloat16> input;
+  Vector<int64_t> input_dims{7};
+  Vector<MLFloat16> input;
   GenerateSequence<MLFloat16>(std::back_inserter(input));
   ASSERT_EQ(input.size(), 7U);
   test.AddInput<MLFloat16>("input", input_dims, input);
 
-  std::vector<MLFloat16> output;
+  Vector<MLFloat16> output;
   TestImpl<MLFloat16>(input.cbegin(), input.cend(), std::back_inserter(output));
   test.AddOutput<MLFloat16>("output", input_dims, output);
   test.Run(OpTester::ExpectResult::kExpectSuccess);

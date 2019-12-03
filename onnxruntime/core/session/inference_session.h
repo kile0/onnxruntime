@@ -39,7 +39,7 @@ class ModelProto;
 
 struct OrtCustomOpDomain {
   std::string domain_;
-  std::vector<OrtCustomOp*> custom_ops_;
+  Vector<OrtCustomOp*> custom_ops_;
 };
 
 namespace onnxruntime {
@@ -77,10 +77,10 @@ struct ModelMetadata {
  *  NameMLValMap feeds;
  *  feeds.insert({});
  *  ...
- *  std::vector<std::string> output_names;
+ *  Vector<std::string> output_names;
  *  output_names.insert(...);
  *  ...
- *  std::vector<OrtValue> fetches;
+ *  Vector<OrtValue> fetches;
  *  common::Status status = session_object.Run(run_options, feeds, output_names, &fetches);
  *  process the output here...
  */
@@ -128,12 +128,12 @@ class InferenceSession {
     * When this list is provided ORT ignores the levels set in session options.
     * @return OK if success.
     */
-  common::Status AddCustomTransformerList(const std::vector<std::string>& transformers_to_enable);
+  common::Status AddCustomTransformerList(const Vector<std::string>& transformers_to_enable);
 
   /**
     * Add custom ops. This API is not thread safe.
     */
-  common::Status AddCustomOpDomains(const std::vector<OrtCustomOpDomain*>& ops);
+  common::Status AddCustomOpDomains(const Vector<OrtCustomOpDomain*>& ops);
 
   /**
     * Register a custom registry for operator schema and kernels.  If you've one to register,
@@ -179,9 +179,9 @@ class InferenceSession {
     */
   common::Status Initialize();
 
-  common::Status Run(const RunOptions& run_options, const std::vector<std::string>& feed_names,
-                     const std::vector<OrtValue>& feeds, const std::vector<std::string>& output_names,
-                     std::vector<OrtValue>* p_fetches);
+  common::Status Run(const RunOptions& run_options, const Vector<std::string>& feed_names,
+                     const Vector<OrtValue>& feeds, const Vector<std::string>& output_names,
+                     Vector<OrtValue>* p_fetches);
 
   /**
     * Run a pre-loaded and pre-intialized model.
@@ -193,16 +193,16 @@ class InferenceSession {
     *        This should not be changed during execution of this function.
     * @return OK if success.
     */
-  common::Status Run(const NameMLValMap& feeds, const std::vector<std::string>& output_names,
-                     std::vector<OrtValue>* p_fetches);
+  common::Status Run(const NameMLValMap& feeds, const Vector<std::string>& output_names,
+                     Vector<OrtValue>* p_fetches);
 
   /**
-   * See Run(const NameMLValMap& feeds, const std::vector<std::string>& output_names, std::vector<OrtValue>* p_fetches)
+   * See Run(const NameMLValMap& feeds, const Vector<std::string>& output_names, Vector<OrtValue>* p_fetches)
    * for details.
    * @param run_options use this to tune the Run call to your needs.
    */
   common::Status Run(const RunOptions& run_options, const NameMLValMap& feeds,
-                     const std::vector<std::string>& output_names, std::vector<OrtValue>* p_fetches);
+                     const Vector<std::string>& output_names, Vector<OrtValue>* p_fetches);
 
   /**
   * Creates a new binding object for binding inputs and outputs.
@@ -253,7 +253,7 @@ class InferenceSession {
     * Get the names of registered Execution Providers. The returned vector is ordered by Execution Provider
     * priority. The first provider in the vector has the highest priority.
     */
-  const std::vector<std::string>& GetRegisteredProviderTypes() const;
+  const Vector<std::string>& GetRegisteredProviderTypes() const;
 
   /*
    * Get the options this session was initialized with.
@@ -347,7 +347,7 @@ class InferenceSession {
 
   void AddPredefinedTransformers(GraphTransformerManager& transformer_manager,
                                  TransformerLevel graph_optimization_level,
-                                 const std::vector<std::string>& custom_list);
+                                 const Vector<std::string>& custom_list);
 
   void InitLogger(logging::LoggingManager* logging_manager);
 
@@ -355,9 +355,9 @@ class InferenceSession {
                              const TensorShape& input_shape,
                              const TensorShape& expected_shape) const;
 
-  common::Status ValidateInputs(const std::vector<std::string>& feed_names, const std::vector<OrtValue>& feeds) const;
+  common::Status ValidateInputs(const Vector<std::string>& feed_names, const Vector<OrtValue>& feeds) const;
 
-  common::Status ValidateOutputs(const std::vector<std::string>& output_names, const std::vector<OrtValue>* p_fetches) const;
+  common::Status ValidateOutputs(const Vector<std::string>& output_names, const Vector<OrtValue>* p_fetches) const;
 
   common::Status WaitForNotification(Notification* p_executor_done, int64_t timeout_in_ms);
 
@@ -374,7 +374,7 @@ class InferenceSession {
   // List of transformers to run. When this list is not empty only the transformers in this list
   // will be run regardless of the level set.
   // .i.e This list overrides both SessionOptions.graph_optimization_level and predefined transformers.
-  std::vector<std::string> transformers_to_enable_;
+  Vector<std::string> transformers_to_enable_;
 
   /// Logging manager if provided.
   logging::LoggingManager* logging_manager_ = nullptr;
@@ -403,7 +403,7 @@ class InferenceSession {
   std::list<std::shared_ptr<onnxruntime::IOnnxRuntimeOpSchemaCollection>> custom_schema_registries_;
 
   // A set of executors that can run in parallel.
-  std::vector<std::unique_ptr<IExecutor>> executors_;  // TODO do we need this vector?
+  Vector<std::unique_ptr<IExecutor>> executors_;  // TODO do we need this vector?
 
   ModelMetadata model_metadata_;
   std::unordered_set<std::string> required_inputs_;
@@ -433,7 +433,7 @@ class InferenceSession {
 
   //CustomRegistry objects own the corresponding KernelRegistry and OnnxRuntimeOpSchemaRegistry objects.
   //So its lifetime should be same as its constituents. This vector is to extend the lifetime of the owner.
-  std::vector<std::shared_ptr<CustomRegistry>> custom_registries_;
+  Vector<std::shared_ptr<CustomRegistry>> custom_registries_;
 
 #ifdef ENABLE_LANGUAGE_INTEROP_OPS
   InterOpDomains interop_domains_;

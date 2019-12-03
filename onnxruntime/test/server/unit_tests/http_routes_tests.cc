@@ -18,7 +18,7 @@ void do_something(const std::string& name, const std::string& version,
   auto noop = name + version + action + context.request.body();
 }
 
-void run_route(const std::string& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data);
+void run_route(const std::string& pattern, http::verb method, const Vector<test_data>& data, bool does_validate_data);
 
 TEST(HttpRouteTests, RegisterTest) {
   Routes routes;
@@ -30,7 +30,7 @@ TEST(HttpRouteTests, RegisterTest) {
 
 TEST(HttpRouteTests, PostRouteTest) {
 
-  std::vector<test_data> actions{
+  Vector<test_data> actions{
       std::make_tuple(http::verb::post, "/v1/models/abc/versions/23:predict", "abc", "23", "predict", http::status::ok),
       std::make_tuple(http::verb::post, "/v1/models/abc:predict", "abc", "", "predict", http::status::ok),
       std::make_tuple(http::verb::post, "/v1/models/models/versions/45:predict", "models", "45", "predict", http::status::ok),
@@ -46,7 +46,7 @@ TEST(HttpRouteTests, PostRouteTest) {
 
 TEST(HttpRouteTests, PostRouteInvalidURLTest) {
 
-  std::vector<test_data> actions{
+  Vector<test_data> actions{
       std::make_tuple(http::verb::post, "", "", "", "", http::status::not_found),
       std::make_tuple(http::verb::post, "/v1/models", "", "", "", http::status::not_found),
       std::make_tuple(http::verb::post, "/v1/models:predict", "", "", "", http::status::not_found),
@@ -69,7 +69,7 @@ TEST(HttpRouteTests, PostRouteInvalidURLTest) {
 // Some HTTP methods should be removed from test data if we support more (e.g. PUT)
 TEST(HttpRouteTests, PostRouteInvalidMethodTest) {
 
-  std::vector<test_data> actions{
+  Vector<test_data> actions{
       std::make_tuple(http::verb::get, "/v1/models/abc/versions/23:predict", "abc", "23", "predict", http::status::method_not_allowed),
       std::make_tuple(http::verb::put, "/v1/models", "", "", "", http::status::method_not_allowed),
       std::make_tuple(http::verb::delete_, "/v1/models", "", "", "", http::status::method_not_allowed),
@@ -80,14 +80,14 @@ TEST(HttpRouteTests, PostRouteInvalidMethodTest) {
 }
 
 TEST(HttpRouteTests, PostRouteSpecialMethodTest){
-  std::vector<test_data> actions{
+  Vector<test_data> actions{
     std::make_tuple(http::verb::post, "/score", "", "", "", http::status::ok)
   };
 
   run_route(R"(/score()()())", http::verb::post, actions, true);
 }
 
-void run_route(const std::string& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data) {
+void run_route(const std::string& pattern, http::verb method, const Vector<test_data>& data, bool does_validate_data) {
   Routes routes;
   EXPECT_TRUE(routes.RegisterController(method, pattern, do_something));
 

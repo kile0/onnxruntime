@@ -110,7 +110,7 @@ std::unique_ptr<Tensor> CreateTensor(AllocatorPtr alloc, const std::string& name
     // numpy requires long int as its dims.
     int ndim = PyArray_NDIM(darray);
     npy_intp* npy_dims = PyArray_DIMS(darray);
-    std::vector<int64_t> dims(ndim);
+    Vector<int64_t> dims(ndim);
     for (int i = 0; i < ndim; ++i) {
       dims[i] = npy_dims[i];
     }
@@ -318,8 +318,8 @@ template <typename KeyType, typename ValueType, typename KeyGetterType, typename
 void CreateMapMLValue_VectorMap(Py_ssize_t& pos, PyObject*& key, const std::string& name_input, PyObject*& value,
                                 PyObject* iterator, PyObject* item, AllocatorPtr /*alloc*/, OrtValue* p_mlvalue,
                                 KeyGetterType keyGetter, ValueGetterType valueGetter) {
-  std::unique_ptr<std::vector<std::map<KeyType, ValueType>>> dstVector;
-  dstVector = onnxruntime::make_unique<std::vector<std::map<KeyType, ValueType>>>();
+  std::unique_ptr<Vector<std::map<KeyType, ValueType>>> dstVector;
+  dstVector = onnxruntime::make_unique<Vector<std::map<KeyType, ValueType>>>();
   int index = 0;
   do {
     dstVector->push_back(std::map<KeyType, ValueType>());
@@ -328,8 +328,8 @@ void CreateMapMLValue_VectorMap(Py_ssize_t& pos, PyObject*& key, const std::stri
     ++index;
     item = iterator == NULL ? NULL : PyIter_Next(iterator);
   } while (item != NULL);
-  p_mlvalue->Init(dstVector.release(), DataTypeImpl::GetType<std::vector<std::map<KeyType, ValueType>>>(),
-                  DataTypeImpl::GetType<std::vector<std::map<KeyType, ValueType>>>()->GetDeleteFunc());
+  p_mlvalue->Init(dstVector.release(), DataTypeImpl::GetType<Vector<std::map<KeyType, ValueType>>>(),
+                  DataTypeImpl::GetType<Vector<std::map<KeyType, ValueType>>>()->GetDeleteFunc());
 }
 
 void CreateMapMLValue_AgnosticMap(Py_ssize_t& pos, PyObject*& key, const std::string& name_input, PyObject*& value,

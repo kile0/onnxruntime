@@ -27,6 +27,6 @@ class DataTransferManager {
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(DataTransferManager);
 
   // It's assumed that data transfers in this array have no overlap in terms of copying functionality.
-  std::vector<std::unique_ptr<IDataTransfer>> datatransfers_;
+  Vector<std::unique_ptr<IDataTransfer>> datatransfers_;
 };
 }  // namespace onnxruntime

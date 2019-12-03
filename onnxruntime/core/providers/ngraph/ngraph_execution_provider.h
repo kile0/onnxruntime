@@ -25,12 +25,12 @@ class NGRAPHExecutionProvider : public IExecutionProvider {
   explicit NGRAPHExecutionProvider(const NGRAPHExecutionProviderInfo& info);
   ~NGRAPHExecutionProvider() = default;
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                const std::vector<const KernelRegistry*>& kernel_registries) const override;
+                const Vector<const KernelRegistry*>& kernel_registries) const override;
 
-  Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                 std::vector<NodeComputeInfo>& node_compute_funcs) override;
+  Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                 Vector<NodeComputeInfo>& node_compute_funcs) override;
 
  private:
   std::shared_ptr<ngraph::runtime::Backend> ng_backend_;

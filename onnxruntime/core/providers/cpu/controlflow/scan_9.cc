@@ -108,10 +108,10 @@ class ScanImpl {
   ScanImpl(OpKernelContextInternal& context,
            const SessionState& session_state,
            const Scan<9>::Info& info,
-           const std::vector<int64_t>& input_directions,
-           const std::vector<int64_t>& output_directions,
-           const std::vector<int64_t>& input_axes,
-           const std::vector<int64_t>& output_axes,
+           const Vector<int64_t>& input_directions,
+           const Vector<int64_t>& output_directions,
+           const Vector<int64_t>& input_axes,
+           const Vector<int64_t>& output_axes,
            const scan::detail::DeviceHelpers& device_helpers);
 
   // Initialize by validating all the inputs, and allocating the output tensors
@@ -126,17 +126,17 @@ class ScanImpl {
   Status ValidateInput();
 
   Status ValidateSubgraphInput(int start_input, int end_input,
-                               const std::vector<const NodeArg*>& graph_inputs);
+                               const Vector<const NodeArg*>& graph_inputs);
 
   // setup inputs to subgraph, transposing if necessary
   Status SetupInputs();
 
   Status AllocateOutputTensors();
-  Status CreateLoopStateVariables(std::vector<LoopStateVariable>& loop_state_variables);
+  Status CreateLoopStateVariables(Vector<LoopStateVariable>& loop_state_variables);
   Status TransposeOutput();
 
-  using ConstTensorSlicerIterators = std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator>;
-  using MutableTensorSlicerIterators = std::vector<OrtValueTensorSlicer<OrtValue>::Iterator>;
+  using ConstTensorSlicerIterators = Vector<OrtValueTensorSlicer<const OrtValue>::Iterator>;
+  using MutableTensorSlicerIterators = Vector<OrtValueTensorSlicer<OrtValue>::Iterator>;
 
   OpKernelContextInternal& context_;
   const SessionState& session_state_;
@@ -144,16 +144,16 @@ class ScanImpl {
 
   int64_t sequence_len_ = -1;
 
-  const std::vector<int64_t>& input_directions_;
-  const std::vector<int64_t>& output_directions_;
-  const std::vector<int64_t>& input_axes_from_attribute_;
-  const std::vector<int64_t>& output_axes_from_attribute_;
-  std::vector<int64_t> input_axes_;
+  const Vector<int64_t>& input_directions_;
+  const Vector<int64_t>& output_directions_;
+  const Vector<int64_t>& input_axes_from_attribute_;
+  const Vector<int64_t>& output_axes_from_attribute_;
+  Vector<int64_t> input_axes_;
 
   // inputs for graph. either original input value or transposed input if an axis other than 0 was specified
-  std::vector<OrtValue> inputs_;
-  std::vector<std::unique_ptr<OutputIterator>> output_iterators_;
-  const std::vector<const OrtValue*>& implicit_inputs_;
+  Vector<OrtValue> inputs_;
+  Vector<std::unique_ptr<OutputIterator>> output_iterators_;
+  const Vector<const OrtValue*>& implicit_inputs_;
 
   const scan::detail::DeviceHelpers& device_helpers_;
 };
@@ -180,7 +180,7 @@ Scan<9>::Scan(const OpKernelInfo& info) : OpKernel(info) {
     ORT_ENFORCE(gsl::narrow_cast<int64_t>(input_axes_.size()) == num_scan_inputs_,
                 "Number of entries in 'scan_input_axes' was ", input_axes_.size(), " but expected ", num_scan_inputs_);
   } else {
-    input_axes_ = std::vector<int64_t>(num_scan_inputs_, 0);
+    input_axes_ = Vector<int64_t>(num_scan_inputs_, 0);
   }
 
   if (info.GetAttrs<int64_t>("scan_output_axes", output_axes_).IsOK()) {
@@ -188,7 +188,7 @@ Scan<9>::Scan(const OpKernelInfo& info) : OpKernel(info) {
                 "Number of entries in 'scan_output_axes' was ", output_axes_.size(), " but expected ",
                 num_scan_outputs);
   } else {
-    output_axes_ = std::vector<int64_t>(num_scan_outputs, 0);
+    output_axes_ = Vector<int64_t>(num_scan_outputs, 0);
   }
 
   device_helpers_.transpose_func = TransposeBase::DoTranspose;
@@ -242,10 +242,10 @@ Status Scan<9>::Compute(OpKernelContext* ctx) const {
 ScanImpl::ScanImpl(OpKernelContextInternal& context,
                    const SessionState& session_state,
                    const Scan<9>::Info& info,
-                   const std::vector<int64_t>& input_directions,
-                   const std::vector<int64_t>& output_directions,
-                   const std::vector<int64_t>& input_axes,
-                   const std::vector<int64_t>& output_axes,
+                   const Vector<int64_t>& input_directions,
+                   const Vector<int64_t>& output_directions,
+                   const Vector<int64_t>& input_axes,
+                   const Vector<int64_t>& output_axes,
                    const scan::detail::DeviceHelpers& device_helpers)
     : context_(context),
       session_state_(session_state),
@@ -274,7 +274,7 @@ Status ScanImpl::Initialize() {
 }
 
 Status ScanImpl::ValidateSubgraphInput(int start_input, int end_input,
-                                       const std::vector<const NodeArg*>& graph_inputs) {
+                                       const Vector<const NodeArg*>& graph_inputs) {
   // sequence dim is all that's required as a scalar input will only have that
   auto min_dims_required = 1;
 
@@ -351,8 +351,8 @@ Status ScanImpl::SetupInputs() {
       auto& input_tensor = *context_.Input<Tensor>(i + info_.num_loop_state_variables);
       const auto& input_shape = input_tensor.Shape();
 
-      std::vector<size_t> permutations;
-      std::vector<int64_t> new_shape;
+      Vector<size_t> permutations;
+      Vector<int64_t> new_shape;
       CalculateTransposedShapeForInput(input_shape, sequence_dim, permutations, new_shape);
 
       if (!alloc) {
@@ -411,7 +411,7 @@ Status ScanImpl::AllocateOutputTensors() {
   return Status::OK();
 }
 
-Status ScanImpl::CreateLoopStateVariables(std::vector<LoopStateVariable>& loop_state_variables) {
+Status ScanImpl::CreateLoopStateVariables(Vector<LoopStateVariable>& loop_state_variables) {
   AllocatorPtr alloc;
   auto status = context_.GetTempSpaceAllocator(&alloc);
   ORT_RETURN_IF_ERROR(status);
@@ -432,12 +432,12 @@ Status ScanImpl::CreateLoopStateVariables(std::vector<LoopStateVariable>& loop_s
 Status ScanImpl::Execute(const FeedsFetchesManager& ffm) {
   Status status = Status::OK();
 
-  std::vector<LoopStateVariable> loop_state_variables;
+  Vector<LoopStateVariable> loop_state_variables;
   status = CreateLoopStateVariables(loop_state_variables);
   ORT_RETURN_IF_ERROR(status);
 
   // Setup input OrtValue streams
-  std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator> scan_input_stream_iterators;
+  Vector<OrtValueTensorSlicer<const OrtValue>::Iterator> scan_input_stream_iterators;
   scan_input_stream_iterators.reserve(info_.num_inputs - info_.num_loop_state_variables);
 
   for (int i = 0, end = info_.num_scan_inputs; i < end; ++i) {
@@ -484,8 +484,8 @@ Status ScanImpl::TransposeOutput() {
         return ORT_MAKE_STATUS(ONNXRUNTIME, INVALID_ARGUMENT, "Invalid value in scan_output_axes for output ", i,
                                " of ", axis, ". Output tensor rank was ", output_rank);
 
-      std::vector<size_t> permutations;
-      std::vector<int64_t> new_shape;
+      Vector<size_t> permutations;
+      Vector<int64_t> new_shape;
       CalculateTransposedShapeForOutput(temporary_output_tensor.Shape(), axis, permutations, new_shape);
 
       Tensor* output = context_.Output(output_index, new_shape);

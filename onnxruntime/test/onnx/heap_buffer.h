@@ -26,8 +26,8 @@ class HeapBuffer {
   void AddDeleter(OrtCallback* d);
 
  private:
-  std::vector<OrtCallback*> deleters_;
-  std::vector<void*> buffers_;
+  Vector<OrtCallback*> deleters_;
+  Vector<void*> buffers_;
 };
 }  // namespace test
 }  // namespace onnxruntime

@@ -132,9 +132,9 @@ class ValidNodes {
 /**
 Class that provides iteration over all valid nodes in the Graph. 
 */
-class GraphNodes : public ValidNodes<std::vector<std::unique_ptr<Node>>> {
+class GraphNodes : public ValidNodes<Vector<std::unique_ptr<Node>>> {
  public:
-  GraphNodes(std::vector<std::unique_ptr<Node>>& nodes) : ValidNodes(nodes) {}
+  GraphNodes(Vector<std::unique_ptr<Node>>& nodes) : ValidNodes(nodes) {}
 };
 
 }  // namespace onnxruntime

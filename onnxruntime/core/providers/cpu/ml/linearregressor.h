@@ -19,8 +19,8 @@ class LinearRegressor final : public OpKernel {
 
  private:
   int64_t targets_;
-  std::vector<float> coefficients_;
-  std::vector<float> intercepts_;
+  Vector<float> coefficients_;
+  Vector<float> intercepts_;
   POST_EVAL_TRANSFORM post_transform_;
 };
 

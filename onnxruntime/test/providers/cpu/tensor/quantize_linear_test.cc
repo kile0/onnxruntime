@@ -9,7 +9,7 @@ namespace test {
 // scalar zero & scale with uint8
 TEST(DequantizeLinearOpTest, DequantizeLinear_0) {
   OpTester test("DequantizeLinear", 10);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<uint8_t>("x", dims, {0, 3, 128, 255});
   test.AddInput<float>("x_scale", {}, {2.0f});
   test.AddInput<uint8_t>("x_zero_point", {}, {128});
@@ -20,7 +20,7 @@ TEST(DequantizeLinearOpTest, DequantizeLinear_0) {
 // scalar zero & scale with int8
 TEST(DequantizeLinearOpTest, DequantizeLinear_1) {
   OpTester test("DequantizeLinear", 10);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int8_t>("x", dims, {-30, -3, 100, 127});
   test.AddInput<float>("x_scale", {}, {2.0f});
   test.AddInput<int8_t>("x_zero_point", {}, {-10});
@@ -31,7 +31,7 @@ TEST(DequantizeLinearOpTest, DequantizeLinear_1) {
 // 2d inputs
 TEST(DequantizeLinearOpTest, DequantizeLinear_2) {
   OpTester test("DequantizeLinear", 10);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<uint8_t>("X", dims,
                          {0, 1, 2, 3,
                           0, 1, 2, 3,
@@ -49,7 +49,7 @@ TEST(DequantizeLinearOpTest, DequantizeLinear_2) {
 // quantize with scalar zero point and scale
 TEST(QuantizeLinearOpTest, QuantizeLinear_uint8) {
   OpTester test("QuantizeLinear", 10);
-  std::vector<int64_t> dims{6};
+  Vector<int64_t> dims{6};
   test.AddInput<float>("x", dims, {0, 2, 3, 1000, -254, -1000});
   test.AddInput<float>("y_scale", {}, {2.0f});
   test.AddInput<uint8_t>("y_zero_point", {}, {128});
@@ -60,7 +60,7 @@ TEST(QuantizeLinearOpTest, QuantizeLinear_uint8) {
 // quantize with scalar zero point and scale
 TEST(QuantizeLinearOpTest, QuantizeLinear_int8) {
   OpTester test("QuantizeLinear", 10);
-  std::vector<int64_t> dims{6};
+  Vector<int64_t> dims{6};
   test.AddInput<float>("x", dims, {0, 2, 3, 5, -2, -5});
   test.AddInput<float>("y_scale", {}, {.039215686f});
   test.AddInput<int8_t>("y_zero_point", {}, {0});
@@ -71,7 +71,7 @@ TEST(QuantizeLinearOpTest, QuantizeLinear_int8) {
 // quantize with 2D data
 TEST(QuantizeLinearOpTest, QuantizeLinear_1) {
   OpTester test("QuantizeLinear", 10);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<float>("X", dims,
                        {0, 2, 3, 1000,
                         0, 2, 3, 1000,

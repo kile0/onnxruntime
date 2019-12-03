@@ -138,7 +138,7 @@ Status OneHotOp<in_type, out_type, depth_type>::Compute(OpKernelContext* p_op_ke
   const auto& indices_shape = indices->Shape();
   const auto& indices_dims = indices_shape.GetDims();
   const auto indices_num_dims = indices_shape.NumDimensions();
-  std::vector<int64_t> output_shape(indices_shape.GetDims());
+  Vector<int64_t> output_shape(indices_shape.GetDims());
 
   // output rank is always 1 more than the input rank as a new dimension is added to the input shape
   const auto output_rank = static_cast<int64_t>(indices_num_dims + 1);
@@ -177,7 +177,7 @@ Status OneHotOp<in_type, out_type, depth_type>::Compute(OpKernelContext* p_op_ke
   // since generator has much larger loops.
   const auto* indices_data = indices->Data<in_type>();
   const auto indices_size = indices_shape.Size();
-  std::vector<in_type> adjusted_indices;
+  Vector<in_type> adjusted_indices;
   adjusted_indices.reserve(indices_size);
   for (int64_t i = 0; i < indices_size; ++i) {
     if (indices_data[i] < 0)

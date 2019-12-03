@@ -26,7 +26,7 @@ NupharKernelState::NupharKernelState(
       ctx_(ctx) {
   partition_info_ = onnxruntime::make_unique<OrtSubgraphAllocationInfo>(node);
 
-  std::vector<NupharSubgraphUnit> subgraphs;
+  Vector<NupharSubgraphUnit> subgraphs;
 
   // create a partitioner
   SubgraphPartitioner subgraph_partitioner;
@@ -67,7 +67,7 @@ void NupharKernelState::Compile(const NupharSubgraphUnit& subgraph) {
   }
 }
 
-void NupharKernelState::BuildExecBlocksAndCalls(const std::vector<NupharSubgraphUnit>& subgraphs) {
+void NupharKernelState::BuildExecBlocksAndCalls(const Vector<NupharSubgraphUnit>& subgraphs) {
   // create ExecBlocks
   for (size_t idx = 0; idx < subgraphs.size(); ++idx) {
     CreateExecBlock(exec_blocks_,
@@ -192,7 +192,7 @@ ONNX_OPERATOR_VERSIONED_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 
@@ -203,7 +203,7 @@ ONNX_OPERATOR_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 
@@ -214,7 +214,7 @@ ONNX_OPERATOR_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 
@@ -271,7 +271,7 @@ ONNX_OPERATOR_VERSIONED_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 
@@ -282,7 +282,7 @@ ONNX_OPERATOR_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 
@@ -293,7 +293,7 @@ ONNX_OPERATOR_KERNEL_EX(
     kNupharExecutionProvider,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllFixedSizeTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     nuphar::NupharKernel);
 

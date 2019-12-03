@@ -12,11 +12,11 @@ namespace nuphar {
 
 bool NodeArgShapeUnknownOnAxis(const NodeArg* def, int64_t axis);
 
-bool HasUnknownShapeOnAxis(const ConstPointerContainer<std::vector<NodeArg*>>& defs, int64_t axis);
+bool HasUnknownShapeOnAxis(const ConstPointerContainer<Vector<NodeArg*>>& defs, int64_t axis);
 
-bool HasUnknownShapeOnAxes(const NodeArg* def, std::vector<int64_t>& axes);
+bool HasUnknownShapeOnAxes(const NodeArg* def, Vector<int64_t>& axes);
 
-Status GetVectorInt64FromTensorProto(std::vector<int64_t>& v,
+Status GetVectorInt64FromTensorProto(Vector<int64_t>& v,
                                      const ONNX_NAMESPACE::TensorProto& tp);
 
 }  // namespace nuphar

@@ -18,8 +18,8 @@ public:
     {
         DmlOperator::Initialize(kernelInfo);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ROI_POOLING_OPERATOR_DESC poolingDesc = {};
         poolingDesc.InputTensor = &inputDescs[0];

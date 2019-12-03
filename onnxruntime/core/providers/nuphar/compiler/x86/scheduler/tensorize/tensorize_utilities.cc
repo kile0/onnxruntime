@@ -103,7 +103,7 @@ tvm::Expr Reinterpret(tvm::Type type,
                        {expr});
 }
 
-tvm::Stmt MergeStmts(std::vector<tvm::Stmt>& stmts) {
+tvm::Stmt MergeStmts(Vector<tvm::Stmt>& stmts) {
   if (stmts.size() == 0)
     return tvm::ir::Evaluate::make(0);
 

@@ -274,9 +274,9 @@ class SparseTensorTests : public testing::Test {
   Model model;
   Graph& graph;
 
-  std::vector<OpSchema> schemas;
-  std::vector<Action> register_actions;
-  std::vector<TypeProto> types;
+  Vector<OpSchema> schemas;
+  Vector<Action> register_actions;
+  Vector<TypeProto> types;
 
  public:
   SparseTensorTests() : session_object(SessionOptions(), &DefaultLoggingManager()),
@@ -336,17 +336,17 @@ class SparseTensorTests : public testing::Test {
     return &arg;
   }
 
-  void Node(std::string op, const std::vector<NodeArg*> inputs, const std::vector<NodeArg*> outputs) {
+  void Node(std::string op, const Vector<NodeArg*> inputs, const Vector<NodeArg*> outputs) {
     auto& node = graph.AddNode("", op, "", inputs, outputs, nullptr, onnxruntime::kMLDomain);
     node.SetExecutionProviderType(onnxruntime::kCpuExecutionProvider);
   }
 
-  MLValue Constant(const std::vector<int64_t>& elts) {
-    const std::vector<int64_t> shape{static_cast<int64_t>(elts.size())};
+  MLValue Constant(const Vector<int64_t>& elts) {
+    const Vector<int64_t> shape{static_cast<int64_t>(elts.size())};
     return Constant(elts, shape);
   }
 
-  MLValue Constant(const std::vector<int64_t>& elts, const std::vector<int64_t>& shape) {
+  MLValue Constant(const Vector<int64_t>& elts, const Vector<int64_t>& shape) {
     MLValue mlvalue;
     CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), shape, elts, &mlvalue);
     return mlvalue;
@@ -354,11 +354,11 @@ class SparseTensorTests : public testing::Test {
 
   NameMLValMap feeds;
 
-  void AddInput(NodeArg* arg, const std::vector<int64_t>& value) {
+  void AddInput(NodeArg* arg, const Vector<int64_t>& value) {
     feeds[arg->Name()] = Constant(value);
   }
 
-  void AddInput(NodeArg* arg, const std::vector<int64_t>& value, const std::vector<int64_t>& shape) {
+  void AddInput(NodeArg* arg, const Vector<int64_t>& value, const Vector<int64_t>& shape) {
     feeds[arg->Name()] = Constant(value, shape);
   }
 
@@ -374,7 +374,7 @@ class SparseTensorTests : public testing::Test {
     }
   }
 
-  void ExpectEq(MLValue val1, const std::vector<int64_t>& data2) {
+  void ExpectEq(MLValue val1, const Vector<int64_t>& data2) {
     // Restricted to case where val1 is an int64_t tensor
     auto& tensor1 = val1.Get<Tensor>();
     EXPECT_EQ(static_cast<uint64_t>(tensor1.Shape().Size()), data2.size());
@@ -384,17 +384,17 @@ class SparseTensorTests : public testing::Test {
     }
   }
 
-  std::vector<std::string> output_names;
-  std::vector<MLValue> expected_output;
+  Vector<std::string> output_names;
+  Vector<MLValue> expected_output;
 
-  void ExpectOutput(NodeArg* arg, const std::vector<int64_t>& value) {
+  void ExpectOutput(NodeArg* arg, const Vector<int64_t>& value) {
     output_names.push_back(arg->Name());
     expected_output.push_back(Constant(value));
   }
 
   void RunTest() {
     RunOptions run_options;
-    std::vector<MLValue> fetches;
+    Vector<MLValue> fetches;
 
     EXPECT_TRUE(session_object.Run(run_options, feeds, output_names, &fetches).IsOK());
 

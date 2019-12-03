@@ -17,8 +17,8 @@ public:
     {
         DmlOperator::Initialize(kernelCreationContext);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         ML_CHECK_VALID_ARGUMENT(inputDescs.size() == 1);
         ML_CHECK_VALID_ARGUMENT(outputDescs.size() == 2);
 
@@ -41,8 +41,8 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext) override
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
 
         ExecuteZeroInt64Tensor(m_zeroOperator.Get(), outputTensors[1]);
 

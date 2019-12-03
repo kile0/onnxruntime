@@ -15,7 +15,7 @@ namespace onnxruntime {
 Status ShapeToInitializer::Apply(Graph& graph, Node& node, RewriteRuleEffect& rule_effect, const logging::Logger&) const {
   // Store the statically inferred shape of the input to the Shape operator.
   const ONNX_NAMESPACE::TensorShapeProto* input_shape_proto = node.InputDefs()[0]->Shape();
-  std::vector<int64_t> input_dims;
+  Vector<int64_t> input_dims;
   int num_dimensions = input_shape_proto->dim_size();
   for (int i = 0; i < num_dimensions; i++) {
     input_dims.push_back(gsl::narrow_cast<int64_t>(input_shape_proto->dim(i).dim_value()));

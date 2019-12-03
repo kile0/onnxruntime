@@ -85,7 +85,7 @@ static void FillBasicFuncInfo(NupharFuncInfo* func_info,
 
   // Handle initializers
   // Initializer meta
-  std::vector<const Tensor*>& intializers = func_info->intializers;
+  Vector<const Tensor*>& intializers = func_info->intializers;
   // Assign Initializer meta
   for (const auto& item : codegen_ctx.GetWeightLayoutMap()) {
     const WeightLayoutCodegenInfo* layout_info = item.second.get();
@@ -226,17 +226,17 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
   scan_info->num_scan_implicit_inputs = gsl::narrow_cast<int64_t>(node.ImplicitInputDefs().size());
 
   // ScanExecInfo's control flow Meta
-  std::vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
-  std::vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
-  std::vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
-  std::vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
+  Vector<bool>& scan_input_forwards = scan_info->scan_input_forwards;
+  Vector<bool>& scan_output_forwards = scan_info->scan_output_forwards;
+  Vector<int64_t>& scan_input_axes = scan_info->scan_input_axes;
+  Vector<int64_t>& scan_output_axes = scan_info->scan_output_axes;
 
   scan_input_forwards.resize(num_scan_inputs);
   scan_output_forwards.resize(num_scan_outputs);
 
   // extract directions and axes
-  std::vector<int64_t> scan_input_directions;
-  std::vector<int64_t> scan_output_directions;
+  Vector<int64_t> scan_input_directions;
+  Vector<int64_t> scan_output_directions;
 
   // scan_input_directions
   if (attrs.GetAttrs<int64_t>("scan_input_directions", scan_input_directions).IsOK()) {
@@ -249,7 +249,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
                 "Invalid values in 'scan_input_directions'. 0 == forward. 1 == reverse.");
   } else {
     // default to forward
-    scan_input_directions = std::vector<int64_t>(num_scan_inputs, 0);
+    scan_input_directions = Vector<int64_t>(num_scan_inputs, 0);
   }
 
   // scan_input_forwards
@@ -268,7 +268,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
                 "Invalid values in 'scan_output_directions'. 0 == forward. 1 == reverse.");
   } else {
     // default to forward
-    scan_output_directions = std::vector<int64_t>(num_scan_outputs, 0);
+    scan_output_directions = Vector<int64_t>(num_scan_outputs, 0);
   }
 
   // scan_output_forwards
@@ -284,7 +284,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
 
   } else {
     // default to axis 0
-    scan_input_axes = std::vector<int64_t>(num_scan_inputs, 0);
+    scan_input_axes = Vector<int64_t>(num_scan_inputs, 0);
   }
 
   // scan_output_axes
@@ -295,7 +295,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
 
   } else {
     // default to axis 0
-    scan_output_axes = std::vector<int64_t>(num_scan_outputs, 0);
+    scan_output_axes = Vector<int64_t>(num_scan_outputs, 0);
   }
 
   // handle NupharFuncInfo
@@ -396,7 +396,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
     input_meta.dtype = OrtTypeInfo::ElementTypeFromProto(def->TypeAsProto()->tensor_type().elem_type());
     input_meta.ort_arg_index = gsl::narrow_cast<int>(ort_input_idx);
 
-    std::vector<std::pair<size_t, std::string>> symbols;
+    Vector<std::pair<size_t, std::string>> symbols;
     for (int dim = 0; dim < gsl::narrow<int>(ShapeRank(def)); ++dim) {
       if (ShapeHasSymbol(def, dim)) {
         auto p = std::make_pair(gsl::narrow<size_t>(dim), ShapeSymbol(def, dim));
@@ -415,7 +415,7 @@ static void FillScanExecInfo(NupharFuncInfo* func_info,
 
   // Handle initializers
   // Initializer meta
-  std::vector<const Tensor*>& intializers = func_info->intializers;
+  Vector<const Tensor*>& intializers = func_info->intializers;
 
   // Assign Initializer meta
   for (const auto& item : codegen_ctx.GetWeightLayoutMap()) {

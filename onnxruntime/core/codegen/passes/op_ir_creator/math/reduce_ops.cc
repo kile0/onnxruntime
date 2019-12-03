@@ -14,7 +14,7 @@ namespace onnxruntime {
 namespace tvm_codegen {
 
 using ReduceIndexedFunc = tvm::Tensor (*)(const tvm::Tensor& X, int64_t axis, bool keep_dims, const std::string& name);
-using ReduceFunc = tvm::Tensor (*)(const tvm::Tensor& X, const std::vector<int64_t>& axes, bool keep_dims, const std::string& name);
+using ReduceFunc = tvm::Tensor (*)(const tvm::Tensor& X, const Vector<int64_t>& axes, bool keep_dims, const std::string& name);
 
 // helper class for for REDUCE_INDEXED_OP
 class FuncReduceIndexed {
@@ -58,7 +58,7 @@ class FuncReduce {
   }
 
   tvm::Tensor operator()(const tvm::Tensor& X) const {
-    std::vector<int64_t> axes;
+    Vector<int64_t> axes;
     for (auto i : axes_)
       axes.push_back(HandleNegativeAxis(i, gsl::narrow_cast<int64_t>(X->shape.size())));
 
@@ -66,7 +66,7 @@ class FuncReduce {
   }
 
  private:
-  std::vector<int64_t> axes_;
+  Vector<int64_t> axes_;
   bool keep_dims_;
   ReduceFunc func_;
   std::string name_;

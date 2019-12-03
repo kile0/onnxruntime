@@ -25,7 +25,7 @@ namespace SchemaInferenceOverrider
 
         auto schema = const_cast<onnx::OpSchema*>(onnx::OpSchemaRegistry::Schema(name, version));
 
-        std::vector<uint32_t> constantCpuInputsCapture(constantCpuInputs.begin(), constantCpuInputs.end());
+        Vector<uint32_t> constantCpuInputsCapture(constantCpuInputs.begin(), constantCpuInputs.end());
         schema->TypeAndShapeInferenceFunction([=](onnx::InferenceContext& ctx) {
             onnxruntime::OpNodeProtoHelper<onnx::InferenceContext> nodeInfo(&ctx);
 
@@ -68,7 +68,7 @@ OverrideSchemaInferenceFunction<OperatorHelper::ShapeInferenceHelper_##opName>( 
 #pragma push_macro("OVERRIDE_SCHEMA_EX")
 #define OVERRIDE_SCHEMA_EX(version, isLatest, opName, shapeInferenceName, ...) \
 OverrideSchemaInferenceFunction<OperatorHelper::ShapeInferenceHelper_##shapeInferenceName>( \
-    #opName, OperatorHelper::OnnxOperatorSet##version##::sc_sinceVer_##opName, isLatest, std::vector<uint32_t>({##__VA_ARGS__}));
+    #opName, OperatorHelper::OnnxOperatorSet##version##::sc_sinceVer_##opName, isLatest, Vector<uint32_t>({##__VA_ARGS__}));
 
     inline void OverrideSchemaInferenceFunctions()
     {

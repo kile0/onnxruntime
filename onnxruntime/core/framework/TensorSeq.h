@@ -21,7 +21,7 @@ struct TensorSeq {
 
   // TODO: optimization opportunity - if all tensors in the seq are scalars, we can potentially represent them
   // as vector<primitive type>
-  std::vector<Tensor> tensors;
+  Vector<Tensor> tensors;
 };
 
 template <typename TensorElemType>

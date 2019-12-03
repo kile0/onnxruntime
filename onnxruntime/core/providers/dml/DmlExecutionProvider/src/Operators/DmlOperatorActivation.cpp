@@ -20,7 +20,7 @@ public:
         // Activation has a single output which is mapped to the first kernel output.  Specifying
         // this manually avoids a problem when activation is used to implement dropout, which may
         // have a 'mask' output which is unused during inference.
-        std::vector<std::optional<uint32_t>> kernelOutputIndices = {0};
+        Vector<std::optional<uint32_t>> kernelOutputIndices = {0};
         DmlOperator::Initialize(kernelCreationContext, std::nullopt, kernelOutputIndices);
 
         ActivationOperatorDescUnion operatorDesc = {};
@@ -105,8 +105,8 @@ public:
         }
 
         gsl::span<const uint32_t> outputSizes = m_outputTensorDescs[0].GetSizes();
-        std::vector<DML_TENSOR_DESC> inputDescs;
-        std::vector<DML_TENSOR_DESC> outputDescs;
+        Vector<DML_TENSOR_DESC> inputDescs;
+        Vector<DML_TENSOR_DESC> outputDescs;
 
         if (operatorType == DML_OPERATOR_ACTIVATION_PARAMETERIZED_RELU)
         {

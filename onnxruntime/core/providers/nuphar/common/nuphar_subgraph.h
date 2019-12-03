@@ -63,21 +63,21 @@ struct NupharSubgraphUnit {
     id_ = counter++;
   }
 
-  std::vector<const Node*> nodes;
+  Vector<const Node*> nodes;
 
   // inputs include each input of this NupharSubgraphUnit (input of Partition AND this NupharSubgraphUnit at the same time)
   // it also includes initializers
-  std::vector<const NodeArg*> inputs;
+  Vector<const NodeArg*> inputs;
 
   // outputs include each output of this NupharSubgraphUnit and real_output (output of Partition AND this NupharSubgraphUnit at the same time)
-  std::vector<const NodeArg*> outputs;
+  Vector<const NodeArg*> outputs;
 
   // initializers include each intializer of this NupharSubgraphUnit
   std::map<std::string, const Tensor*> initializers;
 
   // optional
-  std::vector<NodeArgTileAttribute> input_attrs;
-  std::vector<NodeArgTileAttribute> output_attrs;
+  Vector<NodeArgTileAttribute> input_attrs;
+  Vector<NodeArgTileAttribute> output_attrs;
 
   bool IsSingleNode() const {
     return nodes.size() == 1;

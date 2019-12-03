@@ -23,8 +23,8 @@ class MklDnnPool : public MklDnnKernel {
 
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
-                        mkldnn::engine& cpu_engine, std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
+                        mkldnn::engine& cpu_engine, Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
     Ort::CustomOpApi ort{*api};
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
 
@@ -73,7 +73,7 @@ class MklDnnPool : public MklDnnKernel {
     }
 
     const auto& x_dims = x_shape_.GetDims();
-    std::vector<int64_t> y_dims = SetOutputSize(x_shape_, x_shape_[1], &pads_);
+    Vector<int64_t> y_dims = SetOutputSize(x_shape_, x_shape_[1], &pads_);
     primitive_dst_shape_ = TensorShape(y_dims);
 
     if (x_shape_.NumDimensions() <= 3) {
@@ -325,11 +325,11 @@ class MklDnnPool : public MklDnnKernel {
     return fmt;
   }
 
-  std::vector<int64_t> SetOutputSize(const TensorShape& input_shape,
+  Vector<int64_t> SetOutputSize(const TensorShape& input_shape,
                                      int64_t output_channel,
-                                     std::vector<int64_t>* pads) const {
+                                     Vector<int64_t>* pads) const {
     ORT_ENFORCE(input_shape.Size() > 0);
-    std::vector<int64_t> output_dims;
+    Vector<int64_t> output_dims;
     int64_t N = input_shape[0];
     InferOutputSize(input_shape.GetDims(), &output_dims, pads);
 
@@ -338,9 +338,9 @@ class MklDnnPool : public MklDnnKernel {
     return output_dims;
   }
 
-  inline void InferOutputSize(const std::vector<int64_t>& input_dims,
-                              std::vector<int64_t>* output_dims,
-                              std::vector<int64_t>* pads) const {
+  inline void InferOutputSize(const Vector<int64_t>& input_dims,
+                              Vector<int64_t>* output_dims,
+                              Vector<int64_t>* pads) const {
     ORT_ENFORCE(input_dims.size() >= 2);
     if (global_pooling_) {
       output_dims->assign(input_dims.size() - 2, 1);
@@ -406,9 +406,9 @@ class MklDnnPool : public MklDnnKernel {
   bool global_pooling_{};
   bool count_include_pad_{};
   int64_t storage_order_{0};  // MaxPool_8 only. 0 is row major, and 1 is column major. Default is 0.
-  std::vector<int64_t> kernel_shape_;
-  std::vector<int64_t> pads_;
-  std::vector<int64_t> strides_;
+  Vector<int64_t> kernel_shape_;
+  Vector<int64_t> pads_;
+  Vector<int64_t> strides_;
   AutoPadType auto_pad_;
 
   TensorShape x_shape_;

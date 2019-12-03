@@ -28,7 +28,7 @@ ONNX_CPU_OPERATOR_VERSIONED_KERNEL(
     KernelDefBuilder()
         .MayInplace(0, 0)
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(), DataTypeImpl::GetTensorType<int64_t>()}),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(), DataTypeImpl::GetTensorType<int64_t>()}),
     Scatter);
 
 ONNX_CPU_OPERATOR_KERNEL(
@@ -37,7 +37,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     KernelDefBuilder()
         .MayInplace(0, 0)
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(), DataTypeImpl::GetTensorType<int64_t>()}),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(), DataTypeImpl::GetTensorType<int64_t>()}),
     Scatter);
 
 template <class Tin, class Tdata>
@@ -47,7 +47,7 @@ Status CopyScatterData(const Tensor* data_input, const Tensor* indices_input, co
   const Tin* indices_data_raw = indices_input->template Data<Tin>();
   const auto num_indices = indices_input->Shape().Size();
 
-  std::vector<Tin> indices_data;
+  Vector<Tin> indices_data;
   indices_data.reserve(num_indices);
 
   auto axis_dim_limit = input_data_shape[axis];
@@ -101,7 +101,7 @@ Status CopyScatterData(const Tensor* data_input, const Tensor* indices_input, co
   // different cardinality according to the upd_shape dimensions.
   // As each counter reaches its max (upd_shape) it resets to zero
   // and we carry to the more significant dim (right to left)
-  std::vector<int64_t> dim_counters(num_dims);
+  Vector<int64_t> dim_counters(num_dims);
 
   // This vector contains number of elements under the dimension.
   // For example, for the dimensions of [4, 2, 3] the vector
@@ -119,7 +119,7 @@ Status CopyScatterData(const Tensor* data_input, const Tensor* indices_input, co
   // for axis 1
   //    output[i][indices[i][j][k]][k] = updates[i][j][k]
   // and so on
-  std::vector<int64_t> dim_block_size(num_dims);
+  Vector<int64_t> dim_block_size(num_dims);
 
   dim_block_size.back() = 1;
   if (num_dims > 1) {

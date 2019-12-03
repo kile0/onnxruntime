@@ -27,7 +27,7 @@ Status Concat::ComputeInternal(OpKernelContext* ctx) const {
   auto input_count = Node().InputArgCount().front();
 
   // Hold pointers to the input tensors to be used in the PrepareForCompute() step
-  std::vector<const Tensor*> input_tensors;
+  Vector<const Tensor*> input_tensors;
   input_tensors.reserve(input_count);
   for (int i = 0; i < input_count; ++i) {
     input_tensors.push_back(ctx->Input<Tensor>(i));
@@ -40,11 +40,11 @@ Status Concat::ComputeInternal(OpKernelContext* ctx) const {
   if (p.output_num_elements == 0)
     return Status::OK();
 
-  std::vector<int64_t> concat_sizes(input_count);
+  Vector<int64_t> concat_sizes(input_count);
 
   CudaAsyncBuffer<const void*> input_ptr(this, input_count);
   gsl::span<const void*> input_ptr_cpuspan = input_ptr.CpuSpan();
-  std::vector<int64_t> axis_dimension_input_output_mapping(p.output_tensor->Shape()[p.axis]);
+  Vector<int64_t> axis_dimension_input_output_mapping(p.output_tensor->Shape()[p.axis]);
   int index = 0;
   for (int i = 0; i < input_count; ++i) {
     auto input = p.inputs[i];
@@ -54,7 +54,7 @@ Status Concat::ComputeInternal(OpKernelContext* ctx) const {
       axis_dimension_input_output_mapping.at(index++) = i;
     }
   }
-  std::vector<int64_t> concat_sizes_range(concat_sizes);
+  Vector<int64_t> concat_sizes_range(concat_sizes);
   for (size_t i = 1; i < concat_sizes_range.size(); ++i) {
     concat_sizes_range[i] += concat_sizes_range[i - 1];
   }

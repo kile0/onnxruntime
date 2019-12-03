@@ -48,11 +48,11 @@ struct TempFilePath {
   const PathString path;
 };
 
-std::vector<char> GenerateData(size_t length, uint32_t seed = 0) {
+Vector<char> GenerateData(size_t length, uint32_t seed = 0) {
   auto engine = std::default_random_engine{seed};
   auto dist = std::uniform_int_distribution<int>{
       std::numeric_limits<char>::min(), std::numeric_limits<char>::max()};
-  std::vector<char> result{};
+  Vector<char> result{};
   result.reserve(length);
   for (size_t i = 0; i < length; ++i) {
     result.push_back(static_cast<char>(dist(engine)));
@@ -65,8 +65,8 @@ void WriteDataToFile(gsl::span<const char> data, const PathString& path) {
   out.write(data.data(), data.size());
 }
 
-std::vector<std::pair<FileOffsetType, size_t>> GenerateValidOffsetLengthPairs(size_t begin, size_t end, size_t interval = 1) {
-  std::vector<std::pair<FileOffsetType, size_t>> offset_length_pairs;
+Vector<std::pair<FileOffsetType, size_t>> GenerateValidOffsetLengthPairs(size_t begin, size_t end, size_t interval = 1) {
+  Vector<std::pair<FileOffsetType, size_t>> offset_length_pairs;
   for (size_t range_begin = begin; range_begin < end; range_begin += interval) {
     for (size_t range_end = range_begin; range_end <= end; range_end += interval) {
       offset_length_pairs.emplace_back(static_cast<FileOffsetType>(range_begin), range_end - range_begin);
@@ -83,7 +83,7 @@ TEST(FileIoTest, ReadFileIntoBuffer) {
 
   const auto offsets_and_lengths = GenerateValidOffsetLengthPairs(0, expected_data.size());
 
-  std::vector<char> buffer(expected_data.size());
+  Vector<char> buffer(expected_data.size());
   for (const auto& offset_and_length : offsets_and_lengths) {
     const auto offset = offset_and_length.first;
     const auto length = offset_and_length.second;

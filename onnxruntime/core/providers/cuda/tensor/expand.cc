@@ -14,7 +14,7 @@ Status Expand::ComputeInternal(OpKernelContext* ctx) const {
 
   // new shape to be expanded to
   const auto* p_shape = input1.template Data<int64_t>();
-  std::vector<int64_t> output_dims{p_shape, p_shape + input1.Shape().Size()};
+  Vector<int64_t> output_dims{p_shape, p_shape + input1.Shape().Size()};
   TensorShape output_shape(output_dims);
 
   ORT_RETURN_IF_ERROR(ComputeOutputShape(Node().Name(), input0.Shape(), output_dims, output_shape));

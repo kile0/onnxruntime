@@ -13,7 +13,7 @@ common::Status CustomRegistry::RegisterCustomKernel(KernelCreateInfo& create_inf
 }
 
 common::Status CustomRegistry::RegisterOpSet(
-    std::vector<ONNX_NAMESPACE::OpSchema>& schemas,
+    Vector<ONNX_NAMESPACE::OpSchema>& schemas,
     const std::string& domain,
     int baseline_opset_version,
     int opset_version) {

@@ -23,8 +23,8 @@ public:
         const MLOperatorKernelCreationContext& kernelInfo,
         uint32_t sequenceLengthInputIndex,
         gsl::span<const std::string> defaultActivations,
-        const std::optional<const std::vector<std::optional<uint32_t>>>& kernelInputIndices = std::nullopt,
-        const std::optional<const std::vector<std::optional<uint32_t>>>& kernelOutputIndices = std::nullopt)
+        const std::optional<const Vector<std::optional<uint32_t>>>& kernelInputIndices = std::nullopt,
+        const std::optional<const Vector<std::optional<uint32_t>>>& kernelOutputIndices = std::nullopt)
     {
         DmlOperator::Initialize(kernelInfo, kernelInputIndices, kernelOutputIndices);
 
@@ -64,9 +64,9 @@ public:
         ML_INVALID_ARGUMENT("Unsupported direction"); // throws
     }
 
-    void InitActivationDescs(const MLOperatorKernelCreationContext& kernelInfo, _Out_ std::vector<DML_OPERATOR_DESC>& descs, gsl::span<const std::string> defaultActivations)
+    void InitActivationDescs(const MLOperatorKernelCreationContext& kernelInfo, _Out_ Vector<DML_OPERATOR_DESC>& descs, gsl::span<const std::string> defaultActivations)
     {
-        std::vector<std::string> activations = kernelInfo.GetOptionalStringAttributeVector(AttrName::Activations);
+        Vector<std::string> activations = kernelInfo.GetOptionalStringAttributeVector(AttrName::Activations);
         if (activations.empty())
         {
             uint32_t loopCount = (m_direction == DML_RECURRENT_NETWORK_DIRECTION_BIDIRECTIONAL) ? 2 : 1;
@@ -85,13 +85,13 @@ public:
 
         // Some functions have additional parameters. It is assumed the alpha/beta values will 
         // be ordered by function, so this treats the respective operator attributes as stacks.
-        std::vector<float> alphas; 
+        Vector<float> alphas; 
         if (kernelInfo.HasAttribute(AttrName::ActivationAlpha, MLOperatorAttributeType::FloatArray))
         {
             alphas = kernelInfo.GetAttributeVector<float>(AttrName::ActivationAlpha);
         }
         
-        std::vector<float> betas;
+        Vector<float> betas;
         if (kernelInfo.HasAttribute(AttrName::ActivationBeta, MLOperatorAttributeType::FloatArray))
         {
             betas = kernelInfo.GetAttributeVector<float>(AttrName::ActivationBeta);
@@ -190,8 +190,8 @@ public:
     }
 
 protected:
-    std::vector<DML_OPERATOR_DESC> m_activationOpDescs;
-    std::vector<ActivationOperatorDescUnion> m_activationDescs;
+    Vector<DML_OPERATOR_DESC> m_activationOpDescs;
+    Vector<ActivationOperatorDescUnion> m_activationDescs;
 
     DML_RECURRENT_NETWORK_DIRECTION m_direction;
 };
@@ -205,15 +205,15 @@ public:
     :   DmlOperatorRecurrentBase(kernelInfo)
     {
         // HiddenInit and SequenceLengths are reverse with ONNX ordering
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2, 3, 5, 4};
-        std::vector<std::optional<uint32_t>> kernelOutputIndices = {0, 1};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2, 3, 5, 4};
+        Vector<std::optional<uint32_t>> kernelOutputIndices = {0, 1};
 
         std::array<std::string, 1> defaultActivations = {AttrValue::ActivationTanh};
 
         DmlOperatorRecurrentBase::Initialize(kernelInfo, IN_SEQUENCE_LENGTHS, defaultActivations, kernelInputIndices, kernelOutputIndices);
 
-        std::vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_RNN_OPERATOR_DESC rnnDesc = {};
         
@@ -266,13 +266,13 @@ public:
         bool linearBeforeReset = kernelInfo.GetOptionalAttribute<int64_t>(AttrName::LinearBeforeReset, 0) != 0;
 
         // HiddenInit and SequenceLengths are reverse with ONNX ordering
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2, 3, 5, 4};
-        std::vector<std::optional<uint32_t>> kernelOutputIndices = {0, 1};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2, 3, 5, 4};
+        Vector<std::optional<uint32_t>> kernelOutputIndices = {0, 1};
 
         DmlOperatorRecurrentBase::Initialize(kernelInfo, IN_SEQUENCE_LENGTHS, defaultActivations, kernelInputIndices, kernelOutputIndices);
 
-        std::vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_GRU_OPERATOR_DESC rnnDesc = {};
         
@@ -328,7 +328,7 @@ public:
         float clipThreshold = kernelInfo.GetOptionalAttribute<float>(AttrName::Clip, 0.0f);
         bool coupleInputForget = kernelInfo.GetOptionalAttribute<bool>(AttrName::InputForget, false);
 
-        std::vector<std::optional<uint32_t>> kernelInputIndices = 
+        Vector<std::optional<uint32_t>> kernelInputIndices = 
         {
             0, // DML Input tensor is ONNX input 0
             1, // DML Weight tensor is ONNX input 1 
@@ -340,7 +340,7 @@ public:
             7  // DML Peephole tensor is ONNX input 7
         };
 
-        std::vector<std::optional<uint32_t>> kernelOutputIndices = 
+        Vector<std::optional<uint32_t>> kernelOutputIndices = 
         {
             0, // DML OutputSequence tensor is ONNX input 0
             1, // DML OutputSingle tensor is ONNX input 1
@@ -349,8 +349,8 @@ public:
 
         DmlOperatorRecurrentBase::Initialize(kernelInfo, IN_SEQUENCE_LENGTHS, defaultActivations, kernelInputIndices, kernelOutputIndices);
 
-        std::vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs  = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_LSTM_OPERATOR_DESC rnnDesc = {};
         

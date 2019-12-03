@@ -20,7 +20,7 @@ using FReduce = std::function<tvm::Expr(tvm::Expr source, const tvm::Array<tvm::
 // It prefers but not require last dim is multiple of vector_width
 tvm::Tensor ReduceValueWithoutSplit(const tvm::Tensor& X,
                                     FReduce func,
-                                    const std::vector<int64_t>& axes,
+                                    const Vector<int64_t>& axes,
                                     bool keep_dims,
                                     int32_t fuse_dim = 0,
                                     const std::string& name = "ReduceValueWithoutSplit") {
@@ -95,7 +95,7 @@ tvm::Tensor ReduceValueWithoutSplit(const tvm::Tensor& X,
 // If not, it will perform Pad to force it. Using last_dim_aligned to bypass it.
 tvm::Tensor ReduceValueWithSplitLast(const tvm::Tensor& X,
                                      FReduce func,
-                                     const std::vector<int64_t>& axes,
+                                     const Vector<int64_t>& axes,
                                      bool keep_dims,
                                      const tvm::Expr& pad_value,
                                      const int32_t vector_size,
@@ -187,7 +187,7 @@ tvm::Tensor ReduceValueWithSplitLast(const tvm::Tensor& X,
 // The last reshape won't be fused if the reduce is that last node of the graph. [TODO] FIXME
 tvm::Tensor ReduceValue(const tvm::Tensor& X,
                         FReduce func,
-                        const std::vector<int64_t>& axes,
+                        const Vector<int64_t>& axes,
                         bool keep_dims,
                         const tvm::Expr& pad_value,
                         int32_t vector_size,
@@ -198,7 +198,7 @@ tvm::Tensor ReduceValue(const tvm::Tensor& X,
   if ((axes.size() == 0 && X->shape.size() > 1) ||
       (axes.size() == X->shape.size() && axes.size() > 1)) {
     auto input_shape = X->shape;
-    std::vector<int64_t> axes_new;
+    Vector<int64_t> axes_new;
 
     if (fuse_dim == gsl::narrow_cast<int64_t>(X->shape.size()) - 1) {
       // a special case no need reshape
@@ -272,7 +272,7 @@ tvm::Tensor ReduceValue(const tvm::Tensor& X,
 
 // A special vectorization friendly ReduceSum
 tvm::Tensor ReduceSum(const tvm::Tensor& X,
-                      const std::vector<int64_t>& axes,
+                      const Vector<int64_t>& axes,
                       bool keep_dims,
                       const int32_t vector_size,
                       bool last_dim_aligned,
@@ -284,7 +284,7 @@ tvm::Tensor ReduceSum(const tvm::Tensor& X,
 
 // A special vectorization friendly ReduceMax
 tvm::Tensor ReduceMax(const tvm::Tensor& X,
-                      const std::vector<int64_t>& axes,
+                      const Vector<int64_t>& axes,
                       bool keep_dims,
                       const int32_t vector_size,
                       bool last_dim_aligned,
@@ -296,7 +296,7 @@ tvm::Tensor ReduceMax(const tvm::Tensor& X,
 
 // A special vectorization friendly ReduceMin
 tvm::Tensor ReduceMin(const tvm::Tensor& X,
-                      const std::vector<int64_t>& axes,
+                      const Vector<int64_t>& axes,
                       bool keep_dims,
                       const int32_t vector_size,
                       bool last_dim_aligned,
@@ -307,7 +307,7 @@ tvm::Tensor ReduceMin(const tvm::Tensor& X,
 }
 
 tvm::Tensor ReduceMean(const tvm::Tensor& X,
-                       const std::vector<int64_t>& axes, bool keep_dims,
+                       const Vector<int64_t>& axes, bool keep_dims,
                        const int32_t vector_size,
                        bool last_dim_aligned,
                        int32_t fuse_dim,

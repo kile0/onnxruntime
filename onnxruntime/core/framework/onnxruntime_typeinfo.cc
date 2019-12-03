@@ -43,7 +43,7 @@ ORT_API(void, OrtApis::ReleaseTypeInfo, _Frees_ptr_opt_ OrtTypeInfo* ptr) {
 
 OrtStatus* GetTensorShapeAndType(const TensorShape& shape, const onnxruntime::DataTypeImpl& tensor_data_type,
                                  OrtTensorTypeAndShapeInfo** out);
-OrtStatus* GetTensorShapeAndType(const TensorShape& shape, const std::vector<std::string>* dim_params,
+OrtStatus* GetTensorShapeAndType(const TensorShape& shape, const Vector<std::string>* dim_params,
                                  const ONNX_NAMESPACE::TypeProto& type_proto, OrtTensorTypeAndShapeInfo** out);
 
 OrtStatus* OrtTypeInfo::FromOrtValue(const OrtValue& value, OrtTypeInfo** out) {
@@ -175,8 +175,8 @@ OrtStatus* OrtTypeInfo::FromTypeProto(const ONNX_NAMESPACE::TypeProto* input, Or
       OrtTensorTypeAndShapeInfo* info = nullptr;
       if (sp != nullptr) {
         const on::TensorShapeProto& s = *sp;
-        std::vector<int64_t> dims(s.dim_size());
-        std::vector<std::string> dim_params(s.dim_size());
+        Vector<int64_t> dims(s.dim_size());
+        Vector<std::string> dim_params(s.dim_size());
         TensorShape shape_data(std::move(dims));
         for (int i = 0; i < s.dim_size(); ++i) {
           auto& t = s.dim(i);

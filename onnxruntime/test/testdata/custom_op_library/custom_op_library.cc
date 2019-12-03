@@ -9,10 +9,10 @@
 
 static const char* c_OpDomain = "test.customop";
 
-struct OrtTensorDimensions : std::vector<int64_t> {
+struct OrtTensorDimensions : Vector<int64_t> {
   OrtTensorDimensions(Ort::CustomOpApi ort, const OrtValue* value) {
     OrtTensorTypeAndShapeInfo* info = ort.GetTensorTypeAndShape(value);
-    std::vector<int64_t>::operator=(ort.GetTensorShape(info));
+    Vector<int64_t>::operator=(ort.GetTensorShape(info));
     ort.ReleaseTensorTypeAndShapeInfo(info);
   }
 };

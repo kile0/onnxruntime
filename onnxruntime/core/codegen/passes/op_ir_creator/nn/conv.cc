@@ -24,7 +24,7 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Conv)::Evaluate(
   // Attributes
   int64_t group;
   std::string auto_pad;
-  std::vector<int64_t> kernel_shape, strides, dilations, pads;
+  Vector<int64_t> kernel_shape, strides, dilations, pads;
 
   info.GetAttrOrDefault<int64_t>("group", &group, 1);
   info.GetAttrOrDefault<std::string>("auto_pad", &auto_pad, "NOTSET");
@@ -33,10 +33,10 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Conv)::Evaluate(
   ORT_ENFORCE(kernel_shape.size() <= 2, "Only support 1D/2D convolution currently!");
   ORT_ENFORCE(info.GetAttrs<int64_t>("strides", strides).IsOK());
 
-  dilations = info.GetAttrs<int64_t>("dilations", dilations).IsOK() ? dilations : std::vector<int64_t>(kernel_shape.size(), 1);
-  ORT_ENFORCE(dilations == std::vector<int64_t>(kernel_shape.size(), 1), "Only support dilation is 1 currently");
+  dilations = info.GetAttrs<int64_t>("dilations", dilations).IsOK() ? dilations : Vector<int64_t>(kernel_shape.size(), 1);
+  ORT_ENFORCE(dilations == Vector<int64_t>(kernel_shape.size(), 1), "Only support dilation is 1 currently");
 
-  pads = info.GetAttrs<int64_t>("pads", pads).IsOK() ? pads : std::vector<int64_t>(kernel_shape.size() * 2, 0);
+  pads = info.GetAttrs<int64_t>("pads", pads).IsOK() ? pads : Vector<int64_t>(kernel_shape.size() * 2, 0);
 
   // auto_pad
   if (auto_pad != "NOTSET") {

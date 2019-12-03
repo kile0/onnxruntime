@@ -4,7 +4,7 @@
 #include "core/session/onnxruntime_cxx_api.h"
 #include "test_fixture.h"
 
-static void TestModelInfo(const Ort::Session& session, bool is_input, const std::vector<int64_t>& dims) {
+static void TestModelInfo(const Ort::Session& session, bool is_input, const Vector<int64_t>& dims) {
   size_t input_count;
   if (is_input) {
     input_count = session.GetInputCount();
@@ -24,7 +24,7 @@ static void TestModelInfo(const Ort::Session& session, bool is_input, const std:
   ONNXTensorElementDataType ele_type = p.GetElementType();
   ASSERT_EQ(ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT, ele_type);
   ASSERT_EQ(dims.size(), p.GetDimensionsCount());
-  std::vector<int64_t> real_dims = p.GetShape();
+  Vector<int64_t> real_dims = p.GetShape();
   ASSERT_EQ(real_dims, dims);
 }
 

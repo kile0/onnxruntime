@@ -33,7 +33,7 @@ void sort_expected_and_actual_buffers(const T* expected, const T* actual, int64_
 
 // Check functions for tensor types
 template <typename T>
-void sort_expected_and_actual_buffers(std::vector<T> expected, std::vector<T> actual) {
+void sort_expected_and_actual_buffers(Vector<T> expected, Vector<T> actual) {
   ORT_ENFORCE(expected.size() == actual.size(), "The 2 containers contain different number of elements");
   sort_expected_and_actual_buffers(expected.data(), actual.data(), expected.size());
 }
@@ -153,8 +153,8 @@ void Check<MLFloat16>(const OpTester::Data& expected_data, const Tensor& output_
   auto* output = output_tensor.template Data<MLFloat16>();
   auto size = output_tensor.Shape().Size();
 
-  std::vector<float> f_expected(size);
-  std::vector<float> f_output(size);
+  Vector<float> f_expected(size);
+  Vector<float> f_output(size);
   ConvertMLFloat16ToFloat(expected, f_expected.data(), static_cast<int>(size));
   ConvertMLFloat16ToFloat(output, f_output.data(), static_cast<int>(size));
 
@@ -182,8 +182,8 @@ void Check<BFloat16>(const OpTester::Data& expected_data, const Tensor& output_t
   auto* output = output_tensor.template Data<BFloat16>();
   auto size = output_tensor.Shape().Size();
 
-  std::vector<float> f_expected(size);
-  std::vector<float> f_output(size);
+  Vector<float> f_expected(size);
+  Vector<float> f_output(size);
   BFloat16ToFloat(expected, f_expected.data(), static_cast<size_t>(size));
   BFloat16ToFloat(output, f_output.data(), static_cast<size_t>(size));
 
@@ -315,7 +315,7 @@ OpTester::~OpTester() {
 }
 
 void OpTester::FillFeedsAndOutputNames(std::unordered_map<std::string, OrtValue>& feeds,
-                                       std::vector<std::string>& output_names) {
+                                       Vector<std::string>& output_names) {
   for (auto& output : output_data_) {
     if (output.def_.Exists()) output_names.push_back(output.def_.Name());
   }
@@ -342,9 +342,9 @@ void OpTester::SetOutputRelErr(const char* name, float v) {
   it->relative_error_ = optional<float>(v);
 }
 
-void OpTester::AddNodes(onnxruntime::Graph& graph, std::vector<onnxruntime::NodeArg*>& graph_input_defs,
-                        std::vector<onnxruntime::NodeArg*>& graph_output_defs,
-                        std::vector<std::function<void(onnxruntime::Node& node)>>& add_attribute_funcs) {
+void OpTester::AddNodes(onnxruntime::Graph& graph, Vector<onnxruntime::NodeArg*>& graph_input_defs,
+                        Vector<onnxruntime::NodeArg*>& graph_output_defs,
+                        Vector<std::function<void(onnxruntime::Node& node)>>& add_attribute_funcs) {
   // default behavior is to create a single Node for the op being tested, with node inputs/outputs
   // being 1:1 with graph inputs/outputs.
   auto& node = graph.AddNode("node1", op_, op_, graph_input_defs, graph_output_defs, nullptr, domain_);
@@ -383,8 +383,8 @@ void OpTester::AddInitializers(onnxruntime::Graph& graph) {
 
 std::unique_ptr<onnxruntime::Model> OpTester::BuildGraph() {
   // Generate the input & output def lists
-  std::vector<onnxruntime::NodeArg*> node_input_defs;
-  std::vector<onnxruntime::NodeArg*> output_defs;
+  Vector<onnxruntime::NodeArg*> node_input_defs;
+  Vector<onnxruntime::NodeArg*> output_defs;
 
   for (size_t i = 0; i < input_data_.size(); ++i) {
     node_input_defs.push_back(&input_data_[i].def_);
@@ -400,7 +400,7 @@ std::unique_ptr<onnxruntime::Model> OpTester::BuildGraph() {
   auto p_model = onnxruntime::make_unique<onnxruntime::Model>("test", false, ModelMetaData(),
                                                               custom_schema_registries_,
                                                               domain_to_version,
-                                                              std::vector<ONNX_NAMESPACE::FunctionProto>{},
+                                                              Vector<ONNX_NAMESPACE::FunctionProto>{},
                                                               DefaultLoggingManager().DefaultLogger());
   onnxruntime::Graph& graph = p_model->MainGraph();
   AddNodes(graph, node_input_defs, output_defs, add_attribute_funcs_);
@@ -412,7 +412,7 @@ std::unique_ptr<onnxruntime::Model> OpTester::BuildGraph() {
 
 void OpTester::ExecuteModel(Model& model, InferenceSession& session_object, ExpectResult expect_result,
                             const std::string& expected_failure_string, const RunOptions* run_options,
-                            std::unordered_map<std::string, OrtValue> feeds, std::vector<std::string> output_names,
+                            std::unordered_map<std::string, OrtValue> feeds, Vector<std::string> output_names,
                             const std::string& provider_type) {
   std::string s1;
   const bool rc = model.ToProto().SerializeToString(&s1);
@@ -447,7 +447,7 @@ void OpTester::ExecuteModel(Model& model, InferenceSession& session_object, Expe
   default_run_options.run_tag = op_;
   default_run_options.run_log_verbosity_level = 1;
 
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
   for (int i = 0; i < num_run_calls_; ++i) {
     fetches.clear();
     status = session_object.Run(run_options ? *run_options : default_run_options, feeds, output_names, &fetches);
@@ -511,7 +511,7 @@ void OpTester::Run(ExpectResult expect_result,
                    const std::string& expected_failure_string,
                    const std::unordered_set<std::string>& excluded_provider_types,
                    const RunOptions* run_options,
-                   std::vector<std::unique_ptr<IExecutionProvider>>* execution_providers,
+                   Vector<std::unique_ptr<IExecutionProvider>>* execution_providers,
                    ExecutionMode execution_mode) {
   SessionOptions so;
   so.session_logid = op_;
@@ -526,7 +526,7 @@ void OpTester::Run(SessionOptions so,  // Take the SessionOptions by value (i.e.
                    const std::string& expected_failure_string,
                    const std::unordered_set<std::string>& excluded_provider_types,
                    const RunOptions* run_options,
-                   std::vector<std::unique_ptr<IExecutionProvider>>* execution_providers) {
+                   Vector<std::unique_ptr<IExecutionProvider>>* execution_providers) {
   std::string cur_provider = "not set";
   try {
 #ifndef NDEBUG
@@ -563,7 +563,7 @@ void OpTester::Run(SessionOptions so,  // Take the SessionOptions by value (i.e.
 
     // Hookup the inputs and outputs
     std::unordered_map<std::string, OrtValue> feeds;
-    std::vector<std::string> output_names;
+    Vector<std::string> output_names;
     FillFeedsAndOutputNames(feeds, output_names);
     // Run the model
     static const std::string all_provider_types[] = {

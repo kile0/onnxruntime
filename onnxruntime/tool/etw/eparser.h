@@ -24,7 +24,7 @@ void OrtEventHandler(EVENT_RECORD* pEventRecord, void* pContext);
 
 class LoggingEventRecord {
  private:
-  std::vector<char> buffer_;
+  Vector<char> buffer_;
   EVENT_RECORD* event_record_;
 
  public:
@@ -54,7 +54,7 @@ struct ProfilingInfo {
   LARGE_INTEGER op_start_time;
 
   std::unordered_map<std::wstring, OpStat> op_stat;
-  std::vector<ULONG64> time_per_run;
+  Vector<ULONG64> time_per_run;
 };
 
 

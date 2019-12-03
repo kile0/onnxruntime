@@ -19,12 +19,12 @@ TEST(ConstantOfShape, Float_Ones) {
 
   // We will input 1-D Tensor that will store 3 dimensions
   // and will provide shape for the output
-  std::vector<int64_t> input_dims{3};
-  std::vector<int64_t> input{4, 3, 2};
+  Vector<int64_t> input_dims{3};
+  Vector<int64_t> input{4, 3, 2};
   test.AddInput<int64_t>("input", input_dims, input);
 
-  std::vector<int64_t> output_dims(input);
-  std::vector<float> output;
+  Vector<int64_t> output_dims(input);
+  Vector<float> output;
   output.resize(4 * 3 * 2);
   std::fill_n(output.begin(), 4 * 3 * 2, 1.f);
 
@@ -41,12 +41,12 @@ TEST(ConstantOfShape, Int32_Zeros) {
   t_proto.mutable_int32_data()->Add(0);
   test.AddAttribute("value", t_proto);
 
-  std::vector<int64_t> input_dims{2};
-  std::vector<int64_t> input{10, 6};
+  Vector<int64_t> input_dims{2};
+  Vector<int64_t> input{10, 6};
   test.AddInput<int64_t>("input", input_dims, input);
 
-  std::vector<int64_t> output_dims(input);
-  std::vector<int32_t> output;
+  Vector<int64_t> output_dims(input);
+  Vector<int32_t> output;
   output.resize(10 * 6);
   std::fill_n(output.begin(), output.size(), 0);
   test.AddOutput<int32_t>("output", output_dims, output);
@@ -58,12 +58,12 @@ TEST(ConstantOfShape, DefaultValue) {
   OpTester test("ConstantOfShape", 9);
 
   // By default the output will be FLOAT zeros
-  std::vector<int64_t> input_dims{2};
-  std::vector<int64_t> input{2, 6};
+  Vector<int64_t> input_dims{2};
+  Vector<int64_t> input{2, 6};
   test.AddInput<int64_t>("input", input_dims, input);
 
-  std::vector<int64_t> output_dims(input);
-  std::vector<float> output;
+  Vector<int64_t> output_dims(input);
+  Vector<float> output;
   output.resize(2 * 6);
   std::fill_n(output.begin(), output.size(), 0.f);
   test.AddOutput<float>("output", output_dims, output);
@@ -118,12 +118,12 @@ void RunTypedTest(TensorProto::DataType dt, T value) {
   test.AddAttribute("value", t_proto);
 
   // By default the output will be FLOAT zeros
-  std::vector<int64_t> input_dims{2};
-  std::vector<int64_t> input{2, 6};
+  Vector<int64_t> input_dims{2};
+  Vector<int64_t> input{2, 6};
   test.AddInput<int64_t>("input", input_dims, input);
 
-  std::vector<int64_t> output_dims(input);
-  std::vector<T> output;
+  Vector<int64_t> output_dims(input);
+  Vector<T> output;
   output.resize(2 * 6);
   std::fill_n(output.begin(), output.size(), value);
   test.AddOutput<T>("output", output_dims, output);
@@ -134,7 +134,7 @@ void RunTypedTest(TensorProto::DataType dt, T value) {
 TEST(ConstantOfShape, TypeTests) {
   // bool can not be tested due to a shortcoming of
   // our test infrastructure which makes use of
-  // std::vector<T> which has a specialization for bool
+  // Vector<T> which has a specialization for bool
   // and does not have a continuous buffer implementation
   //RunTypedTest(TensorProto::BOOL, true);
 

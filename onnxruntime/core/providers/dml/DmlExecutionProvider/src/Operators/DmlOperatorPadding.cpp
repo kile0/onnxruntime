@@ -54,8 +54,8 @@ public:
 
         float value = kernelInfo.GetOptionalAttribute<float>(AttrName::Value, 0.0f);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_PADDING_OPERATOR_DESC paddingDesc = {};
         paddingDesc.InputTensor = inputDescs.data();

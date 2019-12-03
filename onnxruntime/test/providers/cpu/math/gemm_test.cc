@@ -19,8 +19,8 @@ TEST(GemmOpTest, GemmNoTrans) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {2, 3}, std::vector<float>(6, 1.0f));
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {2, 3}, Vector<float>(6, 1.0f));
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 11.0f, 11.0f,
                          -9.0f, -9.0f, -9.0f});
@@ -42,17 +42,17 @@ TEST(GemmOpTest, GemmNoTrans_f16) {
   test.AddAttribute("alpha", 1.0f);
   test.AddAttribute("beta", 1.0f);
 
-  std::vector<float> A{1.0f, 2.0f, 3.0f, 4.0f,
+  Vector<float> A{1.0f, 2.0f, 3.0f, 4.0f,
                       -1.0f, -2.0f, -3.0f, -4.0f};
-  std::vector<float> B(12, 1.0f);
-  std::vector<float> C(6, 1.0f);
-  std::vector<float> Y{11.0f, 11.0f, 11.0f,
+  Vector<float> B(12, 1.0f);
+  Vector<float> C(6, 1.0f);
+  Vector<float> Y{11.0f, 11.0f, 11.0f,
                        -9.0f, -9.0f, -9.0f};
 
-  std::vector<MLFloat16> f_A(8);
-  std::vector<MLFloat16> f_B(12);
-  std::vector<MLFloat16> f_C(6);
-  std::vector<MLFloat16> f_Y(6);
+  Vector<MLFloat16> f_A(8);
+  Vector<MLFloat16> f_B(12);
+  Vector<MLFloat16> f_C(6);
+  Vector<MLFloat16> f_Y(6);
   ConvertFloatToMLFloat16(A.data(), f_A.data(), 8);
   ConvertFloatToMLFloat16(B.data(), f_B.data(), 12);
   ConvertFloatToMLFloat16(C.data(), f_C.data(), 6);
@@ -77,8 +77,8 @@ TEST(GemmOpTest, GemmBroadcast) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {3}, std::vector<float>{1.0f, 2.0f, 3.0f});
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {3}, Vector<float>{1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 12.0f, 13.0f,
                          -9.0f, -8.0f, -7.0f});
@@ -98,8 +98,8 @@ TEST(GemmOpTest, GemmTrans) {
                         2.0f, -2.0f,
                         3.0f, -3.0f,
                         4.0f, -4.0f});
-  test.AddInput<float>("B", {3, 4}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {3}, std::vector<float>(3, 1.0f));
+  test.AddInput<float>("B", {3, 4}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {3}, Vector<float>(3, 1.0f));
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 11.0f, 11.0f,
                          -9.0f, -9.0f, -9.0f});
@@ -117,8 +117,8 @@ TEST(GemmOpTest, GemmAlphaBeta) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {3}, std::vector<float>(3, 1.0f));
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {3}, Vector<float>(3, 1.0f));
   test.AddOutput<float>("Y", {2, 3},
                         {7.0f, 7.0f, 7.0f,
                          -3.0f, -3.0f, -3.0f});
@@ -136,8 +136,8 @@ TEST(GemmOpTest, GemmNaN) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {2, 3}, std::vector<float>(6, 1.0f));
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {2, 3}, Vector<float>(6, 1.0f));
   test.AddOutput<float>("Y", {2, 3},
                         {10.0f, 10.0f, 10.0f,
                          -10.0f, -10.0f, -10.0f});
@@ -155,8 +155,8 @@ TEST(GemmOpTest, GemmScalarBroadcast) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {1}, std::vector<float>{1.0f});
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {1}, Vector<float>{1.0f});
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 11.0f, 11.0f,
                          -9.0f, -9.0f, -9.0f});
@@ -174,8 +174,8 @@ TEST(GemmOpTest, Gemm2DBroadcast_1) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {2, 1}, std::vector<float>{1.0f, 2.0f});
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {2, 1}, Vector<float>{1.0f, 2.0f});
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 11.0f, 11.0f,
                          -8.0f, -8.0f, -8.0f});
@@ -194,8 +194,8 @@ TEST(GemmOpTest, Gemm2DBroadcast_2) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {1, 3}, std::vector<float>{1.0f, 2.0f, 3.0f});
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {1, 3}, Vector<float>{1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 12.0f, 13.0f,
                          -9.0f, -8.0f, -7.0f});
@@ -213,8 +213,8 @@ TEST(GemmOpTest, GemmFalseBroadcast) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {2, 3}, std::vector<float>{1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f});
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {2, 3}, Vector<float>{1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f});
   test.AddOutput<float>("Y", {2, 3},
                         {11.0f, 11.0f, 11.0f,
                          -8.0f, -8.0f, -8.0f});
@@ -231,8 +231,8 @@ TEST(GemmOpTest, GemmEmptyTensor) {
 
   test.AddInput<float>("A", {0, 4},
                        {});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
-  test.AddInput<float>("C", {3}, std::vector<float>(3, 1.0f));
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
+  test.AddInput<float>("C", {3}, Vector<float>(3, 1.0f));
   test.AddOutput<float>("Y", {0, 3},
                         {});
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider, kMklDnnExecutionProvider}); //TensorRT: doesn't support dynamic shape yet
@@ -249,7 +249,7 @@ TEST(GemmOpTest, GemmNoBiasOpset11) {
   test.AddInput<float>("A", {2, 4},
                        {1.0f, 2.0f, 3.0f, 4.0f,
                         -1.0f, -2.0f, -3.0f, -4.0f});
-  test.AddInput<float>("B", {4, 3}, std::vector<float>(12, 1.0f));
+  test.AddInput<float>("B", {4, 3}, Vector<float>(12, 1.0f));
   test.AddOutput<float>("Y", {2, 3},
                         {10.0f, 10.0f, 10.0f,
                          -10.0f, -10.0f, -10.0f});

@@ -32,8 +32,8 @@ void Partitioner::UpdatePredecessors(PartitionMeta& part_meta, const NodeIndex& 
 }
 
 void Partitioner::MergePartitions(const Node& node,
-                                  const std::vector<NodeIndex>& candidates,
-                                  const std::vector<NodeIndex>& rejected_partitions) {
+                                  const Vector<NodeIndex>& candidates,
+                                  const Vector<NodeIndex>& rejected_partitions) {
   std::unordered_set<NodeIndex> merged_partitions;
   PartitionMeta& part_meta = partitions_[candidates[0]];
   // update cost
@@ -106,7 +106,7 @@ void Partitioner::MergePartitions(const Node& node,
 void Partitioner::AcceptNode(
     const onnxruntime::GraphViewer& graph,
     const NodeIndex& node_idx) {
-  std::vector<NodeIndex> immedidate_rejected_partitions;  // immediate rejected partitions
+  Vector<NodeIndex> immedidate_rejected_partitions;  // immediate rejected partitions
   std::unordered_set<NodeIndex> all_rejected_partitions;  // all rejected partitions
 
   const Node* node = graph.GetNode(node_idx);
@@ -130,7 +130,7 @@ void Partitioner::AcceptNode(
     }
   }
 
-  std::vector<NodeIndex> candidate_partitions;
+  Vector<NodeIndex> candidate_partitions;
   for (const auto& p : partitions_) {
     bool is_child = false;
     for (const NodeArg* input_def : node->InputDefs()) {
@@ -146,12 +146,12 @@ void Partitioner::AcceptNode(
     }
   }
 
-  std::vector<NodeIndex> coexist_partitions;
+  Vector<NodeIndex> coexist_partitions;
   if (candidate_partitions.size() > 1) {
     // found multiple candidate partitions
     // remove a candidate from candidate_partitions
     // if it is in a predecessor_partitions of another candidate_partitions
-    std::vector<bool> is_partitions_coexisted(candidate_partitions.size(), true);
+    Vector<bool> is_partitions_coexisted(candidate_partitions.size(), true);
     for (auto& cand_id : candidate_partitions) {
       PartitionMeta& part_meta_cand = partitions_[cand_id];
       for (size_t i = 0; i < candidate_partitions.size(); ++i) {
@@ -201,7 +201,7 @@ void Partitioner::AcceptNode(
 
 void Partitioner::CreateNewPartition(
     const Node& node,
-    const std::vector<NodeIndex>& immedidate_rejected_partitions) {
+    const Vector<NodeIndex>& immedidate_rejected_partitions) {
   const NodeIndex node_idx = node.Index();
 
   partitions_.insert(std::make_pair(node_idx, PartitionMeta(node_idx)));

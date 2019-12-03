@@ -66,11 +66,11 @@ class IOBinding {
   /**
     * This simply collects the outputs obtained after calling Run() inside the @param outputs.
     */
-  const std::vector<std::string>& GetOutputNames() const;
-  std::vector<OrtValue>& GetOutputs();
+  const Vector<std::string>& GetOutputNames() const;
+  Vector<OrtValue>& GetOutputs();
 
-  const std::vector<std::string>& GetInputNames() const;
-  const std::vector<OrtValue>& GetInputs() const;
+  const Vector<std::string>& GetInputNames() const;
+  const Vector<OrtValue>& GetInputs() const;
 
   /**
     * Get a CPU allocator from provider for async copy later if the provider supports that
@@ -84,10 +84,10 @@ class IOBinding {
 
   IOBinding(const SessionState& session_state);
   const SessionState& session_state_;
-  std::vector<std::string> feed_names_;
-  std::vector<OrtValue> feeds_;
-  std::vector<std::string> output_names_;
-  std::vector<OrtValue> outputs_;
+  Vector<std::string> feed_names_;
+  Vector<OrtValue> feeds_;
+  Vector<std::string> output_names_;
+  Vector<OrtValue> outputs_;
 
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(IOBinding);
 };

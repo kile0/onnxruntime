@@ -17,7 +17,7 @@ namespace {
 
 struct TestData {
   explicit TestData(int num) : data(num, 0) {}
-  std::vector<int> data;
+  Vector<int> data;
   std::mutex mutex;
 };
 

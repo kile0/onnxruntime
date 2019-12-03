@@ -17,14 +17,14 @@ public:
     {
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetInputCount() == 3);
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetOutputCount() == 1);
-        std::vector<std::optional<uint32_t>> inputIndices = { 0, 2 }; // The second tensor ('depth') is not bound, just 'indices' and 'values'.
-        std::vector<std::optional<uint32_t>> outputIndices = { 0 };
+        Vector<std::optional<uint32_t>> inputIndices = { 0, 2 }; // The second tensor ('depth') is not bound, just 'indices' and 'values'.
+        Vector<std::optional<uint32_t>> outputIndices = { 0 };
         DmlOperator::Initialize(kernelCreationContext, inputIndices, outputIndices);
         
         // Unsqueeze the indices tensor by inserting a flat dimension of size 1,
         // and compute the output tensor by expanding along the active axis.
         // This way they are both size-compatible and directly consumable by DirectML.
-        std::vector<uint32_t> indicesDimensions;
+        Vector<uint32_t> indicesDimensions;
         indicesDimensions = kernelCreationContext.GetTensorShapeDescription().GetInputTensorShape(0);
         indicesDimensions.insert(indicesDimensions.begin() + m_absoluteAxis, 1u);
 
@@ -60,8 +60,8 @@ public:
             m_inputTensorDescs.front().GetDimensionCount()
         );
         
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ONE_HOT_OPERATOR_DESC operatorDesc = {};
         operatorDesc.IndicesTensor = &inputDescs[0];

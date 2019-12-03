@@ -190,13 +190,13 @@ common::Status InferenceSession::RegisterGraphTransformer(
   return graph_transformation_mgr_.Register(std::move(p_graph_transformer), level);
 }
 
-common::Status InferenceSession::AddCustomTransformerList(const std::vector<std::string>& transformers_to_enable) {
+common::Status InferenceSession::AddCustomTransformerList(const Vector<std::string>& transformers_to_enable) {
   std::copy(transformers_to_enable.begin(), transformers_to_enable.end(), std::back_inserter(transformers_to_enable_));
 
   return Status::OK();
 }
 
-common::Status InferenceSession::AddCustomOpDomains(const std::vector<OrtCustomOpDomain*>& op_domains) {
+common::Status InferenceSession::AddCustomOpDomains(const Vector<OrtCustomOpDomain*>& op_domains) {
   std::shared_ptr<CustomRegistry> custom_registry;
   ORT_RETURN_IF_ERROR_SESSIONID_(CreateCustomRegistry(op_domains, custom_registry));
   RegisterCustomRegistry(custom_registry);
@@ -413,7 +413,7 @@ common::Status InferenceSession::TransformGraph(onnxruntime::Graph& graph,
   ORT_RETURN_IF_ERROR_SESSIONID_(insert_cast_transformer.Apply(graph, modified, *session_logger_));
 
   // Now every node should be already assigned to an execution provider
-  std::unordered_map<std::string, std::vector<std::string>> node_placements;
+  std::unordered_map<std::string, Vector<std::string>> node_placements;
   bool is_verbose_mode = session_logger_->GetSeverity() == logging::Severity::kVERBOSE;
   for (auto& node : graph.Nodes()) {
     const auto& node_provider = node.GetExecutionProviderType();
@@ -452,7 +452,7 @@ common::Status InferenceSession::TransformGraph(onnxruntime::Graph& graph,
     }
   }
 
-  std::vector<std::string> provider_types;
+  Vector<std::string> provider_types;
   for (auto& provider_ptr : providers) {
     provider_types.push_back(provider_ptr->Type());
   }
@@ -660,7 +660,7 @@ common::Status InferenceSession::Initialize() {
 
 int InferenceSession::GetCurrentNumRuns() const { return current_num_runs_.load(); }
 
-const std::vector<std::string>& InferenceSession::GetRegisteredProviderTypes() const {
+const Vector<std::string>& InferenceSession::GetRegisteredProviderTypes() const {
   return execution_providers_.GetIds();
 }
 
@@ -680,7 +680,7 @@ common::Status InferenceSession::CheckShapes(const std::string& input_name,
     return Status(ONNXRUNTIME, INVALID_ARGUMENT, ostr.str());
   }
 
-  std::vector<int> invalid_dim_indices;
+  Vector<int> invalid_dim_indices;
   for (size_t i = 0; i < input_shape_sz; ++i) {
     if (expected_shape[i] < 0) {
       continue;  // this represents a symbolic shape dimension
@@ -714,8 +714,8 @@ static common::Status CheckTypes(MLDataType actual, MLDataType expected) {
                 "Unexpected input data type. Actual: (" + actual_name + ") , expected: (" + expected_name + ")");
 }
 
-common::Status InferenceSession::ValidateInputs(const std::vector<std::string>& feed_names,
-                                                const std::vector<OrtValue>& feeds) const {
+common::Status InferenceSession::ValidateInputs(const Vector<std::string>& feed_names,
+                                                const Vector<OrtValue>& feeds) const {
   if (feed_names.size() != feeds.size()) {
     return ORT_MAKE_STATUS(ONNXRUNTIME, INVALID_ARGUMENT, "Size mismatch: feed_names has ", feed_names.size(),
                            "elements, but feeds has ", feeds.size(), " elements.");
@@ -757,8 +757,8 @@ common::Status InferenceSession::ValidateInputs(const std::vector<std::string>& 
   return Status::OK();
 }
 
-common::Status InferenceSession::ValidateOutputs(const std::vector<std::string>& output_names,
-                                                 const std::vector<OrtValue>* p_fetches) const {
+common::Status InferenceSession::ValidateOutputs(const Vector<std::string>& output_names,
+                                                 const Vector<OrtValue>* p_fetches) const {
   if (p_fetches == nullptr) {
     return common::Status(common::ONNXRUNTIME, common::INVALID_ARGUMENT, "Output vector pointer is NULL");
   }
@@ -785,9 +785,9 @@ common::Status InferenceSession::ValidateOutputs(const std::vector<std::string>&
   return common::Status::OK();
 }
 
-Status InferenceSession::Run(const RunOptions& run_options, const std::vector<std::string>& feed_names,
-                             const std::vector<OrtValue>& feeds, const std::vector<std::string>& output_names,
-                             std::vector<OrtValue>* p_fetches) {
+Status InferenceSession::Run(const RunOptions& run_options, const Vector<std::string>& feed_names,
+                             const Vector<OrtValue>& feeds, const Vector<std::string>& output_names,
+                             Vector<OrtValue>* p_fetches) {
   TimePoint tp;
   if (session_profiler_.IsEnabled()) {
     tp = session_profiler_.StartTime();
@@ -875,15 +875,15 @@ Status InferenceSession::Run(const RunOptions& run_options, const std::vector<st
   return retval;
 }
 
-common::Status InferenceSession::Run(const NameMLValMap& feeds, const std::vector<std::string>& output_names,
-                                     std::vector<OrtValue>* p_fetches) {
+common::Status InferenceSession::Run(const NameMLValMap& feeds, const Vector<std::string>& output_names,
+                                     Vector<OrtValue>* p_fetches) {
   return Run(RunOptions(), feeds, output_names, p_fetches);
 }
 
 common::Status InferenceSession::Run(const RunOptions& run_options, const NameMLValMap& feeds_map,
-                                     const std::vector<std::string>& output_names, std::vector<OrtValue>* p_fetches) {
-  std::vector<std::string> feed_names;
-  std::vector<OrtValue> feeds;
+                                     const Vector<std::string>& output_names, Vector<OrtValue>* p_fetches) {
+  Vector<std::string> feed_names;
+  Vector<OrtValue> feeds;
 
   auto num_feeds = feeds_map.size();
   feed_names.reserve(num_feeds);
@@ -1132,7 +1132,7 @@ void InferenceSession::InitLogger(logging::LoggingManager* logging_manager) {
 // Registers all the predefined transformers with transformer manager
 void InferenceSession::AddPredefinedTransformers(GraphTransformerManager& transformer_manager,
                                                  TransformerLevel graph_optimization_level,
-                                                 const std::vector<std::string>& custom_list) {
+                                                 const Vector<std::string>& custom_list) {
   auto add_transformers = [&](TransformerLevel level) {
     // Generate and register transformers for level
     auto transformers_to_register = optimizer_utils::GenerateTransformers(level, session_options_.free_dimension_overrides, custom_list);

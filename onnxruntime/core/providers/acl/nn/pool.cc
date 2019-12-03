@@ -31,8 +31,8 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
   const Tensor* X = context->Input<Tensor>(0);
   const TensorShape& x_shape = X->Shape();
 
-  std::vector<int64_t> dilations(PoolBase::pool_attrs_.dilations);
-  std::vector<int64_t> aclDilations(2);
+  Vector<int64_t> dilations(PoolBase::pool_attrs_.dilations);
+  Vector<int64_t> aclDilations(2);
   aclDilations[0] = (dilations.size() == 2) ? dilations[1] : 1;
   aclDilations[1] = (!dilations.empty()) ? dilations[0] : 1;
 
@@ -42,9 +42,9 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
     return s;
   }
 
-  std::vector<int64_t> pads = PoolBase::pool_attrs_.pads;
-  std::vector<int64_t> strides = PoolBase::pool_attrs_.strides;
-  std::vector<int64_t> kernel_shape = PoolBase::pool_attrs_.kernel_shape;
+  Vector<int64_t> pads = PoolBase::pool_attrs_.pads;
+  Vector<int64_t> strides = PoolBase::pool_attrs_.strides;
+  Vector<int64_t> kernel_shape = PoolBase::pool_attrs_.kernel_shape;
 
   if (PoolBase::pool_attrs_.global_pooling) {
     const auto& input_dims = x_shape.GetDims();
@@ -52,7 +52,7 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
     pads.assign(kernel_shape.size(), 0);
   }
 
-  std::vector<int64_t> output_dims = PoolBase::pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
+  Vector<int64_t> output_dims = PoolBase::pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
   Tensor* Y = context->Output(0, TensorShape(output_dims));
 
   ACLNEPool* pPool;
@@ -78,11 +78,11 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
     if (PoolBase::pool_attrs_.global_pooling) {
       layer->configure(tpool.in.get(), tpool.out.get(), arm_compute::PoolingLayerInfo(pool_type));
     } else {
-      std::vector<int64_t> aclStrides(2);
+      Vector<int64_t> aclStrides(2);
       aclStrides[0] = (strides.size() == 2) ? strides[1] : 1;
       aclStrides[1] = strides[0];
 
-      std::vector<int64_t> aclPads(4);
+      Vector<int64_t> aclPads(4);
       if (pads.size() == 2) {
         if (strides.size() == 1) {
           aclPads[0] = 0;
@@ -105,7 +105,7 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
       arm_compute::PadStrideInfo aclPadStride = arm_compute::PadStrideInfo(aclStrides[0], aclStrides[1],
                                                                            aclPads[0], aclPads[1], aclPads[2], aclPads[3], arm_compute::DimensionRoundingType::FLOOR);
 
-      std::vector<int64_t> aclKernelShape(2);
+      Vector<int64_t> aclKernelShape(2);
       aclKernelShape[0] = (kernel_shape.size() > 1) ? kernel_shape[1] : 1;
       aclKernelShape[1] = kernel_shape[0];
 

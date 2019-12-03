@@ -197,7 +197,7 @@ Status RunTests(TestEnv& env, int p_models, int concurrent_runs, size_t repeat_c
   stat.total_test_case_count = std::accumulate(env.tests.begin(), env.tests.end(), static_cast<size_t>(0), [](size_t v, const ITestCase* info) {
     return info->GetDataCount() + v;
   });
-  std::vector<std::shared_ptr<TestCaseResult>> results;
+  Vector<std::shared_ptr<TestCaseResult>> results;
   if (p_models > 1 && env.tests.size() > 1) {
     ORT_RETURN_IF_ERROR(ParallelRunTests(env, p_models, concurrent_runs, repeat_count, tpool));
     results = env.finished->getResults();
@@ -281,11 +281,11 @@ Status RunTests(TestEnv& env, int p_models, int concurrent_runs, size_t repeat_c
   return common::Status::OK();
 }
 
-void LoadTests(const std::vector<std::basic_string<PATH_CHAR_TYPE>>& input_paths,
-               const std::vector<std::basic_string<PATH_CHAR_TYPE>>& whitelisted_test_cases,
+void LoadTests(const Vector<std::basic_string<PATH_CHAR_TYPE>>& input_paths,
+               const Vector<std::basic_string<PATH_CHAR_TYPE>>& whitelisted_test_cases,
                double default_per_sample_tolerance, double default_relative_per_sample_tolerance,
                const std::function<void(ITestCase*)>& process_function) {
-  std::vector<std::basic_string<PATH_CHAR_TYPE>> paths(input_paths);
+  Vector<std::basic_string<PATH_CHAR_TYPE>> paths(input_paths);
   while (!paths.empty()) {
     std::basic_string<PATH_CHAR_TYPE> node_data_root_path = paths.back();
     paths.pop_back();
@@ -353,7 +353,7 @@ EXECUTE_RESULT DataRunner::RunTaskImpl(size_t task_id) {
   // Create output feed
   size_t output_count = 0;
   Ort::ThrowOnError(Ort::GetApi().SessionGetOutputCount(session, &output_count));
-  std::vector<std::string> output_names(output_count);
+  Vector<std::string> output_names(output_count);
   for (size_t i = 0; i != output_count; ++i) {
     char* output_name = nullptr;
     Ort::ThrowOnError(Ort::GetApi().SessionGetOutputName(session, i, default_allocator.get(), &output_name));
@@ -364,7 +364,7 @@ EXECUTE_RESULT DataRunner::RunTaskImpl(size_t task_id) {
   if (feeds.size() > static_cast<unsigned int>(std::numeric_limits<int>::max())) {
     ORT_THROW("length overflow");
   }
-  std::vector<const char*> input_names(feeds.size());
+  Vector<const char*> input_names(feeds.size());
   OrtValueArray input_values(static_cast<int>(feeds.size()));
   size_t input_index = 0;
   for (auto& kvp : feeds) {
@@ -377,7 +377,7 @@ EXECUTE_RESULT DataRunner::RunTaskImpl(size_t task_id) {
   TIME_SPEC end_time;
   OrtValueArray output_values(static_cast<int>(output_count));
   {
-    std::vector<const char*> output_names_raw_ptr(output_count);
+    Vector<const char*> output_names_raw_ptr(output_count);
     for (size_t i = 0; i != output_count; ++i) {
       output_names_raw_ptr[i] = output_names[i].c_str();
     }

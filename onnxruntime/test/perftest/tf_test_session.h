@@ -14,10 +14,10 @@ class TensorflowTestSession : public TestSession {
  private:
   std::mt19937 rand_engine_;
   std::uniform_int_distribution<int> dist_;
-  std::vector<char> model_data_;
-  std::vector<TF_Output> feed_;
-  std::vector<TF_Output> fetches_;
-  std::vector<std::vector<TF_Tensor*>> feed_tensors_;
+  Vector<char> model_data_;
+  Vector<TF_Output> feed_;
+  Vector<TF_Output> fetches_;
+  Vector<Vector<TF_Tensor*>> feed_tensors_;
   TF_Session* sess_;
   TF_Graph* tf_graph_;
   // This function is for both graph inputs and outputs
@@ -80,7 +80,7 @@ class TensorflowTestSession : public TestSession {
   }
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(TensorflowTestSession);
 
-  bool isDimMatches(const std::vector<int64_t>& dims1, const std::vector<int64_t>& dims2) {
+  bool isDimMatches(const Vector<int64_t>& dims1, const Vector<int64_t>& dims2) {
     if (dims1.size() != dims2.size()) return false;
     size_t len = dims1.size();
     for (size_t i = 0; i != len; ++i) {
@@ -122,7 +122,7 @@ class TensorflowTestSession : public TestSession {
     OrtTensorTypeAndShapeInfo* shape = nullptr;
     ORT_THROW_ON_ERROR(OrtGetTensorTypeAndShape(value, &shape));
     size_t buffer_length = 0;
-    std::vector<int64_t> dims;
+    Vector<int64_t> dims;
     size_t dim_count;
     ORT_THROW_ON_ERROR(OrtGetDimensionsCount(shape, &dim_count));
     dims.resize(dim_count);
@@ -183,7 +183,7 @@ class TensorflowTestSession : public TestSession {
     TF_Tensor* t = nullptr;
     int tf_dims_count = TF_GraphGetTensorNumDims(tf_graph_, feed_[input_id], s);
     if (TF_GetCode(s) != TF_OK || tf_dims_count < 0) ORT_THROW("run TF model failed:", TF_Message(s));
-    std::vector<int64_t> tf_dims(static_cast<size_t>(tf_dims_count));
+    Vector<int64_t> tf_dims(static_cast<size_t>(tf_dims_count));
     TF_GraphGetTensorShape(tf_graph_, feed_[input_id], tf_dims.data(), tf_dims_count, s);
     if (TF_GetCode(s) != TF_OK || tf_dims_count < 0) ORT_THROW("run TF model failed:", TF_Message(s));
     if (!isDimMatches(dims, tf_dims)) {
@@ -208,10 +208,10 @@ class TensorflowTestSession : public TestSession {
     //Randomly pick one OrtValueArray from feed_tensors_. (NOT ThreadSafe)
     const std::uniform_int_distribution<int>::param_type p(0, static_cast<int>(feed_tensors_.size() - 1));
     const size_t id = static_cast<size_t>(dist_(rand_engine_, p));
-    std::vector<TF_Tensor*>& feed_tensors = feed_tensors_.at(id);
+    Vector<TF_Tensor*>& feed_tensors = feed_tensors_.at(id);
 
     TF_Status* s = TF_NewStatus();
-    std::vector<TF_Tensor*> output_tensors(fetches_.size());
+    Vector<TF_Tensor*> output_tensors(fetches_.size());
     auto start = std::chrono::high_resolution_clock::now();
     TF_SessionRun(sess_, nullptr, feed_.data(), feed_tensors.data(), static_cast<int>(feed_.size()), fetches_.data(),
                   output_tensors.data(), static_cast<int>(fetches_.size()), nullptr, 0, nullptr, s);

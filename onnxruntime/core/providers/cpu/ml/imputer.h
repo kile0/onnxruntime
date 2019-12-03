@@ -13,9 +13,9 @@ class ImputerOp final : public OpKernel {
   common::Status Compute(OpKernelContext* context) const override;
 
  private:
-  std::vector<float> imputed_values_float_;
+  Vector<float> imputed_values_float_;
   float replaced_value_float_;
-  std::vector<int64_t> imputed_values_int64_;
+  Vector<int64_t> imputed_values_int64_;
   int64_t replaced_value_int64_;
 };
 }  // namespace ml

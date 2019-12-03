@@ -9,7 +9,7 @@ namespace onnxruntime {
 namespace test {
 
 template <class T>
-inline void FillRandom(std::vector<T>& val, T min, T max) {
+inline void FillRandom(Vector<T>& val, T min, T max) {
   static std::default_random_engine generator;
   std::uniform_real_distribution<float> distribution(min, max);
   for (size_t i = 0; i < val.size(); ++i) {
@@ -17,11 +17,11 @@ inline void FillRandom(std::vector<T>& val, T min, T max) {
   }
 }
 
-inline std::pair<float, float> MeanStdev(std::vector<float>& v) {
+inline std::pair<float, float> MeanStdev(Vector<float>& v) {
   float sum = std::accumulate(v.begin(), v.end(), 0.0f);
   float mean = sum / v.size();
 
-  std::vector<float> diff(v.size());
+  Vector<float> diff(v.size());
   std::transform(v.begin(), v.end(), diff.begin(),
                  std::bind(std::minus<float>(), std::placeholders::_1, mean));
   float sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0f);
@@ -30,7 +30,7 @@ inline std::pair<float, float> MeanStdev(std::vector<float>& v) {
   return std::make_pair(mean, stdev);
 }
 
-inline void Normalize(std::vector<float>& v,
+inline void Normalize(Vector<float>& v,
                       std::pair<float, float>& mean_stdev, bool normalize_variance) {
   float mean = mean_stdev.first;
   float stdev = mean_stdev.second;
@@ -44,8 +44,8 @@ inline void Normalize(std::vector<float>& v,
   }
 }
 
-inline std::vector<MLFloat16> ToFloat16(const std::vector<float>& data) {
-  std::vector<MLFloat16> result;
+inline Vector<MLFloat16> ToFloat16(const Vector<float>& data) {
+  Vector<MLFloat16> result;
   result.reserve(data.size());
   for (size_t i = 0; i < data.size(); i++) {
     result.push_back(MLFloat16(math::floatToHalf(data[i])));

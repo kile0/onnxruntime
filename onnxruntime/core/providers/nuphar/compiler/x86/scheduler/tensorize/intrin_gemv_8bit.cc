@@ -10,7 +10,7 @@
 namespace onnxruntime {
 namespace nuphar {
 
-TensorizeIntGemv8bit::TensorizeIntGemv8bit(const std::string& name, const std::vector<int32_t>& vshape)
+TensorizeIntGemv8bit::TensorizeIntGemv8bit(const std::string& name, const Vector<int32_t>& vshape)
     : TensorizeBase(name, "TensorizeIntGemv8bit_Parameter", {vshape[0], vshape[1]}) {
 }
 

@@ -9,7 +9,7 @@
  */
 class OrtValueArray {
  private:
-  std::vector<OrtValue*> values;
+  Vector<OrtValue*> values;
 
  public:
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(OrtValueArray);

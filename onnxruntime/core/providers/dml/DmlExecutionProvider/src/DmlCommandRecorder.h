@@ -82,8 +82,8 @@ namespace Dml
         // m_pendingCommandListsCacheable indicate whether they can be moved into this
         // class's cache after execution, versus if they belong to the caller and were
         // passed to ExecuteCommandList.
-        std::vector<ComPtr<ID3D12GraphicsCommandList>> m_pendingCommandLists;
-        std::vector<bool> m_pendingCommandListsCacheable;
+        Vector<ComPtr<ID3D12GraphicsCommandList>> m_pendingCommandLists;
+        Vector<bool> m_pendingCommandListsCacheable;
 
         // A pool of cached command lists which may be re-used.
         std::deque<ComPtr<ID3D12GraphicsCommandList>> m_cachedCommandLists;

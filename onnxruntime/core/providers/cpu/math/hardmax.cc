@@ -30,7 +30,7 @@ Status Hardmax<float>::Compute(OpKernelContext* ctx) const {
   const int N = gsl::narrow_cast<int>(tmpN);
   const int D = gsl::narrow_cast<int>(tmpD);
 
-  std::vector<float> rowmax_(N);
+  Vector<float> rowmax_(N);
   float* rowmax_data = rowmax_.data();
   math::RowwiseMax<float, CPUMathUtil>(N, D, Xdata, rowmax_data, nullptr);
 

@@ -9,7 +9,7 @@ namespace nuphar {
 
 class TensorizeIntGemv8bit : public tvm_codegen::TensorizeBase {
  public:
-  TensorizeIntGemv8bit(const std::string& name, const std::vector<int32_t>& vshape);
+  TensorizeIntGemv8bit(const std::string& name, const Vector<int32_t>& vshape);
 
   virtual ~TensorizeIntGemv8bit() = default;
 

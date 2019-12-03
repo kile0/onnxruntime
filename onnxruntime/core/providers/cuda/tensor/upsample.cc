@@ -32,11 +32,11 @@ REGISTER_KERNEL_TYPED(uint8_t)
 
 template <typename T>
 Status Upsample<T>::BaseCompute(OpKernelContext* context,
-                                const std::vector<float>& roi,
-                                const std::vector<float>& scales,
-                                const std::vector<int64_t>& output_dims) const {
+                                const Vector<float>& roi,
+                                const Vector<float>& scales,
+                                const Vector<int64_t>& output_dims) const {
   const Tensor* X = context->Input<Tensor>(0);
-  const std::vector<int64_t>& X_dims = X->Shape().GetDims();
+  const Vector<int64_t>& X_dims = X->Shape().GetDims();
   auto rank = X_dims.size();
 
   ORT_ENFORCE(output_dims.size() == rank, "Rank of input and output tensor should be same.");
@@ -116,15 +116,15 @@ Status Upsample<T>::ComputeInternal(OpKernelContext* context) const {
   const Tensor* X = context->Input<Tensor>(0);
   ORT_ENFORCE(X != nullptr);
 
-  std::vector<int64_t> output_dims(X->Shape().GetDims().size());
-  std::vector<float> roi_array(X->Shape().GetDims().size() * 2, 0.0f);
+  Vector<int64_t> output_dims(X->Shape().GetDims().size());
+  Vector<float> roi_array(X->Shape().GetDims().size() * 2, 0.0f);
   if (!roi_cached_) {
     if (need_roi_input_) {
       ORT_ENFORCE(roi_input_idx_ > 0, "Invalid roi input index.");
       ParseRoiData(context->Input<Tensor>(roi_input_idx_), roi_array);
     }
   }
-  const std::vector<float>& roi = roi_cached_ ? roi_ : roi_array;
+  const Vector<float>& roi = roi_cached_ ? roi_ : roi_array;
 
   if (OpKernel::Node().InputDefs().size() == 1) {
     // Compute output shape from scales and input dims
@@ -142,7 +142,7 @@ Status Upsample<T>::ComputeInternal(OpKernelContext* context) const {
     return BaseCompute(context, roi, scales_, output_dims);
   }
 
-  std::vector<float> scales_array(X->Shape().GetDims().size());
+  Vector<float> scales_array(X->Shape().GetDims().size());
   if (scales != nullptr && scales->Shape().Size() != 0) {
     // use scales input data
     ORT_ENFORCE(sizes == nullptr, "Only one of scales or sizes must be provided as input.");

@@ -14,8 +14,8 @@ class ZipMapOp final : public OpKernel {
 
  private:
   bool using_strings_;
-  std::vector<int64_t> classlabels_int64s_;
-  std::vector<std::string> classlabels_strings_;
+  Vector<int64_t> classlabels_int64s_;
+  Vector<std::string> classlabels_strings_;
 };
 
 }  // namespace ml

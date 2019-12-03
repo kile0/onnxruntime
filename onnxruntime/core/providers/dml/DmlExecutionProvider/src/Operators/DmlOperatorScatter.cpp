@@ -16,10 +16,10 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetOutputCount() == 1, "Scatter expects 1 output.");
 
         auto tensorShapeDescription = kernelCreationContext.GetTensorShapeDescription();
-        std::vector<DimensionType> dataDimensions = tensorShapeDescription.GetInputTensorShape(0);
-        std::vector<DimensionType> indicesDimensions = tensorShapeDescription.GetInputTensorShape(1);
-        std::vector<DimensionType> updatesDimensions = tensorShapeDescription.GetInputTensorShape(2);
-        std::vector<DimensionType> outputDimensions = tensorShapeDescription.GetInputTensorShape(0);
+        Vector<DimensionType> dataDimensions = tensorShapeDescription.GetInputTensorShape(0);
+        Vector<DimensionType> indicesDimensions = tensorShapeDescription.GetInputTensorShape(1);
+        Vector<DimensionType> updatesDimensions = tensorShapeDescription.GetInputTensorShape(2);
+        Vector<DimensionType> outputDimensions = tensorShapeDescription.GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(dataDimensions == outputDimensions);
         ML_CHECK_VALID_ARGUMENT(indicesDimensions == updatesDimensions);
         ML_CHECK_VALID_ARGUMENT(dataDimensions.size() == indicesDimensions.size());
@@ -29,11 +29,11 @@ public:
         // tensors, we have to special-case it outside of DML.
         if (OperatorHelper::ContainsEmptyDimensions(indicesDimensions))
         {
-            std::vector<std::optional<uint32_t>> kernelInputIndices(1, 0);
+            Vector<std::optional<uint32_t>> kernelInputIndices(1, 0);
             DmlOperator::Initialize(kernelCreationContext, kernelInputIndices);
 
-            std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-            std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+            Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+            Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
             assert(inputDescs.size() == 1);
             assert(outputDescs.size() == 1);
@@ -53,8 +53,8 @@ public:
         {
             DmlOperator::Initialize(kernelCreationContext);
 
-            std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-            std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+            Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+            Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
             assert(inputDescs.size() == 3);
             assert(outputDescs.size() == 1);
 

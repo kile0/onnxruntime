@@ -37,7 +37,7 @@ Status Unique<float>::Compute(OpKernelContext* ctx) const {
   int64_t* output_idx_data = output_idx->template MutableData<int64_t>();
 
   // container to hold the unique elements (in the order it was first seen)
-  std::vector<float> unique_elements;
+  Vector<float> unique_elements;
   // number of unique elements is atmost number of elements in the raw data
   unique_elements.reserve(num_elements);
 

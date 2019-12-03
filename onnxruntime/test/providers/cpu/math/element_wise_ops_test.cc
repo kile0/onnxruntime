@@ -78,7 +78,7 @@ TEST(MathOpTest, Add_int64) {
 
 TEST(MathOpTest, Add_float) {
   OpTester test("Add");
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f, -1.0f,
                         0.0f, 1.5f, -100.0f,
@@ -101,7 +101,7 @@ TEST(MathOpTest, Add_float) {
 
 TEST(MathOpTest, Add_double) {
   OpTester test("Add");
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<double>("A", dims,
                         {1.0, 2.0, -1.0,
                          0.0, 1.5, -100.0,
@@ -121,7 +121,7 @@ TEST(MathOpTest, Add_double) {
 TEST(MathOpTest, Add_Broadcast_Axis) {
   OpTester test("Add");
 
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f, 3.0f,
                         4.0f, 5.0f, 6.0f,
@@ -208,7 +208,7 @@ TEST(MathOpTest, Add_Broadcast_1x1) {
 TEST(MathOpTest, Add_Broadcast_3x2_3x1) {
   OpTester test("Add");
 
-  std::vector<int64_t> dims{3, 2};
+  Vector<int64_t> dims{3, 2};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f,
                         3.0f, 4.0f,
@@ -280,7 +280,7 @@ TEST(MathOpTest, Add_Broadcast_2x1x1_3x4) {
 TEST(MathOpTest, Add_Invalid_Broadcast) {
   OpTester test("Add");
 
-  std::vector<int64_t> dims{2, 3};
+  Vector<int64_t> dims{2, 3};
 
   // Use symbolic dimension for first dim so it doesn't fail during shape inferencing
   test.AddShapeToTensorData(true, 0);
@@ -299,7 +299,7 @@ TEST(MathOpTest, Add_Invalid_Broadcast) {
 
   // Call Run twice to validate different parts of the error message.
   // Only test on CPU as it's that implementation that has the ORT_ENFORCE we're targeting
-  std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
+  Vector<std::unique_ptr<IExecutionProvider>> execution_providers;
   execution_providers.push_back(DefaultCpuExecutionProvider());
 
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -332,7 +332,7 @@ TEST(MathOpTest, Sub_int64) {
 
 TEST(MathOpTest, Sub) {
   OpTester test("Sub");
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f, -1.0f,
                         0.0f, 1.5f, -100.0f,
@@ -354,7 +354,7 @@ TEST(MathOpTest, Sub) {
 
 TEST(MathOpTest, Sub_Broadcast_Scalar) {
   OpTester test("Sub");
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f, -1.0f,
                         0.0f, 1.5f, -100.0f,
@@ -385,7 +385,7 @@ TEST(MathOpTest, Mul_int64) {
 
 TEST(MathOpTest, Mul) {
   OpTester test("Mul");
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("A", dims,
                        {1.0f, 2.0f, -1.0f,
                         0.0f, 1.5f, -100.0f, -5.4f,
@@ -424,7 +424,7 @@ TEST(MathOpTest, Div_int64) {
 
 TEST(MathOpTest, Div) {
   OpTester test("Div");
-  std::vector<int64_t> dims{2, 3};
+  Vector<int64_t> dims{2, 3};
   test.AddInput<float>("A", dims,
                        {1000.0f, 1.0f, 6.0f,
                         0.0f, -10.0f, -1.0f});
@@ -443,7 +443,7 @@ TEST(MathOpTest, Div) {
 
 TEST(MathOpTest, Abs) {
   OpTester test("Abs");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, {1.0f, -2.0f, -0.0f, -10.0f});
   test.AddOutput<float>("Y", dims, {1.0f, 2.0f, 0.0f, 10.0f});
   test.Run();
@@ -451,7 +451,7 @@ TEST(MathOpTest, Abs) {
 
 TEST(MathOpTest, Abs_int8) {
   OpTester test("Abs");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int8_t>("X", dims, {1, 2, -1, -5});
   test.AddOutput<int8_t>("Y", dims, {1, 2, 1, 5});
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});  //TensorRT: INT8, Assertion `regionRanges != nullptr' failed
@@ -459,7 +459,7 @@ TEST(MathOpTest, Abs_int8) {
 
 TEST(MathOpTest, Abs_int32) {
   OpTester test("Abs");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int32_t>("X", dims, {1, 2, -1, -5});
   test.AddOutput<int32_t>("Y", dims, {1, 2, 1, 5});
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});  //TensorRT parser: Int32 not allowed as input to this layer
@@ -467,7 +467,7 @@ TEST(MathOpTest, Abs_int32) {
 
 TEST(MathOpTest, Neg) {
   OpTester test("Neg");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {1.0f, -2.0f,
                         0.0f, -10.0f});
@@ -479,7 +479,7 @@ TEST(MathOpTest, Neg) {
 
 TEST(MathOpTest, Neg_int8) {
   OpTester test("Neg");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int8_t>("X", dims, {1, -2, 0, -10});
   test.AddOutput<int8_t>("Y", dims, {-1, 2, 0, 10});
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});  //TensorRT: INT8 is not supported
@@ -487,7 +487,7 @@ TEST(MathOpTest, Neg_int8) {
 
 TEST(MathOpTest, Neg_int32) {
   OpTester test("Neg");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int32_t>("X", dims, {1, -2, 0, -10});
   test.AddOutput<int32_t>("Y", dims, {-1, 2, 0, 10});
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});  //TensorRT parser: Int32 not allowed as input to this layer
@@ -495,7 +495,7 @@ TEST(MathOpTest, Neg_int32) {
 
 TEST(MathOpTest, Floor) {
   OpTester test("Floor");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {-1.5f, 0.2f,
                         -0.5f, 10.3f});
@@ -507,7 +507,7 @@ TEST(MathOpTest, Floor) {
 
 TEST(MathOpTest, Ceil) {
   OpTester test("Ceil");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {-1.5f, 0.2f,
                         -0.5f, 10.3f});
@@ -519,7 +519,7 @@ TEST(MathOpTest, Ceil) {
 
 TEST(MathOpTest, Reciprocal) {
   OpTester test("Reciprocal");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {1.0f, 2.0f,
                         -1.0f, -2.0f});
@@ -531,7 +531,7 @@ TEST(MathOpTest, Reciprocal) {
 
 TEST(MathOpTest, Sqrt_Float) {
   OpTester test("Sqrt");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {1.0f, 4.0f,
                         0.0f, 9.0f});
@@ -543,7 +543,7 @@ TEST(MathOpTest, Sqrt_Float) {
 
 TEST(MathOpTest, Sqrt_Double) {
   OpTester test("Sqrt");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<double>("X", dims,
                         {1.0, 4.0,
                          0.0, 9.0});
@@ -555,7 +555,7 @@ TEST(MathOpTest, Sqrt_Double) {
 
 TEST(MathOpTest, Pow_Float) {
   OpTester test("Pow");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {2.0f, 2.0f,
                         std::sqrt(2.0f), 1.0f});
@@ -570,7 +570,7 @@ TEST(MathOpTest, Pow_Float) {
 
 TEST(MathOpTest, Pow_Double) {
   OpTester test("Pow");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<double>("X", dims,
                         {2.0, 2.0,
                          std::sqrt(2.0), 1.0});
@@ -586,7 +586,7 @@ TEST(MathOpTest, Pow_Double) {
 TEST(MathOpTest, Pow_Broadcast_Scalar0) {
   OpTester test("Pow");
 
-  std::vector<int64_t> dims{3};
+  Vector<int64_t> dims{3};
   test.AddInput<float>("X", {}, {2.0f});
   test.AddInput<float>("Y", dims, {1.0f, 2.0f, 3.0f});
   test.AddOutput<float>("Z", dims, {2.0f, 4.0f, 8.0f});
@@ -596,7 +596,7 @@ TEST(MathOpTest, Pow_Broadcast_Scalar0) {
 TEST(MathOpTest, Pow_Broadcast_Scalar1) {
   OpTester test("Pow");
 
-  std::vector<int64_t> dims{3};
+  Vector<int64_t> dims{3};
   test.AddInput<float>("X", dims, {1.0f, 2.0f, 3.0f});
   test.AddInput<float>("Y", {}, {2.0f});
   test.AddOutput<float>("Z", dims, {1.0f, 4.0f, 9.0f});
@@ -605,7 +605,7 @@ TEST(MathOpTest, Pow_Broadcast_Scalar1) {
 
 TEST(MathOpTest, Exp_float) {
   OpTester test("Exp");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {0.0f, 1.0f,
                         2.0f, 10.0f});
@@ -618,7 +618,7 @@ TEST(MathOpTest, Exp_float) {
 
 TEST(MathOpTest, Exp_double) {
   OpTester test("Exp");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<double>("X", dims,
                         {0.0, 1.0,
                          2.0, 10.0});
@@ -633,7 +633,7 @@ TEST(MathOpTest, Exp_double) {
 
 TEST(MathOpTest, Log) {
   OpTester test("Log");
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims,
                        {1.0f, 2.0f,
                         5.0f, 10.0f});
@@ -645,7 +645,7 @@ TEST(MathOpTest, Log) {
 
 TEST(MathOpTest, Sum_6) {
   OpTester test("Sum", 6);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {1.0f, 0.0f, 1.0f,
                         -1.0f, 1.1f, -100.0f,
@@ -698,7 +698,7 @@ TEST(MathOpTest, Sum_8_Test1) {
 
 TEST(MathOpTest, Sum_8_Test2) {
   OpTester test("Sum", 8);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {
                            1.0f,
@@ -711,10 +711,10 @@ TEST(MathOpTest, Sum_8_Test2) {
                            0.01f,
                            -74.0f,
                        });
-  std::vector<int64_t> dims_1{3};
+  Vector<int64_t> dims_1{3};
   test.AddInput<float>("data_1", dims_1,
                        {1.0f, 0.0f, 2.0f});
-  std::vector<int64_t> dims_2{3, 1};
+  Vector<int64_t> dims_2{3, 1};
   test.AddInput<float>("data_2", dims_2,
                        {-3.0f, 3.3f, 64.0f});
   test.AddOutput<float>("sum", dims,
@@ -733,7 +733,7 @@ TEST(MathOpTest, Sum_8_Test2) {
 
 TEST(MathOpTest, Min_6) {
   OpTester test("Min", 6);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {1.0f, 0.0f, 1.0f,
                         -1.0f, 1.1f, -100.0f,
@@ -755,7 +755,7 @@ TEST(MathOpTest, Min_6) {
 
 TEST(MathOpTest, Min_8) {
   OpTester test("Min", 8);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {1.0f, 0.0f, 1.0f,
                         -1.0f, 1.1f, -100.0f,
@@ -777,7 +777,7 @@ TEST(MathOpTest, Min_8) {
 
 TEST(MathOpTest, Max_6) {
   OpTester test("Max", 6);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {1.0f, 0.0f, 1.0f,
                         -1.0f, 1.1f, -100.0f,
@@ -848,7 +848,7 @@ TEST(MathOpTest, Max_8_2inputbroadcast) {
 
 TEST(MathOpTest, Not) {
   OpTester test("Not");
-  std::vector<int64_t> dims{2};
+  Vector<int64_t> dims{2};
   test.AddInput<bool>("X", dims, {false, true});
   test.AddOutput<bool>("Y", dims, {true, false});
   test.Run();
@@ -856,7 +856,7 @@ TEST(MathOpTest, Not) {
 
 TEST(MathOpTest, And) {
   OpTester test("And");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<bool>("A", dims, {false, true, false, true});
   test.AddInput<bool>("B", dims, {false, false, true, true});
   test.AddOutput<bool>("C", dims, {false, false, false, true});
@@ -865,7 +865,7 @@ TEST(MathOpTest, And) {
 
 TEST(MathOpTest, Or) {
   OpTester test("Or");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<bool>("A", dims, {false, true, false, true});
   test.AddInput<bool>("B", dims, {false, false, true, true});
   test.AddOutput<bool>("C", dims, {false, true, true, true});
@@ -874,7 +874,7 @@ TEST(MathOpTest, Or) {
 
 TEST(MathOpTest, Xor) {
   OpTester test("Xor");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<bool>("A", dims, {false, true, false, true});
   test.AddInput<bool>("B", dims, {false, false, true, true});
   test.AddOutput<bool>("C", dims, {false, true, true, false});
@@ -909,7 +909,7 @@ TEST(MathOpTest, Xor_bcast3v2d) {
 
 TEST(MathOpTest, Less) {
   OpTester test("Less");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<float>("A", dims, {1.0f, 0.0f, -1.0f, -1.0f});
   test.AddInput<float>("B", dims, {1.0f, 1.0f, 2.0f, -1.0f});
   test.AddOutput<bool>("C", dims, {false, true, true, false});
@@ -973,7 +973,7 @@ TEST(MathOpTest, Less_multidiretional_broadcastBA) {
 
 TEST(MathOpTest, Greater_7) {
   OpTester test("Greater");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<float>("A", dims, {1.0f, 0.0f, -1.0f, -1.0f});
   test.AddInput<float>("B", dims, {1.0f, 1.0f, 2.0f, -1.0f});
   test.AddOutput<bool>("C", dims, {false, false, false, false});
@@ -982,7 +982,7 @@ TEST(MathOpTest, Greater_7) {
 
 TEST(MathOpTest, Greater_9_float) {
   OpTester test("Greater", 9);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<float>("A", dims, {1.0f, 0.0f, -1.0f, -1.0f});
   test.AddInput<float>("B", dims, {1.0f, 1.0f, 2.0f, -1.0f});
   test.AddOutput<bool>("C", dims, {false, false, false, false});
@@ -991,7 +991,7 @@ TEST(MathOpTest, Greater_9_float) {
 
 TEST(MathOpTest, Greater_9_int32) {
   OpTester test("Greater", 9);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int32_t>("A", dims, {10, 11, 12, 13});
   test.AddInput<int32_t>("B", dims, {15, 7, 12, 9});
   test.AddOutput<bool>("C", dims, {false, true, false, true});
@@ -1000,7 +1000,7 @@ TEST(MathOpTest, Greater_9_int32) {
 
 TEST(MathOpTest, Greater_9_int64) {
   OpTester test("Greater", 9);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int64_t>("A", dims, {10, 11, 12, 13});
   test.AddInput<int64_t>("B", dims, {15, 7, 12, 9});
   test.AddOutput<bool>("C", dims, {false, true, false, true});
@@ -1041,7 +1041,7 @@ TEST(MathOpTest, Greater_multidiretional_broadcastBA) {
 
 TEST(MathOpTest, Equal_bool) {
   OpTester test("Equal");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<bool>("A", dims, {false, true, false, true});
   test.AddInput<bool>("B", dims, {false, false, true, true});
   test.AddOutput<bool>("C", dims, {true, false, false, true});
@@ -1050,7 +1050,7 @@ TEST(MathOpTest, Equal_bool) {
 
 TEST(MathOpTest, Equal_11_bool) {
   OpTester test("Equal", 11);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<bool>("A", dims, {false, true, false, true});
   test.AddInput<bool>("B", dims, {true, true, true, true});
   test.AddOutput<bool>("C", dims, {false, true, false, true});
@@ -1075,7 +1075,7 @@ TEST(MathOpTest, Equal_bool_scalar1) {
 
 TEST(MathOpTest, Equal_int32) {
   OpTester test("Equal");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int32_t>("A", dims, {1, 0, -1, -1});
   test.AddInput<int32_t>("B", dims, {1, 1, 2, -1});
   test.AddOutput<bool>("C", dims, {true, false, false, true});
@@ -1084,7 +1084,7 @@ TEST(MathOpTest, Equal_int32) {
 
 TEST(MathOpTest, Equal_int64) {
   OpTester test("Equal");
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<int64_t>("A", dims, {1, 0, -1, -1});
   test.AddInput<int64_t>("B", dims, {1, 1, 2, -1});
   test.AddOutput<bool>("C", dims, {true, false, false, true});
@@ -1093,7 +1093,7 @@ TEST(MathOpTest, Equal_int64) {
 
 TEST(MathOpTest, Equal_float) {
   OpTester test("Equal", 11);
-  std::vector<int64_t> dims{4};
+  Vector<int64_t> dims{4};
   test.AddInput<float>("A", dims, {1.0f, 0.0f, -1.0f, -1.0f});
   test.AddInput<float>("B", dims, {1.0f, 1.0f, 2.0f, -1.0f});
   test.AddOutput<bool>("C", dims, {true, false, false, true});
@@ -1142,7 +1142,7 @@ TEST(MathOpTest, Equal_multidiretional_broadcastAB_bool) {
 
 TEST(MathOpTest, Mean_6) {
   OpTester test("Mean", 6);
-  std::vector<int64_t> dims{3, 3};
+  Vector<int64_t> dims{3, 3};
   test.AddInput<float>("data_0", dims,
                        {1.0f, 0.0f, 1.0f,
                         -1.0f, 1.1f, -100.0f,
@@ -1180,9 +1180,9 @@ TEST(MathOpTest, Mean_8) {
 
 template <float (&op)(float value)>
 void TrigFloatTest(OpTester& test, std::initializer_list<float> input) {
-  std::vector<int64_t> dims{static_cast<int64_t>(input.size())};
+  Vector<int64_t> dims{static_cast<int64_t>(input.size())};
 
-  std::vector<float> output;
+  Vector<float> output;
   for (auto v : input)
     output.push_back(op(v));
 
@@ -1193,9 +1193,9 @@ void TrigFloatTest(OpTester& test, std::initializer_list<float> input) {
 
 template <double (&op)(double value)>
 void TrigDoubleTest(OpTester& test, std::initializer_list<double> input) {
-  std::vector<int64_t> dims{static_cast<int64_t>(input.size())};
+  Vector<int64_t> dims{static_cast<int64_t>(input.size())};
 
-  std::vector<double> output;
+  Vector<double> output;
   for (auto v : input)
     output.push_back(op(v));
 
@@ -1409,7 +1409,7 @@ TEST(MathOpTest, Expand_8_1x3_float16) {
 
 TEST(MathOpTest, Erf) {
   OpTester test("Erf", 9);
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("A", dims, {0.5f, 1.0f, 0.7f, 2.0f});
   test.AddOutput<float>("B", dims, {0.5204999f, 0.8427008f, 0.6778012f, 0.9953223f});
   test.Run();
@@ -1417,7 +1417,7 @@ TEST(MathOpTest, Erf) {
 
 TEST(MathOpTest, ErfMoreData) {
   OpTester test("Erf", 9);
-  std::vector<float> inputs{
+  Vector<float> inputs{
       -3.625f, 3.375f, 0.0f, 0.00025f, 0.0005f, -0.00075f, -0.001f, 0.00125f,
       0.0015f, -3.125f, 0.00175f, 2.875f, 2.625f, 2.375f, 2.125f, 6.25e-05f,
       0.0003125f, 0.0005625f, -0.0008125f, 0.0010625f, 0.0013125f, 0.0015625f, 0.0018125f, 3.5625f,
@@ -1426,7 +1426,7 @@ TEST(MathOpTest, ErfMoreData) {
       3.0f, 2.75f, -2.5f, -2.25f, -2.0f, -0.0001875f, 0.0004375f, 0.0006875f,
       2.1875f, -1.9375f, 0.0014375f, -0.0016875f, -0.0019375f, 3.4375f, 3.1875f, -2.9375f,
       -2.4375f, -0.0009375f, 0.0011875f};
-  std::vector<float> outputs{
+  Vector<float> outputs{
       -1.0f, 0.999998f, 0.0f, 0.000282095f, 0.00056419f, -0.000846284f, -0.00112838f, 0.00141047f,
       0.00169257f, -0.99999f, 0.00197466f, 0.999952f, 0.999795f, 0.999217f, 0.997346f, 7.05237e-05f,
       0.000352618f, 0.000634713f, -0.000916808f, 0.0011989f, 0.001481f, 0.00176309f, 0.00204518f, 1.0f,
@@ -1435,7 +1435,7 @@ TEST(MathOpTest, ErfMoreData) {
       0.999978f, 0.999899f, -0.999593f, -0.998537f, -0.995322f, -0.000211571f, 0.000493666f, 0.000775761f,
       0.998022f, -0.993857f, 0.00162204f, -0.00190414f, -0.00218623f, 0.999999f, 0.999993f, -0.999967f,
       -0.999433f, -0.00105786f, 0.00133995f};
-  std::vector<int64_t> dims{static_cast<int64_t>(inputs.size())};
+  Vector<int64_t> dims{static_cast<int64_t>(inputs.size())};
 
   test.AddInput<float>("A", dims, inputs);
   test.AddOutput<float>("B", dims, outputs);
@@ -1454,8 +1454,8 @@ TEST(ModOpTest, Fmod_float_mixed_sign) {
   test.Run();
 }
 
-std::vector<MLFloat16> MakeMLFloat16(const std::initializer_list<float>& input) {
-  std::vector<MLFloat16> output;
+Vector<MLFloat16> MakeMLFloat16(const std::initializer_list<float>& input) {
+  Vector<MLFloat16> output;
   std::transform(input.begin(), input.end(), std::back_inserter(output),
                  [](float fl) {
                    return MLFloat16(math::floatToHalf(fl));
@@ -1594,7 +1594,7 @@ TEST(ModOpTest, UInt64_mod) {
 TEST(ModOpTest, Int32_mod_bcast) {
   OpTester test("Mod", ModOp_ver);
 
-  std::vector<int32_t> input_sequence;
+  Vector<int32_t> input_sequence;
   input_sequence.resize(30);
   std::generate(input_sequence.begin(), input_sequence.end(),
                 [n = 0]() mutable { return n++; });

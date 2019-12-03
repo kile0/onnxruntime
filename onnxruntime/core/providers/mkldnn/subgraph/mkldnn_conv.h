@@ -73,8 +73,8 @@ class MklDnnConv : public MklDnnKernel {
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
                         mkldnn::engine& cpu_engine,
-                        std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
+                        Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
     Ort::CustomOpApi ort{*api};
     stream_ = onnxruntime::make_unique<mkldnn::stream>(mkldnn::stream(cpu_engine));
 
@@ -116,7 +116,7 @@ class MklDnnConv : public MklDnnKernel {
       return;
     }
 
-    std::vector<int64_t> kernel_shape;
+    Vector<int64_t> kernel_shape;
     primitive_created_status_ = ComputeKernelShape(w_shape, kernel_shape);
     if (!primitive_created_status_.IsOK()) {
       return;
@@ -140,22 +140,22 @@ class MklDnnConv : public MklDnnKernel {
       }
     }
 
-    std::vector<int64_t> pads(pads_);
+    Vector<int64_t> pads(pads_);
     if (pads.empty()) {
       pads.resize(kernel_rank * 2, 0);
     }
-    std::vector<int64_t> dilations(dilations_);
+    Vector<int64_t> dilations(dilations_);
     if (dilations.empty()) {
       dilations.resize(kernel_rank, 1);
     }
-    std::vector<int64_t> strides(strides_);
+    Vector<int64_t> strides(strides_);
     if (strides.empty()) {
       strides.resize(kernel_rank, 1);
     }
 
     const int64_t N = x_shape[0];
     const int64_t M = w_shape[0];
-    std::vector<int64_t> y_dims;
+    Vector<int64_t> y_dims;
     y_dims.insert(y_dims.begin(), {N, M});
     TensorShape input_shape = x_shape.Slice(2);
     primitive_created_status_ = InferOutputShape(input_shape, kernel_shape, strides, dilations, &pads, &y_dims);
@@ -555,7 +555,7 @@ class MklDnnConv : public MklDnnKernel {
   IAllocatorUniquePtr<void> dst_reorder_buffer_;
 
  private:
-  Status ComputeKernelShape(const TensorShape& weight_shape, std::vector<int64_t>& kernel_shape) const {
+  Status ComputeKernelShape(const TensorShape& weight_shape, Vector<int64_t>& kernel_shape) const {
     if (kernel_shape_specified_) {
       kernel_shape = kernel_shape_;
       if (kernel_shape.size() + 2 != weight_shape.NumDimensions()) {
@@ -572,7 +572,7 @@ class MklDnnConv : public MklDnnKernel {
       }
     } else {
       auto& weight_dims = weight_shape.GetDims();
-      kernel_shape = std::vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
+      kernel_shape = Vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
     }
 
     return Status::OK();
@@ -605,11 +605,11 @@ class MklDnnConv : public MklDnnKernel {
 
   template <bool ForceSymmetricAutoPadding = false>
   Status InferOutputShape(const TensorShape& input_shape,
-                          const std::vector<int64_t>& kernel_shape,
-                          const std::vector<int64_t>& strides,
-                          const std::vector<int64_t>& dilations,
-                          std::vector<int64_t>* pads,
-                          std::vector<int64_t>* output_shape) const {
+                          const Vector<int64_t>& kernel_shape,
+                          const Vector<int64_t>& strides,
+                          const Vector<int64_t>& dilations,
+                          Vector<int64_t>* pads,
+                          Vector<int64_t>* output_shape) const {
     size_t rank = gsl::narrow_cast<int>(input_shape.NumDimensions());
     for (size_t dim = 0; dim < rank; ++dim) {
       if (dim >= strides.size() || dim >= kernel_shape.size() ||
@@ -637,13 +637,13 @@ class MklDnnConv : public MklDnnKernel {
 
  private:
   std::unique_ptr<mkldnn::stream> stream_;
-  std::vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
+  Vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
   AutoPadType auto_pad_;
   int64_t group_;
   bool kernel_shape_specified_;
-  std::vector<int64_t> strides_;
-  std::vector<int64_t> pads_;
-  std::vector<int64_t> dilations_;
+  Vector<int64_t> strides_;
+  Vector<int64_t> pads_;
+  Vector<int64_t> dilations_;
   std::string activation_;
   float alpha_;
 };

@@ -8,8 +8,8 @@ namespace mkl_dnn {
 
 void MklDnnKernel::InitDstReorderOutput(mkldnn::engine& cpu_engine,
                                         mkldnn::memory::data_type& data_type,
-                                        std::vector<mkldnn::primitive>& net,
-                                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) {
+                                        Vector<mkldnn::primitive>& net,
+                                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) {
   // Allocate dst buffer if reorder is necessary
   if (primitive_dst_desc_ != ort_source_desc_) {
     // reorder to ONNXRuntime format

@@ -31,7 +31,7 @@ class LoopExecCtx {
   }
 
  protected:
-  std::vector<int> sequence_lens_;
+  Vector<int> sequence_lens_;
 
   // current sequence index that are going to run
   int current_loop_step_;

@@ -8,9 +8,9 @@ namespace onnxruntime {
 namespace test {
 
 template <typename T>
-static void RunTest(const std::vector<int64_t>& input_dims, const std::initializer_list<T>& input,
-                    const std::vector<int64_t>& indices_dims, const std::initializer_list<int64_t>& indices,
-                    const std::vector<int64_t>& output_dims, const std::initializer_list<T>& output) {
+static void RunTest(const Vector<int64_t>& input_dims, const std::initializer_list<T>& input,
+                    const Vector<int64_t>& indices_dims, const std::initializer_list<int64_t>& indices,
+                    const Vector<int64_t>& output_dims, const std::initializer_list<T>& output) {
   // ONNX domain opset-11
   OpTester test1("GatherND", 11);
   test1.AddInput<T>("data", input_dims, input);

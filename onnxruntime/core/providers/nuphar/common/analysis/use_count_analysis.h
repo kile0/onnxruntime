@@ -31,9 +31,9 @@ class InternalUseCountAnalysis {
   int NodeUseCount(const onnxruntime::Node* node) const;
 
  private:
-  void Traverse(const std::vector<const Node*>& nodes,
-                const std::vector<const NodeArg*>& graph_inputs,
-                const std::vector<const NodeArg*>& graph_outputs);
+  void Traverse(const Vector<const Node*>& nodes,
+                const Vector<const NodeArg*>& graph_inputs,
+                const Vector<const NodeArg*>& graph_outputs);
 
   std::unordered_map<NodeKey, int> node_use_counts_;
   std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func_;

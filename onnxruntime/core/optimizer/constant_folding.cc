@@ -39,7 +39,7 @@ Status ConstantFolding::ApplyImpl(Graph& graph, bool& modified, int graph_level,
     // Create execution frame for executing constant nodes.
     OptimizerExecutionFrame::Info info({node}, constant_inputs);
 
-    std::vector<int> fetch_mlvalue_idxs;
+    Vector<int> fetch_mlvalue_idxs;
     for (const auto* node_out : node->OutputDefs()) {
       fetch_mlvalue_idxs.push_back(info.GetMLValueIndex(node_out->Name()));
     }
@@ -51,7 +51,7 @@ Status ConstantFolding::ApplyImpl(Graph& graph, bool& modified, int graph_level,
 
     ORT_RETURN_IF_ERROR(kernel->Compute(&op_kernel_context));
 
-    std::vector<OrtValue> fetches;
+    Vector<OrtValue> fetches;
     ORT_RETURN_IF_ERROR(frame.GetOutputs(fetches));
 
     // Go over all output node args and substitute them with the newly computed tensors, which will be

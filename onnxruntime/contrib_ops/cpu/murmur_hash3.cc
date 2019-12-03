@@ -101,10 +101,10 @@ ONNX_OPERATOR_KERNEL_EX(
     1,
     kCpuExecutionProvider,
     KernelDefBuilder()
-        .TypeConstraint("T1", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("T1", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                       DataTypeImpl::GetTensorType<uint32_t>(),
                                                       DataTypeImpl::GetTensorType<std::string>()})
-        .TypeConstraint("T2", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("T2", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                       DataTypeImpl::GetTensorType<uint32_t>()}),
     MurmurHash3);
 

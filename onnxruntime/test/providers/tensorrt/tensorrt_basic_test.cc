@@ -14,21 +14,21 @@ using namespace ::onnxruntime::logging;
 namespace onnxruntime {
 
 namespace test {
-void VerifyOutputs(const std::vector<OrtValue>& fetches, const std::vector<int64_t>& expected_dims,
-                   const std::vector<float>& expected_values) {
+void VerifyOutputs(const Vector<OrtValue>& fetches, const Vector<int64_t>& expected_dims,
+                   const Vector<float>& expected_values) {
   ASSERT_EQ(1, fetches.size());
   auto& rtensor = fetches.front().Get<Tensor>();
   TensorShape expected_shape(expected_dims);
   ASSERT_EQ(expected_shape, rtensor.Shape());
-  const std::vector<float> found(rtensor.template Data<float>(), rtensor.template Data<float>() + expected_values.size());
+  const Vector<float> found(rtensor.template Data<float>(), rtensor.template Data<float>() + expected_values.size());
   ASSERT_EQ(expected_values, found);
 }
 
 TEST(TensorrtExecutionProviderTest, FunctionTest) {
   onnxruntime::Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
-  std::vector<onnxruntime::NodeArg*> inputs;
-  std::vector<onnxruntime::NodeArg*> outputs;
+  Vector<onnxruntime::NodeArg*> inputs;
+  Vector<onnxruntime::NodeArg*> outputs;
 
   // FLOAT tensor.
   ONNX_NAMESPACE::TypeProto float_tensor;
@@ -59,8 +59,8 @@ TEST(TensorrtExecutionProviderTest, FunctionTest) {
   std::string model_file_name = "trt_execution_provider_test_graph.onnx";
   status = onnxruntime::Model::Save(model, model_file_name);
 
-  std::vector<int64_t> dims_mul_x = {1, 3, 2};
-  std::vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_mul_x = {1, 3, 2};
+  Vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
   OrtValue ml_value_x;
   CreateMLValue<float>(TestTensorrtExecutionProvider()->GetAllocator(0, OrtMemTypeCPU), dims_mul_x, values_mul_x, &ml_value_x);
   OrtValue ml_value_y;
@@ -73,13 +73,13 @@ TEST(TensorrtExecutionProviderTest, FunctionTest) {
   feeds.insert(std::make_pair("Z", ml_value_z));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("M");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_mul_m = {1, 3, 2};
-  std::vector<float> expected_values_mul_m = {3.0f, 6.0f, 9.0f, 12.0f, 15.0f, 18.0f};
+  Vector<int64_t> expected_dims_mul_m = {1, 3, 2};
+  Vector<float> expected_values_mul_m = {3.0f, 6.0f, 9.0f, 12.0f, 15.0f, 18.0f};
 
   SessionOptions so;
   so.session_logid = "TensorrtExecutionProviderTest.FunctionTest";
@@ -106,8 +106,8 @@ TEST(TensorrtExecutionProviderTest, FunctionTest) {
 TEST(TensorrtExecutionProviderTest, NodeIndexMappingTest) {
   onnxruntime::Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
-  std::vector<onnxruntime::NodeArg*> inputs;
-  std::vector<onnxruntime::NodeArg*> outputs;
+  Vector<onnxruntime::NodeArg*> inputs;
+  Vector<onnxruntime::NodeArg*> outputs;
 
   // FLOAT tensor.
   ONNX_NAMESPACE::TypeProto float_tensor;
@@ -168,10 +168,10 @@ TEST(TensorrtExecutionProviderTest, NodeIndexMappingTest) {
   std::string model_file_name = "trt_execution_provider_NodeIndexMappingTest.onnx";
   status = onnxruntime::Model::Save(model, model_file_name);
 
-  std::vector<int64_t> dims_mul_x = {1, 3, 2};
-  std::vector<bool> values_mul_x = {true, false, true, false, true, false};
-  std::vector<int64_t> dims_mul_y = {1, 3, 2};
-  std::vector<float> values_mul_y = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_mul_x = {1, 3, 2};
+  Vector<bool> values_mul_x = {true, false, true, false, true, false};
+  Vector<int64_t> dims_mul_y = {1, 3, 2};
+  Vector<float> values_mul_y = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
   OrtValue ml_value_x;
   CreateMLValue<bool>(TestTensorrtExecutionProvider()->GetAllocator(0, OrtMemTypeCPU), dims_mul_x, values_mul_x, &ml_value_x);
   OrtValue ml_value_y;
@@ -184,16 +184,16 @@ TEST(TensorrtExecutionProviderTest, NodeIndexMappingTest) {
   feeds.insert(std::make_pair("Z", ml_value_z));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("M");
   output_names.push_back("N");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_mul_m = {1, 3, 2};
-  std::vector<bool> expected_values_mul_m = {true, false, true, false, true, false};
-  std::vector<int64_t> expected_dims_mul_n = {1, 3, 2};
-  std::vector<float> expected_values_mul_n = {0, 0, 0, 0, 0, 0};
+  Vector<int64_t> expected_dims_mul_m = {1, 3, 2};
+  Vector<bool> expected_values_mul_m = {true, false, true, false, true, false};
+  Vector<int64_t> expected_dims_mul_n = {1, 3, 2};
+  Vector<float> expected_values_mul_n = {0, 0, 0, 0, 0, 0};
 
   SessionOptions so;
   so.session_logid = "TensorrtExecutionProviderTest.NodeIndexMappingTest";
@@ -214,7 +214,7 @@ TEST(TensorrtExecutionProviderTest, NodeIndexMappingTest) {
   // Now run
   status = session_object.Run(run_options, feeds, output_names, &fetches);
   ASSERT_TRUE(status.IsOK());
-  std::vector<OrtValue> fetche {fetches.back()};
+  Vector<OrtValue> fetche {fetches.back()};
   VerifyOutputs(fetche, expected_dims_mul_n, expected_values_mul_n);
 }
 }  // namespace test

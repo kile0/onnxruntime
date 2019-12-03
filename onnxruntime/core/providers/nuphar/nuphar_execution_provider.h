@@ -52,12 +52,12 @@ class NupharExecutionProvider : public IExecutionProvider {
 
   virtual ~NupharExecutionProvider() = default;
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                const std::vector<const KernelRegistry*>& kernel_registries) const override;
+                const Vector<const KernelRegistry*>& kernel_registries) const override;
 
-  Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                 std::vector<NodeComputeInfo>& node_compute_funcs) override;
+  Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                 Vector<NodeComputeInfo>& node_compute_funcs) override;
 
   const void* GetExecutionHandle() const noexcept override {
     // The Nuphar interface does not return anything interesting.
@@ -145,7 +145,7 @@ class NupharExecutionProvider : public IExecutionProvider {
   // Why a list? it is for multi-target support
   // The current release supports one codegen target.
   // TODO: support multi-target support
-  std::vector<std::unique_ptr<nuphar::NupharCodeGenHandle>> codegen_handles_;
+  Vector<std::unique_ptr<nuphar::NupharCodeGenHandle>> codegen_handles_;
 
   std::unique_ptr<nuphar::NupharRuntimeHandle> runtime_handle_;
 

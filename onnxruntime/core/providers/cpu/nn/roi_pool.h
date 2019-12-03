@@ -13,7 +13,7 @@ template <typename T>
 class RoiPool : public OpKernel {
  public:
   RoiPool(const OpKernelInfo& info) : OpKernel(info) {
-    std::vector<int64_t> pooled_shape;
+    Vector<int64_t> pooled_shape;
     ORT_ENFORCE(info.GetAttrs<int64_t>("pooled_shape", pooled_shape).IsOK());
     ORT_ENFORCE(pooled_shape.size() == 2);
 

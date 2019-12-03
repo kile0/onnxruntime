@@ -10,7 +10,7 @@ namespace test {
 // 1d zero & scale with uint8 broadcast axis 0
 TEST(DequantizeLinearContribOpTest, DequantizeLinear_0) {
   OpTester test("DequantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<uint8_t>("X", dims,
                          {0, 1, 2, 3,
                           0, 1, 2, 3,
@@ -34,7 +34,7 @@ TEST(DequantizeLinearContribOpTest, DequantizeLinear_0) {
 // 1d zero & scale with int8 broadcast axis 1
 TEST(DequantizeLinearContribOpTest, DequantizeLinear_1) {
   OpTester test("DequantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<int8_t>("X", dims,
                         {0, 1, 2, 3,
                          0, 2, 4, 6,
@@ -52,7 +52,7 @@ TEST(DequantizeLinearContribOpTest, DequantizeLinear_1) {
 // 1d zero & scale with int8 broadcast axis 0 with 4d tensor input/output
 TEST(DequantizeLinearContribOpTest, DequantizeLinear_2) {
   OpTester test("DequantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{2, 3, 2, 4};
+  Vector<int64_t> dims{2, 3, 2, 4};
   test.AddInput<int8_t>("X", dims,
                         {7, 9, 10, 10,
                          5, 8, 9, 1,
@@ -98,7 +98,7 @@ TEST(DequantizeLinearContribOpTest, DequantizeLinear_2) {
 // 1d zero & scale with uint8 broadcast axis -2 (-2 resolves to axis 0)
 TEST(DequantizeLinearContribOpTest, DequantizeLinear_3) {
   OpTester test("DequantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<uint8_t>("X", dims,
                          {0, 1, 2, 3,
                           0, 1, 2, 3,
@@ -122,7 +122,7 @@ TEST(DequantizeLinearContribOpTest, DequantizeLinear_3) {
 // quantize with scalar zero point and scale
 TEST(QuantizeLinearContribOpTest, QuantizeLinear_0) {
   OpTester test("QuantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{6};
+  Vector<int64_t> dims{6};
   test.AddInput<float>("x", dims, {0, 2, 3, 1000, -254, -1000});
   test.AddInput<float>("y_scale", {}, {2.0f});
   test.AddInput<uint8_t>("y_zero_point", {}, {128});
@@ -133,7 +133,7 @@ TEST(QuantizeLinearContribOpTest, QuantizeLinear_0) {
 // quantize with broadcasting
 TEST(QuantizeLinearContribOpTest, QuantizeLinear_1) {
   OpTester test("QuantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<float>("X", dims,
                        {0, 2, 3, 1000,
                         0, 2, 3, 1000,
@@ -151,7 +151,7 @@ TEST(QuantizeLinearContribOpTest, QuantizeLinear_1) {
 // quantize with broadcasting and negative axis (-2 resolves to axis 0)
 TEST(QuantizeLinearContribOpTest, QuantizeLinear_2) {
   OpTester test("QuantizeLinear", 1, onnxruntime::kMSDomain);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<float>("X", dims,
                        {0, 2, 3, 1000,
                         0, 2, 3, 1000,

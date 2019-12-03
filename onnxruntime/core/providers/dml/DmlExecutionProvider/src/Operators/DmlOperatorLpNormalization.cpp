@@ -16,8 +16,8 @@ public:
 
         const int onnxAxis = kernelCreationContext.GetOptionalAttribute<int>(AttrName::Axis, 0);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         // Valid values for p are 1 and 2.
         int p = kernelCreationContext.GetOptionalAttribute<int>(AttrName::P, 2);

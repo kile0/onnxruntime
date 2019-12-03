@@ -559,12 +559,12 @@ struct OrtApi {
    * 
    * Sequence types
    * ==============
-   * std::vector<std::string>
-   * std::vector<int64_t>
-   * std::vector<float>
-   * std::vector<double>
-   * std::vector<std::map<std::string, float>>
-   * std::vector<std::map<int64_t, float>
+   * Vector<std::string>
+   * Vector<int64_t>
+   * Vector<float>
+   * Vector<double>
+   * Vector<std::map<std::string, float>>
+   * Vector<std::map<int64_t, float>
    */
 
   /**

@@ -15,7 +15,7 @@ ONNX_CPU_OPERATOR_VERSIONED_KERNEL(
     2,
     10,
     KernelDefBuilder().TypeConstraint("T",
-                                      std::vector<MLDataType>{
+                                      Vector<MLDataType>{
                                           DataTypeImpl::GetTensorType<float>(),
                                           DataTypeImpl::GetTensorType<int32_t>(),
                                           DataTypeImpl::GetTensorType<std::string>()}),
@@ -26,7 +26,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     Split,
     11,
     KernelDefBuilder().TypeConstraint("T",
-                                      std::vector<MLDataType>{
+                                      Vector<MLDataType>{
                                           DataTypeImpl::GetTensorType<float>(),
                                           DataTypeImpl::GetTensorType<int32_t>(),
                                           DataTypeImpl::GetTensorType<std::string>()}),
@@ -34,7 +34,7 @@ ONNX_CPU_OPERATOR_KERNEL(
 
 Status SplitBase::PrepareForCompute(const TensorShape& input_shape, int num_outputs, int64_t& axis, int& before_dims,
                                     int& after_dims_including_split_axis, int& after_dims_excluding_split,
-                                    std::vector<int64_t>& split_sizes) const {
+                                    Vector<int64_t>& split_sizes) const {
   auto& input_dims = input_shape.GetDims();
   const auto num_dimensions = gsl::narrow_cast<int64_t>(input_shape.NumDimensions());
   axis = HandleNegativeAxis(axis_, num_dimensions);  // handle negative and enforce axis is valid
@@ -54,7 +54,7 @@ Status SplitBase::PrepareForCompute(const TensorShape& input_shape, int num_outp
     }
 
     // populate split_sizes with the same size for each output
-    split_sizes = std::vector<int64_t>(static_cast<size_t>(num_outputs), split_dim_size / num_outputs);
+    split_sizes = Vector<int64_t>(static_cast<size_t>(num_outputs), split_dim_size / num_outputs);
   } else {
     if (split_sizes_.size() != static_cast<size_t>(num_outputs) || split_size_sum_ != split_dim_size)
       return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL,
@@ -107,7 +107,7 @@ Status Split::ComputeImpl(OpKernelContext& context, const Tensor& input) const {
   int before_dims = 0;
   int after_dims_including_split_axis = 0;
   int after_dims_excluding_split = 0;
-  std::vector<int64_t> split_sizes;
+  Vector<int64_t> split_sizes;
 
   ORT_RETURN_IF_ERROR(PrepareForCompute(input_shape,
                                         num_outputs,
@@ -119,7 +119,7 @@ Status Split::ComputeImpl(OpKernelContext& context, const Tensor& input) const {
 
   // copy dimensions so we can update the selected axis in place
   auto& input_dims = input_shape.GetDims();
-  std::vector<int64_t> output_dimensions{input_dims};
+  Vector<int64_t> output_dimensions{input_dims};
 
   int64_t input_offset = 0;
   const T* input_data = input.template Data<T>();

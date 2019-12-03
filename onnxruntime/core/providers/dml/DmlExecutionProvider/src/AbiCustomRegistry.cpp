@@ -47,9 +47,9 @@ std::string AbiCustomRegistry::ConvertFormalParameterType(const MLOperatorSchema
 }
 
 // Convert type constraints from the ABI types to ONNX strings
-std::vector<std::string> ConvertTypeConstraintTypes(const MLOperatorEdgeTypeConstrant& constraint)
+Vector<std::string> ConvertTypeConstraintTypes(const MLOperatorEdgeTypeConstrant& constraint)
 {
-    std::vector<std::string> ret;
+    Vector<std::string> ret;
     ret.reserve(constraint.allowedTypeCount);
 
     for (uint32_t i = 0; i < constraint.allowedTypeCount; ++i)
@@ -105,21 +105,21 @@ void AbiCustomRegistry::SetAttributesAndDefaults(onnx::OpSchema& schema, const M
 
                 case MLOperatorAttributeType::FloatArray:
                 {
-                    std::vector<float> defaultVals(defaultVal->second->floats, defaultVal->second->floats + defaultCount);
+                    Vector<float> defaultVals(defaultVal->second->floats, defaultVal->second->floats + defaultCount);
                     schema.Attr(attribute.name, "", ToProto(attribute.type), defaultVals);
                     break;
                 }
 
                 case MLOperatorAttributeType::IntArray:
                 {
-                    std::vector<int64_t> defaultVals(defaultVal->second->ints, defaultVal->second->ints + defaultCount);
+                    Vector<int64_t> defaultVals(defaultVal->second->ints, defaultVal->second->ints + defaultCount);
                     schema.Attr(attribute.name, "", ToProto(attribute.type), defaultVals);
                     break;
                 }
 
                 case MLOperatorAttributeType::StringArray:
                 {
-                    std::vector<std::string> defaultVals(defaultVal->second->strings, defaultVal->second->strings + defaultCount);
+                    Vector<std::string> defaultVals(defaultVal->second->strings, defaultVal->second->strings + defaultCount);
                     schema.Attr(attribute.name, "", ToProto(attribute.type), defaultVals);
                     break;
                 }
@@ -233,7 +233,7 @@ HRESULT STDMETHODCALLTYPE AbiCustomRegistry::RegisterOperatorSetSchema(
     _In_opt_ IMLOperatorTypeInferrer* typeInferrer,
     _In_opt_ IMLOperatorShapeInferrer* shapeInferrer) const noexcept try
 {
-    std::vector<onnx::OpSchema> schemaVector;
+    Vector<onnx::OpSchema> schemaVector;
     schemaVector.reserve(schemaCount);
 
     // Convert schema to ONNX types and accumulate them in a vector
@@ -390,7 +390,7 @@ HRESULT STDMETHODCALLTYPE AbiCustomRegistry::RegisterOperatorKernel(
         builder.InputMemoryType<::OrtMemType::OrtMemTypeCPUInput>(0);
     }
         
-    std::vector<uint32_t> constantCpuInputCapture;
+    Vector<uint32_t> constantCpuInputCapture;
     constantCpuInputCapture.assign(requiredConstantCpuInputs, requiredConstantCpuInputs + constantCpuInputCount);
 
     for (uint32_t inputIndex : constantCpuInputCapture)
@@ -406,7 +406,7 @@ HRESULT STDMETHODCALLTYPE AbiCustomRegistry::RegisterOperatorKernel(
     // Set type constraints
     for (uint32_t i = 0; i < opKernel->typeConstraintCount; ++i)
     {
-        std::vector<onnxruntime::MLDataType> types;
+        Vector<onnxruntime::MLDataType> types;
         types.reserve(opKernel->typeConstraints[i].allowedTypeCount);
 
         for (uint32_t j = 0; j < opKernel->typeConstraints[i].allowedTypeCount; ++j)

@@ -73,7 +73,7 @@ App& App::Run() {
   on_start_(http_details);
 
   // Run the I/O service on the requested number of threads
-  std::vector<std::thread> v;
+  Vector<std::thread> v;
   v.reserve(http_details.threads - 1);
   for (auto i = http_details.threads - 1; i > 0; --i) {
     v.emplace_back(

@@ -13,7 +13,7 @@ ONNX_CPU_OPERATOR_VERSIONED_KERNEL(
     10,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     Gather);
 
@@ -22,7 +22,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     11,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     Gather);
 
@@ -35,7 +35,7 @@ Status GatherBase::PrepareForCompute(OpKernelContext* context, Prepare& p) const
   const auto input_rank = input_data_shape.NumDimensions();
   p.axis = HandleNegativeAxis(axis_, input_rank);
 
-  std::vector<int64_t> shape;
+  Vector<int64_t> shape;
   shape.reserve(input_rank - 1 + indices_shape.NumDimensions());
 
   // replace the dimension for p.axis with the shape from the indices

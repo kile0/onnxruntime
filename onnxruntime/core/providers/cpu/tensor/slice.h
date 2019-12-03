@@ -22,34 +22,34 @@ class SliceBase {
   }
 
   // compute output_dims without steps (Slice V1-9 & DynamicSlice)
-  Status PrepareForCompute(const std::vector<int64_t>& raw_starts,
-                           const std::vector<int64_t>& raw_ends,
-                           const std::vector<int64_t>& raw_axes,
-                           const std::vector<int64_t>& input_dimensions,
-                           std::vector<int64_t>& starts,
-                           std::vector<int64_t>& steps,
-                           std::vector<int64_t>& output_dims,
-                           std::vector<int64_t>*& flattened_output_dims) const;
+  Status PrepareForCompute(const Vector<int64_t>& raw_starts,
+                           const Vector<int64_t>& raw_ends,
+                           const Vector<int64_t>& raw_axes,
+                           const Vector<int64_t>& input_dimensions,
+                           Vector<int64_t>& starts,
+                           Vector<int64_t>& steps,
+                           Vector<int64_t>& output_dims,
+                           Vector<int64_t>*& flattened_output_dims) const;
 
   // compute output_dims with steps (Slice V10)
-  Status PrepareForCompute(const std::vector<int64_t>& raw_starts,
-                           const std::vector<int64_t>& raw_ends,
-                           const std::vector<int64_t>& raw_axes,
-                           const std::vector<int64_t>& raw_steps,
-                           const std::vector<int64_t>& input_dimensions,
-                           std::vector<int64_t>& starts,
-                           std::vector<int64_t>& steps,
-                           std::vector<int64_t>& output_dims,
-                           std::vector<int64_t>*& flattened_output_dims) const;
+  Status PrepareForCompute(const Vector<int64_t>& raw_starts,
+                           const Vector<int64_t>& raw_ends,
+                           const Vector<int64_t>& raw_axes,
+                           const Vector<int64_t>& raw_steps,
+                           const Vector<int64_t>& input_dimensions,
+                           Vector<int64_t>& starts,
+                           Vector<int64_t>& steps,
+                           Vector<int64_t>& output_dims,
+                           Vector<int64_t>*& flattened_output_dims) const;
 
   // Slice V10 & DynamicSlice
   void FillVectorsFromInput(const OpKernelContext* context,
-                            std::vector<int64_t>& input_starts,
-                            std::vector<int64_t>& input_ends,
-                            std::vector<int64_t>& input_axes,
-                            std::vector<int64_t>& input_steps) const;
+                            Vector<int64_t>& input_starts,
+                            Vector<int64_t>& input_ends,
+                            Vector<int64_t>& input_axes,
+                            Vector<int64_t>& input_steps) const;
 
-  std::vector<int64_t> attr_starts_, attr_ends_, attr_axes_;
+  Vector<int64_t> attr_starts_, attr_ends_, attr_axes_;
 };
 
 template <typename T, bool dynamic>

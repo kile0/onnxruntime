@@ -61,7 +61,7 @@ Info::Info(const Node& node, const GraphViewer& subgraph_in, int num_scan_inputs
 }
 
 void ReadDirections(const OpKernelInfo& info, const std::string& attr_name,
-                    std::vector<int64_t>& directions, int64_t num_entries) {
+                    Vector<int64_t>& directions, int64_t num_entries) {
   if (info.GetAttrs<int64_t>(attr_name, directions).IsOK()) {
     ORT_ENFORCE(num_entries < 0 || gsl::narrow_cast<int64_t>(directions.size()) == num_entries,
                 "Number of entries in '", attr_name, "' was ", directions.size(),
@@ -73,7 +73,7 @@ void ReadDirections(const OpKernelInfo& info, const std::string& attr_name,
     ORT_ENFORCE(valid, "Invalid values in '", attr_name, "'. 0 == forward. 1 == reverse.");
   } else {
     // default to forward if we know how many entries there should be
-    directions = std::vector<int64_t>(num_entries, static_cast<int64_t>(ScanDirection::kForward));
+    directions = Vector<int64_t>(num_entries, static_cast<int64_t>(ScanDirection::kForward));
   }
 }
 
@@ -97,7 +97,7 @@ Status AllocateOutput(OpKernelContextInternal& context, const GraphViewer& subgr
   TensorShape output_shape = onnxruntime::utils::GetTensorShapeFromTensorShapeProto(*graph_output_shape);
   auto& graph_output_dims(output_shape.GetDims());
 
-  std::vector<int64_t> scan_output_dims;
+  Vector<int64_t> scan_output_dims;
   scan_output_dims.reserve(graph_output_dims.size() + 2);
 
   // v8 has batch size. v9 and later do not.
@@ -139,7 +139,7 @@ Status CreateFeedsFetchesManager(const Node& node,
                                  std::unique_ptr<FeedsFetchesManager>& feeds_fetches_manager) {
   // we need the names of the Scan inputs to determine what device they are available on,
   // so first create a list using those value
-  std::vector<std::string> feed_names;
+  Vector<std::string> feed_names;
   feed_names.reserve(info.num_variadic_inputs + info.num_implicit_inputs);
 
   const auto& scan_inputs = node.InputDefs();
@@ -153,7 +153,7 @@ Status CreateFeedsFetchesManager(const Node& node,
   }
 
   // find locations. use session_state as they're coming from Scan inputs
-  std::vector<OrtDevice> feed_locations;
+  Vector<OrtDevice> feed_locations;
   ORT_RETURN_IF_ERROR(controlflow::detail::FindDevicesForValues(session_state, feed_names, feed_locations));
 
   // now update the feed names to use the subgraph input names so we know what devices they're needed on
@@ -167,7 +167,7 @@ Status CreateFeedsFetchesManager(const Node& node,
   ORT_RETURN_IF_ERROR(utils::InitializeFeedFetchCopyInfo(subgraph_session_state, *ffm));
 
   // we provide fetches using memory allocated by Scan, so provide locations based on the Scan output locations
-  std::vector<const OrtMemoryInfo*> fetch_locations;
+  Vector<const OrtMemoryInfo*> fetch_locations;
   fetch_locations.reserve(info.num_outputs);
 
   for (const auto& output : node.OutputDefs()) {
@@ -183,19 +183,19 @@ Status CreateFeedsFetchesManager(const Node& node,
 }
 
 Status IterateSequence(OpKernelContextInternal& context, const SessionState& session_state,
-                       std::vector<LoopStateVariable>& loop_state_variables,
-                       std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator>& scan_input_stream_iterators,
+                       Vector<LoopStateVariable>& loop_state_variables,
+                       Vector<OrtValueTensorSlicer<const OrtValue>::Iterator>& scan_input_stream_iterators,
                        int64_t seq_length, int num_loop_state_variables, int num_variadic_inputs,
-                       int num_variadic_outputs, const std::vector<const OrtValue*>& implicit_inputs,
-                       std::vector<std::unique_ptr<OutputIterator>>& output_iterators,
+                       int num_variadic_outputs, const Vector<const OrtValue*>& implicit_inputs,
+                       Vector<std::unique_ptr<OutputIterator>>& output_iterators,
                        const FeedsFetchesManager& ffm) {
   Status status = Status::OK();
 
   auto num_implicit_inputs = implicit_inputs.size();
   auto num_inputs = num_variadic_inputs + num_implicit_inputs;
 
-  std::vector<OrtValue> feeds;
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> feeds;
+  Vector<OrtValue> fetches;
   std::unordered_map<size_t, IExecutor::CustomAllocator> fetch_allocators;
 
   feeds.resize(num_inputs);
@@ -302,7 +302,7 @@ OrtValue AllocateTensorInMLValue(const MLDataType data_type, const TensorShape& 
 };
 
 void CalculateTransposedShapeForInput(const TensorShape& original_shape, int64_t axis,
-                                      std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape) {
+                                      Vector<size_t>& permutations, Vector<int64_t>& transposed_shape) {
   int64_t rank = original_shape.NumDimensions();
   const auto& dims = original_shape.GetDims();
 
@@ -321,7 +321,7 @@ void CalculateTransposedShapeForInput(const TensorShape& original_shape, int64_t
 }
 
 void CalculateTransposedShapeForOutput(const TensorShape& original_shape, int64_t axis,
-                                       std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape) {
+                                       Vector<size_t>& permutations, Vector<int64_t>& transposed_shape) {
   int64_t rank = original_shape.NumDimensions();
   const auto& dims = original_shape.GetDims();
 

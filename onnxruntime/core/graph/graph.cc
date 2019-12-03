@@ -438,8 +438,8 @@ void Node::ToProto(NodeProto& proto, bool update_subgraphs) const {
 void Node::Init(const std::string& name,
                 const std::string& op_type,
                 const std::string& description,
-                const std::vector<NodeArg*>& input_args,
-                const std::vector<NodeArg*>& output_args,
+                const Vector<NodeArg*>& input_args,
+                const Vector<NodeArg*>& output_args,
                 const NodeAttributes* attributes,
                 const std::string& domain) {
   name_ = name;
@@ -523,7 +523,7 @@ void Node::AddAttribute(const std::string& attr_name, const AttributeProto& valu
 
 #define ADD_LIST_ATTR_IMPL(type, enumType, field)            \
   void Node::AddAttribute(const std::string& attr_name,      \
-                          const std::vector<type>& values) { \
+                          const Vector<type>& values) { \
     graph_->SetGraphResolveNeeded();                         \
     graph_->SetGraphProtoSyncNeeded();                       \
     AttributeProto a;                                        \
@@ -640,8 +640,8 @@ const Graph* Node::GetGraphAttribute(const std::string& attr_name) const {
   return const_cast<Node*>(this)->GetMutableGraphAttribute(attr_name);
 }
 
-std::vector<gsl::not_null<const Graph*>> Node::GetSubgraphs() const {
-  std::vector<gsl::not_null<const Graph*>> subgraphs;
+Vector<gsl::not_null<const Graph*>> Node::GetSubgraphs() const {
+  Vector<gsl::not_null<const Graph*>> subgraphs;
   subgraphs.reserve(attr_to_subgraph_map_.size());
   using value_type = std::unordered_map<std::string, gsl::not_null<Graph*>>::value_type;
   std::transform(attr_to_subgraph_map_.cbegin(), attr_to_subgraph_map_.cend(), std::back_inserter(subgraphs),
@@ -669,7 +669,7 @@ void Node::ForEachDef(std::function<void(const onnxruntime::NodeArg&, bool is_in
 };
 
 void Node::ReplaceDefs(const std::map<const onnxruntime::NodeArg*, onnxruntime::NodeArg*>& replacements) {
-  std::vector<std::vector<NodeArg*>*> all_defs = {&definitions_.input_defs, &definitions_.output_defs};
+  Vector<Vector<NodeArg*>*> all_defs = {&definitions_.input_defs, &definitions_.output_defs};
 
   for (auto pair : replacements)
     for (auto* defs : all_defs)
@@ -1117,11 +1117,11 @@ Status Graph::BuildConnections(std::unordered_set<std::string>& outer_scope_node
   return Status::OK();
 }  // namespace onnxruntime
 
-void Graph::ReverseDFSFrom(const std::vector<NodeIndex>& from,
+void Graph::ReverseDFSFrom(const Vector<NodeIndex>& from,
                            const std::function<void(const Node*)>& enter,
                            const std::function<void(const Node*)>& leave,
                            const std::function<bool(const Node*, const Node*)>& comp) const {
-  std::vector<const Node*> node_vec;
+  Vector<const Node*> node_vec;
   node_vec.reserve(from.size());
   for (auto i : from) {
     node_vec.push_back(GetNode(i));
@@ -1130,17 +1130,17 @@ void Graph::ReverseDFSFrom(const std::vector<NodeIndex>& from,
   ReverseDFSFrom(node_vec, enter, leave, comp);
 }
 
-void Graph::ReverseDFSFrom(const std::vector<const Node*>& from,
+void Graph::ReverseDFSFrom(const Vector<const Node*>& from,
                            const std::function<void(const Node*)>& enter,
                            const std::function<void(const Node*)>& leave,
                            const std::function<bool(const Node*, const Node*)>& comp) const {
   using WorkEntry = std::pair<const Node*, bool>;  // bool represents leave or not
-  std::vector<WorkEntry> stack(from.size());
+  Vector<WorkEntry> stack(from.size());
   for (size_t i = 0; i < from.size(); i++) {
     stack[i] = WorkEntry(from[i], false);
   }
 
-  std::vector<bool> visited(MaxNodeIndex(), false);
+  Vector<bool> visited(MaxNodeIndex(), false);
   while (!stack.empty()) {
     const WorkEntry last_entry = stack.back();
     stack.pop_back();
@@ -1160,7 +1160,7 @@ void Graph::ReverseDFSFrom(const std::vector<const Node*>& from,
     if (leave) stack.emplace_back(&n, true);
 
     if (comp) {
-      std::vector<const Node*> sorted_nodes;
+      Vector<const Node*> sorted_nodes;
       for (auto iter = n.InputNodesBegin(); iter != n.InputNodesEnd(); ++iter) {
         sorted_nodes.push_back(&(*iter));
       }
@@ -1303,7 +1303,7 @@ bool FullyDefinedType(const TypeProto& type_proto) {
 // parameters are the Graph instance for the subgraph, the input types from the control flow node that contains
 // the subgraph, and the vector to write the output from the inferencing.
 using SubgraphInferencingFunc =
-    std::function<Status(const Node&, Graph&, const std::vector<const TypeProto*>&, std::vector<const TypeProto*>&)>;
+    std::function<Status(const Node&, Graph&, const Vector<const TypeProto*>&, Vector<const TypeProto*>&)>;
 
 class GraphInferencerImpl : public ONNX_NAMESPACE::GraphInferencer {
  public:
@@ -1314,9 +1314,9 @@ class GraphInferencerImpl : public ONNX_NAMESPACE::GraphInferencer {
   // Perform inferencing on the graph contained in GraphInferencer.
   // Returns the graph output types post-inferencing.
   // We ignore input_data currently as the inferencing happens prior to receiving user input.
-  std::vector<const TypeProto*> doInferencing(const std::vector<const TypeProto*>& input_types,
-                                              const std::vector<const TensorProto*>& /*input_data*/) override {
-    std::vector<const TypeProto*> output_types;
+  Vector<const TypeProto*> doInferencing(const Vector<const TypeProto*>& input_types,
+                                              const Vector<const TensorProto*>& /*input_data*/) override {
+    Vector<const TypeProto*> output_types;
 
     auto status = inferencing_func_(node_, graph_, input_types, output_types);
 
@@ -1355,7 +1355,7 @@ class InferenceContextImpl : public ONNX_NAMESPACE::InferenceContext {
     }
   }
 
-  std::vector<TypeProto> InferredOutputTypes() const { return node_output_types_; }
+  Vector<TypeProto> InferredOutputTypes() const { return node_output_types_; }
 
   const AttributeProto* getAttribute(const std::string& name) const override {
     auto& attribute_value_map = node_.GetAttributes();
@@ -1419,15 +1419,15 @@ class InferenceContextImpl : public ONNX_NAMESPACE::InferenceContext {
  private:
   Node& node_;
   // node_output_types_ will be populated by the operator-specific shape inference.
-  std::vector<TypeProto> node_output_types_;
+  Vector<TypeProto> node_output_types_;
   SubgraphInferencingFunc subgraph_inferencing_func_;
-  std::vector<std::unique_ptr<GraphInferencerImpl>> graph_inferencers_;
+  Vector<std::unique_ptr<GraphInferencerImpl>> graph_inferencers_;
   const Graph& graph_;
 };
 
 Status Graph::InferAndVerifySubgraphTypes(const Node& node, Graph& subgraph,
-                                          const std::vector<const TypeProto*>& input_types,
-                                          std::vector<const TypeProto*>& output_types) {
+                                          const Vector<const TypeProto*>& input_types,
+                                          Vector<const TypeProto*>& output_types) {
   auto status = Status::OK();
 
   output_types.clear();
@@ -1863,7 +1863,7 @@ Status Graph::VerifyNodeAndOpMatch() {
   return Status::OK();
 }
 
-void Graph::FindAllSubgraphs(std::vector<Graph*>& subgraphs) {
+void Graph::FindAllSubgraphs(Vector<Graph*>& subgraphs) {
   for (auto& node : Nodes()) {
     for (auto& subgraph : node.MutableSubgraphs()) {
       subgraphs.push_back(subgraph.get());
@@ -1939,7 +1939,7 @@ Status Graph::PerformTypeAndShapeInferencing() {
   return Status::OK();
 }
 
-Status Graph::ForThisAndAllSubgraphs(const std::vector<Graph*>& subgraphs, std::function<Status(Graph&)> func) {
+Status Graph::ForThisAndAllSubgraphs(const Vector<Graph*>& subgraphs, std::function<Status(Graph&)> func) {
   auto status = func(*this);
   ORT_RETURN_IF_ERROR(status);
 
@@ -1963,7 +1963,7 @@ Status Graph::Resolve(bool no_proto_sync_required) {
   }
 
   // find all subgraphs including nested ones.
-  std::vector<Graph*> all_subgraphs;
+  Vector<Graph*> all_subgraphs;
   FindAllSubgraphs(all_subgraphs);
 
   bool subgraphs_need_resolve = std::any_of(all_subgraphs.cbegin(), all_subgraphs.cend(),
@@ -2157,14 +2157,14 @@ const InitializedTensorSet& Graph::GetAllInitializedTensors() const noexcept {
   return name_to_initial_tensor_;
 }
 
-const std::vector<const NodeArg*>& Graph::GetValueInfo() const noexcept {
+const Vector<const NodeArg*>& Graph::GetValueInfo() const noexcept {
   return value_info_;
 }
 
-std::vector<NodeArg*> Graph::CreateNodeArgs(const google::protobuf::RepeatedPtrField<std::string>& names,
+Vector<NodeArg*> Graph::CreateNodeArgs(const google::protobuf::RepeatedPtrField<std::string>& names,
                                             const ArgNameToTypeMap& name_to_type_map) {
   const auto name_to_type_map_end = name_to_type_map.end();
-  std::vector<NodeArg*> results;
+  Vector<NodeArg*> results;
   results.reserve(names.size());
 
   for (auto& name : names) {
@@ -2249,12 +2249,12 @@ std::string Graph::GenerateNodeName(const std::string& base_name) {
 Node& Graph::AddNode(const std::string& name,
                      const std::string& op_type,
                      const std::string& description,
-                     const std::vector<NodeArg*>& input_args,
-                     const std::vector<NodeArg*>& output_args,
+                     const Vector<NodeArg*>& input_args,
+                     const Vector<NodeArg*>& output_args,
                      const NodeAttributes* attributes,
                      const std::string& domain) {
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
   inputs.resize(input_args.size());
   outputs.resize(output_args.size());
   int i = 0;
@@ -2400,7 +2400,7 @@ void Graph::CleanUnusedInitializers() {
     }
   }
 
-  std::vector<std::string> erase_list;
+  Vector<std::string> erase_list;
   auto end = used_args.end();
   for (const auto& pv : name_to_initial_tensor_) {
     const std::string& name = pv.first;
@@ -2535,7 +2535,7 @@ Status Graph::SetGraphInputsOutputs() {
     value_info_.clear();
 
     std::unordered_map<std::string, size_t> output_name_to_node_arg_index;
-    std::vector<const NodeArg*> output_node_args_in_order;
+    Vector<const NodeArg*> output_node_args_in_order;
 
     // if something is coming from outer scope, consider it already added
     std::unordered_set<std::string> added_input_names{outer_scope_node_arg_names_};
@@ -2643,7 +2643,7 @@ Status Graph::SetGraphInputsOutputs() {
 
     if (!graph_outputs_manually_set_) {
       // Set graph outputs in order.
-      std::vector<size_t> graph_output_args_index;
+      Vector<size_t> graph_output_args_index;
       graph_output_args_index.reserve(graph_output_args.size());
       for (const auto& output_arg : graph_output_args) {
         graph_output_args_index.push_back(output_arg.second);
@@ -2724,8 +2724,8 @@ Node& Graph::FuseSubGraph(std::unique_ptr<::onnxruntime::IndexedSubGraph> sub_gr
 
   auto func_meta_def = sub_graph->GetMetaDef();
   ORT_ENFORCE(nullptr != func_meta_def);
-  std::vector<NodeArg*> input_args;
-  std::vector<NodeArg*> output_args;
+  Vector<NodeArg*> input_args;
+  Vector<NodeArg*> output_args;
   for (auto& arg_name : func_meta_def->inputs) {
     input_args.push_back(GetNodeArg(arg_name));
   }
@@ -2777,7 +2777,7 @@ Status Graph::InlineFunction(Node& node) {
   return Status::OK();
 }
 
-void Graph::SetInputs(const std::vector<const NodeArg*>& inputs) {
+void Graph::SetInputs(const Vector<const NodeArg*>& inputs) {
   if (GraphLoadedFromModelFile(graph_proto_)) {
     // TODO: add this support.
     ORT_THROW("This API is not supported when model is loaded from proto file right now.");
@@ -2787,7 +2787,7 @@ void Graph::SetInputs(const std::vector<const NodeArg*>& inputs) {
   graph_inputs_manually_set_ = true;
 }
 
-void Graph::SetOutputs(const std::vector<const NodeArg*>& outputs) {
+void Graph::SetOutputs(const Vector<const NodeArg*>& outputs) {
   if (GraphLoadedFromModelFile(graph_proto_)) {
     // TODO: add this support.
     ORT_THROW("This API is not supported when model is loaded from proto file right now.");

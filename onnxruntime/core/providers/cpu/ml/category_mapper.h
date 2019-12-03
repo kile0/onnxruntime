@@ -13,8 +13,8 @@ namespace ml {
 class CategoryMapper final : public OpKernel {
  public:
   CategoryMapper(const OpKernelInfo& info) : OpKernel(info) {
-    std::vector<std::string> string_categories;
-    std::vector<int64_t> int_categories;
+    Vector<std::string> string_categories;
+    Vector<int64_t> int_categories;
 
     ORT_ENFORCE(info.GetAttrs<std::string>("cats_strings", string_categories).IsOK());
     ORT_ENFORCE(info.GetAttrs<int64_t>("cats_int64s", int_categories).IsOK());

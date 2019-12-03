@@ -14,7 +14,7 @@ class CudnnTensor final {
   CudnnTensor();
   ~CudnnTensor();
 
-  Status Set(const std::vector<int64_t>& input_dims, cudnnDataType_t dataType);
+  Status Set(const Vector<int64_t>& input_dims, cudnnDataType_t dataType);
   Status Set(const CudnnTensor& x_desc, cudnnBatchNormMode_t mode);
 
   operator cudnnTensorDescriptor_t() const { return tensor_; }
@@ -52,7 +52,7 @@ class CudnnFilterDescriptor final {
   CudnnFilterDescriptor();
   ~CudnnFilterDescriptor();
 
-  Status Set(const std::vector<int64_t>& filter_dims, cudnnDataType_t data_typ);
+  Status Set(const Vector<int64_t>& filter_dims, cudnnDataType_t data_typ);
 
   operator cudnnFilterDescriptor_t() const { return desc_; }
 

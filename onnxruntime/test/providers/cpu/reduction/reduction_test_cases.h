@@ -6,15 +6,15 @@
 namespace onnxruntime {
 namespace test {
 struct ReductionAttribute {
-  std::vector<int64_t> axes_;
+  Vector<int64_t> axes_;
   int64_t keep_dims_;
 };
 
-typedef std::tuple<ReductionAttribute, std::vector<int64_t>, std::vector<float>> OpAttributesResult;
+typedef std::tuple<ReductionAttribute, Vector<int64_t>, Vector<float>> OpAttributesResult;
 typedef std::multimap<std::string, OpAttributesResult> OpAttributesResultMap;
 struct ReductionTestCases {
-  std::vector<float> input_data;
-  std::vector<int64_t> input_dims;
+  Vector<float> input_data;
+  Vector<int64_t> input_dims;
 
   OpAttributesResultMap map_op_attribute_expected;
 };

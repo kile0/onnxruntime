@@ -19,7 +19,7 @@ namespace onnxruntime {
 namespace nuphar {
 
 static void HandleAllOutputs(
-    const std::vector<const NodeArg*>& outputs,
+    const Vector<const NodeArg*>& outputs,
     tvm::Array<tvm::Tensor>& tvm_args,
     tvm::Array<tvm::Tensor>& tvm_outputs,
     const NupharCodeGenCtx& context) {

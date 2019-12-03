@@ -22,7 +22,7 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Split)::Evaluate(
   int64_t axis;
   ORT_RETURN_IF_ERROR(info.GetAttr<int64_t>("axis", &axis));
   axis = HandleNegativeAxis(axis, gsl::narrow_cast<int64_t>(inputs[0]->shape.size()));
-  std::vector<int64_t> split_sizes;
+  Vector<int64_t> split_sizes;
 
   int64_t split_size_sum = 0;
   if (info.GetAttrs("split", split_sizes).IsOK()) {

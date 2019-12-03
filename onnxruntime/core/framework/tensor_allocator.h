@@ -43,7 +43,7 @@ class ITensorAllocator {
 
   static std::unique_ptr<ITensorAllocator> Create(bool enable_mem_pattern, const ExecutionPlanBase& execution_plan,
                                                   const ExecutionProviders& exec_providers,
-                                                  std::vector<BufferUniquePtr>& weights_buffers);
+                                                  Vector<BufferUniquePtr>& weights_buffers);
 };
 
 }  // namespace onnxruntime

@@ -94,7 +94,7 @@ class Scan8Impl {
   Scan8Impl(OpKernelContextInternal& context,
             const SessionState& session_state,
             const Scan<8>::Info& info,
-            const std::vector<int64_t>& directions,
+            const Vector<int64_t>& directions,
             const scan::detail::DeviceHelpers& device_helpers);
 
   // Initialize by validating all the inputs, and allocating the output tensors
@@ -108,13 +108,13 @@ class Scan8Impl {
   // validate inputs and setup batch size and max sequence length.
   Status ValidateInput();
   Status ValidateSubgraphInput(int start_input, int end_input, bool is_loop_state_var,
-                               const std::vector<const NodeArg*>& graph_inputs);
+                               const Vector<const NodeArg*>& graph_inputs);
 
   Status AllocateOutputTensors();
-  Status CreateLoopStateVariables(std::vector<std::vector<LoopStateVariable>>& loop_state_variables);
+  Status CreateLoopStateVariables(Vector<Vector<LoopStateVariable>>& loop_state_variables);
 
-  using ConstTensorSlicerIterators = std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator>;
-  using MutableTensorSlicerIterators = std::vector<OrtValueTensorSlicer<OrtValue>::Iterator>;
+  using ConstTensorSlicerIterators = Vector<OrtValueTensorSlicer<const OrtValue>::Iterator>;
+  using MutableTensorSlicerIterators = Vector<OrtValueTensorSlicer<OrtValue>::Iterator>;
 
   OpKernelContextInternal& context_;
   const SessionState& session_state_;
@@ -123,13 +123,13 @@ class Scan8Impl {
   int64_t batch_size_ = -1;
   int64_t max_sequence_len_ = -1;
 
-  const std::vector<int64_t>& directions_;
+  const Vector<int64_t>& directions_;
   const Tensor* sequence_lens_tensor_;
-  std::vector<int64_t> sequence_lens_;
+  Vector<int64_t> sequence_lens_;
 
-  std::vector<std::unique_ptr<OutputIterator>> output_iterators_;
+  Vector<std::unique_ptr<OutputIterator>> output_iterators_;
 
-  const std::vector<const OrtValue*>& implicit_inputs_;
+  const Vector<const OrtValue*>& implicit_inputs_;
 
   const scan::detail::DeviceHelpers& device_helpers_;
 };
@@ -148,7 +148,7 @@ Scan<8>::Scan(const OpKernelInfo& info) : OpKernel(info) {
 
   ReadDirections(info, "directions", input_directions_, num_scan_inputs_);
 
-  device_helpers_.transpose_func = [](const std::vector<size_t>&, const Tensor&, Tensor&) -> Status {
+  device_helpers_.transpose_func = [](const Vector<size_t>&, const Tensor&, Tensor&) -> Status {
     ORT_NOT_IMPLEMENTED("Scan<8> spec does not support transpose of output. This should never be called.");
   };
 
@@ -201,7 +201,7 @@ Status Scan<8>::Compute(OpKernelContext* ctx) const {
 Scan8Impl::Scan8Impl(OpKernelContextInternal& context,
                      const SessionState& session_state,
                      const Scan<8>::Info& info,
-                     const std::vector<int64_t>& directions,
+                     const Vector<int64_t>& directions,
                      const scan::detail::DeviceHelpers& device_helpers)
     : context_(context),
       session_state_(session_state),
@@ -239,7 +239,7 @@ static const OrtValue& GetSubgraphInputMLValue(const OpKernelContextInternal& co
 
 // Validate that the subgraph input has valid shapes
 Status Scan8Impl::ValidateSubgraphInput(int start_input, int end_input, bool is_loop_state_var,
-                                        const std::vector<const NodeArg*>& graph_inputs) {
+                                        const Vector<const NodeArg*>& graph_inputs) {
   // first dim is batch size. optional sequence dim. dim/s for the data.
   // if there is no dim for the data treat it as a scalar.
   bool has_seq_len_dim = !is_loop_state_var;
@@ -312,7 +312,7 @@ Status Scan8Impl::ValidateInput() {
     }
 
   } else {
-    sequence_lens_ = std::vector<int64_t>(batch_size_, max_sequence_len_);
+    sequence_lens_ = Vector<int64_t>(batch_size_, max_sequence_len_);
   }
 
   return Status::OK();
@@ -347,14 +347,14 @@ Status Scan8Impl::AllocateOutputTensors() {
 }
 
 // setup the loop state variables for each batch item
-Status Scan8Impl::CreateLoopStateVariables(std::vector<std::vector<LoopStateVariable>>& batch_loop_state_variables) {
+Status Scan8Impl::CreateLoopStateVariables(Vector<Vector<LoopStateVariable>>& batch_loop_state_variables) {
   // Setup loop state variables
   // 1. Slice the input/output loop state variable tensors provided to Scan into the per-batch-item chunks
   //    (slice on the first dimension which is the batch size).
   // 2. For each batch item, create the LoopStateVariable instances that can be used to pass state between
   //    each iteration of the subgraph. This minimizes copying of data during each iteration.
 
-  std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator> loop_state_input_iterators;
+  Vector<OrtValueTensorSlicer<const OrtValue>::Iterator> loop_state_input_iterators;
   loop_state_input_iterators.reserve(info_.num_loop_state_variables);
 
   // create the input and output slice iterator for each loop state variable.
@@ -376,7 +376,7 @@ Status Scan8Impl::CreateLoopStateVariables(std::vector<std::vector<LoopStateVari
 
   // setup the loop state variables for each batch row
   for (int64_t b = 0; b < batch_size_; ++b) {
-    std::vector<LoopStateVariable>& variables = batch_loop_state_variables[b];
+    Vector<LoopStateVariable>& variables = batch_loop_state_variables[b];
     variables.reserve(info_.num_loop_state_variables);
 
     for (int i = 0; i < info_.num_loop_state_variables; ++i) {
@@ -396,8 +396,8 @@ Status Scan8Impl::CreateLoopStateVariables(std::vector<std::vector<LoopStateVari
 Status Scan8Impl::Execute(const FeedsFetchesManager& ffm) {
   Status status = Status::OK();
 
-  // for each batch item, std::vector of LoopStateVariables
-  std::vector<std::vector<LoopStateVariable>> batch_loop_state_variables;
+  // for each batch item, Vector of LoopStateVariables
+  Vector<Vector<LoopStateVariable>> batch_loop_state_variables;
   status = CreateLoopStateVariables(batch_loop_state_variables);
   ORT_RETURN_IF_ERROR(status);
 
@@ -405,7 +405,7 @@ Status Scan8Impl::Execute(const FeedsFetchesManager& ffm) {
     auto sequence_len = sequence_lens_[b];
 
     // Setup input OrtValue streams
-    std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator> scan_input_stream_iterators;
+    Vector<OrtValueTensorSlicer<const OrtValue>::Iterator> scan_input_stream_iterators;
     scan_input_stream_iterators.reserve(info_.num_variadic_inputs - info_.num_loop_state_variables);
 
     for (int i = info_.num_loop_state_variables, end = info_.num_variadic_inputs; i < end; ++i) {

@@ -3,6 +3,6 @@
 
 namespace onnxruntime {
 
-common::Status CreateCustomRegistry(const std::vector<OrtCustomOpDomain*>& op_domains, std::shared_ptr<CustomRegistry>& output);
+common::Status CreateCustomRegistry(const Vector<OrtCustomOpDomain*>& op_domains, std::shared_ptr<CustomRegistry>& output);
 
 }

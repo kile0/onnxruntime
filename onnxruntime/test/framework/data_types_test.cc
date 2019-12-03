@@ -28,7 +28,7 @@ struct TestMap {
 
 // Try recursive type registration and compatibility tests
 using TestMapToMapInt64ToFloat = TestMap<int64_t, MapInt64ToFloat>;
-using VectorInt64 = std::vector<int64_t>;
+using VectorInt64 = Vector<int64_t>;
 using TestMapStringToVectorInt64 = TestMap<std::string, VectorInt64>;
 
 // Trial to see if we resolve the setter properly
@@ -40,7 +40,7 @@ struct TestSequence {
   using value_type = T;
 };
 
-using VectorString = std::vector<std::string>;
+using VectorString = Vector<std::string>;
 using TestSequenceOfSequence = TestSequence<VectorString>;
 
 /// Adding an Opaque type with type parameters
@@ -69,8 +69,8 @@ using MyOpaqueMapCpp_1 = std::map<int64_t, TestOpaqueType_1>;
 using MyOpaqueMapCpp_2 = std::map<int64_t, TestOpaqueType_2>;
 
 // Register Sequence as containing an Opaque type
-using MyOpaqueSeqCpp_1 = std::vector<TestOpaqueType_1>;
-using MyOpaqueSeqCpp_2 = std::vector<TestOpaqueType_2>;
+using MyOpaqueSeqCpp_1 = Vector<TestOpaqueType_1>;
+using MyOpaqueSeqCpp_2 = Vector<TestOpaqueType_2>;
 
 ORT_REGISTER_MAP(MyOpaqueMapCpp_1);
 ORT_REGISTER_MAP(MyOpaqueMapCpp_2);

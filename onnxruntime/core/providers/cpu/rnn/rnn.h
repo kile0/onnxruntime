@@ -22,8 +22,8 @@ class RNN : public OpKernel {
     ORT_ENFORCE(allowed_directions.find(direction_) != allowed_directions.end());
     const int num_directions = direction_ == "bidirectional" ? 2 : 1;
 
-    activation_alpha_ = info.GetAttrsOrDefault("activation_alpha", std::vector<float>(num_directions, 0.0F));
-    activation_beta_ = info.GetAttrsOrDefault("activation_beta", std::vector<float>(num_directions, 0.0F));
+    activation_alpha_ = info.GetAttrsOrDefault("activation_alpha", Vector<float>(num_directions, 0.0F));
+    activation_beta_ = info.GetAttrsOrDefault("activation_beta", Vector<float>(num_directions, 0.0F));
     ORT_ENFORCE(info.GetAttrs("activations", activations_).IsOK());
     //TODO: is it optional or not?
     ORT_ENFORCE(info.GetAttr("hidden_size", &hidden_size_).IsOK());
@@ -44,13 +44,13 @@ class RNN : public OpKernel {
 
  private:
   // optional, default values tied to the activation function
-  std::vector<float> activation_alpha_;
+  Vector<float> activation_alpha_;
 
   // optional, default values tied to the activation function
-  std::vector<float> activation_beta_;
+  Vector<float> activation_beta_;
 
   // optional, default = "Tanh"
-  std::vector<std::string> activations_;
+  Vector<std::string> activations_;
 
   // optional, default no clip_
   float clip_;

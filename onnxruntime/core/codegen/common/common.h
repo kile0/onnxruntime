@@ -142,7 +142,7 @@ ONNX_NAMESPACE::TensorProto_DataType TensorProtoDataType(const NodeArg* def);
 
 // Convert GraphNodes to internal NodePtrs without check lifetime.
 // Please use it only locally when GraphNodes still exist
-std::vector<const Node*> ConvertGraphNodesToNodePtrs(const GraphNodes& graph_nodes);
+Vector<const Node*> ConvertGraphNodesToNodePtrs(const GraphNodes& graph_nodes);
 
 enum : int {
   Dimension_Unknown = -1,

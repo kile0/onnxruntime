@@ -29,7 +29,7 @@ TVM_REGISTER_GLOBAL("tvm.contrib.onnxruntime.pool_f32")
       int arg_idx = 3;
 
       auto extract_values_fn = [&]() {
-        std::vector<int64_t> vec;
+        Vector<int64_t> vec;
 
         DCHECK(arg_idx < num_args);
         int64_t num_vec = args[arg_idx++];
@@ -41,9 +41,9 @@ TVM_REGISTER_GLOBAL("tvm.contrib.onnxruntime.pool_f32")
         return vec;
       };
 
-      std::vector<int64_t> kernel_shape = extract_values_fn();
-      std::vector<int64_t> padding = extract_values_fn();
-      std::vector<int64_t> strides = extract_values_fn();
+      Vector<int64_t> kernel_shape = extract_values_fn();
+      Vector<int64_t> padding = extract_values_fn();
+      Vector<int64_t> strides = extract_values_fn();
 
       MlasPool(kind,
                /*num_pooling_dims*/ kernel_shape.size(),
@@ -112,7 +112,7 @@ static tvm::Tensor MakePoolCommon(const tvm::Tensor& X,
               "kernel_shape num_dims is not compatible with X num_dims.");
 
   tvm::Array<tvm::Expr> pooling_args;
-  auto add_args_fn = [&](const std::vector<int64_t>& v) {
+  auto add_args_fn = [&](const Vector<int64_t>& v) {
     pooling_args.push_back(tvm::make_const(tvm::Int(64), static_cast<int64_t>(v.size())));
     for (auto n : v) {
       pooling_args.push_back(tvm::make_const(tvm::Int(64), n));

@@ -50,9 +50,9 @@ class IfOpTester : public OpTester {
 
  protected:
   void AddNodes(onnxruntime::Graph& graph,
-                std::vector<onnxruntime::NodeArg*>& graph_input_defs,
-                std::vector<onnxruntime::NodeArg*>& graph_output_defs,
-                std::vector<std::function<void(onnxruntime::Node& node)>>& /*add_attribute_funcs*/) override {
+                Vector<onnxruntime::NodeArg*>& graph_input_defs,
+                Vector<onnxruntime::NodeArg*>& graph_output_defs,
+                Vector<std::function<void(onnxruntime::Node& node)>>& /*add_attribute_funcs*/) override {
     // Graph inputs are 0:Split input, 1:Cond for If, 2:if input
     ASSERT_EQ(graph_input_defs.size(), 3);
     ASSERT_EQ(graph_output_defs.size(), 1);
@@ -61,8 +61,8 @@ class IfOpTester : public OpTester {
     NodeArg* if_cond_input = graph_input_defs[1];
     NodeArg* if_input = graph_input_defs[2];
 
-    std::vector<NodeArg*> inputs;
-    std::vector<NodeArg*> outputs;
+    Vector<NodeArg*> inputs;
+    Vector<NodeArg*> outputs;
 
     // add Split node
     {
@@ -150,8 +150,8 @@ static const ONNX_NAMESPACE::GraphProto CreateSubgraph(bool then_branch, const R
   Model model(then_branch ? "If_then" : "If_else", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   const std::string suffix = then_branch ? "0" : "1";
 
@@ -248,7 +248,7 @@ void RunTest(bool condition_value,
   if (options.mixed_execution_providers) {
     // we want the CUDA provider to be first, and the CPU provider second. all except the If should run on
     // CUDA given that, which creates the scenario where we need to copy to/from CPU to execute the If node correctly.
-    std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
+    Vector<std::unique_ptr<IExecutionProvider>> execution_providers;
     execution_providers.push_back(DefaultCudaExecutionProvider());
     execution_providers.push_back(DefaultCpuExecutionProvider());
 

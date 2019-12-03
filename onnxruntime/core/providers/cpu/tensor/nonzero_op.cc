@@ -49,7 +49,7 @@ Status NonZero<T>::Compute(OpKernelContext* context) const {
   assert(X_shape.Size() >= 0);
 
   const Eigen::Index coordinate_size = X_shape.IsScalar() ? 1 : X_shape.NumDimensions();
-  std::vector<int64_t> non_zero_indices_buffer{};
+  Vector<int64_t> non_zero_indices_buffer{};
   // reserve enough space for indices for every element of X
   non_zero_indices_buffer.reserve(X_shape.Size() * coordinate_size);
 
@@ -61,7 +61,7 @@ Status NonZero<T>::Compute(OpKernelContext* context) const {
       non_zero_indices_buffer.push_back(0);
     }
   } else {
-    std::vector<int64_t> coordinate(coordinate_size, 0);
+    Vector<int64_t> coordinate(coordinate_size, 0);
 
     // as we iterate the entries, increment the coordinate for the current entry
     // e.g. if shape is {2,2}, we start with 0,0 increment to 0,1 increment to 1,0 and finally 1,1

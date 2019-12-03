@@ -15,7 +15,7 @@ struct RelAllocations {
   void add(T* x) {
     torel.push_back(x);
   }
-  std::vector<T*> torel;
+  Vector<T*> torel;
   std::function<void(T*)> relf;
   ~RelAllocations() {
     for (auto x : torel) {
@@ -32,10 +32,10 @@ TEST_F(CApiTest, CreateGetVectorOfMapsInt64Float) {  // support zipmap output ty
 
   const int N = 3;
   const int NUM_KV_PAIRS = 4;
-  std::vector<Ort::Value> in;
-  std::vector<int64_t> keys{3, 1, 2, 0};
-  std::vector<int64_t> dims = {4};
-  std::vector<float> values{3.0f, 1.0f, 2.f, 0.f};
+  Vector<Ort::Value> in;
+  Vector<int64_t> keys{3, 1, 2, 0};
+  Vector<int64_t> dims = {4};
+  Vector<float> values{3.0f, 1.0f, 2.f, 0.f};
   for (int i = 0; i < N; ++i) {
     // create key tensor
     Ort::Value keys_tensor = Ort::Value::CreateTensor(info, keys.data(), keys.size() * sizeof(int64_t),
@@ -92,11 +92,11 @@ TEST_F(CApiTest, CreateGetVectorOfMapsStringFloat) {  // support zipmap output t
 
   const int N = 3;
   const int64_t NUM_KV_PAIRS = 4;
-  std::vector<Ort::Value> in;
+  Vector<Ort::Value> in;
   const char* keys_arr[NUM_KV_PAIRS] = {"abc", "def", "ghi", "jkl"};
-  std::vector<std::string> keys{keys_arr, keys_arr + NUM_KV_PAIRS};
-  std::vector<int64_t> dims = {NUM_KV_PAIRS};
-  std::vector<float> values{3.0f, 1.0f, 2.f, 0.f};
+  Vector<std::string> keys{keys_arr, keys_arr + NUM_KV_PAIRS};
+  Vector<int64_t> dims = {NUM_KV_PAIRS};
+  Vector<float> values{3.0f, 1.0f, 2.f, 0.f};
   for (int i = 0; i < N; ++i) {
     // create key tensor
     Ort::Value keys_tensor = Ort::Value::CreateTensor(info, keys.data(), keys.size() * sizeof(std::string),
@@ -128,7 +128,7 @@ TEST_F(CApiTest, CreateGetVectorOfMapsStringFloat) {  // support zipmap output t
     size_t data_len = keys_ort.GetStringTensorDataLength();
 
     std::string result(data_len, '\0');
-    std::vector<size_t> offsets(NUM_KV_PAIRS);
+    Vector<size_t> offsets(NUM_KV_PAIRS);
     keys_ort.GetStringTensorContent((void*)result.data(), data_len, offsets.data(), offsets.size());
 
     const char* s = result.data();
@@ -155,9 +155,9 @@ TEST_F(CApiTest, CreateGetSeqTensors) {
   auto default_allocator = onnxruntime::make_unique<MockedOrtAllocator>();
   Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);
 
-  std::vector<Ort::Value> in;
-  std::vector<int64_t> vals{3, 1, 2, 0};
-  std::vector<int64_t> dims{1, 4};
+  Vector<Ort::Value> in;
+  Vector<int64_t> vals{3, 1, 2, 0};
+  Vector<int64_t> dims{1, 4};
   const int N = 2;
   for (int i = 0; i < N; ++i) {
     // create tensor

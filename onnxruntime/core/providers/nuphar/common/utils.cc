@@ -17,7 +17,7 @@ bool NodeArgShapeUnknownOnAxis(const NodeArg* def, int64_t axis) {
   return utils::HasDimParam(dim) || (!utils::HasDimParam(dim) && !utils::HasDimValue(dim));
 }
 
-bool HasUnknownShapeOnAxis(const ConstPointerContainer<std::vector<NodeArg*>>& defs, int64_t axis) {
+bool HasUnknownShapeOnAxis(const ConstPointerContainer<Vector<NodeArg*>>& defs, int64_t axis) {
   for (const NodeArg* def : defs) {
     if (NodeArgShapeUnknownOnAxis(def, axis)) {
       return true;
@@ -26,7 +26,7 @@ bool HasUnknownShapeOnAxis(const ConstPointerContainer<std::vector<NodeArg*>>& d
   return false;
 }
 
-bool HasUnknownShapeOnAxes(const NodeArg* def, std::vector<int64_t>& axes) {
+bool HasUnknownShapeOnAxes(const NodeArg* def, Vector<int64_t>& axes) {
   for (auto axis : axes) {
     if (NodeArgShapeUnknownOnAxis(def, axis)) {
       return true;
@@ -35,7 +35,7 @@ bool HasUnknownShapeOnAxes(const NodeArg* def, std::vector<int64_t>& axes) {
   return false;
 }
 
-Status GetVectorInt64FromTensorProto(std::vector<int64_t>& v,
+Status GetVectorInt64FromTensorProto(Vector<int64_t>& v,
                                      const ONNX_NAMESPACE::TensorProto& tp) {
   size_t tp_sz_in_bytes;
   ORT_RETURN_IF_ERROR(utils::GetSizeInBytesFromTensorProto<0>(tp, &tp_sz_in_bytes));
@@ -50,7 +50,7 @@ Status GetVectorInt64FromTensorProto(std::vector<int64_t>& v,
       tp.raw_data().size(),                                  \
       p,                                                     \
       tp_sz_in_bytes / sizeof(T)));                          \
-  std::vector<T> tmp_v(p, p + tp_sz_in_bytes / sizeof(T));
+  Vector<T> tmp_v(p, p + tp_sz_in_bytes / sizeof(T));
   v.clear();
 
   switch (tp.data_type()) {

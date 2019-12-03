@@ -145,13 +145,13 @@ class SessionState {
   Get cached memory pattern based on input shapes
   */
   const MemoryPatternGroup* GetMemoryPatternGroup(
-      const std::vector<std::reference_wrapper<const TensorShape>>& input_shapes) const;
+      const Vector<std::reference_wrapper<const TensorShape>>& input_shapes) const;
 
   /**
   Set generated memory pattern with a given input shapes.
   Const as it's an internal cache update only.
   */
-  Status UpdateMemoryPatternGroupCache(const std::vector<std::reference_wrapper<const TensorShape>>& input_shape,
+  Status UpdateMemoryPatternGroupCache(const Vector<std::reference_wrapper<const TensorShape>>& input_shape,
                                        std::unique_ptr<MemoryPatternGroup> mem_patterns) const;
 
   /**
@@ -177,13 +177,13 @@ class SessionState {
     const OrtDevice* device = nullptr;
   };
 
-  using NameNodeInfoMapType = std::unordered_map<std::string, std::vector<NodeInfo>>;
+  using NameNodeInfoMapType = std::unordered_map<std::string, Vector<NodeInfo>>;
   common::Status AddInputNameToNodeInfoMapping(const std::string& input_name, const NodeInfo& node_info);
-  common::Status GetInputNodeInfo(const std::string& input_name, std::vector<NodeInfo>& node_info_vec) const;
+  common::Status GetInputNodeInfo(const std::string& input_name, Vector<NodeInfo>& node_info_vec) const;
   const NameNodeInfoMapType& GetInputNodeInfoMap() const;
 
   void AddOutputNameToNodeInfoMapping(const std::string& output_name, const NodeInfo& node_info);
-  common::Status GetOutputNodeInfo(const std::string& output_name, std::vector<NodeInfo>& node_info_vec) const;
+  common::Status GetOutputNodeInfo(const std::string& output_name, Vector<NodeInfo>& node_info_vec) const;
   const NameNodeInfoMapType& GetOutputNodeInfoMap() const;
 
   /// Add a SessionState instance for executing a subgraph in a Node
@@ -214,7 +214,7 @@ class SessionState {
   const DataTransferManager& GetDataTransferMgr() const { return *data_transfer_mgr_; }
   void SetDataTransferMgr(const DataTransferManager* data_transfer_mgr) { data_transfer_mgr_ = data_transfer_mgr; }
 
-  std::vector<BufferUniquePtr>& GetMutableWeightsBuffers() { return weights_buffers_; }
+  Vector<BufferUniquePtr>& GetMutableWeightsBuffers() { return weights_buffers_; }
   const NodeIndexInfo& GetNodeIndexInfo() const;
 
  private:
@@ -222,7 +222,7 @@ class SessionState {
 
   // cache of the constructed kernels to avoid spending construction
   // time per executor
-  std::vector<OpKernel*> session_kernels_;
+  Vector<OpKernel*> session_kernels_;
   std::unique_ptr<GraphViewer> graph_viewer_;
 
   std::reference_wrapper<const ExecutionProviders> execution_providers_;  // owned by InferenceSession
@@ -236,7 +236,7 @@ class SessionState {
   // This data structure is for uninitializing string tensors and
   // munmap memory region and close file descriptor
   std::unordered_map<int, OrtCallback> deleter_for_initialized_tensors_;
-  std::vector<BufferUniquePtr> weights_buffers_;
+  Vector<BufferUniquePtr> weights_buffers_;
   std::unique_ptr<SequentialExecutionPlan> p_seq_exec_plan_ = nullptr;
 
   const logging::Logger* logger_ = nullptr;

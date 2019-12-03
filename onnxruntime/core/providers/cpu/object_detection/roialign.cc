@@ -68,7 +68,7 @@ void pre_calc_for_bilinear_interpolate(
     T bin_size_w,
     int64_t roi_bin_grid_h,
     int64_t roi_bin_grid_w,
-    std::vector<PreCalc<T>>& pre_calc) {
+    Vector<PreCalc<T>>& pre_calc) {
   int64_t pre_calc_index = 0;
   for (int64_t ph = 0; ph < pooled_height; ph++) {
     for (int64_t pw = 0; pw < pooled_width; pw++) {
@@ -202,7 +202,7 @@ void RoiAlignForward(const TensorShape& output_shape,
 
     // we want to precalculate indices and weights shared by all channels,
     // this is the key point of optimization
-    std::vector<PreCalc<T>> pre_calc(
+    Vector<PreCalc<T>> pre_calc(
         roi_bin_grid_h * roi_bin_grid_w * pooled_width * pooled_height);
     pre_calc_for_bilinear_interpolate(
         height,

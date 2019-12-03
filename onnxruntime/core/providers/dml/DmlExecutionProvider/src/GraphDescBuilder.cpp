@@ -50,8 +50,8 @@ namespace Dml::GraphDescBuilder
         gsl::span<const uint8_t> isConstGpuGraphInput,
         std::unordered_map<std::string, onnx::TensorProto>& transferredInitializerMap,
         const onnxruntime::Graph& graph,
-        const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
-        const onnxruntime::ConstPointerContainer<std::vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
+        const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeInputDefs,
+        const onnxruntime::ConstPointerContainer<Vector<onnxruntime::NodeArg*>>& fusedNodeOutputDefs,
         const std::unordered_map<std::string, GraphNodeProperties>& graphNodePropertyMap,
         IDMLDevice* device,
         const void* executionHandle)
@@ -87,15 +87,15 @@ namespace Dml::GraphDescBuilder
 
         StackAllocator<1024> allocator; // Used for converting abstract operator descs into DML_OPERATOR_DESC
 
-        std::vector<NodeInfo> graphNodes;
-        std::vector<DML_PREVIEW_INPUT_GRAPH_EDGE> graphInputEdges;
-        std::vector<DML_PREVIEW_INTERMEDIATE_GRAPH_EDGE> graphIntermediateEdges;
-        std::vector<DML_PREVIEW_OUTPUT_GRAPH_EDGE> graphOutputEdges;
+        Vector<NodeInfo> graphNodes;
+        Vector<DML_PREVIEW_INPUT_GRAPH_EDGE> graphInputEdges;
+        Vector<DML_PREVIEW_INTERMEDIATE_GRAPH_EDGE> graphIntermediateEdges;
+        Vector<DML_PREVIEW_OUTPUT_GRAPH_EDGE> graphOutputEdges;
 
         // Get the topological sorting of Lotus nodes
         // paulm: breaking change from LOTUS that removed GetNodesInTopologicalOrder from Graph
         onnxruntime::GraphViewer viewer(graph);
-        const std::vector<onnxruntime::NodeIndex>& orderedNodeIndices = viewer.GetNodesInTopologicalOrder();
+        const Vector<onnxruntime::NodeIndex>& orderedNodeIndices = viewer.GetNodesInTopologicalOrder();
 
         // Avoid using separate command lists for small graphs. This value can be reduced by tuning the 
         // flushing behavior of DmlCommandRecorder.  Its current behavior is to assume that graphs contain
@@ -179,8 +179,8 @@ namespace Dml::GraphDescBuilder
 
             // Retrieve lists of input and output tensor descs. These point into the opDesc, which allows us to modify
             // the tensor descs through these pointers.
-            std::vector<DmlBufferTensorDesc*> inputTensorDescs = opDesc.GetInputTensors();
-            std::vector<DmlBufferTensorDesc*> outputTensorDescs = opDesc.GetOutputTensors();
+            Vector<DmlBufferTensorDesc*> inputTensorDescs = opDesc.GetInputTensors();
+            Vector<DmlBufferTensorDesc*> outputTensorDescs = opDesc.GetOutputTensors();
 
             // Set connections of the new node
             for (uint32_t inputIndex = 0; inputIndex < validOpInputCount; ++inputIndex)

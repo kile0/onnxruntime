@@ -127,7 +127,7 @@ namespace Dml
 
         struct Bucket
         {
-            std::vector<Resource> resources;
+            Vector<Resource> resources;
         };
 
         static gsl::index GetBucketIndexFromSize(uint64_t size);
@@ -148,7 +148,7 @@ namespace Dml
         D3D12_RESOURCE_FLAGS m_resourceFlags;
         D3D12_RESOURCE_STATES m_initialState;
 
-        std::vector<Bucket> m_pool;
+        Vector<Bucket> m_pool;
         size_t m_currentAllocationId = 0;
         uint64_t m_currentResourceId = 0;
         AllocatorRoundingMode m_defaultRoundingMode = AllocatorRoundingMode::Enabled;

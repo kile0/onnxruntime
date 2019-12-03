@@ -48,12 +48,12 @@ tvm::Array<tvm::Expr> WeightLayoutTranspose2D::ToActualShape(const tvm::Tensor& 
   return new_shape;
 }
 
-std::vector<int64_t> WeightLayoutTranspose2D::ToActualShape(const Tensor* X) const {
+Vector<int64_t> WeightLayoutTranspose2D::ToActualShape(const Tensor* X) const {
   ORT_ENFORCE(X != nullptr);
   ORT_ENFORCE(X->Shape().GetDims().size() == 2);
   auto old_shape = X->Shape().GetDims();
 
-  std::vector<int64_t> new_shape = {
+  Vector<int64_t> new_shape = {
       old_shape[1],
       old_shape[0]};
 

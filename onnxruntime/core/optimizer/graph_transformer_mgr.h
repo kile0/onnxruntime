@@ -38,7 +38,7 @@ class GraphTransformerManager {
     }
   };
 
-  std::unordered_map<TransformerLevel, std::vector<std::unique_ptr<GraphTransformer>>, EnumHashKey> level_to_transformer_map_;
+  std::unordered_map<TransformerLevel, Vector<std::unique_ptr<GraphTransformer>>, EnumHashKey> level_to_transformer_map_;
   std::unordered_map<std::string, GraphTransformer*> transformers_info_;
 };
 }  // namespace onnxruntime

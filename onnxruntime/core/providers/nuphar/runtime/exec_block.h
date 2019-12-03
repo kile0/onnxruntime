@@ -45,7 +45,7 @@ class ExecBlock {
 };
 
 void CreateExecBlock(
-    std::vector<std::unique_ptr<ExecBlock>>& exec_blocks,
+    Vector<std::unique_ptr<ExecBlock>>& exec_blocks,
     const NupharFuncInfo* info,
     const NupharSubgraphUnit& subgraph,
     bool enable_tiling = false);

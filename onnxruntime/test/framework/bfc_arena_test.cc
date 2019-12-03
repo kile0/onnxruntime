@@ -22,7 +22,7 @@ TEST(BFCArenaTest, NoDups) {
   CheckStats(&a, 0, 0, 0, 0);
 
   // Allocate a lot of raw pointers
-  std::vector<void*> ptrs;
+  Vector<void*> ptrs;
   for (int s = 1; s < 1024; s++) {
     void* raw = a.Alloc(s);
     ptrs.push_back(raw);
@@ -51,7 +51,7 @@ TEST(BFCArenaTest, AllocationsAndDeallocations) {
   // Allocate 256 raw pointers of sizes between 100 bytes and about a meg
   std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-  std::vector<void*> initial_ptrs;
+  Vector<void*> initial_ptrs;
   for (int s = 1; s < 256; s++) {
     size_t size = std::min<size_t>(
         std::max<size_t>(rand() % 1048576, 100), 1048576);
@@ -61,7 +61,7 @@ TEST(BFCArenaTest, AllocationsAndDeallocations) {
   }
 
   // Deallocate half of the memory, and keep track of the others.
-  std::vector<void*> existing_ptrs;
+  Vector<void*> existing_ptrs;
   for (size_t i = 0; i < initial_ptrs.size(); i++) {
     if (i % 2 == 1) {
       a.Free(initial_ptrs[i]);
@@ -173,7 +173,7 @@ TEST(BFCArenaTest, AllocationsAndDeallocationsWithGrowth) {
 
   const int32_t max_mem = 1 << 27;
 
-  std::vector<void*> initial_ptrs;
+  Vector<void*> initial_ptrs;
   for (int s = 1; s < 10; s++) {
     size_t size = std::min<size_t>(
         std::max<size_t>(rand() % max_mem, 100), max_mem);
@@ -183,7 +183,7 @@ TEST(BFCArenaTest, AllocationsAndDeallocationsWithGrowth) {
   }
 
   // Deallocate half of the memory, and keep track of the others.
-  std::vector<void*> existing_ptrs;
+  Vector<void*> existing_ptrs;
   for (size_t i = 0; i < initial_ptrs.size(); i++) {
     if (i % 2 == 1) {
       a.Free(initial_ptrs[i]);

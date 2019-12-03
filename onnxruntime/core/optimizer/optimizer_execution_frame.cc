@@ -16,7 +16,7 @@
 
 namespace onnxruntime {
 
-OptimizerExecutionFrame::Info::Info(const std::vector<const Node*>& nodes,
+OptimizerExecutionFrame::Info::Info(const Vector<const Node*>& nodes,
                                     const InitializedTensorSet& initialized_tensor_set) {
   // Create CPU execution provider
   // For now, CPU execution provider will be created every time when initializing Info.
@@ -83,9 +83,9 @@ const OpKernel* OptimizerExecutionFrame::Info::GetKernel(NodeIndex node_id) cons
 
 // For optimizer, probably no need to pass feed_mlvalue_idxs, feeds to initialize IExecutionFrame.
 // If needed, the parameters of OptimizerExecutionFrame ctor can be changed later.
-OptimizerExecutionFrame::OptimizerExecutionFrame(const Info& info, const std::vector<int>& fetch_mlvalue_idxs)
-    : IExecutionFrame(std::vector<int>(), std::vector<OrtValue>(), info.GetInitializers(), fetch_mlvalue_idxs,
-                      std::vector<OrtValue>(), info.GetMLValueNameIdxMap(), info.GetNodeIndexInfo()),
+OptimizerExecutionFrame::OptimizerExecutionFrame(const Info& info, const Vector<int>& fetch_mlvalue_idxs)
+    : IExecutionFrame(Vector<int>(), Vector<OrtValue>(), info.GetInitializers(), fetch_mlvalue_idxs,
+                      Vector<OrtValue>(), info.GetMLValueNameIdxMap(), info.GetNodeIndexInfo()),
       info_(info) {}
 
 AllocatorPtr OptimizerExecutionFrame::GetAllocatorImpl(const OrtMemoryInfo& info) const {

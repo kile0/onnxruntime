@@ -1143,7 +1143,7 @@ std::shared_ptr<KernelRegistry> CUDAExecutionProvider::GetKernelRegistry() const
 }
 
 static bool RNNNeedFallbackToCPU(const onnxruntime::Node& node,
-                                 const std::vector<std::string> activations_supported,
+                                 const Vector<std::string> activations_supported,
                                  const std::string& op_type) {
   const auto& node_attributes = node.GetAttributes();
   // Check attributes
@@ -1244,10 +1244,10 @@ std::unique_ptr<onnxruntime::IDataTransfer> CUDAExecutionProvider::GetDataTransf
   return onnxruntime::make_unique<onnxruntime::GPUDataTransfer>();
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 CUDAExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
-                                     const std::vector<const KernelRegistry*>&) const {
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+                                     const Vector<const KernelRegistry*>&) const {
+  Vector<std::unique_ptr<ComputeCapability>> result;
   std::unordered_set<const NodeArg*> defs_outside_cuda;
 
   for (auto& node_index : graph.GetNodesInTopologicalOrder()) {
@@ -1270,15 +1270,15 @@ CUDAExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
     bool force_inside = false;  // for some compute heavy ops, we'll force it to run inside CUDA
     if ("LSTM" == node.OpType()) {
       // the supported activations covers the bidirectional mode
-      std::vector<std::string> activations_supported{"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
+      Vector<std::string> activations_supported{"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
       not_supported = RNNNeedFallbackToCPU(node, activations_supported, node.OpType());
       force_inside = !not_supported;
     } else if ("RNN" == node.OpType()) {
-      std::vector<std::string> activations_supported{"tanh", "tanh"};
+      Vector<std::string> activations_supported{"tanh", "tanh"};
       not_supported = RNNNeedFallbackToCPU(node, activations_supported, node.OpType());
       force_inside = !not_supported;
     } else if ("GRU" == node.OpType()) {
-      std::vector<std::string> activations_supported{"sigmoid", "tanh", "sigmoid", "tanh"};
+      Vector<std::string> activations_supported{"sigmoid", "tanh", "sigmoid", "tanh"};
       not_supported = RNNNeedFallbackToCPU(node, activations_supported, node.OpType());
       force_inside = !not_supported;
     } else if ("Conv" == node.OpType()) {

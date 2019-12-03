@@ -66,7 +66,7 @@ class SplitToSequence final : public OpKernel {
                            int64_t& num_outputs, int64_t& axis, int& before_dims,
                            int& after_dims_including_split_axis, int& after_dims_excluding_split,
                            bool& is_uneven_split, int& num_remaining_splits,
-                           std::vector<int64_t>& split_sizes) const;
+                           Vector<int64_t>& split_sizes) const;
   int64_t axis_{};
   int64_t keepdims_{1};
   const int64_t DEFAULT_LENGTH_EACH_OUTPUT_ = 1;

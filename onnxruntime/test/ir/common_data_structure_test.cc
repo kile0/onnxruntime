@@ -14,7 +14,7 @@ TEST(RecordTest, CommonDataStructureTest) {
   EXPECT_FALSE(string_record.GetName(0, &n2).IsOK());
 
   // One way to store feature vector using Record.
-  std::vector<std::string> names = {"featureName", "featureValue"};
+  Vector<std::string> names = {"featureName", "featureValue"};
   std::tuple<std::string, float> values("streamLength", 2.0f);
   Record<std::string, float> record(names, values);
 

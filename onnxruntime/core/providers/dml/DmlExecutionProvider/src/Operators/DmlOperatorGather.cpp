@@ -18,16 +18,16 @@ public:
 
         DmlOperator::Initialize(kernelCreationContext);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         assert(inputDescs.size() == 2);
         assert(outputDescs.size() == 1);
 
         m_inputTensorDescs[1].ForceUnsignedDataType();
 
         auto outputTensorShapeDescription = kernelCreationContext.GetTensorShapeDescription();;
-        std::vector<DimensionType> dataDimensions = outputTensorShapeDescription.GetInputTensorShape(0);
-        std::vector<DimensionType> indicesDimensions = outputTensorShapeDescription.GetInputTensorShape(1);
+        Vector<DimensionType> dataDimensions = outputTensorShapeDescription.GetInputTensorShape(0);
+        Vector<DimensionType> indicesDimensions = outputTensorShapeDescription.GetInputTensorShape(1);
         ML_CHECK_VALID_ARGUMENT(dataDimensions.size() <= OperatorHelper::NchwDimensionCount);
         uint32_t dmlAxis = GetDmlAdjustedAxis(m_axis, kernelCreationContext, m_inputTensorDescs.front().GetDimensionCount());
 

@@ -40,7 +40,7 @@ class CompositeSink : public ISink {
     }
   }
 
-  std::vector<std::unique_ptr<ISink>> sinks_;
+  Vector<std::unique_ptr<ISink>> sinks_;
 };
 }  // namespace logging
 }  // namespace onnxruntime

@@ -21,8 +21,8 @@ namespace Dml
         ComPtr<IDMLDevice> m_dmlDevice;
 
         // Tensor descs ordered based on index arrays passed to Initialize
-        std::vector<TensorDesc> m_inputTensorDescs;
-        std::vector<TensorDesc> m_outputTensorDescs;
+        Vector<TensorDesc> m_inputTensorDescs;
+        Vector<TensorDesc> m_outputTensorDescs;
 
         ComPtr<IDMLCompiledOperator> m_compiledOperator;
         ComPtr<ID3D12Resource> m_persistentResource;
@@ -31,8 +31,8 @@ namespace Dml
 
         void Initialize(
             const MLOperatorKernelCreationContext& kernelInfo,
-            const std::optional<const std::vector<std::optional<uint32_t>>>& kernelInputIndices = std::nullopt,
-            const std::optional<const std::vector<std::optional<uint32_t>>>& kernelOutputIndices = std::nullopt,
+            const std::optional<const Vector<std::optional<uint32_t>>>& kernelInputIndices = std::nullopt,
+            const std::optional<const Vector<std::optional<uint32_t>>>& kernelOutputIndices = std::nullopt,
             const std::optional<gsl::span<const uint32_t>> inputShape = std::nullopt,
             const std::optional<gsl::span<const uint32_t>> outputShape = std::nullopt
             );
@@ -51,18 +51,18 @@ namespace Dml
             );
         
         // Tensors ordered based on index arrays passed to Initialize
-        std::vector<IMLOperatorTensor*> GetInputTensors(const MLOperatorKernelContext& kernelContext);
-        std::vector<IMLOperatorTensor*> GetOutputTensors(const MLOperatorKernelContext& kernelContext);
+        Vector<IMLOperatorTensor*> GetInputTensors(const MLOperatorKernelContext& kernelContext);
+        Vector<IMLOperatorTensor*> GetOutputTensors(const MLOperatorKernelContext& kernelContext);
         
         // Retrieves the input/output tensors to be supplied to DirectML for execution. These differ from
         // Get[Input|Output]Tensors in that they account for the binding requirements of DML, instead of
         // unconditionally retrieving all input and output tensors.
-        std::vector<IMLOperatorTensor*> GetInputTensorsForExecute(const MLOperatorKernelContext& kernelContext);
-        std::vector<IMLOperatorTensor*> GetOutputTensorsForExecute(const MLOperatorKernelContext& kernelContext);
+        Vector<IMLOperatorTensor*> GetInputTensorsForExecute(const MLOperatorKernelContext& kernelContext);
+        Vector<IMLOperatorTensor*> GetOutputTensorsForExecute(const MLOperatorKernelContext& kernelContext);
 
         // Tensor descs ordered based on index arrays passed to Initialize
-        std::vector<DML_TENSOR_DESC> GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> GetDmlOutputDescs();
 
         // Sets the memory of a tensor to all zeros.
         //
@@ -100,8 +100,8 @@ namespace Dml
     private:
         // For each input or output of the DML kernel, the corresponding input or output of the original 
         // kernel.  Entries for unused DML inputs are nullopt.
-        std::vector<std::optional<uint32_t>> m_kernelInputIndices;
-        std::vector<std::optional<uint32_t>> m_kernelOutputIndices;
+        Vector<std::optional<uint32_t>> m_kernelInputIndices;
+        Vector<std::optional<uint32_t>> m_kernelOutputIndices;
     };
 
 } // namespace Dml

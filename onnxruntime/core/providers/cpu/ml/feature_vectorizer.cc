@@ -11,7 +11,7 @@ namespace ml {
 ONNX_CPU_OPERATOR_ML_KERNEL(
     FeatureVectorizer,
     1,
-    KernelDefBuilder().TypeConstraint("T1", std::vector<MLDataType>{
+    KernelDefBuilder().TypeConstraint("T1", Vector<MLDataType>{
                                                 DataTypeImpl::GetTensorType<int32_t>(),
                                                 DataTypeImpl::GetTensorType<int64_t>(),
                                                 DataTypeImpl::GetTensorType<float>(),

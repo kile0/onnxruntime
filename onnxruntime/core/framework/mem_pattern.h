@@ -51,8 +51,8 @@ class MemoryPattern {
 };
 
 struct MemoryPatternGroup {
-  std::vector<OrtMemoryInfo> locations;
-  std::vector<MemoryPattern> patterns;
+  Vector<OrtMemoryInfo> locations;
+  Vector<MemoryPattern> patterns;
 
   const MemoryPattern* GetPatterns(const OrtMemoryInfo& location) const {
     for (size_t i = 0; i < locations.size(); i++)

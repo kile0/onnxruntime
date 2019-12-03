@@ -19,7 +19,7 @@ class Transpose final : public CudaKernel, public TransposeBase {
   Status ComputeInternal(OpKernelContext* context) const override;
 
   static Status DoTranspose(const Transpose& transpose_kernel,
-                            const std::vector<size_t>& permutations, const Tensor& input, Tensor& output);
+                            const Vector<size_t>& permutations, const Tensor& input, Tensor& output);
 };
 
 }  // namespace cuda

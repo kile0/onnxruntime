@@ -57,7 +57,7 @@ class ThreadPool {
   void ParallelForRange(int64_t first, int64_t last, std::function<void(int64_t, int64_t)> fn);
 
   // This is not supported until the latest Eigen
-  // void SetStealPartitions(const std::vector<std::pair<unsigned, unsigned>>& partitions);
+  // void SetStealPartitions(const Vector<std::pair<unsigned, unsigned>>& partitions);
 
   /**
   Tries to call the given function in parallel, with calls split into (num_batches) batches.

@@ -88,7 +88,7 @@ static const Tensor* Marshalling(
     packed_func = ctx_layout.weight_layout_to_packed_func[layout_key];
   }
 
-  std::vector<int64_t> marshalled_shape = layout_ptr->ToActualShape(original_initializer);
+  Vector<int64_t> marshalled_shape = layout_ptr->ToActualShape(original_initializer);
   auto marshalled_size = TotalSize(marshalled_shape);
   auto byte_size = original_initializer->DataType()->Size();
 
@@ -104,8 +104,8 @@ static const Tensor* Marshalling(
 
   int num_args = 2;
   DLContext tvm_ctx{kDLCPU, 0};
-  std::vector<TVMValue> lvalues(num_args);
-  std::vector<DLTensor> tvm_tensors(num_args);
+  Vector<TVMValue> lvalues(num_args);
+  Vector<DLTensor> tvm_tensors(num_args);
 
   // input
   const auto& tensor_shape = original_initializer->Shape();
@@ -126,7 +126,7 @@ static const Tensor* Marshalling(
                     marshalled_shape.data(), nullptr, 0};
   lvalues[1].v_handle = &(tvm_tensors[1]);
 
-  auto types_code = std::vector<int>(num_args, kNDArrayContainer);
+  auto types_code = Vector<int>(num_args, kNDArrayContainer);
   tvm::TVMArgs tvm_args(lvalues.data(), types_code.data(), num_args);
   tvm::TVMRetValue rvalue;
   packed_func.CallPacked(tvm_args, &rvalue);

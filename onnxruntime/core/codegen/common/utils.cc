@@ -45,7 +45,7 @@ bool IsEnvVarDefined(const char* var) {
   return val != nullptr;
 }
 
-int64_t TotalSize(const std::vector<int64_t>& shape) {
+int64_t TotalSize(const Vector<int64_t>& shape) {
   int64_t total = 1;
   for (auto s : shape) {
     total *= s;
@@ -57,7 +57,7 @@ int64_t TotalSize(const std::vector<int64_t>& shape) {
 // elements contained by a single element of current dimension.
 // For example, for shape[3][4][5][6], strides will be
 // [4*5*6, 5*6, 6, 1], i.e. [120, 30, 6, 1]
-void GetStrides(const int64_t* shape, int ndim, std::vector<int64_t>& strides) {
+void GetStrides(const int64_t* shape, int ndim, Vector<int64_t>& strides) {
   strides.resize(ndim);
   strides[ndim - 1] = 1;
   for (int64_t i = ndim - 2; i >= 0; i--) {

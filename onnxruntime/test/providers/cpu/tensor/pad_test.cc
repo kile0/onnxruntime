@@ -10,12 +10,12 @@ namespace test {
 // There is support for int32, int64, float, and double types for opset-11 Pad alone in ORT
 template <typename T>
 static void RunOpset11TypedTest(
-    const std::vector<int64_t>& input_dims,
-    const std::vector<T>& input,
-    const std::vector<int64_t>& pads,
+    const Vector<int64_t>& input_dims,
+    const Vector<T>& input,
+    const Vector<int64_t>& pads,
     T value,
-    const std::vector<int64_t>& output_dims,
-    const std::vector<T>& output,
+    const Vector<int64_t>& output_dims,
+    const Vector<T>& output,
     std::string mode = "constant",
     OpTester::ExpectResult expect = OpTester::ExpectResult::kExpectSuccess,
     const std::string& error_msg = "") {
@@ -33,12 +33,12 @@ static void RunOpset11TypedTest(
 
 // There is only support for float type for opset-10 and MSDomain kernel in ORT
 static void RunAllOpsetAllDomainPadTests(
-    const std::vector<int64_t>& input_dims,
-    const std::vector<float>& input,
-    const std::vector<int64_t>& pads,
+    const Vector<int64_t>& input_dims,
+    const Vector<float>& input,
+    const Vector<int64_t>& pads,
     float value,
-    const std::vector<int64_t>& output_dims,
-    const std::vector<float>& output,
+    const Vector<int64_t>& output_dims,
+    const Vector<float>& output,
     std::string mode = "constant",
     OpTester::ExpectResult expect = OpTester::ExpectResult::kExpectSuccess,
     const std::string& error_msg = "") {
@@ -88,9 +88,9 @@ TEST(TensorOpTest, Pad_Spec_Example) {
 }
 
 TEST(TensorOpTest, Pad_Constant_1D_int) {
-  std::vector<int32_t> X = {1, 2, 3, 4, 5, 6};
+  Vector<int32_t> X = {1, 2, 3, 4, 5, 6};
   int32_t value = 1234;
-  std::vector<int32_t> Y = {1234, 1234, 1, 2, 1234, 1234, 3, 4, 1234, 1234, 5, 6};
+  Vector<int32_t> Y = {1234, 1234, 1, 2, 1234, 1234, 3, 4, 1234, 1234, 5, 6};
   RunOpset11TypedTest({3, 2},
                       X,
                       {0, 2, 0, 0},
@@ -100,9 +100,9 @@ TEST(TensorOpTest, Pad_Constant_1D_int) {
 }
 
 TEST(TensorOpTest, Pad_Constant_1D_long) {
-  std::vector<int64_t> X = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> X = {1, 2, 3, 4, 5, 6};
   int64_t value = 1234;
-  std::vector<int64_t> Y = {1234, 1234, 1, 2, 1234, 1234, 3, 4, 1234, 1234, 5, 6};
+  Vector<int64_t> Y = {1234, 1234, 1, 2, 1234, 1234, 3, 4, 1234, 1234, 5, 6};
   RunOpset11TypedTest({3, 2},
                       X,
                       {0, 2, 0, 0},
@@ -112,9 +112,9 @@ TEST(TensorOpTest, Pad_Constant_1D_long) {
 }
 
 TEST(TensorOpTest, Pad_Constant_1D_double) {
-  std::vector<double> X = {1., 2., 3., 4., 5., 6.};
+  Vector<double> X = {1., 2., 3., 4., 5., 6.};
   double value = 0.;
-  std::vector<double> Y = {0., 0., 1., 2., 0., 0., 3., 4., 0., 0., 5., 6.};
+  Vector<double> Y = {0., 0., 1., 2., 0., 0., 3., 4., 0., 0., 5., 6.};
   RunOpset11TypedTest({3, 2},
                       X,
                       {0, 2, 0, 0},
@@ -249,10 +249,10 @@ TEST(TensorOpTest, Pad_Reflect_2D) {
 }
 
 TEST(TensorOpTest, Pad_Constant_2D_int) {
-  std::vector<int32_t> X = {11, 21, 31,
+  Vector<int32_t> X = {11, 21, 31,
                             12, 22, 32};
   int32_t value = 0;
-  std::vector<int32_t> Y = {11, 11, 11, 21, 31, 31, 31,
+  Vector<int32_t> Y = {11, 11, 11, 21, 31, 31, 31,
                             11, 11, 11, 21, 31, 31, 31,
                             11, 11, 11, 21, 31, 31, 31,
                             12, 12, 12, 22, 32, 32, 32,
@@ -268,10 +268,10 @@ TEST(TensorOpTest, Pad_Constant_2D_int) {
 }
 
 TEST(TensorOpTest, Pad_Constant_2D_long) {
-  std::vector<int64_t> X = {11, 21, 31,
+  Vector<int64_t> X = {11, 21, 31,
                             12, 22, 32};
   int64_t value = 0;
-  std::vector<int64_t> Y = {11, 11, 11, 21, 31, 31, 31,
+  Vector<int64_t> Y = {11, 11, 11, 21, 31, 31, 31,
                             11, 11, 11, 21, 31, 31, 31,
                             11, 11, 11, 21, 31, 31, 31,
                             12, 12, 12, 22, 32, 32, 32,
@@ -287,10 +287,10 @@ TEST(TensorOpTest, Pad_Constant_2D_long) {
 }
 
 TEST(TensorOpTest, Pad_Constant_2D_double) {
-  std::vector<double> X = {11., 21., 31.,
+  Vector<double> X = {11., 21., 31.,
                            12., 22., 32.};
   double value = 0.;
-  std::vector<double> Y = {11., 11., 11., 21., 31., 31., 31.,
+  Vector<double> Y = {11., 11., 11., 21., 31., 31., 31.,
                            11., 11., 11., 21., 31., 31., 31.,
                            11., 11., 11., 21., 31., 31., 31.,
                            12., 12., 12., 22., 32., 32., 32.,

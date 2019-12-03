@@ -45,8 +45,8 @@ TEST(SessionStateTest, AddGetKernelTest) {
 
   onnxruntime::Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
-  std::vector<onnxruntime::NodeArg*> inputs;
-  std::vector<onnxruntime::NodeArg*> outputs;
+  Vector<onnxruntime::NodeArg*> inputs;
+  Vector<onnxruntime::NodeArg*> outputs;
   TypeProto output_type;
   output_type.mutable_tensor_type()->set_elem_type(TensorProto_DataType_INT32);
   output_type.mutable_tensor_type()->mutable_shape()->add_dim()->set_dim_value(1);

@@ -27,7 +27,7 @@ class WeightLayoutVerticalStripe2D : public WeightLayout {
   virtual CoordTransFunc ToNominal(const tvm::Tensor& X) const override;
   virtual CoordTransFunc ToActual(const tvm::Tensor& X) const override;
   tvm::Array<tvm::Expr> ToActualShape(const tvm::Tensor& X) const override;
-  std::vector<int64_t> ToActualShape(const Tensor* X) const override;
+  Vector<int64_t> ToActualShape(const Tensor* X) const override;
 
  private:
   int stripe_width_;

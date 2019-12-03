@@ -46,24 +46,24 @@ class GraphViewer {
   @returns Collection of NodeArg pointers for the graph inputs, excluding inputs that have matching initializers.
   @remarks No nullptr values in the returned collection. The order will be the same as in the GraphProto.
   */
-  const std::vector<const NodeArg*>& GetInputs() const noexcept;
+  const Vector<const NodeArg*>& GetInputs() const noexcept;
 
   /**
   Gets the Graph inputs, including any initializers.
   @returns Collection of NodeArg pointers for all the graph inputs.
   @remarks No nullptr values in the returned collection. The order will be the same as in the GraphProto.
   */
-  const std::vector<const NodeArg*>& GetInputsIncludingInitializers() const noexcept;
+  const Vector<const NodeArg*>& GetInputsIncludingInitializers() const noexcept;
 
   /**
   Gets the Graph outputs.
   @returns Collection of NodeArg pointers for all the graph outputs.
   @remarks No nullptr values in the returned collection. The order will be the same as in the GraphProto.
   */
-  const std::vector<const NodeArg*>& GetOutputs() const noexcept;
+  const Vector<const NodeArg*>& GetOutputs() const noexcept;
 
   /** Gets all ValueInfo NodeArg instances in the Graph. */
-  const std::vector<const NodeArg*>& GetValueInfo() const noexcept;
+  const Vector<const NodeArg*>& GetValueInfo() const noexcept;
 
   /**
   Gets the Node instance at the specified index.
@@ -82,14 +82,14 @@ class GraphViewer {
   int MaxNodeIndex() const noexcept;
 
   /** Gets the NodeIndex values for the Graph nodes, sorted into topological order. */
-  const std::vector<NodeIndex>& GetNodesInTopologicalOrder() const;
+  const Vector<NodeIndex>& GetNodesInTopologicalOrder() const;
 
   /** 
   Gets the NodeIndex values for the root nodes in the Graph.
   The root nodes are the topmost nodes in the Graph that receive inputs from the Graph inputs 
   and no other nodes in the Graph.
   */
-  const std::vector<NodeIndex>& GetRootNodes() const;
+  const Vector<NodeIndex>& GetRootNodes() const;
 
   /** Gets all tensors created from initializers. */
   const InitializedTensorSet& GetAllInitializedTensors() const noexcept;
@@ -123,8 +123,8 @@ class GraphViewer {
   const Graph* graph_;
 
   // The NodeIndex values of the graph nodes sorted in topological order.
-  std::vector<NodeIndex> nodes_in_topological_order_;
+  Vector<NodeIndex> nodes_in_topological_order_;
   // Graph root nodes.
-  std::vector<NodeIndex> root_nodes_;
+  Vector<NodeIndex> root_nodes_;
 };
 }  // namespace onnxruntime

@@ -173,7 +173,7 @@ void MLValueToTensorProto(Ort::Value& ml_value, bool using_raw_data,
     case onnx::TensorProto_DataType_BFLOAT16: {  // Target: raw_data or int32_data
       const auto* data = ml_value.GetTensorMutableData<onnxruntime::BFloat16>();
 
-      std::vector<uint16_t> raw_data;
+      Vector<uint16_t> raw_data;
       raw_data.reserve(elem_count);
       for (size_t i = 0; i < elem_count; ++i) {
         raw_data.push_back(data[i].val);
@@ -191,8 +191,8 @@ void MLValueToTensorProto(Ort::Value& ml_value, bool using_raw_data,
     case onnx::TensorProto_DataType_STRING: {  // Target: string_data
       // string could not be written into "raw_data"
       auto length = ml_value.GetStringTensorDataLength();
-      std::vector<char> buffer;
-      std::vector<size_t> offsets;
+      Vector<char> buffer;
+      Vector<size_t> offsets;
       buffer.reserve(length);
       offsets.reserve(elem_count);
       ml_value.GetStringTensorContent(buffer.data(), length, offsets.data(), elem_count);

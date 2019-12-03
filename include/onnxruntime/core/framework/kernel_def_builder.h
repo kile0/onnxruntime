@@ -52,15 +52,15 @@ class KernelDef {
     return provider_type_;
   }
 
-  const std::unordered_map<std::string, std::vector<MLDataType>>& TypeConstraints() const {
+  const std::unordered_map<std::string, Vector<MLDataType>>& TypeConstraints() const {
     return type_constraints_;
   }
 
-  const std::vector<std::pair<int, int>>& MayInplace() const {
+  const Vector<std::pair<int, int>>& MayInplace() const {
     return inplace_map_;
   }
 
-  const std::vector<std::pair<int, int>>& Alias() const {
+  const Vector<std::pair<int, int>>& Alias() const {
     return alias_map_;
   }
 
@@ -110,13 +110,13 @@ class KernelDef {
 
   // The supported data types for inputs/outputs.
   // Key is input/output name defined in op schema, Value are supported types.
-  std::unordered_map<std::string, std::vector<MLDataType>> type_constraints_;
+  std::unordered_map<std::string, Vector<MLDataType>> type_constraints_;
 
   // An element <i, j> means that output j reuses the memory of input i.
-  std::vector<std::pair<int, int>> inplace_map_;
+  Vector<std::pair<int, int>> inplace_map_;
 
   // An element <i, j> means that output j is an alias of input i.
-  std::vector<std::pair<int, int>> alias_map_;
+  Vector<std::pair<int, int>> alias_map_;
 
   // The memory types of inputs/outputs of this kernel
   MemTypeMap input_memory_type_args_;
@@ -175,9 +175,9 @@ class KernelDefBuilder {
      argument name specified in op schema, say "T".
   */
   KernelDefBuilder& TypeConstraint(const std::string& arg_name,
-                                   const std::vector<MLDataType>& supported_types);
+                                   const Vector<MLDataType>& supported_types);
   KernelDefBuilder& TypeConstraint(const char* arg_name,
-                                   const std::vector<MLDataType>& supported_types);
+                                   const Vector<MLDataType>& supported_types);
 
   /**
      Like TypeConstraint but supports just a single type.
@@ -190,7 +190,7 @@ class KernelDefBuilder {
      It means that uplayer runtime could do memory in-place optimization
      as it will not impact the correctness of this kernel.
   */
-  KernelDefBuilder& MayInplace(const std::vector<std::pair<int, int>>& inplaces);
+  KernelDefBuilder& MayInplace(const Vector<std::pair<int, int>>& inplaces);
   KernelDefBuilder& MayInplace(int input_index, int output_index);
 
   /**
@@ -198,7 +198,7 @@ class KernelDefBuilder {
      content of the tensor is not changed. This is to take care of operators
      such as Identity and Reshape.
   */
-  KernelDefBuilder& Alias(const std::vector<std::pair<int, int>>& aliases);
+  KernelDefBuilder& Alias(const Vector<std::pair<int, int>>& aliases);
   KernelDefBuilder& Alias(int input_index, int output_index);
 
   /**

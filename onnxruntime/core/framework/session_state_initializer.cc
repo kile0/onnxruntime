@@ -40,7 +40,7 @@ static common::Status SaveInputOutputNamesToNodeMapping(
     const onnxruntime::Graph& graph,
     const KernelRegistryManager& custom_registry_manager,
     SessionState& session_state,
-    const ConstPointerContainer<std::vector<NodeArg*>>* implicit_inputs);
+    const ConstPointerContainer<Vector<NodeArg*>>* implicit_inputs);
 
 SessionStateInitializer::SessionStateInitializer(bool enable_mem_pattern,
                                                  const std::basic_string<PATH_CHAR_TYPE>& graph_loc,
@@ -57,7 +57,7 @@ SessionStateInitializer::SessionStateInitializer(bool enable_mem_pattern,
 
 common::Status SessionStateInitializer::CreatePlan(
     const Node* parent_node,
-    const ConstPointerContainer<std::vector<NodeArg*>>* outer_scope_node_args,
+    const ConstPointerContainer<Vector<NodeArg*>>* outer_scope_node_args,
     ExecutionMode execution_mode) {
   session_state_.SetGraph(graph_);
   const GraphViewer* graph_viewer = session_state_.GetGraphViewer();
@@ -66,7 +66,7 @@ common::Status SessionStateInitializer::CreatePlan(
   const auto& ort_value_name_idx_map = session_state_.GetOrtValueNameIdxMap();
 
   // ignore any outer scope args we don't know about. this can happen if a node contains multiple subgraphs.
-  std::vector<const NodeArg*> valid_outer_scope_node_args;
+  Vector<const NodeArg*> valid_outer_scope_node_args;
   if (outer_scope_node_args) {
     std::for_each(outer_scope_node_args->cbegin(), outer_scope_node_args->cend(),
                   [&ort_value_name_idx_map, &valid_outer_scope_node_args](const NodeArg* node_arg) {
@@ -237,7 +237,7 @@ static bool IsArgNameInInputsOutputs(const std::string& name,
 common::Status SaveInputOutputNamesToNodeMapping(const onnxruntime::Graph& graph,
                                                  const KernelRegistryManager& custom_registry_manager,
                                                  SessionState& session_state,
-                                                 const ConstPointerContainer<std::vector<NodeArg*>>* implicit_inputs) {
+                                                 const ConstPointerContainer<Vector<NodeArg*>>* implicit_inputs) {
   auto& graph_inputs = graph.GetInputsIncludingInitializers();
   auto& graph_outputs = graph.GetOutputs();
 

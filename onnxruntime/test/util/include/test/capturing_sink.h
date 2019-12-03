@@ -26,12 +26,12 @@ class CapturingSink : public logging::ISink {
     messages_.push_back(msg.str());
   }
 
-  const std::vector<std::string>& Messages() const {
+  const Vector<std::string>& Messages() const {
     return messages_;
   }
 
  private:
-  std::vector<std::string> messages_;
+  Vector<std::string> messages_;
 };
 }  // namespace test
 }  // namespace onnxruntime

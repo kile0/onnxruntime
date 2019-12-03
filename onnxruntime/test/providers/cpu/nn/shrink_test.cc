@@ -13,15 +13,15 @@ struct ShrinkTestData {
   std::string name;
   float bias;
   float lambd;
-  std::vector<T> input_vals;
-  std::vector<int64_t> input_dimensions;
-  std::vector<T> expected_vals;
-  std::vector<int64_t> expected_dimensions;
+  Vector<T> input_vals;
+  Vector<int64_t> input_dimensions;
+  Vector<T> expected_vals;
+  Vector<int64_t> expected_dimensions;
 };
 
 template <typename T>
-std::vector<ShrinkTestData<T>> GenerateSignedTestCases() {
-  std::vector<ShrinkTestData<T>> test_cases;
+Vector<ShrinkTestData<T>> GenerateSignedTestCases() {
+  Vector<ShrinkTestData<T>> test_cases;
   test_cases.push_back(
       {"default attributes",
        0.0f,
@@ -43,8 +43,8 @@ std::vector<ShrinkTestData<T>> GenerateSignedTestCases() {
 }
 
 template <typename T>
-std::vector<ShrinkTestData<T>> GenerateUnsignedTestCases() {
-  std::vector<ShrinkTestData<T>> test_cases;
+Vector<ShrinkTestData<T>> GenerateUnsignedTestCases() {
+  Vector<ShrinkTestData<T>> test_cases;
 
   test_cases.push_back(
       {"default attributes",
@@ -68,7 +68,7 @@ std::vector<ShrinkTestData<T>> GenerateUnsignedTestCases() {
 }
 
 template <typename T>
-void RunShrinkTest(const std::vector<ShrinkTestData<T>>& test_cases) {
+void RunShrinkTest(const Vector<ShrinkTestData<T>>& test_cases) {
   for (const auto& test_data : test_cases) {
     OpTester test("Shrink", 9);
 
@@ -86,8 +86,8 @@ void RunShrinkTest(const std::vector<ShrinkTestData<T>>& test_cases) {
   }
 }
 
-const std::vector<MLFloat16> ConvertFloatToMLFloat16(const std::vector<float>& float_data) {
-  std::vector<MLFloat16> new_data;
+const Vector<MLFloat16> ConvertFloatToMLFloat16(const Vector<float>& float_data) {
+  Vector<MLFloat16> new_data;
   for (const auto& f : float_data) {
     new_data.push_back(MLFloat16(math::floatToHalf(f)));
   }
@@ -145,12 +145,12 @@ TEST(MathOpTest, ShrinkDoubleType) {
 }
 
 TEST(MathOpTest, ShrinkMLFloat16Type) {
-  const std::vector<MLFloat16> input_test_data_default = ConvertFloatToMLFloat16({-1, 0, 0, 1});
-  const std::vector<MLFloat16> output_test_data_default = ConvertFloatToMLFloat16({-1, 0, 0, 1});
+  const Vector<MLFloat16> input_test_data_default = ConvertFloatToMLFloat16({-1, 0, 0, 1});
+  const Vector<MLFloat16> output_test_data_default = ConvertFloatToMLFloat16({-1, 0, 0, 1});
 
-  const std::vector<MLFloat16> input_test_data_nondefault = ConvertFloatToMLFloat16({-3, -1, 1, 4});
-  const std::vector<MLFloat16> output_test_data_nondefault = ConvertFloatToMLFloat16({7, 0, 0, -6});
-  std::vector<ShrinkTestData<MLFloat16>> test_cases;
+  const Vector<MLFloat16> input_test_data_nondefault = ConvertFloatToMLFloat16({-3, -1, 1, 4});
+  const Vector<MLFloat16> output_test_data_nondefault = ConvertFloatToMLFloat16({7, 0, 0, -6});
+  Vector<ShrinkTestData<MLFloat16>> test_cases;
   test_cases.push_back(
       {"default attributes",
        0.0f,

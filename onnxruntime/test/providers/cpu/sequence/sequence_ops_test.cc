@@ -33,8 +33,8 @@ TEST(SequenceOpsTest, SequenceLengthPositiveInt64) {
 TEST(SequenceOpsTest, SequenceAtPositiveIdx) {
   OpTester test("SequenceAt", 11);
   SeqTensors<float> input;
-  std::vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
-  std::vector<int64_t> output_shape{3, 3};
+  Vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
+  Vector<int64_t> output_shape{3, 3};
   input.AddTensor({3, 2}, {10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f});
   input.AddTensor(output_shape, output_vec);
   test.AddSeqInput("S", input);
@@ -46,8 +46,8 @@ TEST(SequenceOpsTest, SequenceAtPositiveIdx) {
 TEST(SequenceOpsTest, SequenceAtNegativeIdx) {
   OpTester test("SequenceAt", 11);
   SeqTensors<float> input;
-  std::vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
-  std::vector<int64_t> output_shape{3, 3};
+  Vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
+  Vector<int64_t> output_shape{3, 3};
   input.AddTensor({3, 2}, {10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f});
   input.AddTensor(output_shape, output_vec);
   test.AddSeqInput("S", input);
@@ -59,8 +59,8 @@ TEST(SequenceOpsTest, SequenceAtNegativeIdx) {
 TEST(SequenceOpsTest, SequenceAtInvalidPositiveIdx) {
   OpTester test("SequenceAt", 11);
   SeqTensors<float> input;
-  std::vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
-  std::vector<int64_t> output_shape{3, 3};
+  Vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
+  Vector<int64_t> output_shape{3, 3};
   input.AddTensor({3, 2}, {10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f});
   input.AddTensor(output_shape, output_vec);
   test.AddSeqInput("S", input);
@@ -72,8 +72,8 @@ TEST(SequenceOpsTest, SequenceAtInvalidPositiveIdx) {
 TEST(SequenceOpsTest, SequenceAtInvalidNegativeIdx) {
   OpTester test("SequenceAt", 11);
   SeqTensors<float> input;
-  std::vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
-  std::vector<int64_t> output_shape{3, 3};
+  Vector<float> output_vec{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
+  Vector<int64_t> output_shape{3, 3};
   input.AddTensor({3, 2}, {10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f});
   input.AddTensor(output_shape, output_vec);
   test.AddSeqInput("S", input);
@@ -300,8 +300,8 @@ TEST(SequenceOpsTest, SequenceConstructPositive) {
 
 // SplitToSequence
 template <typename T>
-static std::vector<T> GetConsequtiveVector(T start, int num) {
-  std::vector<T> inputv(num);
+static Vector<T> GetConsequtiveVector(T start, int num) {
+  Vector<T> inputv(num);
   std::iota(inputv.begin(), inputv.end(), start);
   return inputv;
 }

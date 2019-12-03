@@ -91,7 +91,7 @@ namespace Dml
         ComPtr<ID3D12Device> m_device;
         std::shared_ptr<ExecutionContext> m_executionContext;
 
-        std::vector<Chunk> m_chunks; // sorted ascending by capacity (upload heap size)
+        Vector<Chunk> m_chunks; // sorted ascending by capacity (upload heap size)
         size_t m_totalCapacity = 0; // Total size of all chunks, in bytes
     };
 

@@ -102,8 +102,8 @@ class ShapeExprT {
   ShapeExprT(const ShapeExprT<DimT>& expr) = default;
   ShapeExprT(ShapeExprT<DimT>&& expr) = default;
   ShapeExprT(size_t size) { dims_.resize(size); }
-  ShapeExprT(const std::vector<DimT>& dims) : dims_(dims) {}
-  ShapeExprT(const std::vector<int64_t>& dims) {
+  ShapeExprT(const Vector<DimT>& dims) : dims_(dims) {}
+  ShapeExprT(const Vector<int64_t>& dims) {
     for (auto dim : dims)
       dims_.push_back(DimT(dim));
   }
@@ -133,8 +133,8 @@ class ShapeExprT {
     return min_index;
   }
 
-  std::vector<int64_t> TailedKnown() const {
-    std::vector<int64_t> result;
+  Vector<int64_t> TailedKnown() const {
+    Vector<int64_t> result;
 
     for (size_t i = KnownFromDimension(); i < Rank(); ++i) {
       result.push_back(dims_[i].Value());
@@ -212,9 +212,9 @@ class ShapeExprT {
     return dims_[dim];
   }
 
-  const std::vector<int64_t> Value() const {
+  const Vector<int64_t> Value() const {
     ORT_ENFORCE(IsConst());
-    std::vector<int64_t> result;
+    Vector<int64_t> result;
     for (size_t i = 0; i < Rank(); ++i) {
       result.push_back(dims_[i].Value());
     }
@@ -234,7 +234,7 @@ class ShapeExprT {
   }
 
  private:
-  std::vector<DimT> dims_;
+  Vector<DimT> dims_;
 };
 
 typedef SimpleDimExpr DimExpr;

@@ -9,7 +9,7 @@ namespace nuphar {
 
 class TensorizeIntGemv16bit : public tvm_codegen::TensorizeBase {
  public:
-  TensorizeIntGemv16bit(const std::string& name, const std::vector<int32_t>& vshape);
+  TensorizeIntGemv16bit(const std::string& name, const Vector<int32_t>& vshape);
 
   virtual ~TensorizeIntGemv16bit() = default;
 

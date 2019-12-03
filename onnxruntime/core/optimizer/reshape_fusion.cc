@@ -82,12 +82,12 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
   }
 
   // path 1: [Root] --> Shape --> Gather(indices=0) --> Unsqueeze (axes=0) --> Concat [input 0]
-  std::vector<graph_utils::EdgeEndToMatch> parent_path{
+  Vector<graph_utils::EdgeEndToMatch> parent_path{
       {0, 0, "Unsqueeze", {1}, kOnnxDomain},
       {0, 0, "Gather", {1}, kOnnxDomain},
       {0, 0, "Shape", {1}, kOnnxDomain}};
 
-  std::vector<const Node::EdgeEnd*> edges;
+  Vector<const Node::EdgeEnd*> edges;
   if (!graph_utils::FindPath(concat, true, parent_path, edges, logger)) {
     return false;
   }
@@ -103,7 +103,7 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
     return false;
   }
 
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(unsqueeze_1, "axes", axes) && axes.size() == 1 && axes[0] == 0)) {
     return false;
   }
@@ -113,7 +113,7 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
   }
 
   // path 2: [Root] --> Shape --> Gather(indices=1) --> Unsqueeze (axes=0) --> Concat [input 1]
-  std::vector<graph_utils::EdgeEndToMatch> parent_path2 {
+  Vector<graph_utils::EdgeEndToMatch> parent_path2 {
       {0, 1, "Unsqueeze", {1}, kOnnxDomain},
       {0, 0, "Gather", {1}, kOnnxDomain},
       {0, 0, "Shape", {1}, kOnnxDomain}};
@@ -142,7 +142,7 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
   }
 
   // Compose the shape value input for reshape op.
-  std::vector<int64_t> shape_value = {0, 0};
+  Vector<int64_t> shape_value = {0, 0};
 
   // We do not check whether the initializer is constant.
   // Some model uses constant initializer and some does not.
@@ -175,7 +175,7 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
   }
 
   // Remove nodes not used anymore.
-  std::vector<Node*> nodes_to_remove{
+  Vector<Node*> nodes_to_remove{
       graph.GetNode(unsqueeze_1.Index()),
       graph.GetNode(gather_1.Index()),
       graph.GetNode(shape_1.Index()),

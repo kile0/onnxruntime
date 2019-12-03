@@ -46,9 +46,9 @@ class LoopOpTester : public OpTester {
 
  protected:
   void AddNodes(onnxruntime::Graph& graph,
-                std::vector<onnxruntime::NodeArg*>& graph_input_defs,
-                std::vector<onnxruntime::NodeArg*>& graph_output_defs,
-                std::vector<std::function<void(onnxruntime::Node& node)>>& /*add_attribute_funcs*/) override {
+                Vector<onnxruntime::NodeArg*>& graph_input_defs,
+                Vector<onnxruntime::NodeArg*>& graph_output_defs,
+                Vector<std::function<void(onnxruntime::Node& node)>>& /*add_attribute_funcs*/) override {
     // add outer_scope_0 node
     {
       TypeProto float_scalar;
@@ -100,8 +100,8 @@ static const ONNX_NAMESPACE::GraphProto CreateSubgraph(const RunOptions& options
   Model model("Loop subgraph", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   /* Subgraph Adds outer_scope_0 to loop_var_0_in,
      Concats the iter_num to loop_var_1_in (test loop var that changes shape) so each iteration appends the iter_num
@@ -213,7 +213,7 @@ static const ONNX_NAMESPACE::GraphProto CreateSubgraph(const RunOptions& options
     auto& unsqueeze = graph.AddNode("iter_num_unsqueeze", "Unsqueeze",
                                     "Unsqueeze iter_num_float to tensor of single dim",
                                     {&iter_num_float}, {&iter_num_float_tensor});
-    unsqueeze.AddAttribute("axes", std::vector<int64_t>{0});
+    unsqueeze.AddAttribute("axes", Vector<int64_t>{0});
   }
 
   // Concat iter_num and sum to create loop_out_0
@@ -322,10 +322,10 @@ static const ONNX_NAMESPACE::GraphProto CreateSubgraph(const RunOptions& options
 
 void RunTest(int64_t max_iterations,
              float loop_var_0_final,
-             std::vector<int64_t>& loop_var_1_final_shape,
-             std::vector<float>& loop_var_1_final,
-             std::vector<int64_t>& loop_out_0_final_shape,
-             std::vector<float>& loop_out_0_final,
+             Vector<int64_t>& loop_var_1_final_shape,
+             Vector<float>& loop_var_1_final,
+             Vector<int64_t>& loop_out_0_final_shape,
+             Vector<float>& loop_out_0_final,
              const RunOptions& options,
              OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
              const std::string& failure_message = "") {
@@ -354,7 +354,7 @@ void RunTest(int64_t max_iterations,
   if (options.mixed_execution_providers) {
     // we want the CUDA provider to be first, and the CPU provider second. all except the Loop node should run on
     // CUDA given that, which creates the scenario where we need to copy to/from CPU to execute the Loop node correctly.
-    std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
+    Vector<std::unique_ptr<IExecutionProvider>> execution_providers;
     execution_providers.push_back(DefaultCudaExecutionProvider());
     execution_providers.push_back(DefaultCpuExecutionProvider());
 
@@ -372,11 +372,11 @@ void ExitDueToCond(const RunOptions& options) {
 
   float loop_var_0_final = kOuterNodeAddValue * expected_num_iterations;
 
-  std::vector<int64_t> loop_var_1_final_shape{1 + expected_num_iterations};
-  std::vector<float> loop_var_1_final{0.f, 3.f, 6.f, 9.f};
+  Vector<int64_t> loop_var_1_final_shape{1 + expected_num_iterations};
+  Vector<float> loop_var_1_final{0.f, 3.f, 6.f, 9.f};
 
-  std::vector<int64_t> loop_out_0_final_shape{expected_num_iterations, 2};
-  std::vector<float> loop_out_0_final{0.f, 3.f,  // iter #, sum for each iteration
+  Vector<int64_t> loop_out_0_final_shape{expected_num_iterations, 2};
+  Vector<float> loop_out_0_final{0.f, 3.f,  // iter #, sum for each iteration
                                       1.f, 6.f,
                                       2.f, 9.f};
 
@@ -439,11 +439,11 @@ TEST(Loop, ExitDueToMaxIterations) {
 
   float loop_var_0_final = kOuterNodeAddValue * expected_num_iterations;
 
-  std::vector<int64_t> loop_var_1_final_shape{1 + expected_num_iterations};
-  std::vector<float> loop_var_1_final{0.f, 3.f, 6.f};
+  Vector<int64_t> loop_var_1_final_shape{1 + expected_num_iterations};
+  Vector<float> loop_var_1_final{0.f, 3.f, 6.f};
 
-  std::vector<int64_t> loop_out_0_final_shape{expected_num_iterations, 2};
-  std::vector<float> loop_out_0_final{0.f, 3.f,  // iter #, sum for each iteration
+  Vector<int64_t> loop_out_0_final_shape{expected_num_iterations, 2};
+  Vector<float> loop_out_0_final{0.f, 3.f,  // iter #, sum for each iteration
                                       1.f, 6.f};
 
   RunTest(max_iterations,
@@ -458,12 +458,12 @@ TEST(Loop, ZeroIterations) {
 
   float loop_var_0_final = 0.f;
 
-  std::vector<int64_t> loop_var_1_final_shape{1};
-  std::vector<float> loop_var_1_final{0.f};
+  Vector<int64_t> loop_var_1_final_shape{1};
+  Vector<float> loop_var_1_final{0.f};
 
   // zero iterations so first dim value is 0. also checking rank is correct.
-  std::vector<int64_t> loop_out_0_final_shape{0, 0};
-  std::vector<float> loop_out_0_final{};
+  Vector<int64_t> loop_out_0_final_shape{0, 0};
+  Vector<float> loop_out_0_final{};
 
   RunTest(max_iterations,
           loop_var_0_final,
@@ -477,8 +477,8 @@ TEST(Loop, InfiniteLoopTermination) {
     Model model("Infinite Loop subgraph", false, DefaultLoggingManager().DefaultLogger());
     auto& graph = model.MainGraph();
 
-    std::vector<NodeArg*> inputs;
-    std::vector<NodeArg*> outputs;
+    Vector<NodeArg*> inputs;
+    Vector<NodeArg*> outputs;
 
     /* Never change cond_in so loop is infinite
             Inputs: iter_num, cond_in, loop carried state variables.
@@ -586,10 +586,10 @@ TEST(Loop, SubgraphInputShadowsOuterScopeValue) {
   ASSERT_TRUE((st = session_object.Initialize()).IsOK()) << st;
 
   // prepare inputs
-  std::vector<int64_t> scalar = {1};
-  std::vector<float> a = {3.f}, b = {6.f};
-  std::vector<int64_t> trip_count = {10};
-  std::vector<bool> keep_going = {true};
+  Vector<int64_t> scalar = {1};
+  Vector<float> a = {3.f}, b = {6.f};
+  Vector<int64_t> trip_count = {10};
+  Vector<bool> keep_going = {true};
 
   NameMLValMap feeds;
   OrtValue ml_value;
@@ -604,8 +604,8 @@ TEST(Loop, SubgraphInputShadowsOuterScopeValue) {
   feeds.insert(std::make_pair("keep_going_inp", ml_value));
 
   // prepare outputs
-  std::vector<std::string> output_names{"b", "user_defined_vals"};
-  std::vector<OrtValue> fetches;
+  Vector<std::string> output_names{"b", "user_defined_vals"};
+  Vector<OrtValue> fetches;
 
   // Now run
   onnxruntime::RunOptions run_options;
@@ -615,8 +615,8 @@ TEST(Loop, SubgraphInputShadowsOuterScopeValue) {
 
   // prepare expected outputs
   float expected_value_b = 6.f;
-  std::vector<int64_t> expected_dims_user_defined_vals = {2, 1};
-  std::vector<float> expected_user_defined_vals = {-6.f, 12.f};
+  Vector<int64_t> expected_dims_user_defined_vals = {2, 1};
+  Vector<float> expected_user_defined_vals = {-6.f, 12.f};
 
   auto& b_out = fetches[0].Get<Tensor>();
   TensorShape expected_shape(scalar);
@@ -635,8 +635,8 @@ TEST(Loop, Opset11WithNoVariadicInputsAndOutputs) {
     Model model("Loop opset 11 op body graph", false, DefaultLoggingManager().DefaultLogger());
     auto& graph = model.MainGraph();
 
-    std::vector<NodeArg*> inputs;
-    std::vector<NodeArg*> outputs;
+    Vector<NodeArg*> inputs;
+    Vector<NodeArg*> outputs;
 
     // graph inputs types.
     // iteration number

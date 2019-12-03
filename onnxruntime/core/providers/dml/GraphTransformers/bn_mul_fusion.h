@@ -17,7 +17,7 @@ class BatchNormalizationMulFusion : public RewriteRule {
  public:
   BatchNormalizationMulFusion() noexcept : RewriteRule("BatchNormalizationMulFusion") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"BatchNormalization"};
   }
 

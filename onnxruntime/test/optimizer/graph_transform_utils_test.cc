@@ -20,7 +20,7 @@ TEST(GraphTransformerUtilsTests, TestGenerateRewriterules) {
   ASSERT_TRUE(rewrite_rules.size() != 0);
 
   // Rule name match test
-  std::vector<std::string> custom_list = {"EliminateIdentity", "ConvAddFusion", "ConvMulFusion", "abc", "def"};
+  Vector<std::string> custom_list = {"EliminateIdentity", "ConvAddFusion", "ConvMulFusion", "abc", "def"};
   rewrite_rules = optimizer_utils::GenerateRewriteRules(TransformerLevel::Level1, custom_list);
   // validate each rule returned is present in the custom list
   for (const auto& rule : rewrite_rules) {
@@ -39,7 +39,7 @@ TEST(GraphTransformerUtilsTests, TestGenerateGraphTransformers) {
   std::string l1_rule1 = "EliminateIdentity";
   std::string l1_transformer = "ConstantFolding";
   std::string l2_transformer = "ConvActivationFusion";
-  std::vector<std::string> custom_list = {l1_rule1, l1_transformer, l2_transformer};
+  Vector<std::string> custom_list = {l1_rule1, l1_transformer, l2_transformer};
 
   auto transformers = optimizer_utils::GenerateTransformers(TransformerLevel::Level1, {}, custom_list);
   ASSERT_TRUE(transformers.size() == 2);

@@ -15,7 +15,7 @@ namespace test {
 
 #define MODEL_FOLDER ORT_TSTR("testdata/transform/")
 
-typedef std::vector<onnxruntime::NodeArg*> ArgMap;
+typedef Vector<onnxruntime::NodeArg*> ArgMap;
 TEST(TransformerTest, InsertCastGPUTest) {
   auto model = std::make_shared<onnxruntime::Model>("test", false, DefaultLoggingManager().DefaultLogger());
   onnxruntime::Graph& graph = model->MainGraph();

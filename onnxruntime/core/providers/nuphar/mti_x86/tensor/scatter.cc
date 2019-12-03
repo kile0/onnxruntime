@@ -46,7 +46,7 @@ void ScatterCommon(tvm::TVMArgs args, tvm::TVMRetValue* /*ret*/) {
   // extract indices from raw data
   Tind* indices_data = reinterpret_cast<Tind*>(static_cast<char*>(indices->data) + indices->byte_offset);
   int64_t indices_size = DLTensorSize(indices);
-  std::vector<Tind> indices_data_vec(indices_size);
+  Vector<Tind> indices_data_vec(indices_size);
   int64_t axis_size = input->shape[axis];
   for (int64_t i = 0; i < indices_size; i++) {
     Tind idx = indices_data[i];
@@ -67,21 +67,21 @@ void ScatterCommon(tvm::TVMArgs args, tvm::TVMRetValue* /*ret*/) {
          static_cast<char*>(input->data) + input->byte_offset,
          input_size * input->dtype.bits / 8);
 
-  std::vector<int64_t> input_strides;
+  Vector<int64_t> input_strides;
   GetStrides(input->shape, num_dims, input_strides);
 
   T* output_data = reinterpret_cast<T*>(static_cast<char*>(output->data) + output->byte_offset);
   T* updates_data = reinterpret_cast<T*>(static_cast<char*>(updates->data) + updates->byte_offset);
-  const std::vector<int> indices_shape(indices->shape, indices->shape + num_dims);
+  const Vector<int> indices_shape(indices->shape, indices->shape + num_dims);
   // Because indices data is flat, running_indices maintains indices's original dimensions.
   // We will use its dimensions to compute the corresponding index (or offset) to output_data,
   // which is also flat.
-  std::vector<int64_t> running_indices(num_dims, 0);
+  Vector<int64_t> running_indices(num_dims, 0);
 
   for (int64_t i = 0; i < indices_size; i++) {
     Tind idx = indices_data_vec[i];
     // output indices come from running_indices
-    std::vector<int64_t> curr_output_indices = running_indices;
+    Vector<int64_t> curr_output_indices = running_indices;
     curr_output_indices[axis] = static_cast<int64_t>(idx);
 
     // get the index into output_data

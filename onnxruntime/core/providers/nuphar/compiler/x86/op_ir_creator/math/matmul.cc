@@ -98,10 +98,10 @@ static bool MatMulF32ExternCPU(
   NupharCodeGenCtx* ctx_nuphar = Promote<NupharCodeGenCtx>(&ctx_codegen);
 
   // try to fuse tranpose in MatMul input with MatMul
-  auto find_transposed_input = [&ctx_nuphar](const tvm::Tensor& t, std::vector<int32_t>& cumulated_permute) {
+  auto find_transposed_input = [&ctx_nuphar](const tvm::Tensor& t, Vector<int32_t>& cumulated_permute) {
     tvm::Tensor out = t;
     int64_t rank = gsl::narrow<int64_t>(t->shape.size());
-    std::vector<int64_t> default_node_perm(rank);
+    Vector<int64_t> default_node_perm(rank);
     cumulated_permute.resize(rank);
     for (int64_t i = 0; i < rank; ++i) {
       cumulated_permute[i] = gsl::narrow<int32_t>(i);
@@ -113,7 +113,7 @@ static bool MatMulF32ExternCPU(
       ProtoHelperNodeContext ctx(*root_node);
       OpNodeProtoHelper<ProtoHelperNodeContext> info(&ctx);
       auto perm = info.GetAttrsOrDefault("perm", default_node_perm);
-      std::vector<int32_t> updated_cumulated_permute = cumulated_permute;
+      Vector<int32_t> updated_cumulated_permute = cumulated_permute;
       for (int64_t dst_dim = 0; dst_dim < rank; ++dst_dim) {
         auto src_dim = tvm_codegen::HandleNegativeAxis(perm[cumulated_permute[dst_dim]], rank);
         updated_cumulated_permute[dst_dim] = gsl::narrow<int32_t>(src_dim);
@@ -128,10 +128,10 @@ static bool MatMulF32ExternCPU(
     return out;
   };
 
-  std::vector<int32_t> permute_A;
-  std::vector<int32_t> permute_B;
-  const std::vector<int32_t>* p_permute_A = nullptr;
-  const std::vector<int32_t>* p_permute_B = nullptr;
+  Vector<int32_t> permute_A;
+  Vector<int32_t> permute_B;
+  const Vector<int32_t>* p_permute_A = nullptr;
+  const Vector<int32_t>* p_permute_B = nullptr;
   tvm::Tensor root_A = find_transposed_input(A, permute_A);
   tvm::Tensor root_B = find_transposed_input(B, permute_B);
   if (A->shape.size() == B->shape.size() && A->shape.size() >= 2) {

@@ -24,13 +24,13 @@ class MklDnnSum : public MklDnnKernel {
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
                         mkldnn::engine& cpu_engine,
-                        std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
+                        Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
     Ort::CustomOpApi ort{*api};
     int num_inputs = mklnode_ptr_->num_inputs;
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
 
-    std::vector<float> coeff;
+    Vector<float> coeff;
     TensorShape x_shape;
     if (mklnode_ptr_->parent_nodes.empty()) {
       const OrtValue* input_tensor = ort.KernelContext_GetInput(context, input_index);
@@ -163,10 +163,10 @@ class MklDnnSum : public MklDnnKernel {
 
  private:
   std::unique_ptr<mkldnn::memory::desc> src_md_;
-  std::vector<mkldnn::memory::desc> src_mds_;
-  std::vector<mkldnn::memory> srcs_memory_;
+  Vector<mkldnn::memory::desc> src_mds_;
+  Vector<mkldnn::memory> srcs_memory_;
 
-  std::vector<mkldnn::memory::desc> srcs_pd_;
+  Vector<mkldnn::memory::desc> srcs_pd_;
   std::unique_ptr<mkldnn::memory::desc> src_mpd_;
   std::unique_ptr<mkldnn::memory::desc> dst_pd_;
   std::unique_ptr<mkldnn::sum::primitive_desc> sum_pd_;

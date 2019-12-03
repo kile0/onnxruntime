@@ -42,7 +42,7 @@ class WeightLayout {
   virtual tvm::Array<tvm::Expr> ToActualShape(const tvm::Tensor& X) const = 0;
 
   // Return actual (transformed) shape in vector<int64_t> (ort)
-  virtual std::vector<int64_t> ToActualShape(const Tensor* X) const = 0;
+  virtual Vector<int64_t> ToActualShape(const Tensor* X) const = 0;
 
   // Create Layout Marshalling op in outputs
   void CreateLayoutMarshallingTVMOp(tvm::Array<tvm::Tensor>& inputs,

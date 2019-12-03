@@ -283,10 +283,10 @@ static bool IsNodeSupported(const std::map<std::string, std::set<std::string>>& 
   }
 }
 
-static void AppendClusterToSubGraph(const std::vector<NodeIndex>& nodes,
-                                    const std::vector<std::string>& inputs,
-                                    const std::vector<std::string>& outputs,
-                                    std::vector<std::unique_ptr<ComputeCapability>>& result) {
+static void AppendClusterToSubGraph(const Vector<NodeIndex>& nodes,
+                                    const Vector<std::string>& inputs,
+                                    const Vector<std::string>& outputs,
+                                    Vector<std::unique_ptr<ComputeCapability>>& result) {
   static size_t op_counter = 0;
 
   auto meta_def = onnxruntime::make_unique<IndexedSubGraph::MetaDef>();
@@ -321,11 +321,11 @@ static std::map<std::string, std::set<std::string>> GetNgSupportedOps(const int 
   return ng_supported_ops;
 }
 
-static std::vector<NodeIndex>
+static Vector<NodeIndex>
 GetUnsupportedNodeIndices(const GraphViewer& graph_viewer, /*out*/ std::unordered_set<std::string>& ng_required_initializers) {
   const auto ng_supported_ops = GetNgSupportedOps(GetOnnxOpSet(graph_viewer));
 
-  std::vector<NodeIndex> unsupported_nodes_idx;
+  Vector<NodeIndex> unsupported_nodes_idx;
 
   for (const auto& node_idx : graph_viewer.GetNodesInTopologicalOrder()) {
     if (IsNodeSupported(ng_supported_ops, graph_viewer, node_idx)) {
@@ -346,16 +346,16 @@ GetUnsupportedNodeIndices(const GraphViewer& graph_viewer, /*out*/ std::unordere
  * Returns a vector clusters(or node_idx). For each unsupported node, the graph is split into 3 parts.
  * supported_cluster + (UNsupported_node + rest_of_the_graph). This functions returns vector of all supported_clusters by nGraph
  */
-static std::vector<std::vector<NodeIndex>>
-GetPartitionedClusters(const std::vector<NodeIndex>& topological_order, const std::vector<NodeIndex>& unsupported_nodes) {
-  std::vector<std::vector<NodeIndex>> ng_clusters;
+static Vector<Vector<NodeIndex>>
+GetPartitionedClusters(const Vector<NodeIndex>& topological_order, const Vector<NodeIndex>& unsupported_nodes) {
+  Vector<Vector<NodeIndex>> ng_clusters;
 
   auto prev = topological_order.begin();
 
   for (const auto& unsup_node : unsupported_nodes) {
     auto it = std::find(prev, topological_order.end(), unsup_node);
     // Create a cluster vector[supported_node_idx, unsupported_node_idx) and append it to return list.
-    std::vector<NodeIndex> this_cluster{prev, it};
+    Vector<NodeIndex> this_cluster{prev, it};
     if (!this_cluster.empty()) {
       ng_clusters.push_back(std::move(this_cluster));
     }
@@ -364,7 +364,7 @@ GetPartitionedClusters(const std::vector<NodeIndex>& topological_order, const st
   }
 
   //Tail
-  std::vector<NodeIndex> this_cluster{prev, topological_order.end()};
+  Vector<NodeIndex> this_cluster{prev, topological_order.end()};
   if (!this_cluster.empty()) {
     ng_clusters.push_back(std::move(this_cluster));
   }
@@ -373,12 +373,12 @@ GetPartitionedClusters(const std::vector<NodeIndex>& topological_order, const st
 }
 
 static void GetInputsOutputsOfCluster(const GraphViewer& graph_viewer,
-                                      const std::vector<NodeIndex>& cluster,
+                                      const Vector<NodeIndex>& cluster,
                                       const std::unordered_set<std::string>& ng_required_initializers,
-                                      /*out*/ std::vector<std::string>& cluster_inputs,
-                                      /*out*/ std::vector<std::string>& cluster_outputs) {
+                                      /*out*/ Vector<std::string>& cluster_inputs,
+                                      /*out*/ Vector<std::string>& cluster_outputs) {
   std::unordered_set<std::string> input_args;
-  std::vector<std::string> ordered_input_args;
+  Vector<std::string> ordered_input_args;
   std::unordered_set<std::string> output_args;
   std::unordered_set<std::string> external_output_args;
 
@@ -430,7 +430,7 @@ static void GetInputsOutputsOfCluster(const GraphViewer& graph_viewer,
   }
 
   const auto& initializers = graph_viewer.GetAllInitializedTensors();
-  std::vector<std::string> const_inputs;
+  Vector<std::string> const_inputs;
   for (const auto& in_arg : ordered_input_args) {
     if ((initializers.count(in_arg) && !original_graph_inputs.count(in_arg)) ||
         ng_required_initializers.count(in_arg)) {
@@ -459,12 +459,12 @@ static void GetInputsOutputsOfCluster(const GraphViewer& graph_viewer,
   }
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 NGRAPHExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                                       const std::vector<const KernelRegistry*>& kernel_registries) const {
+                                       const Vector<const KernelRegistry*>& kernel_registries) const {
   ORT_UNUSED_PARAMETER(kernel_registries);
 
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+  Vector<std::unique_ptr<ComputeCapability>> result;
 
   //TODO:(nivas) Handle If and Loop operators
   if (graph_viewer.IsSubgraph()) {
@@ -487,8 +487,8 @@ NGRAPHExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_vie
 
   //If all ops are supported, no partitioning is required. Short-circuit and avoid splitting.
   if (unsupported_nodes.empty()) {
-    std::vector<std::string> inputs;
-    std::vector<std::string> outputs;
+    Vector<std::string> inputs;
+    Vector<std::string> outputs;
 
     //Fill inputs with names
     std::for_each(graph_viewer.GetInputs().begin(), graph_viewer.GetInputs().end(),
@@ -515,7 +515,7 @@ NGRAPHExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_vie
     const auto ng_clusters = GetPartitionedClusters(graph_viewer.GetNodesInTopologicalOrder(), unsupported_nodes);
 
     for (const auto& this_cluster : ng_clusters) {
-      std::vector<std::string> cluster_inputs, cluster_outputs;
+      Vector<std::string> cluster_inputs, cluster_outputs;
       GetInputsOutputsOfCluster(graph_viewer, this_cluster, ng_required_initializers, cluster_inputs, cluster_outputs);
 
       if (!cluster_inputs.empty()) {
@@ -535,7 +535,7 @@ static ONNX_NAMESPACE::ModelProto GetModelProtoFromFusedNode(const onnxruntime::
   const Graph& node_subgraph = node_function->Body();
   onnxruntime::Model model{node_subgraph.Name(), true, ModelMetaData{},
                            IOnnxRuntimeOpSchemaRegistryList{}, node_subgraph.DomainToVersionMap(),
-                           std::vector<ONNX_NAMESPACE::FunctionProto>(), logger};
+                           Vector<ONNX_NAMESPACE::FunctionProto>(), logger};
 
   ONNX_NAMESPACE::ModelProto model_proto = model.ToProto();
   model_proto.set_ir_version(ONNX_NAMESPACE::Version::IR_VERSION);
@@ -545,8 +545,8 @@ static ONNX_NAMESPACE::ModelProto GetModelProtoFromFusedNode(const onnxruntime::
   return model_proto;
 }
 
-Status NGRAPHExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                                        std::vector<NodeComputeInfo>& node_compute_funcs) {
+Status NGRAPHExecutionProvider::Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                                        Vector<NodeComputeInfo>& node_compute_funcs) {
   for (const auto& fused_node : fused_nodes) {
     NodeComputeInfo compute_info;
 

@@ -210,7 +210,7 @@ tvm::Schedule CreateSchedule(const DemoTVMTensorCtx& ctx) {
 tvm::runtime::Module BuildStackVMModule(tvm::Schedule schedule,
                                         tvm::BuildConfig config,
                                         tvm::Array<tvm::Tensor> tvm_args,
-                                        std::vector<std::string>& target_func_names) {
+                                        Vector<std::string>& target_func_names) {
   auto target = tvm::target::stackvm();
   std::string func_name = "func";
   auto args = tvm::Array<tvm::Tensor>(tvm_args);

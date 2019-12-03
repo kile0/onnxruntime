@@ -15,7 +15,7 @@
 
 namespace onnxruntime {
 
-using OnnxTypes   = std::vector<ONNXTensorElementDataType>;
+using OnnxTypes   = Vector<ONNXTensorElementDataType>;
 using OnnxAttrs   = std::unordered_map<std::string, std::string>;
 using PyOpLogFunc = std::function<void(const char*)>;
 
@@ -23,12 +23,12 @@ typedef bool Initialize();
 typedef void ReleaseInstance(void*);
 typedef bool InvokePythonFunc(void*,
                               const char*,
-                              const std::vector<const void*>&,
-                              const std::vector<int32_t>&,
-                              const std::vector<std::vector<int64_t>>&,
-                              std::vector<std::unique_ptr<char[]>>&,
-                              std::vector<int32_t>&,
-                              std::vector<std::vector<int64_t>>&,
+                              const Vector<const void*>&,
+                              const Vector<int32_t>&,
+                              const Vector<Vector<int64_t>>&,
+                              Vector<std::unique_ptr<char[]>>&,
+                              Vector<int32_t>&,
+                              Vector<Vector<int64_t>>&,
                               std::function<void(const char*)>);
 typedef const char* GetLastErrorMessage(std::string&);
 typedef void* NewInstance(const char*, const char*, const OnnxAttrs&);

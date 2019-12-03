@@ -24,8 +24,8 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Crop)::Evaluate(
                            "Input is expected to have four dimensions corresponding to [N,C,H,W]");
   }
 
-  std::vector<int64_t> border;
-  std::vector<int64_t> scale;
+  Vector<int64_t> border;
+  Vector<int64_t> scale;
 
   ORT_ENFORCE(attrs.GetAttrs<int64_t>("border", border).IsOK());
   // scale is optional and status is false when omit

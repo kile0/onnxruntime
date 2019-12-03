@@ -103,7 +103,7 @@ Status MatMulInteger<uint8_t, int8_t>::Compute(OpKernelContext* ctx) const {
       ORT_ENFORCE(utils::IsPrimitiveDataType<int8_t>(t->DataType()) ||
                   utils::IsPrimitiveDataType<uint8_t>(t->DataType()));
       auto data = reinterpret_cast<const int8_t*>(t->DataRaw());
-      auto vec = std::vector<int8_t>(data, data + t->Shape().Size());
+      auto vec = Vector<int8_t>(data, data + t->Shape().Size());
       return std::all_of(vec.begin(), vec.end(), [](int8_t v) { return v == 0; });
     };
 

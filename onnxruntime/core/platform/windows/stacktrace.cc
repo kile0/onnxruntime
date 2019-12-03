@@ -19,7 +19,7 @@ class CaptureStackTrace {
  public:
   CaptureStackTrace() = default;
 
-  std::vector<std::string> Trace() const;
+  Vector<std::string> Trace() const;
 
  private:
   std::string Lookup(void* address_in) const;
@@ -30,7 +30,7 @@ class CaptureStackTrace {
 }  // namespace detail
 
 // Get the stack trace. Currently only enabled for a DEBUG build as we require the DbgHelp library.
-std::vector<std::string> GetStackTrace() {
+Vector<std::string> GetStackTrace() {
 #ifndef NDEBUG
 // TVM need to run with shared CRT, so won't work with debug helper now
 #if !(defined USE_TVM || (defined USE_NGRAPH && defined _WIN32))
@@ -89,13 +89,13 @@ class SymbolHelper {
   bool cleanup_ = false;
 };
 
-std::vector<std::string> CaptureStackTrace::Trace() const {
+Vector<std::string> CaptureStackTrace::Trace() const {
 #pragma warning(push)
 #pragma warning(disable : 26426)
   static SymbolHelper sh;
 #pragma warning(pop)
 
-  std::vector<std::string> stacktrace;
+  Vector<std::string> stacktrace;
 
   PVOID frames[kCallstackLimit];
   const auto f = gsl::make_span(frames);

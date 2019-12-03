@@ -10,7 +10,7 @@ using namespace onnxruntime::test;
 namespace onnxruntime {
 namespace test {
 
-void TestActivationContribOp(const char* szOp, std::vector<float>& input_vals,
+void TestActivationContribOp(const char* szOp, Vector<float>& input_vals,
                              std::function<float(float)> expected_func,
                              const std::unordered_map<std::string, float> attribs = {},
                              bool is_tensorrt_supported = true,
@@ -21,9 +21,9 @@ void TestActivationContribOp(const char* szOp, std::vector<float>& input_vals,
   for (auto attr : attribs)
     test.AddAttribute(attr.first, attr.second);
 
-  std::vector<int64_t> dims{(int64_t)input_vals.size()};
+  Vector<int64_t> dims{(int64_t)input_vals.size()};
 
-  std::vector<float> expected_vals;
+  Vector<float> expected_vals;
   for (const auto& iv : input_vals)
     expected_vals.push_back(expected_func(iv));
 
@@ -38,7 +38,7 @@ void TestActivationContribOp(const char* szOp, std::vector<float>& input_vals,
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", excluded_providers);
 }
 
-std::vector<float> input_values = {
+Vector<float> input_values = {
     -1.0f, 0, 1.0f,                                              // normal input values for activation
     100.0f, -100.0f, 1000.0f, -1000.0f,                          // input values that leads to exp() overflow
     FLT_MIN, FLT_MIN / 10, -FLT_MIN / 10,                        // min, denorm, -denorm

@@ -23,7 +23,7 @@ class FeatureVectorizer final : public OpKernel {
   Status Compute(OpKernelContext* context) const override;
 
  private:
-  std::vector<int64_t> input_dimensions_;
+  Vector<int64_t> input_dimensions_;
   int64_t total_dimensions_;
 };
 

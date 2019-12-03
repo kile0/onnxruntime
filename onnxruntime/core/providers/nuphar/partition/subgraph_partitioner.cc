@@ -34,7 +34,7 @@ int SubgraphPartitioner::Cost(const Node& node) const {
 }
 
 // Here we use linear summation for a Partition cost.
-int SubgraphPartitioner::Cost(const Node& node, const std::vector<NodeIndex>& candidates) const {
+int SubgraphPartitioner::Cost(const Node& node, const Vector<NodeIndex>& candidates) const {
   int cost = Cost(node);
   for (auto n_id : candidates) {
     const PartitionMeta& part_meta_cand = partitions_.at(n_id);
@@ -48,15 +48,15 @@ bool SubgraphPartitioner::IsNodeSupported(const Node&) const {
   return true;
 }
 
-void SubgraphPartitioner::SetSpecifiedNodeNames(const std::vector<std::string>& specified_names) {
+void SubgraphPartitioner::SetSpecifiedNodeNames(const Vector<std::string>& specified_names) {
   for (const auto& name : specified_names) {
     specified_names_.insert(name);
   }
 }
 
 bool SubgraphPartitioner::SpecifiedNodePartition(const Node& node,
-                                                 const std::vector<NodeIndex>& candidates,
-                                                 const std::vector<NodeIndex>& rejected_partitions) {
+                                                 const Vector<NodeIndex>& candidates,
+                                                 const Vector<NodeIndex>& rejected_partitions) {
   if (specified_names_.count(node.Name()) > 0) {
     // Here the old algorithm-equalivent. Merge two partitions
     MergePartitions(node, candidates, rejected_partitions);
@@ -103,8 +103,8 @@ static void RecordScanStates(
 bool SubgraphPartitioner::ForcePartition(
     const onnxruntime::GraphViewer& graph,
     const Node& node,
-    const std::vector<NodeIndex>& candidates,
-    const std::vector<NodeIndex>& immedidate_rejected_partitions) {
+    const Vector<NodeIndex>& candidates,
+    const Vector<NodeIndex>& immedidate_rejected_partitions) {
   const NodeIndex node_idx = node.Index();
 
   if (IsRecurrentNode(node) ||
@@ -172,7 +172,7 @@ bool SubgraphPartitioner::ForcePartition(
 // Main interface for Partition
 Status SubgraphPartitioner::Partition(
     const Node& node,
-    std::vector<NupharSubgraphUnit>& results,
+    Vector<NupharSubgraphUnit>& results,
     FindInitializerFunc find_initializer_func) {
   const Graph* onnx_subgraph = GetSubgraph(node);
 
@@ -247,7 +247,7 @@ Status SubgraphPartitioner::Partition(
         continue;  // already sorted, skip
 
       const auto& predecessor = iter.second.predecessor_partitions;
-      std::vector<int> result;
+      Vector<int> result;
       auto count_predecessor_not_sorted =
           std::count_if(predecessor.begin(),
                         predecessor.end(),

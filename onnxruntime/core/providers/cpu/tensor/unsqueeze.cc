@@ -33,7 +33,7 @@ Status UnsqueezeBase::PrepareCompute(OpKernelContext* ctx, Prepare& p) const {
 
   // New dimension count is the current dimensions + the number of entries in axes_
   // Initialize output_dims to 0 in each axis initially
-  std::vector<int64_t> output_dims(axes_.size() + input_tensor.Shape().NumDimensions(), 0);
+  Vector<int64_t> output_dims(axes_.size() + input_tensor.Shape().NumDimensions(), 0);
 
   // Set all axes_ indices to 1 in output_dims and check for duplicates
   for (int64_t axis : axes_) {

@@ -16,8 +16,8 @@ public:
     {
         Initialize(kernelInfo);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_SCALE_BIAS scaleBias = {};
         scaleBias.Scale = kernelInfo.GetOptionalAttribute<float>(AttrName::Alpha, 0.0f);

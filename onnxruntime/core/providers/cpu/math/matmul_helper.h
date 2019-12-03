@@ -49,8 +49,8 @@ class MatMulComputeHelper {
     // output shape would squeeze the reduced 1D dimension
     size_t num_output_dims = num_input_dims - (has_1D_input ? 1 : 0);
 
-    left_padded_dims_ = std::vector<int64_t>(num_dims_with_pad, 1);
-    right_padded_dims_ = std::vector<int64_t>(num_dims_with_pad, 1);
+    left_padded_dims_ = Vector<int64_t>(num_dims_with_pad, 1);
+    right_padded_dims_ = Vector<int64_t>(num_dims_with_pad, 1);
 
     if (right_num_dims == 1) {
       // right padded to (1,...,K,1)
@@ -72,7 +72,7 @@ class MatMulComputeHelper {
     }
 
     // validate input shape and generate output shape
-    std::vector<int64_t> output_dims(num_output_dims);
+    Vector<int64_t> output_dims(num_output_dims);
 
     // broadcasting for all output dims except last two
     for (size_t idx_dim = 0; idx_dim < num_dims_with_pad - 2; ++idx_dim) {
@@ -182,13 +182,13 @@ class MatMulComputeHelper {
 
   size_t num_broadcasted_dims_;
 
-  std::vector<int64_t> left_padded_dims_;
-  std::vector<int64_t> right_padded_dims_;
-  std::vector<int64_t> output_broadcast_dims_;
+  Vector<int64_t> left_padded_dims_;
+  Vector<int64_t> right_padded_dims_;
+  Vector<int64_t> output_broadcast_dims_;
 
-  std::vector<size_t> left_padded_strides_;
-  std::vector<size_t> right_padded_strides_;
-  std::vector<size_t> output_broadcast_strides_;
+  Vector<size_t> left_padded_strides_;
+  Vector<size_t> right_padded_strides_;
+  Vector<size_t> output_broadcast_strides_;
 
   TensorShape output_shape_;
 
@@ -196,9 +196,9 @@ class MatMulComputeHelper {
   int64_t N_;
   int64_t K_;
 
-  std::vector<size_t> left_offsets_;
-  std::vector<size_t> right_offsets_;
-  std::vector<size_t> output_offsets_;
+  Vector<size_t> left_offsets_;
+  Vector<size_t> right_offsets_;
+  Vector<size_t> output_offsets_;
 
  public:
   // output shape
@@ -222,22 +222,22 @@ class MatMulComputeHelper {
   }
 
   // Batched Gemm offsets in left matrices
-  const std::vector<size_t>& LeftOffsets() const {
+  const Vector<size_t>& LeftOffsets() const {
     return left_offsets_;
   }
 
   // Batched Gemm offsets in right matrices
-  const std::vector<size_t>& RightOffsets() const {
+  const Vector<size_t>& RightOffsets() const {
     return right_offsets_;
   }
 
   // Batched Gemm offsets in output matrices
-  const std::vector<size_t>& OutputOffsets() const {
+  const Vector<size_t>& OutputOffsets() const {
     return output_offsets_;
   }
 
   template <typename T>
-  static void OffsetToArrays(T* p, const std::vector<size_t>& offsets, gsl::span<T*> arrays) {
+  static void OffsetToArrays(T* p, const Vector<size_t>& offsets, gsl::span<T*> arrays) {
     auto len = offsets.size();
     ORT_ENFORCE(arrays.size() == len);
     for (size_t i = 0; i < len; i++) {
@@ -246,7 +246,7 @@ class MatMulComputeHelper {
   }
 
   template <typename T>
-  static void OffsetToArrays(const T* p, const std::vector<size_t>& offsets, gsl::span<const T*> arrays) {
+  static void OffsetToArrays(const T* p, const Vector<size_t>& offsets, gsl::span<const T*> arrays) {
     auto len = offsets.size();
     ORT_ENFORCE(arrays.size() == len);
     for (size_t i = 0; i < len; i++) {

@@ -38,8 +38,8 @@ void BasicExecBlock::Run(KernelComputeCtx* kernel_compute_ctx) {
 
   // Check aliased outputs
   if (tvm_output_count < func_info_->ort_output_count) {
-    const std::vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
-    const std::vector<std::vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
+    const Vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
+    const Vector<Vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
     const auto& ort_aliased_output_to_func_indices = func_info_->ort_aliased_output_to_func_indices;
     const auto& output_metas = func_info_->output_metas;
 
@@ -69,11 +69,11 @@ void BasicExecBlock::InitContext(KernelComputeCtx* kernel_compute_ctx) const {
   size_t tvm_output_count = func_info_->func_output_count;
   size_t tvm_num_args = tvm_input_count + tvm_output_count;
 
-  std::vector<TVMValue>& lvalues = subgraph_compute_ctx.lvalues;
+  Vector<TVMValue>& lvalues = subgraph_compute_ctx.lvalues;
   lvalues.resize(tvm_num_args);
-  std::vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
+  Vector<DLTensor>& dl_tensors = subgraph_compute_ctx.dl_tensors;
   dl_tensors.resize(tvm_num_args);
-  std::vector<std::vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
+  Vector<Vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
   dl_output_shapes.resize(tvm_output_count);
 
   // a common lambda utility function for fill-in inputs
@@ -103,7 +103,7 @@ void BasicExecBlock::InitContext(KernelComputeCtx* kernel_compute_ctx) const {
   }
 
   // Handle Initializers
-  const std::vector<const Tensor*>& intializers = func_info_->intializers;
+  const Vector<const Tensor*>& intializers = func_info_->intializers;
   for (const Tensor* t : intializers) {
     fill_input(tvm_input_idx++, t->DataRaw(), t->Shape().GetDims().data(),
                t->Shape().NumDimensions(), t->DataType());
@@ -112,11 +112,11 @@ void BasicExecBlock::InitContext(KernelComputeCtx* kernel_compute_ctx) const {
   // Handle Outputs
   size_t tvm_output_idx = 0;
   for (const auto& output_meta : func_info_->output_metas) {
-    std::vector<int64_t>& realized_output_shape = dl_output_shapes[tvm_output_idx];
+    Vector<int64_t>& realized_output_shape = dl_output_shapes[tvm_output_idx];
     // Update static dim
     realized_output_shape = output_meta.inferred_shape;
     // Update dynamic dim
-    const std::vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
+    const Vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
     kernel_compute_ctx->UpdateRealizedDims(symbols, realized_output_shape);
 
     int ort_output_idx = output_meta.ort_arg_index;
@@ -147,7 +147,7 @@ void BasicExecBlock::InitContext(KernelComputeCtx* kernel_compute_ctx) const {
 // UpdateContext is for an existing KernelComputeCtx, and only needs to update non-initializer input/output
 void BasicExecBlock::UpdateContext(KernelComputeCtx* kernel_compute_ctx) const {
   FuncComputeCtx& subgraph_compute_ctx = kernel_compute_ctx->GetFuncComputeCtx(func_info_);
-  std::vector<std::vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
+  Vector<Vector<int64_t>>& dl_output_shapes = subgraph_compute_ctx.dl_output_shapes;
 
   // Handle Inputs
   size_t tvm_input_idx = 0;
@@ -175,7 +175,7 @@ void BasicExecBlock::UpdateContext(KernelComputeCtx* kernel_compute_ctx) const {
     size_t tvm_idx = tvm_output_idx + func_info_->func_input_count;
     DLTensor& dl_tensor = subgraph_compute_ctx.dl_tensors[tvm_idx];
     // Update dynamic dim
-    const std::vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
+    const Vector<std::pair<size_t, std::string>>& symbols = output_meta.dim_symbols;
     kernel_compute_ctx->UpdateRealizedDims(symbols, dl_output_shapes[tvm_output_idx]);
 
     int ort_output_idx = output_meta.ort_arg_index;

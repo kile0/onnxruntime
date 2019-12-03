@@ -35,13 +35,13 @@ class OpenVINOExecutionProvider : public IExecutionProvider {
  public:
   explicit OpenVINOExecutionProvider(OpenVINOExecutionProviderInfo& info);
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                const std::vector<const KernelRegistry*>& kernel_registries) const
+                const Vector<const KernelRegistry*>& kernel_registries) const
       override;
 
-  common::Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                         std::vector<NodeComputeInfo>& node_compute_funcs) override;
+  common::Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                         Vector<NodeComputeInfo>& node_compute_funcs) override;
 
   std::shared_ptr<KernelRegistry> GetKernelRegistry() const override {
     return std::make_shared<KernelRegistry>();

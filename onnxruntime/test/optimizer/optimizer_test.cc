@@ -32,8 +32,8 @@ TEST(OptimizerTest, Basic) {
   const int tensor_dim = 10;
   const int input_num = 2;
   TensorProto initializer_tensor[input_num];
-  std::vector<std::unique_ptr<NodeArg>> inputs(input_num);
-  std::vector<std::unique_ptr<NodeArg>> outputs(1);
+  Vector<std::unique_ptr<NodeArg>> inputs(input_num);
+  Vector<std::unique_ptr<NodeArg>> outputs(1);
   InitializedTensorSet initialized_tensor_set;
 
   TypeProto tensor_int32;
@@ -54,18 +54,18 @@ TEST(OptimizerTest, Basic) {
   }
   outputs[0] = onnxruntime::make_unique<NodeArg>("out", &tensor_int32);
 
-  std::vector<NodeArg*> tmp_inputs{inputs[0].get(), inputs[1].get()};
-  std::vector<NodeArg*> tmp_outputs{outputs[0].get()};
+  Vector<NodeArg*> tmp_inputs{inputs[0].get(), inputs[1].get()};
+  Vector<NodeArg*> tmp_outputs{outputs[0].get()};
   graph.AddNode("a", "Add", "a", tmp_inputs, tmp_outputs);
   graph.Resolve();
 
-  std::vector<const Node*> nodes;
+  Vector<const Node*> nodes;
   for (auto& node : graph.Nodes()) {
     nodes.push_back(&node);
   }
 
   OptimizerExecutionFrame::Info info(nodes, initialized_tensor_set);
-  std::vector<int> fetch_mlvalue_idxs{info.GetMLValueIndex("out")};
+  Vector<int> fetch_mlvalue_idxs{info.GetMLValueIndex("out")};
   OptimizerExecutionFrame frame(info, fetch_mlvalue_idxs);
   const logging::Logger& logger = DefaultLoggingManager().DefaultLogger();
 
@@ -77,11 +77,11 @@ TEST(OptimizerTest, Basic) {
     auto st = kernel->Compute(&op_kernel_context);
     ASSERT_TRUE(st.IsOK()) << st.ErrorMessage();
 
-    std::vector<OrtValue> fetches;
+    Vector<OrtValue> fetches;
     frame.GetOutputs(fetches);
     auto& tensor = fetches[0].Get<Tensor>();
-    const std::vector<int32_t> found(tensor.template Data<int32_t>(), tensor.template Data<int32_t>() + tensor_dim);
-    std::vector<int32_t> expected;
+    const Vector<int32_t> found(tensor.template Data<int32_t>(), tensor.template Data<int32_t>() + tensor_dim);
+    Vector<int32_t> expected;
     for (int j = 0; j < tensor_dim; j++) {
       expected.push_back(3 * j);
     }

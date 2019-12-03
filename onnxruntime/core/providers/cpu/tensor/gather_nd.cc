@@ -50,10 +50,10 @@ Status GatherNDBase::PrepareForCompute(OpKernelContext* context, Prepare& p) con
                            "last dimension of indices must not be larger than rank of input tensor");
   }
 
-  std::vector<int64_t> shape(indices_shape.GetDims().begin(), indices_shape.GetDims().end() - 1);
+  Vector<int64_t> shape(indices_shape.GetDims().begin(), indices_shape.GetDims().end() - 1);
   shape.insert(shape.end(), input_shape.GetDims().begin() + last_indices_dimension, input_shape.GetDims().end());
   auto* output_tensor = context->Output(0, TensorShape(std::move(shape)));
-  std::vector<int64_t> element_counts(last_indices_dimension,
+  Vector<int64_t> element_counts(last_indices_dimension,
                                       0LL);  // Number of elements for each input dimension
 
 #ifdef USE_OPENMP

@@ -43,8 +43,8 @@ TEST(MatmulIntegerOpTest, MatMulInteger_WithZero_ZeroPoint) {
 }
 
 template <typename T>
-std::vector<T> ToVector(const int* value, int size) {
-  std::vector<T> data(size);
+Vector<T> ToVector(const int* value, int size) {
+  Vector<T> data(size);
   for (int i = 0; i < size; i++)
     data[i] = static_cast<T>(value[i]);
   return data;

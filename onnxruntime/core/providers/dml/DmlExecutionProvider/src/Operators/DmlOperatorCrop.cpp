@@ -22,8 +22,8 @@ public:
         auto outputShape = kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0);
         assert(outputShape.size() == NchwDimensionCount);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_SLICE_OPERATOR_DESC opDesc = {};
         opDesc.InputTensor = inputDescs.data();

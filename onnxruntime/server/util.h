@@ -29,7 +29,7 @@ class MemBufferArray {
   }
 
  private:
-  std::vector<uint8_t*> buffers_;
+  Vector<uint8_t*> buffers_;
 
   void FreeBuffers() {
     for (auto* buf : buffers_) {

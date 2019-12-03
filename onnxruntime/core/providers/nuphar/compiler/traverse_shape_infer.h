@@ -14,7 +14,7 @@ namespace nuphar {
 // A collection of ShapeExpr
 struct ShapeExprContext {
   std::map<std::string, ShapeExpr> inputs;
-  std::map<const Node*, std::vector<ShapeExpr>> ops;
+  std::map<const Node*, Vector<ShapeExpr>> ops;
   std::map<std::string, std::pair<const Node*, size_t>> input_from;
 
   const ShapeExpr* Lookup(const NodeArg* def) const {

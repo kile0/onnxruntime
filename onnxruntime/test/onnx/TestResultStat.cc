@@ -17,7 +17,7 @@ template <typename T1>
 std::string containerToStr(const T1& input) {
   std::ostringstream oss;
   bool is_first = true;
-  std::vector<typename T1::value_type> vec(input.begin(), input.end());
+  Vector<typename T1::value_type> vec(input.begin(), input.end());
   std::sort(vec.begin(), vec.end());
   for (const auto& s : vec) {
     if (!is_first) oss << ", ";

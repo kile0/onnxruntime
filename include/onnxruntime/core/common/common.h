@@ -35,9 +35,10 @@
 #include "core/common/exceptions.h"
 #include "core/common/make_unique.h"
 #include "core/common/status.h"
+#include "core/framework/allocator_mimalloc.h"
 
 #ifdef USE_MIMALLOC
-#include <mimalloc.h>
+//#include <mimalloc.h>
 #endif
 
 namespace onnxruntime {
@@ -77,7 +78,7 @@ using common::Status;
 #define ORT_IGNORE_RETURN_VALUE(fn) \
   static_cast<void>(fn)
 
-std::vector<std::string> GetStackTrace();
+Vector<std::string> GetStackTrace();
 // these is a helper function that gets defined by platform/Telemetry
 void LogRuntimeError(uint32_t session_id, const common::Status& status, const char* file,
                      const char* function, uint32_t line);

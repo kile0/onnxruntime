@@ -78,9 +78,9 @@ public:
     std::string name;
     MLOperatorAttributeType type = MLOperatorAttributeType::Undefined;
 
-    std::vector<int64_t> ints;
-    std::vector<std::string> strings;
-    std::vector<float> floats;
+    Vector<int64_t> ints;
+    Vector<std::string> strings;
+    Vector<float> floats;
 };
 
 using AttributeMap = std::map<std::string, AttributeValue>;
@@ -94,12 +94,12 @@ public:
 
     EdgeShapes(size_t count) : m_shapes(count) {}
 
-    const std::vector<uint32_t>& GetShape(size_t edgeIndex) const
+    const Vector<uint32_t>& GetShape(size_t edgeIndex) const
     {
         return m_shapes[edgeIndex];
     }
 
-    std::vector<uint32_t>& GetMutableShape(size_t edgeIndex)
+    Vector<uint32_t>& GetMutableShape(size_t edgeIndex)
     {
         return m_shapes[edgeIndex];
     }
@@ -118,7 +118,7 @@ public:
     }
 
  private:
-    std::vector<std::vector<uint32_t>> m_shapes;
+    Vector<Vector<uint32_t>> m_shapes;
 };
 
 // Base class for ABI objects which may be "Closed", at which point calls will predictably
@@ -240,7 +240,7 @@ class OpNodeInfoWrapper : public Base1_t, public Base2_t, public Closable
     // May be null
     const EdgeShapes* m_inputShapesOverride;
     
-    std::vector<uint32_t> m_requiredConstantCpuInputs;
+    Vector<uint32_t> m_requiredConstantCpuInputs;
     MLOperatorTensorGetter m_constantInputGetter;
 
     const AttributeMap* m_defaultAttributes = nullptr;
@@ -462,8 +462,8 @@ class OpKernelContextWrapper : public WRL::Base<IMLOperatorKernelContext>, publi
     
     void Close() override;
 
-    std::vector<IMLOperatorTensor*> GetInputTensors();
-    std::vector<IMLOperatorTensor*> GetOutputTensors(const EdgeShapes& outputShapes);
+    Vector<IMLOperatorTensor*> GetInputTensors();
+    Vector<IMLOperatorTensor*> GetOutputTensors(const EdgeShapes& outputShapes);
 
  protected:
     void ClearTempAllocations();
@@ -473,8 +473,8 @@ class OpKernelContextWrapper : public WRL::Base<IMLOperatorKernelContext>, publi
     onnxruntime::OpKernelContext* m_impl = nullptr;
     const EdgeShapes* m_outputShapes = nullptr;
 
-    std::vector<ComPtr<TensorWrapper>> m_inputTensors;
-    std::vector<ComPtr<TensorWrapper>> m_outputTensors;
+    Vector<ComPtr<TensorWrapper>> m_inputTensors;
+    Vector<ComPtr<TensorWrapper>> m_outputTensors;
 
     const onnxruntime::IExecutionProvider* m_provider = nullptr;
     ComPtr<winrt::Windows::AI::MachineLearning::implementation::IWinmlExecutionProvider> m_winmlProvider;
@@ -486,8 +486,8 @@ class OpKernelContextWrapper : public WRL::Base<IMLOperatorKernelContext>, publi
 
     // Temporary allocations created by the kernel.  These will be freed to the allocator following
     // Compute being called on the kernel.  This list is used to maintain their lifetime.
-    mutable std::vector<ComPtr<IUnknown>> m_temporaryAllocations;
-    mutable std::vector<ComPtr<IUnknown>> m_temporaryAbiAllocations;
+    mutable Vector<ComPtr<IUnknown>> m_temporaryAllocations;
+    mutable Vector<ComPtr<IUnknown>> m_temporaryAbiAllocations;
 };    
 
 class AbiOpKernel : public onnxruntime::OpKernel
@@ -531,19 +531,19 @@ class AbiOpKernel : public onnxruntime::OpKernel
 
     struct TensorContent
     {
-        std::vector<uint32_t> shape;
+        Vector<uint32_t> shape;
         MLOperatorTensorDataType type;
-        std::vector<std::byte> data;
+        Vector<std::byte> data;
     };
 
-    mutable std::vector<TensorContent> m_constantInputTensorContentsOfKernel;
+    mutable Vector<TensorContent> m_constantInputTensorContentsOfKernel;
 
     mutable std::mutex m_mutex;
     mutable EdgeShapes m_inferredOutputShapes;
 
     ComPtr<winrt::Windows::AI::MachineLearning::implementation::IWinmlExecutionProvider> m_winmlProvider;
     bool m_internalOperator = false;
-    std::vector<uint32_t> m_requiredConstantCpuInputs;
+    Vector<uint32_t> m_requiredConstantCpuInputs;
     
     // The execution object returned through the ABI may vary according to kernel
     // registration options.  

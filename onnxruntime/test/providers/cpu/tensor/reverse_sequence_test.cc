@@ -9,10 +9,10 @@ namespace test {
 
 TEST(ReverseSequenceTest, BatchMajor) {
   OpTester test("ReverseSequence", 10);
-  std::vector<int64_t> input = {0, 1, 2, 3,
+  Vector<int64_t> input = {0, 1, 2, 3,
                                 4, 5, 6, 7};
-  std::vector<int64_t> sequence_lens = {4, 3};
-  std::vector<int64_t> expected_output = {3, 2, 1, 0,
+  Vector<int64_t> sequence_lens = {4, 3};
+  Vector<int64_t> expected_output = {3, 2, 1, 0,
                                           6, 5, 4, 7};
 
   test.AddAttribute("batch_axis", int64_t(0));
@@ -26,13 +26,13 @@ TEST(ReverseSequenceTest, BatchMajor) {
 
 TEST(ReverseSequenceTest, TimeMajor) {
   OpTester test("ReverseSequence", 10);
-  std::vector<int64_t> input = {0, 4,
+  Vector<int64_t> input = {0, 4,
                                 1, 5,
                                 2, 6,
                                 3, 7};
 
-  std::vector<int64_t> sequence_lens = {4, 3};
-  std::vector<int64_t> expected_output = {3, 6,
+  Vector<int64_t> sequence_lens = {4, 3};
+  Vector<int64_t> expected_output = {3, 6,
                                           2, 5,
                                           1, 4,
                                           0, 7};
@@ -48,15 +48,15 @@ TEST(ReverseSequenceTest, TimeMajor) {
 
 TEST(ReverseSequenceTest, LargerDim2) {
   OpTester test("ReverseSequence", 10);
-  std::vector<float> input = {0.f, 1.f,
+  Vector<float> input = {0.f, 1.f,
                               2.f, 3.f,
                               4.f, 5.f,
 
                               6.f, 7.f,
                               8.f, 9.f,
                               10.f, 11.f};
-  std::vector<int64_t> sequence_lens = {2, 3};
-  std::vector<float> expected_output = {2.f, 3.f,
+  Vector<int64_t> sequence_lens = {2, 3};
+  Vector<float> expected_output = {2.f, 3.f,
                                         0.f, 1.f,
                                         4.f, 5.f,
 
@@ -75,13 +75,13 @@ TEST(ReverseSequenceTest, LargerDim2) {
 
 TEST(ReverseSequenceTest, Strings) {
   OpTester test("ReverseSequence", 10);
-  std::vector<std::string> input = {"0", "4 string longer than 16 chars that requires its own buffer",
+  Vector<std::string> input = {"0", "4 string longer than 16 chars that requires its own buffer",
                                     "1", "5",
                                     "2", "6",
                                     "3", "7"};
 
-  std::vector<int64_t> sequence_lens = {4, 3};
-  std::vector<std::string> expected_output = {"3", "6",
+  Vector<int64_t> sequence_lens = {4, 3};
+  Vector<std::string> expected_output = {"3", "6",
                                               "2", "5",
                                               "1", "4 string longer than 16 chars that requires its own buffer",
                                               "0", "7"};
@@ -101,12 +101,12 @@ TEST(ReverseSequenceTest, InvalidInput) {
 
     // Bad axis values
     auto check_bad_axis = [&](int64_t batch_dim, int64_t seq_dim,
-                              const std::vector<int64_t>& input_shape,
+                              const Vector<int64_t>& input_shape,
                               const std::string err_msg) {
       OpTester test("ReverseSequence", 10);
-      std::vector<int64_t> input(batch_size * seq_size, 0);
-      std::vector<int64_t> sequence_lens(batch_size, 1);
-      std::vector<int64_t> expected_output = input;
+      Vector<int64_t> input(batch_size * seq_size, 0);
+      Vector<int64_t> sequence_lens(batch_size, 1);
+      Vector<int64_t> expected_output = input;
 
       test.AddAttribute("batch_axis", batch_dim);
       test.AddAttribute("time_axis", seq_dim);
@@ -127,10 +127,10 @@ TEST(ReverseSequenceTest, InvalidInput) {
     OpTester test("ReverseSequence", 10);
 
     // Bad data_format value
-    std::vector<int64_t> input = {0, 1, 2, 3,
+    Vector<int64_t> input = {0, 1, 2, 3,
                                   4, 5, 6, 7};
-    std::vector<int64_t> sequence_lens = {4, 3, 4};
-    std::vector<int64_t> expected_output = {3, 2, 1, 0,
+    Vector<int64_t> sequence_lens = {4, 3, 4};
+    Vector<int64_t> expected_output = {3, 2, 1, 0,
                                             6, 5, 4, 7};
 
     test.AddAttribute("batch_axis", int64_t(0));

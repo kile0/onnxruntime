@@ -64,10 +64,10 @@ void PyCustomKernel::GetOutputShape(OrtKernelContext*, size_t, OrtTensorTypeAndS
 void PyCustomKernel::Compute(OrtKernelContext* context) {
   ORT_ENFORCE(nullptr != context);
   auto inputs_count = (size_t) reinterpret_cast<onnxruntime::OpKernelContextInternal*>(context)->InputCount();
-  std::vector<const void*> inputs;
-  std::vector<std::unique_ptr<char[]>> outputs;
-  std::vector<int32_t> inputs_type, outputs_elem_size;
-  std::vector<std::vector<int64_t>> inputs_dim, outputs_dim;
+  Vector<const void*> inputs;
+  Vector<std::unique_ptr<char[]>> outputs;
+  Vector<int32_t> inputs_type, outputs_elem_size;
+  Vector<Vector<int64_t>> inputs_dim, outputs_dim;
 
   for (size_t i = 0; i < inputs_count; ++i) {
     auto ort_value = ort_.KernelContext_GetInput(context, i);

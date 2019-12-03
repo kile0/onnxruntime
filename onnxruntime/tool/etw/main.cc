@@ -23,7 +23,7 @@ int real_main(int argc, TCHAR* argv[]) {
   session.Finalize();
 
   assert(context.ortrun_count == context.ortrun_end_count);
-  std::vector<OpStat*> stat_array(context.op_stat.size());
+  Vector<OpStat*> stat_array(context.op_stat.size());
   size_t i = 0;
   for (auto& p : context.op_stat) {
     stat_array[i++] = &p.second;

@@ -20,13 +20,13 @@ class SubgraphPartitioner : public Partitioner {
 
   Status Partition(
       const Node& node,
-      std::vector<NupharSubgraphUnit>& subgraphs,
+      Vector<NupharSubgraphUnit>& subgraphs,
       FindInitializerFunc find_initializer_func);
 
-  void SetSpecifiedNodeNames(const std::vector<std::string>& specified_names);
+  void SetSpecifiedNodeNames(const Vector<std::string>& specified_names);
 
  private:
-  std::vector<NodeIndex> sorted_partitions_;
+  Vector<NodeIndex> sorted_partitions_;
 
   std::unique_ptr<OrtGraphStats> graph_stats_;
 
@@ -35,16 +35,16 @@ class SubgraphPartitioner : public Partitioner {
   bool ForcePartition(
       const onnxruntime::GraphViewer& graph,
       const Node& node,
-      const std::vector<NodeIndex>& candiates,
-      const std::vector<NodeIndex>& rejected_partitions) override;
+      const Vector<NodeIndex>& candiates,
+      const Vector<NodeIndex>& rejected_partitions) override;
 
-  int Cost(const Node& node, const std::vector<NodeIndex>& candiates) const override;
+  int Cost(const Node& node, const Vector<NodeIndex>& candiates) const override;
   int Cost(const Node& node) const;
 
   // Some help function for ForcePartition
   bool SpecifiedNodePartition(const Node& node,
-                              const std::vector<NodeIndex>& candiates,
-                              const std::vector<NodeIndex>& rejected_partitions);
+                              const Vector<NodeIndex>& candiates,
+                              const Vector<NodeIndex>& rejected_partitions);
 
   // a lookup to user-guided partitioning
   std::unordered_set<std::string> specified_names_;

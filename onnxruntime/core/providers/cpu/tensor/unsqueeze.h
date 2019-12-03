@@ -22,7 +22,7 @@ class UnsqueezeBase {
   Status PrepareCompute(OpKernelContext* context, Prepare& p) const;
 
  private:
-  std::vector<int64_t> axes_;
+  Vector<int64_t> axes_;
 };
 
 class Unsqueeze final : public OpKernel, public UnsqueezeBase {

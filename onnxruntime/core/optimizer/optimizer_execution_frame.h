@@ -20,7 +20,7 @@ class OptimizerExecutionFrame final : public IExecutionFrame {
  public:
   class Info {
    public:
-    Info(const std::vector<const Node*>& nodes, const InitializedTensorSet& initialized_tensor_set);
+    Info(const Vector<const Node*>& nodes, const InitializedTensorSet& initialized_tensor_set);
     ~Info() {
       for (auto& kvp : deleter_for_initialized_tensors_) {
         kvp.second.f(kvp.second.param);
@@ -72,7 +72,7 @@ class OptimizerExecutionFrame final : public IExecutionFrame {
   };
 
   OptimizerExecutionFrame(const Info& info,
-                          const std::vector<int>& fetch_mlvalue_idxs);
+                          const Vector<int>& fetch_mlvalue_idxs);
 
   ~OptimizerExecutionFrame() override = default;
 

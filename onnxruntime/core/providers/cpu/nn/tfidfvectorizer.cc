@@ -57,7 +57,7 @@ class NgramEntry;
 
 template <>
 class NgramEntry<int64_t> : public NgramEntryBase {
-  std::vector<int64_t> items_;
+  Vector<int64_t> items_;
   size_t hash_ = 0;
 
   void RunningHash(int64_t v) {
@@ -108,7 +108,7 @@ class NgramEntry<int32_t> : public NgramEntry<int64_t> {
 template <>
 class NgramEntry<std::string> : public NgramEntryBase {
  private:
-  std::vector<std::reference_wrapper<const std::string>> items_;
+  Vector<std::reference_wrapper<const std::string>> items_;
   size_t hash_ = 0;
 
   void RunningHash(const std::string& s) {
@@ -233,13 +233,13 @@ struct TfIdfVectorizer::Impl {
   // and so on in pool. For example, if ngram_counts is [0, 17, 36],
   // the first index (zero-based) of 1-gram/2-gram/3-gram
   // in pool are 0/17/36.
-  std::vector<int64_t> ngram_counts_;
+  Vector<int64_t> ngram_counts_;
   // Contains output indexes
   // represents ngram_indexes output
-  std::vector<int64_t> ngram_indexes_;
-  std::vector<float> weights_;
+  Vector<int64_t> ngram_indexes_;
+  Vector<float> weights_;
 
-  std::vector<std::string> pool_strings_;
+  Vector<std::string> pool_strings_;
   // This set contains references to pool_string_ entries
   // of pool_strings attribute
   StringPoolSet str_set_;
@@ -259,7 +259,7 @@ struct TfIdfVectorizer::Impl {
   typename Return<T>::type PoolFind(const ngram_details::NgramEntry<T>&) const;
 
   void IncrementCount(size_t ngram_id, size_t row_num,
-                      std::vector<uint32_t>& frequencies) const {
+                      Vector<uint32_t>& frequencies) const {
     assert(ngram_id < ngram_indexes_.size());
     auto output_idx = row_num * output_size_ + ngram_indexes_[ngram_id];
     assert(static_cast<size_t>(output_idx) < frequencies.size());
@@ -353,7 +353,7 @@ TfIdfVectorizer::TfIdfVectorizer(const OpKernelInfo& info) : OpKernel(info), imp
                 " must be of equal size");
   }
 
-  std::vector<int64_t> pool_int64s;
+  Vector<int64_t> pool_int64s;
   status = info.GetAttrs("pool_strings", impl_->pool_strings_);
   if (status.IsOK()) {
     ORT_ENFORCE(!impl_->pool_strings_.empty(), "pool_strings must not be empty if specified");
@@ -400,9 +400,9 @@ TfIdfVectorizer::TfIdfVectorizer(const OpKernelInfo& info) : OpKernel(info), imp
 
 TfIdfVectorizer::~TfIdfVectorizer() = default;
 
-void TfIdfVectorizer::OutputResult(OpKernelContext* ctx, size_t B, const std::vector<uint32_t>& frequences) const {
+void TfIdfVectorizer::OutputResult(OpKernelContext* ctx, size_t B, const Vector<uint32_t>& frequences) const {
   const Impl& impl = *impl_;
-  std::vector<int64_t> output_dims;
+  Vector<int64_t> output_dims;
   if (B == 0) {
     output_dims.push_back(impl.output_size_);
   } else {
@@ -487,7 +487,7 @@ Status TfIdfVectorizer::ComputeImpl(OpKernelContext* ctx) const {
 
   // Frequency holder allocate [B..output_size_]
   // and init all to zero
-  std::vector<uint32_t> frequencies;
+  Vector<uint32_t> frequencies;
   frequencies.resize(b_dim * impl.output_size_, 0);
 
   if (input_shape.Size() == 0) {

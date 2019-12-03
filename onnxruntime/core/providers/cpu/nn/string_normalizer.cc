@@ -194,7 +194,7 @@ Status CopyCaseAction(ForwardIter first, ForwardIter end, OpKernelContext* ctx,
                       Utf8Converter& converter,
                       size_t N, size_t C,
                       StringNormalizer::CaseAction caseaction) {
-  std::vector<int64_t> output_dims;
+  Vector<int64_t> output_dims;
   if (N == 1) {
     output_dims.push_back(1);
   }
@@ -271,7 +271,7 @@ StringNormalizer::StringNormalizer(const OpKernelInfo& info) : OpKernel(info),
   Locale locale(locale_name_);
   Utf8Converter converter(conv_error, wconv_error);
 
-  std::vector<std::string> swords = info.GetAttrsOrDefault<std::string>("stopwords");
+  Vector<std::string> swords = info.GetAttrsOrDefault<std::string>("stopwords");
   for (const auto& sw : swords) {
     ORT_ENFORCE(!sw.empty(), "Empty stopwords not allowed");
     if (is_case_sensitive_) {
@@ -321,7 +321,7 @@ Status StringNormalizer::Compute(OpKernelContext* ctx) const {
   using StrRef = std::reference_wrapper<const std::string>;
   if (is_case_sensitive_) {
     if (!stopwords_.empty()) {
-      std::vector<StrRef> filtered_strings;
+      Vector<StrRef> filtered_strings;
       filtered_strings.reserve(C);
       auto first = input_data;
       auto const last = input_data + C;
@@ -343,8 +343,8 @@ Status StringNormalizer::Compute(OpKernelContext* ctx) const {
       // Filter input. When no case action is required
       // we simply store original string references.
       // Otherwise, we store converted strings.
-      std::vector<StrRef> filtered_orignal_strings;
-      std::vector<std::string> filtered_cased_strings;
+      Vector<StrRef> filtered_orignal_strings;
+      Vector<std::string> filtered_cased_strings;
       filtered_orignal_strings.reserve(C);
       filtered_cased_strings.reserve(C);
       auto first = input_data;

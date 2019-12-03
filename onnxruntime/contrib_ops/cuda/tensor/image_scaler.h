@@ -21,7 +21,7 @@ class ImageScaler final : public CudaKernel {
 
  private:
   float scale_;
-  std::vector<float> bias_;
+  Vector<float> bias_;
   IAllocatorUniquePtr<float> b_data_;  // gpu copy of bias
 };
 

@@ -36,9 +36,9 @@ class MathGemmTest : public testing::TestWithParam<int> {
 
 TEST_P(MathGemmTest, GemmNoTransNoTrans) {
   auto& provider = CPUMathUtil::Instance();
-  std::vector<float> X(50);  // 5 * 10
-  std::vector<float> W(60);  // 10 * 6
-  std::vector<float> Y(30);  // 5 * 6
+  Vector<float> X(50);  // 5 * 10
+  Vector<float> W(60);  // 10 * 6
+  Vector<float> Y(30);  // 5 * 6
   math::Set<float, CPUMathUtil>(X.size(), 1, VECTOR_HEAD(X), &provider);
   math::Set<float, CPUMathUtil>(W.size(), 1, VECTOR_HEAD(W), &provider);
   EXPECT_EQ(Y.size(), 30);
@@ -81,9 +81,9 @@ TEST_P(MathGemmTest, GemmNoTransNoTrans) {
 TEST_P(MathGemmTest, GemmNoTransTrans) {
   auto& provider = CPUMathUtil::Instance();
 
-  std::vector<float> X(50);  // 5 * 10
-  std::vector<float> W(60);  // 10 * 6
-  std::vector<float> Y(30);  // 5 * 6
+  Vector<float> X(50);  // 5 * 10
+  Vector<float> W(60);  // 10 * 6
+  Vector<float> Y(30);  // 5 * 6
   math::Set<float, CPUMathUtil>(X.size(), 1, VECTOR_HEAD(X), &provider);
   math::Set<float, CPUMathUtil>(W.size(), 1, VECTOR_HEAD(W), &provider);
   EXPECT_EQ(Y.size(), 30);
@@ -126,9 +126,9 @@ INSTANTIATE_TEST_CASE_P(MathGemmTests, MathGemmTest,
 
 TEST(MathTest, GemvNoTrans) {
   auto& provider = CPUMathUtil::Instance();
-  std::vector<float> A(50);  // 5 * 10
-  std::vector<float> X(10);
-  std::vector<float> Y(5);
+  Vector<float> A(50);  // 5 * 10
+  Vector<float> X(10);
+  Vector<float> Y(5);
   math::Set<float, CPUMathUtil>(A.size(), 1, VECTOR_HEAD(A), &provider);
   math::Set<float, CPUMathUtil>(X.size(), 1, VECTOR_HEAD(X), &provider);
   EXPECT_EQ(Y.size(), 5);
@@ -164,9 +164,9 @@ TEST(MathTest, GemvNoTrans) {
 
 TEST(MathTest, GemvTrans) {
   auto& provider = CPUMathUtil::Instance();
-  std::vector<float> A(60);  // 6 * 10
-  std::vector<float> X(6);
-  std::vector<float> Y(10);
+  Vector<float> A(60);  // 6 * 10
+  Vector<float> X(6);
+  Vector<float> Y(10);
   math::Set<float, CPUMathUtil>(A.size(), 1, VECTOR_HEAD(A), &provider);
   math::Set<float, CPUMathUtil>(X.size(), 1, VECTOR_HEAD(X), &provider);
   EXPECT_EQ(Y.size(), 10);

@@ -13,7 +13,7 @@ TEST(TensorOpTest, SpaceToDepthTest_1) {
   const int64_t blocksize = 2;
   test.AddAttribute("blocksize", blocksize);
   const int64_t N = 1, C = 2, H = 2, W = 4;
-  const std::vector<float> X =
+  const Vector<float> X =
       {0.0f, 0.1f, 0.2f, 0.3f,
        1.0f, 1.1f, 1.2f, 1.3f,
 
@@ -22,7 +22,7 @@ TEST(TensorOpTest, SpaceToDepthTest_1) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {
+  const Vector<float> result = {
       0.0f, 0.2f,
       2.0f, 2.2f,
 
@@ -43,7 +43,7 @@ TEST(TensorOpTest, SpaceToDepthTest_2) {
   const int64_t blocksize = 3;
   test.AddAttribute("blocksize", blocksize);
   const int64_t N = 2, C = 3, H = 3, W = 6;
-  const std::vector<float> X = {
+  const Vector<float> X = {
       0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10.,
       11., 12., 13., 14., 15., 16., 17., 18., 19., 20., 21.,
       22., 23., 24., 25., 26., 27., 28., 29., 30., 31., 32.,
@@ -57,7 +57,7 @@ TEST(TensorOpTest, SpaceToDepthTest_2) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {
+  const Vector<float> result = {
       0., 3., 18., 21., 36., 39., 1., 4., 19., 22., 37.,
       40., 2., 5., 20., 23., 38., 41., 6., 9., 24., 27.,
       42., 45., 7., 10., 25., 28., 43., 46., 8., 11., 26.,
@@ -78,7 +78,7 @@ TEST(TensorOpTest, DepthToSpaceTest_1) {
   test.AddAttribute("blocksize", blocksize);
 
   const int64_t N = 1, C = 8, H = 1, W = 2;
-  const std::vector<float> X = {
+  const Vector<float> X = {
       0.0f, 0.2f,
       2.0f, 2.2f,
 
@@ -93,7 +93,7 @@ TEST(TensorOpTest, DepthToSpaceTest_1) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result =
+  const Vector<float> result =
       {0.0f, 0.1f, 0.2f, 0.3f,
        1.0f, 1.1f, 1.2f, 1.3f,
 
@@ -109,7 +109,7 @@ TEST(TensorOpTest, DepthToSpaceTest_2) {
   test.AddAttribute("blocksize", blocksize);
 
   const int64_t N = 2, C = 12, H = 3, W = 2;
-  const std::vector<float> X = {
+  const Vector<float> X = {
       0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10.,
       11., 12., 13., 14., 15., 16., 17., 18., 19., 20., 21.,
       22., 23., 24., 25., 26., 27., 28., 29., 30., 31., 32.,
@@ -127,7 +127,7 @@ TEST(TensorOpTest, DepthToSpaceTest_2) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {
+  const Vector<float> result = {
       0., 18., 1., 19., 36., 54., 37., 55., 2., 20., 3.,
       21., 38., 56., 39., 57., 4., 22., 5., 23., 40., 58.,
       41., 59., 6., 24., 7., 25., 42., 60., 43., 61., 8.,
@@ -152,7 +152,7 @@ TEST(TensorOpTest, DepthToSpaceTest_3) {
   test.AddAttribute("blocksize", blocksize);
 
   const int64_t N = 2, C = 12, H = 3, W = 2;
-  const std::vector<float> X = {
+  const Vector<float> X = {
       0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10.,
       11., 12., 13., 14., 15., 16., 17., 18., 19., 20., 21.,
       22., 23., 24., 25., 26., 27., 28., 29., 30., 31., 32.,
@@ -170,7 +170,7 @@ TEST(TensorOpTest, DepthToSpaceTest_3) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {
+  const Vector<float> result = {
       0., 18., 1., 19., 36., 54., 37., 55., 2., 20., 3.,
       21., 38., 56., 39., 57., 4., 22., 5., 23., 40., 58.,
       41., 59., 6., 24., 7., 25., 42., 60., 43., 61., 8.,
@@ -196,7 +196,7 @@ TEST(TensorOpTest, DepthToSpaceTest_4) {
   test.AddAttribute("mode", "DCR");
 
   const int64_t N = 2, C = 12, H = 3, W = 2;
-  const std::vector<float> X = {
+  const Vector<float> X = {
       0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10.,
       11., 12., 13., 14., 15., 16., 17., 18., 19., 20., 21.,
       22., 23., 24., 25., 26., 27., 28., 29., 30., 31., 32.,
@@ -214,7 +214,7 @@ TEST(TensorOpTest, DepthToSpaceTest_4) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {
+  const Vector<float> result = {
       0., 18., 1., 19., 36., 54., 37., 55., 2., 20., 3.,
       21., 38., 56., 39., 57., 4., 22., 5., 23., 40., 58.,
       41., 59., 6., 24., 7., 25., 42., 60., 43., 61., 8.,
@@ -240,7 +240,7 @@ TEST(TensorOpTest, DepthToSpaceTest_5) {
   test.AddAttribute("mode", "CRD");
 
   const int64_t N = 1, C = 4, H = 2, W = 3;
-  const std::vector<float> X = {0., 1., 2.,
+  const Vector<float> X = {0., 1., 2.,
                                 3., 4., 5.,
                                 9., 10., 11.,
                                 12., 13., 14.,
@@ -251,7 +251,7 @@ TEST(TensorOpTest, DepthToSpaceTest_5) {
 
   test.AddInput<float>("input", {N, C, H, W}, X);
 
-  const std::vector<float> result = {0., 9., 1., 10., 2., 11.,
+  const Vector<float> result = {0., 9., 1., 10., 2., 11.,
                                      18., 27., 19., 28., 20., 29.,
                                      3., 12., 4., 13., 5., 14.,
                                     21., 30., 22., 31., 23., 32.};

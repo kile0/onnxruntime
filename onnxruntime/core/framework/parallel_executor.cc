@@ -27,9 +27,9 @@ ParallelExecutor::ParallelExecutor(const SessionState& session_state, const bool
   }
 }
 
-Status ParallelExecutor::Execute(const SessionState& session_state, const std::vector<int>& feed_mlvalue_idxs,
-                                 const std::vector<OrtValue>& feeds, const std::vector<int>& fetch_mlvalue_idxs,
-                                 std::vector<OrtValue>& fetches,
+Status ParallelExecutor::Execute(const SessionState& session_state, const Vector<int>& feed_mlvalue_idxs,
+                                 const Vector<OrtValue>& feeds, const Vector<int>& fetch_mlvalue_idxs,
+                                 Vector<OrtValue>& fetches,
                                  const std::unordered_map<size_t, CustomAllocator>& fetch_allocators,
                                  const logging::Logger& logger) {
   TimePoint tp;
@@ -82,7 +82,7 @@ Status ParallelExecutor::Execute(const SessionState& session_state, const std::v
   VLOGS(logger, 1) << "Done execution.";
 
   if (root_frame_->HasMemoryPatternPlanner()) {
-    std::vector<std::reference_wrapper<const TensorShape>> input_shapes;
+    Vector<std::reference_wrapper<const TensorShape>> input_shapes;
     bool all_tensors = true;
     for (const auto& feed : feeds) {
       if (!(feed.IsTensor())) {

@@ -8,7 +8,7 @@
 namespace onnxruntime {
 namespace test {
 
-void TestUnaryElementwiseOp(const char* szOp, std::vector<float>& input_vals,
+void TestUnaryElementwiseOp(const char* szOp, Vector<float>& input_vals,
                             std::function<float(float)> expected_func,
                             const std::unordered_map<std::string, float> attribs = {},
                             bool is_tensorrt_supported = true,
@@ -18,9 +18,9 @@ void TestUnaryElementwiseOp(const char* szOp, std::vector<float>& input_vals,
   for (auto attr : attribs)
     test.AddAttribute(attr.first, attr.second);
 
-  std::vector<int64_t> dims{(int64_t)input_vals.size()};
+  Vector<int64_t> dims{(int64_t)input_vals.size()};
 
-  std::vector<float> expected_vals;
+  Vector<float> expected_vals;
   for (const auto& iv : input_vals)
     expected_vals.push_back(expected_func(iv));
 
@@ -45,13 +45,13 @@ void TestUnaryElementwiseOp(const char* szOp, std::vector<float>& input_vals,
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", excluded_providers);
 }
 
-std::vector<float> input_vals = {
+Vector<float> input_vals = {
     -1.0f, 0, 1.0f,                                              // normal input values for activation
     100.0f, -100.0f, 1000.0f, -1000.0f,                          // input values that leads to exp() overflow
     FLT_MIN, FLT_MIN / 10, -FLT_MIN / 10,                        // min, denorm, -denorm
     FLT_MAX, -FLT_MAX, std::numeric_limits<float>::infinity()};  // max, -max, inf
 
-std::vector<float> no_inf_input_vals = {
+Vector<float> no_inf_input_vals = {
     -1.0f, 0, 1.0f,                        // normal input values for activation
     FLT_MIN, FLT_MIN / 10, -FLT_MIN / 10,  // min, denorm, -denorm
     FLT_MAX, -FLT_MAX};                    // max, -max
@@ -139,13 +139,13 @@ TEST(ActivationOpTest, PRelu) {
 
   auto formula = [](float x, float slope) { return x < 0 ? slope * x : x; };
 
-  std::vector<float> inputs{1.0f, -4.0f, 0.0f, -9.0f};
-  std::vector<float> slopes{1.0f, -2.0f, 3.0f, -4.0f};
-  std::vector<float> outputs;
+  Vector<float> inputs{1.0f, -4.0f, 0.0f, -9.0f};
+  Vector<float> slopes{1.0f, -2.0f, 3.0f, -4.0f};
+  Vector<float> outputs;
   for (unsigned i = 0; i < inputs.size(); i++)
     outputs.push_back(formula(inputs[i], slopes[i]));
 
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, inputs);
   test.AddInput<float>("slope", dims, slopes);
   test.AddOutput<float>("Y", dims, outputs);
@@ -159,11 +159,11 @@ TEST(ActivationOpTest, PRelu_SingleSlope) {
 
   auto inputs = {1.0f, -4.0f, 0.0f, -9.0f};
   auto slope = 1.5f;
-  std::vector<float> outputs;
+  Vector<float> outputs;
   for (auto& input : inputs)
     outputs.push_back(formula(input, slope));
 
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, inputs);
   test.AddInput<float>("slope", {}, {slope});
   test.AddOutput<float>("Y", dims, outputs);
@@ -175,17 +175,17 @@ TEST(ActivationOpTest, PRelu_MultiChannel) {
 
   auto formula = [](float x, float slope) { return x < 0 ? slope * x : x; };
 
-  std::vector<float> inputs{1.0f, 2.0f, -4.0f, 3.0f, 0.0f, 5.0f, -9.0f, 8.0f};
-  std::vector<float> slopes{1.0f, -2.0f};
-  std::vector<float> outputs;
+  Vector<float> inputs{1.0f, 2.0f, -4.0f, 3.0f, 0.0f, 5.0f, -9.0f, 8.0f};
+  Vector<float> slopes{1.0f, -2.0f};
+  Vector<float> outputs;
   const int64_t num_images = 2;
   const int64_t num_channels = 2;
   const int64_t num_pixels = 2;
   for (unsigned i = 0; i < inputs.size(); i++)
     outputs.push_back(formula(inputs[i], slopes[i / num_pixels % num_channels]));
 
-  std::vector<int64_t> x_dims{num_images, num_channels, num_pixels};
-  std::vector<int64_t> slope_dims{num_channels, 1};
+  Vector<int64_t> x_dims{num_images, num_channels, num_pixels};
+  Vector<int64_t> slope_dims{num_channels, 1};
   test.AddInput<float>("X", x_dims, inputs);
   test.AddInput<float>("slope", slope_dims, slopes);
   test.AddOutput<float>("Y", x_dims, outputs);

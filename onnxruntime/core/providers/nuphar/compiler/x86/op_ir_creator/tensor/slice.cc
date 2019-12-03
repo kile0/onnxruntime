@@ -15,10 +15,10 @@ namespace tvm_codegen {
 Status SliceCommon(const tvm::Array<tvm::Tensor>& inputs,
                    const Node& node,
                    tvm::Array<tvm::Tensor>& outputs,
-                   const std::vector<int64_t>& starts,
-                   const std::vector<int64_t>& ends,
-                   const std::vector<int64_t>& axes,
-                   const std::vector<int64_t>& steps);
+                   const Vector<int64_t>& starts,
+                   const Vector<int64_t>& ends,
+                   const Vector<int64_t>& axes,
+                   const Vector<int64_t>& steps);
 
 }  // namespace tvm_codegen
 
@@ -34,10 +34,10 @@ Status NUPHAR_TVM_X86_OP_IR_CREATOR_CLASS(Slice)::Evaluate(
   OpNodeProtoHelper<ProtoHelperNodeContext> info(&ctx);
   NupharCodeGenCtx* ctx_nuphar = Promote<NupharCodeGenCtx>(&ctx_codegen);
 
-  std::vector<std::vector<int64_t>> slice_params;
+  Vector<Vector<int64_t>> slice_params;
   int version = ctx_codegen.GetCodeGenHandle()->domain_version_lookup_func(node.Domain());
   if (version <= 9) {
-    std::vector<int64_t> starts, ends, axes, steps;
+    Vector<int64_t> starts, ends, axes, steps;
     ORT_RETURN_IF_ERROR(info.GetAttrs<int64_t>("starts", starts));
     ORT_RETURN_IF_ERROR(info.GetAttrs<int64_t>("ends", ends));
     ORT_RETURN_IF_NOT(starts.size() == ends.size());
@@ -55,15 +55,15 @@ Status NUPHAR_TVM_X86_OP_IR_CREATOR_CLASS(Slice)::Evaluate(
         if (tensor) {
           if (utils::IsPrimitiveDataType<int64_t>(tensor->DataType())) {
             const int64_t* data = tensor->Data<int64_t>();
-            slice_params.push_back(std::vector<int64_t>(data, data + tensor->Shape().Size()));
+            slice_params.push_back(Vector<int64_t>(data, data + tensor->Shape().Size()));
           } else {
             const int32_t* data = tensor->Data<int32_t>();
-            slice_params.push_back(std::vector<int64_t>(data, data + tensor->Shape().Size()));
+            slice_params.push_back(Vector<int64_t>(data, data + tensor->Shape().Size()));
           }
           continue;
         }
       }
-      slice_params.push_back(std::vector<int64_t>());
+      slice_params.push_back(Vector<int64_t>());
     }
   }
   return tvm_codegen::SliceCommon(inputs, node, outputs, slice_params[0], slice_params[1], slice_params[2], slice_params[3]);

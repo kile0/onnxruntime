@@ -116,7 +116,7 @@ bool IsAttributeWithExpectedValue(const Node& node, const std::string& attr_name
   return false;
 }
 
-bool AppendTensorFromInitializer(const Graph& graph, const NodeArg& input_arg, std::vector<int64_t>& data) {
+bool AppendTensorFromInitializer(const Graph& graph, const NodeArg& input_arg, Vector<int64_t>& data) {
   const ONNX_NAMESPACE::TensorProto* tensor_proto = nullptr;
   if (!graph.GetInitializedTensor(input_arg.Name(), tensor_proto)) {
     return false;

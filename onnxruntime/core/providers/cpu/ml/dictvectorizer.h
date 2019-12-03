@@ -33,7 +33,7 @@ class DictVectorizerOp final : public OpKernel {
     return Status::OK();
   }
 
-  std::vector<AttrType> vocabulary_;
+  Vector<AttrType> vocabulary_;
 };
 
 }  // namespace ml

@@ -247,7 +247,7 @@ void ExecuteLambdaInParallel(const std::string& name, TLambda lambda, int max, i
   // The only solution with the current Eigen that comes to mind is to have shared_ptr to with std::promise.
   //
   const int total_tasks = max / (step > 0 ? step : 1) + (max % step > 0 ? 1 : 0);
-  std::vector<std::future<void> > futures;
+  Vector<std::future<void> > futures;
   futures.reserve(total_tasks);
 
   for (int i = 0, t = 0; i < max; i += step, ++t) {
@@ -303,16 +303,16 @@ class ActivationFuncs {
 
   ActivationFuncs() = default;
 
-  ActivationFuncs(const std::vector<std::string>& funcs,
-                  const std::vector<float>& alphas,
-                  const std::vector<float>& betas);
+  ActivationFuncs(const Vector<std::string>& funcs,
+                  const Vector<float>& alphas,
+                  const Vector<float>& betas);
 
-  const std::vector<Entry>& Entries() const {
+  const Vector<Entry>& Entries() const {
     return entries_;
   }
 
  private:
-  std::vector<Entry> entries_;
+  Vector<Entry> entries_;
 };
 
 namespace deepcpu {

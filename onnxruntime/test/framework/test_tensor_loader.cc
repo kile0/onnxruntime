@@ -27,7 +27,7 @@ TEST(CApiTest, load_simple_float_tensor_not_enough_space) {
   // save it to a buffer
   ASSERT_TRUE(p.SerializeToString(&s));
   // deserialize it
-  std::vector<float> output(1);
+  Vector<float> output(1);
   OrtValue value;
   auto deleter = onnxruntime::make_unique<onnxruntime::OrtCallback>();
   OrtMemoryInfo cpu_memory_info(onnxruntime::CPU, OrtDeviceAllocator, OrtDevice(), 0, OrtMemTypeDefault);
@@ -52,7 +52,7 @@ TEST(CApiTest, load_simple_float_tensor) {
   // save it to a buffer
   ASSERT_TRUE(p.SerializeToString(&s));
   // deserialize it
-  std::vector<float> output(3);
+  Vector<float> output(3);
   OrtValue value;
   auto deleter = onnxruntime::make_unique<onnxruntime::OrtCallback>();
   OrtMemoryInfo cpu_memory_info(onnxruntime::CPU, OrtDeviceAllocator, OrtDevice(), 0, OrtMemTypeDefault);
@@ -94,7 +94,7 @@ static void run_external_data_test() {
   // save it to a buffer
   ASSERT_TRUE(p.SerializeToString(&s));
   // deserialize it
-  std::vector<float> output(3);
+  Vector<float> output(3);
   std::basic_string<ORTCHAR_T> cwd;
   if (use_current_dir) {
 #ifdef _WIN32
@@ -145,7 +145,7 @@ TEST(CApiTest, load_huge_tensor_with_external_data) {
   CreateTestFile(fp, filename);
   std::unique_ptr<ORTCHAR_T, decltype(&DeleteFileFromDisk)> file_deleter(const_cast<ORTCHAR_T*>(filename.c_str()),
                                                                          DeleteFileFromDisk);
-  std::vector<int> data(524288, 1);
+  Vector<int> data(524288, 1);
   const size_t len = data.size() * sizeof(int);
   for (int i = 0; i != 1025; ++i) {
     ASSERT_EQ(len, fwrite(data.data(), 1, len, fp));
@@ -165,7 +165,7 @@ TEST(CApiTest, load_huge_tensor_with_external_data) {
   // save it to a buffer
   ASSERT_TRUE(p.SerializeToString(&s));
   // deserialize it
-  std::vector<int> output(total_ele_count);
+  Vector<int> output(total_ele_count);
   OrtValue value;
   auto deleter = onnxruntime::make_unique<onnxruntime::OrtCallback>();
   OrtMemoryInfo cpu_memory_info(onnxruntime::CPU, OrtDeviceAllocator, OrtDevice(), 0, OrtMemTypeDefault);

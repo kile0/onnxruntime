@@ -85,7 +85,7 @@ int real_main(int argc, wchar_t* argv[], Ort::Env& env) {
 int real_main(int argc, char* argv[], Ort::Env& env) {
 #endif
   // if this var is not empty, only run the tests with name in this list
-  std::vector<std::basic_string<PATH_CHAR_TYPE> > whitelisted_test_cases;
+  Vector<std::basic_string<PATH_CHAR_TYPE> > whitelisted_test_cases;
   int concurrent_session_runs = GetNumCpuCores();
   bool enable_cpu_mem_arena = true;
   ExecutionMode execution_mode = ExecutionMode::ORT_SEQUENTIAL;
@@ -246,7 +246,7 @@ int real_main(int argc, char* argv[], Ort::Env& env) {
     return -1;
   }
 
-  std::vector<std::basic_string<PATH_CHAR_TYPE> > data_dirs;
+  Vector<std::basic_string<PATH_CHAR_TYPE> > data_dirs;
   TestResultStat stat;
 
   for (int i = 0; i != argc; ++i) {
@@ -371,7 +371,7 @@ int real_main(int argc, char* argv[], Ort::Env& env) {
     all_disabled_tests.insert(std::begin(x86_disabled_tests), std::end(x86_disabled_tests));
 #endif
 
-    std::vector<ITestCase*> tests;
+    Vector<ITestCase*> tests;
     LoadTests(data_dirs, whitelisted_test_cases, per_sample_tolerance, relative_per_sample_tolerance,
               [&tests](ITestCase* l) { tests.push_back(l); });
     for (auto it = tests.begin(); it != tests.end();) {

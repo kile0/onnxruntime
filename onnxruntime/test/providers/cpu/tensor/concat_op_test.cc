@@ -69,7 +69,7 @@ TEST(ConcatOpTest, Concat2D_1) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{0});
 
-  std::vector<int64_t> dims{1, 4};
+  Vector<int64_t> dims{1, 4};
   test.AddInput<float>("input1", dims, {11.0f, 12.0f, 13.0f, 14.0f});
   test.AddInput<float>("input2", dims, {21.0f, 22.0f, 23.0f, 24.0f});
   test.AddInput<float>("input3", dims, {31.0f, 32.0f, 33.0f, 34.0f});
@@ -84,7 +84,7 @@ TEST(ConcatOpTest, Concat2D_2) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{1});
 
-  std::vector<int64_t> dims{4, 1};
+  Vector<int64_t> dims{4, 1};
   test.AddInput<float>("input1", dims, {11.0f, 21.0f, 31.0f, 41.0f});
   test.AddInput<float>("input2", {4, 2}, {12.0f, 13.0f, 22.0f, 23.0f, 32.0f, 33.0f, 42.0f, 43.0f});
   test.AddInput<float>("input3", dims, {14.0f, 24.0f, 34.0f, 44.0f});
@@ -111,7 +111,7 @@ TEST(ConcatOpTest, Concat3D_1) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{0});
 
-  std::vector<int64_t> dims{1, 3, 3};
+  Vector<int64_t> dims{1, 3, 3};
   test.AddInput<float>("input1", dims,
                        {111.0f, 112.0f, 113.0f,
                         121.0f, 122.0f, 123.0f,
@@ -143,7 +143,7 @@ TEST(ConcatOpTest, Concat3D_1_negative_axis) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{-3});
 
-  std::vector<int64_t> dims{1, 3, 3};
+  Vector<int64_t> dims{1, 3, 3};
   test.AddInput<float>("input1", dims,
                        {111.0f, 112.0f, 113.0f,
                         121.0f, 122.0f, 123.0f,
@@ -175,7 +175,7 @@ TEST(ConcatOpTest, Concat3D_2) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{1});
 
-  std::vector<int64_t> dims{3, 1, 3};
+  Vector<int64_t> dims{3, 1, 3};
   test.AddInput<float>("input1", dims,
                        {111.0f, 112.0f, 113.0f,
                         211.0f, 212.0f, 213.0f,
@@ -207,7 +207,7 @@ TEST(ConcatOpTest, Concat3D_3) {
   OpTester test("Concat");
   test.AddAttribute("axis", int64_t{1});
 
-  std::vector<int64_t> dims{2, 2, 2};
+  Vector<int64_t> dims{2, 2, 2};
   test.AddInput<float>("input1", dims,
                        {1.0f, 2.0f,
                         3.0f, 4.0f,

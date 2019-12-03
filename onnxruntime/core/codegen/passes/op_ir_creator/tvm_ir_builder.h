@@ -41,7 +41,7 @@ class TVMIRBuilder {
   const std::string& Name() const;
 
  private:
-  std::vector<std::unique_ptr<OpIRDispatcher>> dispatchers_;
+  Vector<std::unique_ptr<OpIRDispatcher>> dispatchers_;
   std::string name_;
 
  private:

@@ -8,9 +8,9 @@
 namespace onnxruntime {
 namespace test {
 
-static void RunTest(const std::vector<float>& x_vals,
-                    const std::vector<float>& expected_vals,
-                    const std::vector<int64_t>& dimensions,
+static void RunTest(const Vector<float>& x_vals,
+                    const Vector<float>& expected_vals,
+                    const Vector<int64_t>& dimensions,
                     int64_t axis = 1,
                     OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
                     const std::string& expected_err_str = "") {
@@ -27,9 +27,9 @@ static void RunTest(const std::vector<float>& x_vals,
 
 TEST(HardmaxOperator, Simple) {
   // https://github.com/onnx/onnx/blob/master/docs/Operators.md#Hardmax
-  std::vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
-  std::vector<float> expected_vals = {0.0f, 0.0f, 1.0f};
-  std::vector<int64_t> dimensions = {1, 3};
+  Vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
+  Vector<float> expected_vals = {0.0f, 0.0f, 1.0f};
+  Vector<int64_t> dimensions = {1, 3};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
@@ -39,17 +39,17 @@ TEST(HardmaxOperator, LargeNumber) {
   // expected output[[0.0f, 0.0f, 0.0f, 1.0f],
   //                 [0.0f, 0.0f, 0.0f, 1.0f]]
 
-  std::vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f, 10000.0f, 10001.0f, 10002.0f, 10003.0f};
-  std::vector<float> expected_vals = {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-  std::vector<int64_t> dimensions = {2, 4};
+  Vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f, 10000.0f, 10001.0f, 10002.0f, 10003.0f};
+  Vector<float> expected_vals = {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+  Vector<int64_t> dimensions = {2, 4};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
 
 //np.random.seed(123) # Use a seed so we can replicate the input and expected values here and in python
 //x = np.abs(np.random.randn(3, 4, 5).astype(np.float32))
-static std::vector<int64_t> three_dimensions = {3, 4, 5};
-static std::vector<float> x_vals_3dims = {
+static Vector<int64_t> three_dimensions = {3, 4, 5};
+static Vector<float> x_vals_3dims = {
     1.0856307f, 0.99734545f, 0.2829785f, 1.5062947f, 0.5786002f,
     1.6514366f, 2.4266791f, 0.42891264f, 1.2659363f, 0.8667404f,
     0.6788862f, 0.09470897f, 1.4913896f, 0.638902f, 0.44398195f,
@@ -69,7 +69,7 @@ TEST(HardmaxOperator, ThreeDimsAxis0) {
   // x = <see x_vals_3dims>
   // import cntk as C
   // expected = C.hardmax(x.reshape(1,60)).eval().reshape(3, 4, 5)
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -92,7 +92,7 @@ TEST(HardmaxOperator, ThreeDimsAxis1) {
   // x = <see x_vals_3dims>
   // import cntk as C
   // expected = C.hardmax(x.reshape(3,20)).eval().reshape(3, 4, 5)
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -115,7 +115,7 @@ TEST(HardmaxOperator, ThreeDimsAxis2) {
   // x = <see x_vals_3dims>
   // import cntk as C
   // expected = C.hardmax(x.reshape(12,5)).eval().reshape(3, 4, 5)
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -138,7 +138,7 @@ TEST(HardmaxOperator, ThreeDimsNegAxis2) {
   // x = <see x_vals_3dims>
   // import cntk as C
   // expected = C.hardmax(x.reshape(12,5)).eval().reshape(3, 4, 5)
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 0.0f, 1.0f, 0.0f, 0.0f,

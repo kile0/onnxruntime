@@ -14,11 +14,11 @@ const int opset_ver = 9;
 
 void InitTestAttr(OpTester& test, const std::string& mode,
                   int64_t min_gram_length, int64_t max_gram_length, int64_t max_skip_count,
-                  const std::vector<int64_t>& ngram_counts,
-                  const std::vector<int64_t>& ngram_indexes,
-                  const std::vector<float>& weights,
-                  const std::vector<int64_t>& pool_int64s,
-                  const std::vector<std::string>& pool_strings) {
+                  const Vector<int64_t>& ngram_counts,
+                  const Vector<int64_t>& ngram_indexes,
+                  const Vector<float>& weights,
+                  const Vector<int64_t>& pool_int64s,
+                  const Vector<std::string>& pool_strings) {
   test.AddAttribute("mode", mode);
   test.AddAttribute("min_gram_length", min_gram_length);
   test.AddAttribute("max_gram_length", max_gram_length);
@@ -58,12 +58,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip0) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 1, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -80,12 +80,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip0_Empty_Dim1Fail) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{0};
-  std::vector<int32_t> input = {};
+  Vector<int64_t> dims{0};
+  Vector<int32_t> input = {};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{0};
-  std::vector<float> output = {};
+  Vector<int64_t> out_dims{0};
+  Vector<float> output = {};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -104,12 +104,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip0_Empty_Dim1Success) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{0};
-  std::vector<int32_t> input = {};
+  Vector<int64_t> dims{0};
+  Vector<int32_t> input = {};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -126,12 +126,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip0_Empty_Dim2) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{1, 0};
-  std::vector<int32_t> input = {};
+  Vector<int64_t> dims{1, 0};
+  Vector<int32_t> input = {};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -149,12 +149,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip01_Empty_Dim2) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{0, 1};
-  std::vector<int32_t> input = {};
+  Vector<int64_t> dims{0, 1};
+  Vector<int32_t> input = {};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -172,12 +172,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip0_Empty_Dim2N) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{2, 0};
-  std::vector<int32_t> input = {};
+  Vector<int64_t> dims{2, 0};
+  Vector<int32_t> input = {};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0,
+  Vector<int64_t> out_dims{2, 7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0};
   test.AddOutput<float>("Y", out_dims, output);
 
@@ -196,13 +196,13 @@ TEST(TfIdfVectorizerTest, Int32_TF_BatchOnlyBigrams_Skip0) {
                {});
 
   // Tow batches by six
-  std::vector<int64_t> dims{2, 6};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7,
+  Vector<int64_t> dims{2, 6};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7,
                                 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0,
+  Vector<int64_t> out_dims{2, 7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 1, 0, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
@@ -220,13 +220,13 @@ TEST(TfIdfVectorizerTest, String_TF_OnlyBigrams_Skip0) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 1, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -243,15 +243,15 @@ TEST(TfIdfVectorizerTest, String_TF_BatchOnlyBigrams_Skip0) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{2, 6};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven",
+  Vector<int64_t> dims{2, 6};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven",
                                  "eight", "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
+  Vector<int64_t> out_dims{2, 7};
   // ["seven", "eight"] can not be found due to batch boundary and s=0
   // bigram elements have to be next to each other
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0,
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 1, 0, 1};
 
   test.AddOutput<float>("Y", out_dims, output);
@@ -274,12 +274,12 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_LevelEmpty) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{3};
-  std::vector<float> output = {1, 1, 1};
+  Vector<int64_t> out_dims{3};
+  Vector<float> output = {1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -296,14 +296,14 @@ TEST(TfIdfVectorizerTest, Int32_TF_onlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
+  Vector<int64_t> out_dims{7};
   // No 1-grams but Skip is 5 so we manage to count 3
   // occurrences of [7,8]
-  std::vector<float> output = {0, 0, 0, 0, 1, 3, 1};
+  Vector<float> output = {0, 0, 0, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -320,15 +320,15 @@ TEST(TfIdfVectorizerTest, Int32_TF_BatchOnlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{2, 6};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7,
+  Vector<int64_t> dims{2, 6};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7,
                                 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
+  Vector<int64_t> out_dims{2, 7};
   // Skip is 5 but we are constraint by row boundaries
   // so count only 1 of each
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0,
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
@@ -346,15 +346,15 @@ TEST(TfIdfVectorizerTest, String_TF_onlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
+  Vector<int64_t> out_dims{7};
   // No 1-grams but Skip is 5 so we manage to count 3
   // occurrences of [7,8] in one batch (row)
-  std::vector<float> output = {0, 0, 0, 0, 1, 3, 1};
+  Vector<float> output = {0, 0, 0, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -371,13 +371,13 @@ TEST(TfIdfVectorizerTest, String_TF_BatchOnlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{2, 6};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{2, 6};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
-  std::vector<float> output = {0, 0, 0, 0, 0, 0, 0,
+  Vector<int64_t> out_dims{2, 7};
+  Vector<float> output = {0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
@@ -395,13 +395,13 @@ TEST(TfIdfVectorizerTest, Int32_TF_UniAndBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
+  Vector<int64_t> out_dims{7};
   // We consider both 1-grams and 2-grams so get all the counts here
-  std::vector<float> output = {0, 3, 1, 0, 1, 3, 1};
+  Vector<float> output = {0, 3, 1, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -418,14 +418,14 @@ TEST(TfIdfVectorizerTest, Int32_TF_BatchUniAndBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{2, 6};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7,
+  Vector<int64_t> dims{2, 6};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7,
                                 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
+  Vector<int64_t> out_dims{2, 7};
   // Counts are now per row (batch)
-  std::vector<float> output = {0, 3, 0, 0, 0, 0, 0,
+  Vector<float> output = {0, 3, 0, 0, 0, 0, 0,
                                0, 0, 1, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
@@ -443,13 +443,13 @@ TEST(TfIdfVectorizerTest, String_TF_UniAndBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 3, 1, 0, 1, 3, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 3, 1, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -466,13 +466,13 @@ TEST(TfIdfVectorizerTest, String_TF_BatchUniAndBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{2, 6};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{2, 6};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{2, 7};
-  std::vector<float> output = {0, 3, 0, 0, 0, 0, 0,
+  Vector<int64_t> out_dims{2, 7};
+  Vector<float> output = {0, 3, 0, 0, 0, 0, 0,
                                0, 0, 1, 0, 1, 1, 1};
 
   test.AddOutput<float>("Y", out_dims, output);
@@ -493,12 +493,12 @@ TEST(TfIdfVectorizerTest, Int32_IDF_onlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 1, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -515,13 +515,13 @@ TEST(TfIdfVectorizerTest, String_IDF_onlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 1, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 1, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -541,12 +541,12 @@ TEST(TfIdfVectorizerTest, Int32_TFIDF_onlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},  //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 3, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -563,13 +563,13 @@ TEST(TfIdfVectorizerTest, String_TFIDF_onlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 1, 3, 1};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 1, 3, 1};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -588,12 +588,12 @@ TEST(TfIdfVectorizerTest, Int32_IDFWeights_onlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},                   //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 2, 3, 2};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 2, 3, 2};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -610,13 +610,13 @@ TEST(TfIdfVectorizerTest, String_IDFWeights_onlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 2, 3, 2};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 2, 3, 2};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -635,12 +635,12 @@ TEST(TfIdfVectorizerTest, Int32_TFIDFWeights_onlyBigrams_Skip5) {
                 5, 6, 7, 8, 6, 7},                   //bi-grams
                {});
 
-  std::vector<int64_t> dims{12};
-  std::vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
+  Vector<int64_t> dims{12};
+  Vector<int32_t> input = {1, 1, 3, 3, 3, 7, 8, 6, 7, 5, 6, 8};
   test.AddInput<int32_t>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 2, 9, 2};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 2, 9, 2};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);
@@ -657,13 +657,13 @@ TEST(TfIdfVectorizerTest, String_TFIDFWeights_onlyBigrams_Skip5) {
                {"two", "three", "five", "four",                     //1-grams
                 "five", "six", "seven", "eight", "six", "seven"});  //bi-grams
 
-  std::vector<int64_t> dims{12};
-  std::vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
+  Vector<int64_t> dims{12};
+  Vector<std::string> input{"one", "one", "three", "three", "three", "seven", "eight",
                                  "six", "seven", "five", "six", "eight"};
   test.AddInput<std::string>("T", dims, input);
 
-  std::vector<int64_t> out_dims{7};
-  std::vector<float> output = {0, 0, 0, 0, 2, 9, 2};
+  Vector<int64_t> out_dims{7};
+  Vector<float> output = {0, 0, 0, 0, 2, 9, 2};
   test.AddOutput<float>("Y", out_dims, output);
 
   test.Run(OpTester::ExpectResult::kExpectSuccess);

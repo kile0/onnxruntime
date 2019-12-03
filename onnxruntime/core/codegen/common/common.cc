@@ -271,8 +271,8 @@ ONNX_NAMESPACE::TensorProto_DataType TensorProtoDataType(const NodeArg* def) {
 
 // Convert GraphNodes to internal NodePtrs without check lifetime.
 // Please use it only locally when GraphNodes still exist
-std::vector<const Node*> ConvertGraphNodesToNodePtrs(const GraphNodes& graph_nodes) {
-  std::vector<const Node*> nodes;
+Vector<const Node*> ConvertGraphNodesToNodePtrs(const GraphNodes& graph_nodes) {
+  Vector<const Node*> nodes;
   for (auto& node : graph_nodes) {
     nodes.push_back(&node);
   }

@@ -44,7 +44,7 @@ struct SequentialExecutionPlan : public ExecutionPlanBase {
   // to decide whether to allocate a new buffer or reuse an existing buffer
 
   // The following vector is indexed by OrtValueIndex
-  std::vector<AllocPlanPerValue> allocation_plan;
+  Vector<AllocPlanPerValue> allocation_plan;
 
   // The following indicates the order in which nodes should be executed and the
   // ml-values to be free after each node's execution:
@@ -64,13 +64,13 @@ struct SequentialExecutionPlan : public ExecutionPlanBase {
   };
 
   // Execution_plan: represents the nodes in the sequential order to be executed
-  std::vector<NodeExecutionPlan> execution_plan;
+  Vector<NodeExecutionPlan> execution_plan;
 
   // Records whether a given node has fence on its input or output, key is node index.
-  std::vector<bool> node_has_fence;
+  Vector<bool> node_has_fence;
 
   // to_be_freed: vector elements represent indices of ml-values to be freed (as described above)
-  std::vector<OrtValueIndex> to_be_freed;
+  Vector<OrtValueIndex> to_be_freed;
 
   const OrtMemoryInfo& GetLocation(size_t ort_value_index) const override {
     return allocation_plan[ort_value_index].location;

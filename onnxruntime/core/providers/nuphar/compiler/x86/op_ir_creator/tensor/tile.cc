@@ -24,7 +24,7 @@ Status NUPHAR_TVM_X86_OP_IR_CREATOR_CLASS(Tile)::Evaluate(
   ORT_RETURN_IF_NOT(repeats != nullptr);
   ORT_RETURN_IF_NOT(repeats->Shape().Size() == gsl::narrow<int64_t>(inputs[0]->shape.size()));
   const int64_t* repeats_data = repeats->Data<int64_t>();
-  const auto repeats_vector = std::vector<int64_t>(repeats_data, repeats_data + inputs[0]->shape.size());
+  const auto repeats_vector = Vector<int64_t>(repeats_data, repeats_data + inputs[0]->shape.size());
   tvm::Tensor Y = tvm_codegen::Tile(inputs[0], repeats_vector, node.Name() + "_Tile");
   outputs.push_back(Y);
   return Status::OK();

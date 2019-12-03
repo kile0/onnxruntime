@@ -27,7 +27,7 @@ void Telemetry::LogSessionCreation(uint32_t session_id, int64_t ir_version, cons
                                    const std::unordered_map<std::string, int>& domain_to_version_map,
                                    const std::string& model_graph_name,
                                    const std::unordered_map<std::string, std::string>& model_metadata,
-                                   const std::string& loadedFrom, const std::vector<std::string>& execution_provider_ids) const {
+                                   const std::string& loadedFrom, const Vector<std::string>& execution_provider_ids) const {
   ORT_UNUSED_PARAMETER(session_id);
   ORT_UNUSED_PARAMETER(ir_version);
   ORT_UNUSED_PARAMETER(model_producer_name);

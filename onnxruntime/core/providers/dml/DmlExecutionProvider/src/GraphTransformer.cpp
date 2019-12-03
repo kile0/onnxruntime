@@ -63,13 +63,13 @@ namespace Dml
             std::string activationOpDomain;
             int activationOpVersion;
             onnxruntime::NodeAttributes activationAttributes;
-            std::vector<onnxruntime::NodeArg*> inputs;
-            std::vector<onnxruntime::NodeArg*> outputs;
+            Vector<onnxruntime::NodeArg*> inputs;
+            Vector<onnxruntime::NodeArg*> outputs;
         };
 
         // Defer adding new nodes to the graph until after we're done iterating over it, because we can't mutate the
         // graph while iterating over it
-        std::vector<NodeToAdd> nodesToAdd;
+        Vector<NodeToAdd> nodesToAdd;
 
         for (auto& node : graph->Nodes())
         {

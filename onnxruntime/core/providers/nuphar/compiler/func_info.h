@@ -69,39 +69,39 @@ struct NupharFuncInfo {
     MLDataType dtype;
     // shapes with dimensions statically know or inferred at compile time
     // symbolic dim would have Dimension_Unknown and will be patched at runtime
-    std::vector<int64_t> inferred_shape;
-    std::vector<std::pair<size_t, std::string>> dim_symbols;
+    Vector<int64_t> inferred_shape;
+    Vector<std::pair<size_t, std::string>> dim_symbols;
     int ort_arg_index;
   };
 
-  std::vector<FuncArgMeta> input_metas;
-  std::vector<FuncArgMeta> output_metas;
-  std::vector<std::pair<int, size_t>> ort_aliased_output_to_func_indices;  // A pair of (Ort dst index, TVM src index)
+  Vector<FuncArgMeta> input_metas;
+  Vector<FuncArgMeta> output_metas;
+  Vector<std::pair<int, size_t>> ort_aliased_output_to_func_indices;  // A pair of (Ort dst index, TVM src index)
 
   struct AllocatorMeta {
     int index;
     bool is_external;
   };
 
-  std::vector<AllocatorMeta> ort_input_allocators;
-  std::vector<AllocatorMeta> ort_output_allocators;
+  Vector<AllocatorMeta> ort_input_allocators;
+  Vector<AllocatorMeta> ort_output_allocators;
 
   // Note an input can be also an external output.
   // It is due to NodeArg can be used by Nodes in
   // and out of a subgraph at the same time.
   // When it happens, we need to label it as a collided output,
   // and record that external output allocator index.
-  std::vector<bool> ort_input_allocator_is_collided_output;
+  Vector<bool> ort_input_allocator_is_collided_output;
 
   // initializers meta
-  std::vector<const Tensor*> intializers;
+  Vector<const Tensor*> intializers;
 
   // Note the total arg number == input_count + output_count
   size_t func_input_count;   // input_count == real inputs + initializers
   size_t func_output_count;  // real outputs
 
   // tvm args (including input and outputs )
-  std::vector<int> type_codes;
+  Vector<int> type_codes;
 
   // control-flow info for the generated function
   std::unique_ptr<ControlFlowInfo> cf_info;

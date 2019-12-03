@@ -21,7 +21,7 @@ void CudnnRnnBase<T>::SetWeightBias(const cudnnHandle_t handle,
                                     int& offset,
                                     bool is_matrix) const {
   int numDims;
-  std::vector<int> matDims(3);
+  Vector<int> matDims(3);
   cudnnDataType_t dt;
   cudnnTensorFormat_t tf;
   T* mem_offset;
@@ -86,10 +86,10 @@ Status CudnnRnnBase<T>::ReorganizeWeights(const Tensor* W, const Tensor* R, cons
   // LSTM B[num_directions_, 8*hidden_size_]
   size_t number = W_lin_layer_id_.size();
   int64_t w_size = num_directions_ * (number * hidden_size_ * (input_size + hidden_size_ + 2));
-  std::vector<int64_t> dims_w({w_size, 1, 1});
+  Vector<int64_t> dims_w({w_size, 1, 1});
   ORT_RETURN_IF_ERROR(target_w_desc.Set(dims_w, CudnnTensor::GetDataType<CudaT>()));
 
-  std::vector<int64_t> fake_dims_x({1, input_size, 1});
+  Vector<int64_t> fake_dims_x({1, input_size, 1});
   CudnnTensor fake_x_desc;
   fake_x_desc.Set(fake_dims_x, CudnnTensor::GetDataType<CudaT>());
 
@@ -153,22 +153,22 @@ Status CudnnRnnBase<T>::ComputeInternal(OpKernelContext* ctx) const {
   int64_t input_size = X->Shape()[2];
 
   // optional outputs
-  std::vector<int64_t> dims_Y({seq_length, num_directions_, batch_size, hidden_size_});
-  std::vector<int64_t> dims_hxy({RNN_NUM_LAYERS * num_directions_, batch_size, hidden_size_});
-  std::vector<int64_t> dims_yc{num_directions_, batch_size, hidden_size_};
+  Vector<int64_t> dims_Y({seq_length, num_directions_, batch_size, hidden_size_});
+  Vector<int64_t> dims_hxy({RNN_NUM_LAYERS * num_directions_, batch_size, hidden_size_});
+  Vector<int64_t> dims_yc{num_directions_, batch_size, hidden_size_};
   Tensor* Y = ctx->Output(Output_Index::Y, dims_Y);
   Tensor* Y_h = ctx->Output(Output_Index::Y_h, dims_hxy);
   Tensor* Y_c = ctx->Output(Output_Index::Y_c, dims_yc);
 
-  std::vector<int64_t> dims_x({batch_size, input_size, 1});
-  std::vector<int64_t> dims_y({batch_size, hidden_size_ * num_directions_, 1});
+  Vector<int64_t> dims_x({batch_size, input_size, 1});
+  Vector<int64_t> dims_y({batch_size, hidden_size_ * num_directions_, 1});
 
   CudnnTensor x_desc_temp;
   x_desc_temp.Set(dims_x, CudnnTensor::GetDataType<CudaT>());
   CudnnTensor y_desc_temp;
   y_desc_temp.Set(dims_y, CudnnTensor::GetDataType<CudaT>());
-  std::vector<cudnnTensorDescriptor_t> x_desc(seq_length, x_desc_temp);
-  std::vector<cudnnTensorDescriptor_t> y_desc(seq_length, y_desc_temp);
+  Vector<cudnnTensorDescriptor_t> x_desc(seq_length, x_desc_temp);
+  Vector<cudnnTensorDescriptor_t> y_desc(seq_length, y_desc_temp);
 
   CudnnTensor hx_desc;
   CudnnTensor cx_desc;
@@ -231,7 +231,7 @@ Status CudnnRnnBase<T>::ComputeInternal(OpKernelContext* ctx) const {
   CUDNN_RETURN_IF_ERROR(cudnnGetRNNWorkspaceSize(CudnnHandle(), rnn_desc, gsl::narrow_cast<int>(seq_length), x_desc.data(), &workspace_bytes));
   auto workspace_cuda = GetScratchBuffer<void>(workspace_bytes);
   int32_t zero_seq_count = 0;
-  std::vector<int32_t> zero_seq_index_cache(batch_size, 0);
+  Vector<int32_t> zero_seq_index_cache(batch_size, 0);
   int64_t zero_seq_index_cache_size = 0;
 
   if (CUDNN_RNN_RELU == rnn_mode_ || CUDNN_RNN_TANH == rnn_mode_ || nullptr == sequence_lens_data) {
@@ -257,7 +257,7 @@ Status CudnnRnnBase<T>::ComputeInternal(OpKernelContext* ctx) const {
   } else {
     // cudnn doesn't support 0 sequence inside the batch, find the 0 sequence and set it to 1
     // there's a ZeroMask kernel to reset the result to 0 for the 0 sequence
-    std::vector<int32_t> seq_len_array(sequence_lens_data, sequence_lens_data + batch_size);
+    Vector<int32_t> seq_len_array(sequence_lens_data, sequence_lens_data + batch_size);
     for (int i = 0; i < batch_size; ++i) {
       if (0 == seq_len_array[i]) {
         seq_len_array[i] = 1;
@@ -366,7 +366,7 @@ Status CudnnRnnBase<T>::ComputeInternal(OpKernelContext* ctx) const {
 
 template <typename T>
 void CudnnRnnBase<T>::SetZeroSequences(const int64_t zero_seq_index_cache_size,
-                                       const std::vector<int32_t> zero_seq_index_cache,
+                                       const Vector<int32_t> zero_seq_index_cache,
                                        T* y_data,
                                        T* y_h_data,
                                        T* y_c_data) const {

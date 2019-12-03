@@ -84,8 +84,8 @@ ONNXTensorElementDataType NumericTypeToONNXType<std::string>() {
 }
 
 template <typename T>
-OrtValue* CreateTensorWithDataAsOrtValue(OrtMemoryInfo* info, std::vector<T>& input) {
-  std::vector<int64_t> dims(1, input.size());
+OrtValue* CreateTensorWithDataAsOrtValue(OrtMemoryInfo* info, Vector<T>& input) {
+  Vector<int64_t> dims(1, input.size());
   OrtValue* ret = nullptr;
   Ort::ThrowOnError(Ort::GetApi().CreateTensorWithDataAsOrtValue(info, input.data(), input.size() * sizeof(T), dims.data(),
                                                                  dims.size(), NumericTypeToONNXType<T>(), &ret));
@@ -98,9 +98,9 @@ OrtValue* PbMapToOrtValue(const google::protobuf::Map<key_type, value_type>& map
   Ort::ThrowOnError(Ort::GetApi().CreateCpuMemoryInfo(OrtDeviceAllocator, OrtMemTypeDefault, &info));
   std::unique_ptr<OrtMemoryInfo, decltype(Ort::GetApi().ReleaseMemoryInfo)> rel_info(info, Ort::GetApi().ReleaseMemoryInfo);
   const size_t ele_count = map.size();
-  std::vector<int64_t> dims(1, ele_count);
-  std::vector<key_type> keys(ele_count);
-  std::vector<value_type> values(ele_count);
+  Vector<int64_t> dims(1, ele_count);
+  Vector<key_type> keys(ele_count);
+  Vector<value_type> values(ele_count);
   size_t i = 0;
   for (auto& kvp : map) {
     keys[i] = kvp.first;
@@ -135,9 +135,9 @@ void VectorProtoToOrtValue(const RepeatedPtrField<T>& input, ORT_VALUE_HOLDER& o
     size_t ele_count = map.size();
     using key_type = typename std::remove_reference<decltype(v.v())>::type::key_type;
     using value_type = typename std::remove_reference<decltype(v.v())>::type::mapped_type;
-    std::vector<int64_t> dims(1, static_cast<int64_t>(ele_count));
-    std::vector<key_type> keys(ele_count);
-    std::vector<value_type> values(ele_count);
+    Vector<int64_t> dims(1, static_cast<int64_t>(ele_count));
+    Vector<key_type> keys(ele_count);
+    Vector<value_type> values(ele_count);
     size_t i = 0;
     for (auto& kvp : map) {
       keys[i] = kvp.first;
@@ -183,12 +183,12 @@ class OnnxModelInfo : public TestModelInfo {
  private:
   std::string node_name_;
   std::string onnx_commit_tag_;
-  std::vector<ONNX_NAMESPACE::ValueInfoProto> input_value_info_;
-  std::vector<ONNX_NAMESPACE::ValueInfoProto> output_value_info_;
+  Vector<ONNX_NAMESPACE::ValueInfoProto> input_value_info_;
+  Vector<ONNX_NAMESPACE::ValueInfoProto> output_value_info_;
 
   template <typename T>
   static void RepeatedPtrFieldToVector(const ::google::protobuf::RepeatedPtrField<T>& input_value_info,
-                                       std::vector<T>& out) {
+                                       Vector<T>& out) {
     for (int i = 0; i != input_value_info.size(); ++i) {
       out.push_back(input_value_info[i]);
     }
@@ -254,7 +254,7 @@ class OnnxModelInfo : public TestModelInfo {
   const std::string& GetOutputName(size_t i) const override { return output_value_info_[i].name(); }
 };
 
-static void SortTensorFileNames(std::vector<std::basic_string<PATH_CHAR_TYPE>>& input_pb_files) {
+static void SortTensorFileNames(Vector<std::basic_string<PATH_CHAR_TYPE>>& input_pb_files) {
   if (input_pb_files.size() <= 1) return;
   std::sort(input_pb_files.begin(), input_pb_files.end(),
             [](const std::basic_string<PATH_CHAR_TYPE>& left, const std::basic_string<PATH_CHAR_TYPE>& right) -> bool {
@@ -394,10 +394,10 @@ TestModelInfo* TestModelInfo::LoadOnnxModel(_In_ const PATH_CHAR_TYPE* model_url
 class OnnxTestCase : public ITestCase {
  private:
   std::string test_case_name_;
-  std::vector<std::string> debuginfo_strings;
+  Vector<std::string> debuginfo_strings;
   onnxruntime::OrtMutex m_;
 
-  std::vector<std::basic_string<PATH_CHAR_TYPE>> test_data_dirs_;
+  Vector<std::basic_string<PATH_CHAR_TYPE>> test_data_dirs_;
 
   std::string GetDatasetDebugInfoString(size_t dataset_id) override {
     std::lock_guard<OrtMutex> l(m_);
@@ -408,7 +408,7 @@ class OnnxTestCase : public ITestCase {
     return std::string();
   }
 
-  void ConvertTestData(const std::vector<ONNX_NAMESPACE::TensorProto>& test_data_pbs, onnxruntime::test::HeapBuffer& b,
+  void ConvertTestData(const Vector<ONNX_NAMESPACE::TensorProto>& test_data_pbs, onnxruntime::test::HeapBuffer& b,
                        bool is_input,
                        std::unordered_map<std::string, OrtValue*>& out);
 
@@ -503,7 +503,7 @@ static bool read_config_file(const std::basic_string<PATH_CHAR_TYPE>& path, std:
     if (line.empty()) {
       continue;
     }
-    std::vector<std::string> tokens;
+    Vector<std::string> tokens;
     for (std::string token; std::getline(ss, token, ':');) {
       std::string trimmed_token = trim_str(token);
       if (trimmed_token.empty()) {
@@ -518,8 +518,8 @@ static bool read_config_file(const std::basic_string<PATH_CHAR_TYPE>& path, std:
 
 //load tensors from disk
 template <typename PATH_STRING_TYPE>
-static void LoadTensors(const std::vector<PATH_STRING_TYPE>& pb_files,
-                        std::vector<ONNX_NAMESPACE::TensorProto>* input_pbs) {
+static void LoadTensors(const Vector<PATH_STRING_TYPE>& pb_files,
+                        Vector<ONNX_NAMESPACE::TensorProto>* input_pbs) {
   for (size_t i = 0; i != pb_files.size(); ++i) {
     int tensor_fd;
     auto st = Env::Default().FileOpenRd(pb_files.at(i), tensor_fd);
@@ -567,7 +567,7 @@ void OnnxTestCase::LoadTestData(size_t id, onnxruntime::test::HeapBuffer& b,
     return;
   }
 
-  std::vector<PATH_STRING_TYPE> test_data_pb_files;
+  Vector<PATH_STRING_TYPE> test_data_pb_files;
   const PATH_STRING_TYPE& dir_path = test_data_dirs_[id];
   LoopDir(dir_path,
           [&test_data_pb_files, &dir_path, is_input](const PATH_CHAR_TYPE* filename, OrtFileType f_type) -> bool {
@@ -585,16 +585,16 @@ void OnnxTestCase::LoadTestData(size_t id, onnxruntime::test::HeapBuffer& b,
           });
   SortTensorFileNames(test_data_pb_files);
 
-  std::vector<ONNX_NAMESPACE::TensorProto> test_data_pbs;
+  Vector<ONNX_NAMESPACE::TensorProto> test_data_pbs;
   LoadTensors(test_data_pb_files, &test_data_pbs);
   ConvertTestData(test_data_pbs, b, is_input, name_data_map);
 }
 
-void OnnxTestCase::ConvertTestData(const std::vector<ONNX_NAMESPACE::TensorProto>& test_data_pbs,
+void OnnxTestCase::ConvertTestData(const Vector<ONNX_NAMESPACE::TensorProto>& test_data_pbs,
                                    onnxruntime::test::HeapBuffer& b,
                                    bool is_input, std::unordered_map<std::string, OrtValue*>& out) {
   bool has_valid_names = true;
-  std::vector<std::string> var_names(test_data_pbs.size());
+  Vector<std::string> var_names(test_data_pbs.size());
   for (size_t input_index = 0; input_index != test_data_pbs.size(); ++input_index) {
     std::string name = test_data_pbs[input_index].name();
     if (name.empty()) {

@@ -8,7 +8,7 @@
 namespace onnxruntime {
 namespace nuphar {
 
-void OutputAliasAnalysis::Traverse(const std::vector<const Node*>& nodes,
+void OutputAliasAnalysis::Traverse(const Vector<const Node*>& nodes,
                                    const std::set<std::string>& graph_inputs,
                                    const std::set<std::string>& graph_outputs) {
   for (auto& node : nodes) {

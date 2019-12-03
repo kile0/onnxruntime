@@ -13,7 +13,7 @@
 namespace onnxruntime {
 namespace nuphar {
 
-TensorizeIntGemm8bit::TensorizeIntGemm8bit(const std::string& name, const std::vector<int32_t>& vshape, const std::string& target)
+TensorizeIntGemm8bit::TensorizeIntGemm8bit(const std::string& name, const Vector<int32_t>& vshape, const std::string& target)
     : TensorizeBase(name, "TensorizeIntGemm8bit_Parameter", vshape), tensorize_target_(target) {}
 
 void TensorizeIntGemm8bit::InsertTensorizeDimInfo(std::string name, TensorizeDimMeta dim_meta) {
@@ -74,7 +74,7 @@ tvm::Buffer CreateTensorBuffer(tvm::Tensor tensor, const std::string& name) {
   return buffer;
 }
 
-void TensorizeIntGemm8bit::TensorizeReduceKernel(std::vector<tvm::Stmt>& inits, std::vector<tvm::Stmt>& bodys, std::vector<tvm::Stmt>& updates,
+void TensorizeIntGemm8bit::TensorizeReduceKernel(Vector<tvm::Stmt>& inits, Vector<tvm::Stmt>& bodys, Vector<tvm::Stmt>& updates,
                                                  tvm::Buffer& a_buf, tvm::Buffer& b_buf, tvm::Buffer& c_buf,
                                                  int inner_m, int inner_n) {
   // tensorize dim meta
@@ -234,7 +234,7 @@ tvm::TensorIntrin TensorizeIntGemm8bit::CreateTensorIntrin() {
   }
 
   // generated tvm statments
-  std::vector<tvm::Stmt> inits, bodys, updates;
+  Vector<tvm::Stmt> inits, bodys, updates;
 
   codegen::CodeGenSettings& settings = codegen::CodeGenSettings::Instance();
   if (settings.HasOption(kNupharTensorize_IGEMM_Permute) &&

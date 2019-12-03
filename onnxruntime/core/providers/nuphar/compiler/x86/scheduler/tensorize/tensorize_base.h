@@ -12,7 +12,7 @@ namespace tvm_codegen {
 #define TENSORIZE_CLASS(tensorize_name)                                         \
   class tensorize_name : public tvm_codegen::TensorizeBase {                    \
    public:                                                                      \
-    tensorize_name(const std::string& name, const std::vector<int32_t>& shape); \
+    tensorize_name(const std::string& name, const Vector<int32_t>& shape); \
     virtual ~tensorize_name() = default;                                        \
     tvm::TensorIntrin CreateTensorIntrin() override;                            \
   };
@@ -20,7 +20,7 @@ namespace tvm_codegen {
 #define TENSORIZE_CLASS_WITH_LLVM_IMPORT(tensorize_name)                        \
   class tensorize_name : public tvm_codegen::TensorizeWithLLVMImport {          \
    public:                                                                      \
-    tensorize_name(const std::string& name, const std::vector<int32_t>& shape); \
+    tensorize_name(const std::string& name, const Vector<int32_t>& shape); \
     virtual ~tensorize_name() = default;                                        \
     tvm::TensorIntrin CreateTensorIntrin() override;                            \
     const std::string LLVMImportDef() override;                                 \
@@ -36,14 +36,14 @@ class TensorizeBase {
  public:
   TensorizeBase(const std::string& name,
                 const std::string& parameter,
-                const std::vector<int32_t>& shape)
+                const Vector<int32_t>& shape)
       : name_(name), parameter_(parameter), shape_(shape) {}
 
   virtual ~TensorizeBase() = default;
 
   const std::string& Name() const { return name_; }
   const std::string& Parameter() const { return parameter_; }
-  const std::vector<int32_t>& Shape() const { return shape_; }
+  const Vector<int32_t>& Shape() const { return shape_; }
   const size_t Size() const { return shape_.size(); }
 
   virtual tvm::TensorIntrin CreateTensorIntrin() = 0;
@@ -54,7 +54,7 @@ class TensorizeBase {
   // specific parameter name
   std::string parameter_;
   // specific shape for this tensorization
-  std::vector<int32_t> shape_;
+  Vector<int32_t> shape_;
 };
 
 // TensorizeWithLLVMImport is also for standard tesorization scheduling interface
@@ -64,7 +64,7 @@ class TensorizeWithLLVMImport : public TensorizeBase {
  public:
   TensorizeWithLLVMImport(const std::string& name,
                           const std::string& parameter,
-                          const std::vector<int32_t>& shape)
+                          const Vector<int32_t>& shape)
       : TensorizeBase(name, parameter, shape) {}
 
   virtual ~TensorizeWithLLVMImport() = default;

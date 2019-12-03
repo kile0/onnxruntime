@@ -18,7 +18,7 @@ bool IsSupportedOptypeVersionAndDomain(const Node& node,
 
 /** Checks if the node has the same operator since version as the given one. */
 bool MatchesOpSinceVersion(const Node& node, const std::initializer_list<ONNX_NAMESPACE::OperatorSetVersion>& versions);
-bool MatchesOpSinceVersion(const Node& node, const std::vector<ONNX_NAMESPACE::OperatorSetVersion>& versions);
+bool MatchesOpSinceVersion(const Node& node, const Vector<ONNX_NAMESPACE::OperatorSetVersion>& versions);
 
 /** Checks if the node has the same op set domain as the given one. */
 bool MatchesOpSetDomain(const Node& node, const std::string& domain);
@@ -78,7 +78,7 @@ const ONNX_NAMESPACE::AttributeProto* GetNodeAttribute(const Node& node, const s
 template <typename T>
 bool GetRepeatedNodeAttributeValues(const Node& node,
                                     const std::string& attr_name,
-                                    std::vector<T>& values) {
+                                    Vector<T>& values) {
   const auto* attr = graph_utils::GetNodeAttribute(node, attr_name);
   if (attr) {
     values = ONNX_NAMESPACE::RetrieveValues<T>(*attr);
@@ -186,7 +186,7 @@ void FinalizeNodeFusion(Graph& graph, Node& first_node, Node& second_node);
     The output definitions and edges from the last node in 'nodes' will be moved to replacement_node.
     All nodes in 'nodes' will be removed.
 */
-void FinalizeNodeFusion(Graph& graph, const std::vector<std::reference_wrapper<Node>>& nodes, Node& replacement_node);
+void FinalizeNodeFusion(Graph& graph, const Vector<std::reference_wrapper<Node>>& nodes, Node& replacement_node);
 
 /** Find the input edge of a node for a specified input index.
 @returns nullptr when not found.
@@ -213,7 +213,7 @@ struct EdgeEndToMatch {
   std::string op_type;
 
   // Expected version of the operator of node in the edge end.
-  std::vector<ONNX_NAMESPACE::OperatorSetVersion> versions;
+  Vector<ONNX_NAMESPACE::OperatorSetVersion> versions;
 
   // Expected domain of the operator of node in the edge end.
   std::string domain;
@@ -241,7 +241,7 @@ struct EdgeEndToMatch {
     It is recommended to match path from bottom to top direction to avoid such issue.
     It is because each node input (dst_arg_index) only accepts one input edge.
 */
-bool FindPath(const Node& node, bool is_input_edge, const std::vector<EdgeEndToMatch>& edges_to_match, std::vector<const Node::EdgeEnd*>& result, const logging::Logger& logger);
+bool FindPath(const Node& node, bool is_input_edge, const Vector<EdgeEndToMatch>& edges_to_match, Vector<const Node::EdgeEnd*>& result, const logging::Logger& logger);
 
 }  // namespace graph_utils
 }  // namespace onnxruntime

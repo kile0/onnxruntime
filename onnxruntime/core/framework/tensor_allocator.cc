@@ -13,7 +13,7 @@ AllocatorPtr ITensorAllocator::GetAllocator(const OrtMemoryInfo& memory_info) {
 std::unique_ptr<ITensorAllocator> ITensorAllocator::Create(bool enable_mem_pattern,
                                                            const ExecutionPlanBase& execution_plan,
                                                            const ExecutionProviders& exec_providers,
-                                                           std::vector<BufferUniquePtr>& weights_buffers) {
+                                                           Vector<BufferUniquePtr>& weights_buffers) {
   if (enable_mem_pattern) {
     return onnxruntime::make_unique<TensorAllocatorWithMemPattern>(execution_plan, exec_providers, weights_buffers);
   }

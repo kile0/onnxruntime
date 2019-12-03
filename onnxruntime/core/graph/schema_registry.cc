@@ -35,7 +35,7 @@ DomainToVersionMap OnnxRuntimeOpSchemaRegistry::GetLatestOpsetVersions(bool is_o
 }
 
 common::Status OnnxRuntimeOpSchemaRegistry::RegisterOpSet(
-    std::vector<ONNX_NAMESPACE::OpSchema>& schemas,
+    Vector<ONNX_NAMESPACE::OpSchema>& schemas,
     const std::string& domain,
     int baseline_opset_version,
     int opset_version) {
@@ -209,10 +209,10 @@ void SchemaRegistryManager::GetSchemaAndHistory(
   // given the op-set version.  Each time a registry fails to locate the schema
   // but indicates that this schema was unchanged across its version span, the search
   // is restarted with a reduced op-set version.
-  std::vector<int> unchecked_registry_indices(registries.size());
+  Vector<int> unchecked_registry_indices(registries.size());
   std::iota(unchecked_registry_indices.begin(), unchecked_registry_indices.end(), 0);
 
-  std::vector<int> checked_registry_indices;
+  Vector<int> checked_registry_indices;
   int version = op_set_version;
   while (!unchecked_registry_indices.empty()) {
     int index = unchecked_registry_indices.back();

@@ -100,10 +100,10 @@ static const std::string MUL_MODEL_URI = "testdata/mul_16.onnx";
 
 void RunSession(InferenceSession& session_object,
                 RunOptions& run_options,
-                std::vector<int64_t>& dims_x,
-                std::vector<MLFloat16>& values_x,
-                std::vector<int64_t>& dims_y,
-                std::vector<MLFloat16>& values_y) {
+                Vector<int64_t>& dims_x,
+                Vector<MLFloat16>& values_x,
+                Vector<int64_t>& dims_y,
+                Vector<MLFloat16>& values_y) {
   // prepare inputs
   OrtValue ml_value;
   CreateMLValue<MLFloat16>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_x, values_x, &ml_value);
@@ -111,9 +111,9 @@ void RunSession(InferenceSession& session_object,
   feeds.insert(std::make_pair("X", ml_value));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("Y");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // Now run
   common::Status st = session_object.Run(run_options, feeds, output_names, &fetches);
@@ -123,7 +123,7 @@ void RunSession(InferenceSession& session_object,
   auto& rtensor = fetches.front().Get<Tensor>();
   TensorShape expected_shape(dims_y);
   EXPECT_EQ(expected_shape, rtensor.Shape());
-  const std::vector<MLFloat16> found(rtensor.template Data<MLFloat16>(), rtensor.template Data<MLFloat16>() + expected_shape.Size());
+  const Vector<MLFloat16> found(rtensor.template Data<MLFloat16>(), rtensor.template Data<MLFloat16>() + expected_shape.Size());
   ASSERT_EQ(found.size(), values_y.size());
   for (size_t i = 0; i < found.size(); i++)
     ASSERT_EQ(found[i].val, values_y[i].val);
@@ -138,7 +138,7 @@ TEST(Float16_Tests, Mul_16_Test) {
   InferenceSession session_object{so, &DefaultLoggingManager()};
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
   auto mulfp16_schema = GetMulFP16Schema();
-  std::vector<OpSchema> schemas = {mulfp16_schema};
+  Vector<OpSchema> schemas = {mulfp16_schema};
 
   EXPECT_TRUE(registry->RegisterOpSet(schemas, onnxruntime::kOnnxDomain, 5, 7).IsOK());
 
@@ -154,18 +154,18 @@ TEST(Float16_Tests, Mul_16_Test) {
   run_options.run_tag = "one session/one tag";
 
   // prepare inputs
-  std::vector<int64_t> dims_x = {3, 2};
-  std::vector<float> values_x_32 = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-  std::vector<MLFloat16> values_x;
+  Vector<int64_t> dims_x = {3, 2};
+  Vector<float> values_x_32 = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<MLFloat16> values_x;
   for (float i : values_x_32) {
     values_x.push_back(MLFloat16(math::floatToHalf(i)));
   }
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
+  Vector<int64_t> expected_dims_y = {3, 2};
   // now the expected value should be Add's result.
-  std::vector<float> expected_values_y_32 = {1.0f, 4.0f, 9.0f, 16.0f, 25.0f, 36.0f};
-  std::vector<MLFloat16> expected_values_y;
+  Vector<float> expected_values_y_32 = {1.0f, 4.0f, 9.0f, 16.0f, 25.0f, 36.0f};
+  Vector<MLFloat16> expected_values_y;
   for (float i : expected_values_y_32) {
     expected_values_y.push_back(MLFloat16(math::floatToHalf(i)));
   }

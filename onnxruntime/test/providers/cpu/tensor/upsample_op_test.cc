@@ -14,12 +14,12 @@ namespace test {
 TEST(UpsampleOpTest, UpsampleOpNearestTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -27,7 +27,7 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.0f, 1.0f, 3.0f, 3.0f, 3.0f,
       1.0f, 1.0f, 1.0f, 3.0f, 3.0f, 3.0f,
       3.0f, 3.0f, 3.0f, 5.0f, 5.0f, 5.0f,
@@ -45,12 +45,12 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest) {
 TEST(UpsampleOpTest, UpsampleOpNearestTest_int32) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<int32_t> X = {1, 3,
+  Vector<int32_t> X = {1, 3,
                             3, 5,
 
                             3, 5,
@@ -58,7 +58,7 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_int32) {
 
   test.AddInput<int32_t>("X", {N, C, H, W}, X);
 
-  std::vector<int32_t> Y = {
+  Vector<int32_t> Y = {
       1, 1, 1, 3, 3, 3,
       1, 1, 1, 3, 3, 3,
       3, 3, 3, 5, 5, 5,
@@ -76,12 +76,12 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_int32) {
 TEST(UpsampleOpTest, UpsampleOpNearestTest_uint8) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 3.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<uint8_t> X = {1, 3,
+  Vector<uint8_t> X = {1, 3,
                             3, 5,
 
                             3, 5,
@@ -89,7 +89,7 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_uint8) {
 
   test.AddInput<uint8_t>("X", {N, C, H, W}, X);
 
-  std::vector<uint8_t> Y = {
+  Vector<uint8_t> Y = {
       1, 1, 1, 3, 3, 3,
       1, 1, 1, 3, 3, 3,
       3, 3, 3, 5, 5, 5,
@@ -107,12 +107,12 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_uint8) {
 TEST(UpsampleOpTest, UpsampleOpNearest2XTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -120,7 +120,7 @@ TEST(UpsampleOpTest, UpsampleOpNearest2XTest) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.0f, 3.0f, 3.0f,
       1.0f, 1.0f, 3.0f, 3.0f,
       3.0f, 3.0f, 5.0f, 5.0f,
@@ -138,12 +138,12 @@ TEST(UpsampleOpTest, UpsampleOpNearest2XTest) {
 TEST(UpsampleOpTest, UpsampleOpNearest222XTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{2.0f, 1.0f, 2.0f, 2.0f};
+  Vector<float> scales{2.0f, 1.0f, 2.0f, 2.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -151,7 +151,7 @@ TEST(UpsampleOpTest, UpsampleOpNearest222XTest) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.0f, 3.0f, 3.0f,
       1.0f, 1.0f, 3.0f, 3.0f,
       3.0f, 3.0f, 5.0f, 5.0f,
@@ -179,12 +179,12 @@ TEST(UpsampleOpTest, UpsampleOpNearest222XTest) {
 TEST(UpsampleOpTest, UpsampleOpNearest15XTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 1.5f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 1.5f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -192,7 +192,7 @@ TEST(UpsampleOpTest, UpsampleOpNearest15XTest) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.0f, 3.0f,
       1.0f, 1.0f, 3.0f,
       3.0f, 3.0f, 5.0f,
@@ -210,12 +210,12 @@ TEST(UpsampleOpTest, UpsampleOpNearest15XTest) {
 TEST(UpsampleOpTest, UpsampleOpNearestTest_NoScale) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 1.0f, 1.0f};
+  Vector<float> scales{1.0f, 1.0f, 1.0f, 1.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -223,7 +223,7 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_NoScale) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {1.0f, 3.0f,
+  Vector<float> Y = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -236,12 +236,12 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_NoScale) {
 TEST(UpsampleOpTest, UpsampleOpNearest2XTest_int32) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<int32_t> X = {1, 3,
+  Vector<int32_t> X = {1, 3,
                             3, 5,
 
                             3, 5,
@@ -249,7 +249,7 @@ TEST(UpsampleOpTest, UpsampleOpNearest2XTest_int32) {
 
   test.AddInput<int32_t>("X", {N, C, H, W}, X);
 
-  std::vector<int32_t> Y = {
+  Vector<int32_t> Y = {
       1, 1, 3, 3,
       1, 1, 3, 3,
       3, 3, 5, 5,
@@ -267,12 +267,12 @@ TEST(UpsampleOpTest, UpsampleOpNearest2XTest_int32) {
 TEST(UpsampleOpTest, UpsampleOp4DBilinearTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 4.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 4.0f};
   test.AddAttribute("mode", "linear");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 2, C = 1, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -280,7 +280,7 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.0f, 3.0f, 3.0f,
       2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.0f, 4.0f, 4.0f,
       3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.0f, 5.0f, 5.0f,
@@ -298,17 +298,17 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest) {
 TEST(UpsampleOpTest, UpsampleOp2DBilinearTest) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{2.0f, 4.0f};
+  Vector<float> scales{2.0f, 4.0f};
   test.AddAttribute("mode", "linear");
   test.AddAttribute("scales", scales);
 
   const int64_t H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f};
 
   test.AddInput<float>("X", {H, W}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.0f, 3.0f, 3.0f,
       2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.0f, 4.0f, 4.0f,
       3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.0f, 5.0f, 5.0f,
@@ -321,12 +321,12 @@ TEST(UpsampleOpTest, UpsampleOp2DBilinearTest) {
 TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_ScalesNoOp) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 1.0f, 1.0f};
+  Vector<float> scales{1.0f, 1.0f, 1.0f, 1.0f};
   test.AddAttribute("mode", "linear");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 2, C = 1, H = 2, W = 2;
-  std::vector<float> X = {1.0f, 3.0f,
+  Vector<float> X = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -334,7 +334,7 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_ScalesNoOp) {
 
   test.AddInput<float>("X", {N, C, H, W}, X);
 
-  std::vector<float> Y = {1.0f, 3.0f,
+  Vector<float> Y = {1.0f, 3.0f,
                           3.0f, 5.0f,
 
                           3.0f, 5.0f,
@@ -347,12 +347,12 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_ScalesNoOp) {
 TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_int32) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 4.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 4.0f};
   test.AddAttribute("mode", "linear");
   test.AddAttribute("scales", scales);
 
   const int64_t N = 2, C = 1, H = 2, W = 2;
-  std::vector<int32_t> X = {1, 3,
+  Vector<int32_t> X = {1, 3,
                             3, 5,
 
                             3, 5,
@@ -360,7 +360,7 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_int32) {
 
   test.AddInput<int32_t>("X", {N, C, H, W}, X);
 
-  std::vector<int32_t> Y = {
+  Vector<int32_t> Y = {
       1, 1, 2, 2, 3, 3, 3, 3,
       2, 2, 3, 3, 4, 4, 4, 4,
       3, 3, 4, 4, 5, 5, 5, 5,
@@ -378,15 +378,15 @@ TEST(UpsampleOpTest, UpsampleOp4DBilinearTest_int32) {
 TEST(UpsampleOpTest, UpsampleOpNearestTest_1D) {
   OpTester test("Upsample");
 
-  std::vector<float> scales{2.0f};
+  Vector<float> scales{2.0f};
   test.AddAttribute("mode", "nearest");
   test.AddAttribute("scales", scales);
 
-  std::vector<float> X = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+  Vector<float> X = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
 
   test.AddInput<float>("X", {5}, X);
 
-  std::vector<float> Y = {
+  Vector<float> Y = {
       1.0f, 1.0f,
       2.0f, 2.0f,
       3.0f, 3.0f,
@@ -400,11 +400,11 @@ TEST(UpsampleOpTest, UpsampleOpNearestTest_1D) {
 TEST(UpsampleOpTest, UpsampleOpNearest2XTest_opset9) {
   OpTester test("Upsample", 9);
 
-  std::vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
+  Vector<float> scales{1.0f, 1.0f, 2.0f, 2.0f};
   test.AddAttribute("mode", "nearest");
 
   const int64_t N = 1, C = 2, H = 2, W = 2;
-  std::vector<int32_t> X = {1, 3,
+  Vector<int32_t> X = {1, 3,
                             3, 5,
 
                             3, 5,
@@ -413,7 +413,7 @@ TEST(UpsampleOpTest, UpsampleOpNearest2XTest_opset9) {
   test.AddInput<int32_t>("X", {N, C, H, W}, X);
   test.AddInput<float>("scales", {4}, scales);
 
-  std::vector<int32_t> Y = {
+  Vector<int32_t> Y = {
       1, 1, 3, 3,
       1, 1, 3, 3,
       3, 3, 5, 5,

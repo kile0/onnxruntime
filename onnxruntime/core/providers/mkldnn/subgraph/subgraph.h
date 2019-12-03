@@ -20,7 +20,7 @@ struct MklDnnNode {
   int output_index = -1;       // index in output()
   std::string weight_name;
   std::string output_name;
-  std::vector<size_t> parent_nodes; // index to parents in vector mklnodes
+  Vector<size_t> parent_nodes; // index to parents in vector mklnodes
 
   std::string ToString() const {
     std::string key;
@@ -44,10 +44,10 @@ struct MklDnnNode {
 
 struct Subgraph {
   struct SubgraphVariables {
-    std::vector<std::string> inputs;
-    std::vector<std::string> outputs;
-    std::vector<std::string> outputs_as_input_other_node;
-    std::vector<onnxruntime::NodeIndex> subgraph_node_indexes;
+    Vector<std::string> inputs;
+    Vector<std::string> outputs;
+    Vector<std::string> outputs_as_input_other_node;
+    Vector<onnxruntime::NodeIndex> subgraph_node_indexes;
 
 	void Reset() {
       subgraph_node_indexes.clear();
@@ -63,7 +63,7 @@ struct Subgraph {
 
   std::string graph_name;
   std::string subgraph_id;
-  std::vector<MklDnnNode> mkldnn_nodes;
+  Vector<MklDnnNode> mkldnn_nodes;
 };
 }  // namespace mkl_dnn
 }  // namespace onnxruntime

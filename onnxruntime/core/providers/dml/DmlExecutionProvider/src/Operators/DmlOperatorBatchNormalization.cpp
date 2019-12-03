@@ -23,7 +23,7 @@ public:
     DmlOperatorBatchNormalization(const MLOperatorKernelCreationContext& kernelCreationContext)
     :   DmlOperator(kernelCreationContext)
     {
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {X, Mean, Variance, Scale, Bias};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {X, Mean, Variance, Scale, Bias};
         DmlOperator::Initialize(kernelCreationContext, kernelInputIndices);
 
         ML_CHECK_VALID_ARGUMENT(m_inputTensorDescs.size() == 5);
@@ -42,8 +42,8 @@ public:
             m_inputTensorDescs[i] = CreateTensorDescFromInput(kernelCreationContext, i, TensorAxis::DoNotCoerce, TensorAxis::C, TensorAxis::LeftAligned);
         }
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_BATCH_NORMALIZATION_OPERATOR_DESC operatorDesc = {};
         operatorDesc.InputTensor = &inputDescs[X];

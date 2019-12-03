@@ -48,9 +48,9 @@ static Status ReleaseNodeMLValues(ExecutionFrame& frame,
                                   const SequentialExecutionPlan::NodeExecutionPlan& node_exec_plan,
                                   const logging::Logger& logger);
 
-Status SequentialExecutor::Execute(const SessionState& session_state, const std::vector<int>& feed_mlvalue_idxs,
-                                   const std::vector<OrtValue>& feeds, const std::vector<int>& fetch_mlvalue_idxs,
-                                   std::vector<OrtValue>& fetches,
+Status SequentialExecutor::Execute(const SessionState& session_state, const Vector<int>& feed_mlvalue_idxs,
+                                   const Vector<OrtValue>& feeds, const Vector<int>& fetch_mlvalue_idxs,
+                                   Vector<OrtValue>& fetches,
                                    const std::unordered_map<size_t, CustomAllocator>& fetch_allocators,
                                    const logging::Logger& logger) {
   const bool is_profiler_enabled = session_state.Profiler().IsEnabled();
@@ -255,7 +255,7 @@ Status SequentialExecutor::Execute(const SessionState& session_state, const std:
   VLOGS(logger, 1) << "Done with execution.";
 
   if (frame.HasMemoryPatternPlanner()) {
-    std::vector<std::reference_wrapper<const TensorShape>> input_shapes;
+    Vector<std::reference_wrapper<const TensorShape>> input_shapes;
     bool all_tensors = true;
     for (const auto& feed : feeds) {
       if (!(feed.IsTensor())) {

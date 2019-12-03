@@ -42,8 +42,8 @@ Status MatMulAddFusion::ApplyImpl(Graph& graph, bool& modified, int graph_level,
 
     Node& matmul_node = node;
     Node& add_node = const_cast<Node&>(next_node);
-    std::vector<NodeArg> input_args;
-    std::vector<NodeArg> output_args;
+    Vector<NodeArg> input_args;
+    Vector<NodeArg> output_args;
     auto matmul_input_defs = matmul_node.MutableInputDefs();
     auto add_input_defs = add_node.MutableInputDefs();
 

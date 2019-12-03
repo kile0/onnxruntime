@@ -110,7 +110,7 @@ void ThreadPool::ParallelForRange(int64_t first, int64_t last, std::function<voi
   barrier.Wait();
 }
 
-// void ThreadPool::SetStealPartitions(const std::vector<std::pair<unsigned, unsigned>>& partitions) {
+// void ThreadPool::SetStealPartitions(const Vector<std::pair<unsigned, unsigned>>& partitions) {
 //   impl_->SetStealPartitions(partitions);
 // }
 

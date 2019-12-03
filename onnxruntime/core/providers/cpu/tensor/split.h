@@ -28,10 +28,10 @@ class SplitBase {
    */
   Status PrepareForCompute(const TensorShape& input_shape, int num_outputs, int64_t& axis, int& before_dims,
                            int& after_dims_including_split_axis, int& after_dims_excluding_split,
-                           std::vector<int64_t>& split_sizes) const;
+                           Vector<int64_t>& split_sizes) const;
 
   int64_t axis_;
-  std::vector<int64_t> split_sizes_;
+  Vector<int64_t> split_sizes_;
   int64_t split_size_sum_ = 0;
 };
 

@@ -77,8 +77,8 @@ namespace winrt::Windows::AI::MachineLearning::implementation
         bool initialized = false;
 
         // Mapping between DML in/out indices and kernel in/out indices
-        std::vector<uint32_t> kernelInputIndices;
-        std::vector<uint32_t> kernelOutputIndices;
+        Vector<uint32_t> kernelInputIndices;
+        Vector<uint32_t> kernelOutputIndices;
 
         Microsoft::WRL::ComPtr<IDMLOperator> op;
         std::unique_ptr<AbstractOperatorDesc> desc;
@@ -99,7 +99,7 @@ namespace winrt::Windows::AI::MachineLearning::implementation
     {
         GraphNodeFactory factory;
         std::optional<uint32_t> requiredInputCount;
-        std::vector<uint32_t> requiredConstantCpuInputs;
+        Vector<uint32_t> requiredConstantCpuInputs;
         bool requiresFloatFormatsExceptConstInputs = false;
     };
 

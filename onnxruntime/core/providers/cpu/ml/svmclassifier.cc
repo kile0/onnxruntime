@@ -77,8 +77,8 @@ SVMClassifier<T>::SVMClassifier(const OpKernelInfo& info)
 
 template <typename LabelType>
 int _set_score_svm(Tensor* Y, float max_weight, const int64_t maxclass, const int64_t n,
-                   POST_EVAL_TRANSFORM post_transform_, const std::vector<float>& proba_, bool weights_are_all_positive_,
-                   const std::vector<LabelType>& classlabels, LabelType posclass, LabelType negclass) {
+                   POST_EVAL_TRANSFORM post_transform_, const Vector<float>& proba_, bool weights_are_all_positive_,
+                   const Vector<LabelType>& classlabels, LabelType posclass, LabelType negclass) {
   int write_additional_scores = -1;
   auto output_data = Y->template MutableData<LabelType>();
   if (classlabels.size() == 2) {
@@ -118,7 +118,7 @@ Status SVMClassifier<T>::Compute(OpKernelContext* ctx) const {
       nb_columns = 2;
   }
 
-  std::vector<int64_t> dims{N, nb_columns};
+  Vector<int64_t> dims{N, nb_columns};
   Tensor* Z = ctx->Output(1, TensorShape(dims));
 
   const T* x_data = X->template Data<T>();
@@ -128,10 +128,10 @@ Status SVMClassifier<T>::Compute(OpKernelContext* ctx) const {
   {
     int64_t current_weight_0 = n * stride;
     int64_t maxclass = -1;
-    std::vector<float> decisions;
-    std::vector<float> scores;
-    std::vector<float> kernels;
-    std::vector<int64_t> votes;
+    Vector<float> decisions;
+    Vector<float> scores;
+    Vector<float> kernels;
+    Vector<int64_t> votes;
 
     if (vector_count_ == 0 && mode_ == SVM_TYPE::SVM_LINEAR) {
       for (int64_t j = 0; j < class_count_; j++) {  //for each class
@@ -183,8 +183,8 @@ Status SVMClassifier<T>::Compute(OpKernelContext* ctx) const {
     if (proba_.size() > 0 && mode_ == SVM_TYPE::SVM_SVC) {
       //compute probabilities from the scores
       int64_t num = class_count_ * class_count_;
-      std::vector<float> probsp2(num, 0.f);
-      std::vector<float> estimates(class_count_, 0.f);
+      Vector<float> probsp2(num, 0.f);
+      Vector<float> estimates(class_count_, 0.f);
       int64_t index = 0;
       for (int64_t i = 0; i < class_count_; ++i) {
         int64_t p1 = i * class_count_ + i + 1;

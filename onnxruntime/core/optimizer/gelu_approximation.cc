@@ -13,7 +13,7 @@ using namespace onnxruntime::common;
 namespace onnxruntime {
 
 // FastGelu supports limited data types.
-static std::vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)"};
+static Vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)"};
 
 static bool IsSupportedDataType(const Node& node) {
   for (const auto& input_arg : node.InputDefs()) {

@@ -17,9 +17,9 @@ std::unique_ptr<char[]> GetEnv(const char* var);
 // Check if an environment variable is set
 bool IsEnvVarDefined(const char* var);
 
-int64_t TotalSize(const std::vector<int64_t>& shape);
+int64_t TotalSize(const Vector<int64_t>& shape);
 
-void GetStrides(const int64_t* shape, int ndim, std::vector<int64_t>& strides);
+void GetStrides(const int64_t* shape, int ndim, Vector<int64_t>& strides);
 
 struct TargetFeature {
   bool hasAVX;

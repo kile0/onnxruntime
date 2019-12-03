@@ -369,9 +369,9 @@ struct BroadcastIterator {
     counts_.push_back(1);
   }
 
-  std::vector<int64_t> counters_;
-  std::vector<ptrdiff_t> deltas_;
-  std::vector<int64_t> counts_;
+  Vector<int64_t> counters_;
+  Vector<ptrdiff_t> deltas_;
+  Vector<int64_t> counts_;
   size_t count_{1};  // Running total count of entries in tensor, used while building up the entries
 
  private:
@@ -379,7 +379,7 @@ struct BroadcastIterator {
 };
 
 struct Broadcaster {
-  Broadcaster(const std::vector<int64_t>& shape1, const std::vector<int64_t>& shape2) {
+  Broadcaster(const Vector<int64_t>& shape1, const Vector<int64_t>& shape2) {
     size_t dimension_count_max = std::max(shape1.size(), shape2.size());
     size_t dimension_count_min = std::min(shape1.size(), shape2.size());
     output_shape_.resize(dimension_count_max);
@@ -484,7 +484,7 @@ struct Broadcaster {
   size_t GetSpanSize() const { return std::min(iterator1_.counts_.front(), iterator2_.counts_.front()); }
 
   BroadcastIterator iterator1_, iterator2_;
-  std::vector<int64_t> output_shape_;
+  Vector<int64_t> output_shape_;
 };
 
 template <typename T0, typename T1>

@@ -280,7 +280,7 @@ class BFCArena : public IArenaAllocator {
     }
     void erase(const void* p) { return MutableRegionFor(p)->erase(p); }
 
-    const std::vector<AllocationRegion>& regions() const { return regions_; }
+    const Vector<AllocationRegion>& regions() const { return regions_; }
 
    private:
     ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(RegionManager);
@@ -306,7 +306,7 @@ class BFCArena : public IArenaAllocator {
     }
 
    private:
-    std::vector<AllocationRegion> regions_;
+    Vector<AllocationRegion> regions_;
   };
 
   // Returns 'bytes' rounded up to the next highest kMinAllocationSize.
@@ -427,7 +427,7 @@ class BFCArena : public IArenaAllocator {
   mutable OrtMutex lock_;
 
   RegionManager region_manager_;
-  std::vector<Chunk> chunks_;
+  Vector<Chunk> chunks_;
   // Pointer to head of linked list of free Chunks
   ChunkHandle free_chunks_list_;
 

@@ -83,7 +83,7 @@ tvm::Array<tvm::Expr> WeightLayoutTiling2D::ToActualShape(const tvm::Tensor& X) 
   return new_shape;
 }
 
-std::vector<int64_t> WeightLayoutTiling2D::ToActualShape(const Tensor* X) const {
+Vector<int64_t> WeightLayoutTiling2D::ToActualShape(const Tensor* X) const {
   ORT_ENFORCE(X != nullptr);
   ORT_ENFORCE(X->Shape().GetDims().size() == 2);
 
@@ -94,7 +94,7 @@ std::vector<int64_t> WeightLayoutTiling2D::ToActualShape(const Tensor* X) const 
   auto new_shape0 = (old_shape[1] + pad_col - 1) / pad_col * pad_col;
   auto new_shape1 = ((old_shape[0] + pad_row - 1) / pad_row) * pad_row;
 
-  std::vector<int64_t> new_shape = {
+  Vector<int64_t> new_shape = {
       new_shape0,
       new_shape1};
 

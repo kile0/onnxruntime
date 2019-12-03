@@ -26,13 +26,13 @@ Status CudnnTensor::CreateTensorIfNeeded() {
   return Status::OK();
 }
 
-Status CudnnTensor::Set(const std::vector<int64_t>& input_dims, cudnnDataType_t dataType) {
+Status CudnnTensor::Set(const Vector<int64_t>& input_dims, cudnnDataType_t dataType) {
   ORT_RETURN_IF_ERROR(CreateTensorIfNeeded());
 
   int rank = gsl::narrow_cast<int>(input_dims.size());
   TensorPitches pitches(input_dims);
-  std::vector<int> dims(rank);
-  std::vector<int> strides(rank);
+  Vector<int> dims(rank);
+  Vector<int> strides(rank);
   for (int i = 0; i < rank; i++) {
     dims[i] = gsl::narrow_cast<int>(input_dims[i]);
     strides[i] = gsl::narrow_cast<int>(pitches[i]);
@@ -106,12 +106,12 @@ CudnnFilterDescriptor::~CudnnFilterDescriptor() {
   }
 }
 
-Status CudnnFilterDescriptor::Set(const std::vector<int64_t>& filter_dims, cudnnDataType_t data_type) {
+Status CudnnFilterDescriptor::Set(const Vector<int64_t>& filter_dims, cudnnDataType_t data_type) {
   if (!desc_)
     CUDNN_RETURN_IF_ERROR(cudnnCreateFilterDescriptor(&desc_));
 
   int rank = gsl::narrow_cast<int>(filter_dims.size());
-  std::vector<int> w_dims(rank);
+  Vector<int> w_dims(rank);
   for (int i = 0; i < rank; i++) {
     w_dims[i] = gsl::narrow_cast<int>(filter_dims[i]);
   }
@@ -144,7 +144,7 @@ const float Consts<half>::Zero = 0;
 
 const float Consts<half>::One = 1;
 
-std::vector<cudaDeviceProp> DeviceProp::s_cachedDeviceProps;
+Vector<cudaDeviceProp> DeviceProp::s_cachedDeviceProps;
 std::once_flag DeviceProp::s_cachedDevicePropsInitFlag;
 
 }  // namespace cuda

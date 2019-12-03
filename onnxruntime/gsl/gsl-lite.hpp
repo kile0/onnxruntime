@@ -1169,7 +1169,7 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   }
 
   //
-  // at() - Bounds-checked way of accessing static arrays, std::array, std::vector.
+  // at() - Bounds-checked way of accessing static arrays, std::array, Vector.
   //
 
   template <class T, size_t N>
@@ -2094,13 +2094,13 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
 
   template <class T>
   gsl_api inline span<T>
-  make_span(std::vector<T> & cont) {
+  make_span(Vector<T> & cont) {
     return span<T>(with_container, cont);
   }
 
   template <class T>
   gsl_api inline span<const T>
-  make_span(std::vector<T> const& cont) {
+  make_span(Vector<T> const& cont) {
     return span<const T>(with_container, cont);
   }
 #endif

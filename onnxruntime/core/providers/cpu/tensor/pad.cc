@@ -134,7 +134,7 @@ template <typename T>
 static Status PadInputWithDimValueOfZero(OpKernelContext* ctx,
                                          const Mode& mode,
                                          const TensorShape& input_shape,
-                                         std::vector<int64_t>& output_dims,
+                                         Vector<int64_t>& output_dims,
                                          T value) {
   TensorShape output_shape(output_dims);
   ORT_RETURN_IF_ERROR(PadBase::HandleDimValueZero(mode, input_shape, output_shape));
@@ -154,8 +154,8 @@ static Status PadInputWithDimValueOfZero(OpKernelContext* ctx,
 // Flatten no padding inner most Axis, so one memcpy cover multiple Axis.
 // For example, for a shape of [1,224,224,3] with padding [0,3,3,0,0,3,3,0], can be flatten as
 // [1,224,224*3] with padding [0,3,3*3,0,3,3*3].
-static void FlattenInnerShape(const std::vector<int64_t>& input_dims, const std::vector<int64_t>& pads,
-                              const std::vector<int64_t>& slices, std::vector<int64_t>& reshaped_dims) {
+static void FlattenInnerShape(const Vector<int64_t>& input_dims, const Vector<int64_t>& pads,
+                              const Vector<int64_t>& slices, Vector<int64_t>& reshaped_dims) {
   size_t dims_count = input_dims.size();
   size_t inner_axis = dims_count - 1;
   size_t inner_size = 1;
@@ -180,8 +180,8 @@ static void FlattenInnerShape(const std::vector<int64_t>& input_dims, const std:
   reshaped_dims[inner_axis] = inner_size;
 }
 
-static void ReshapePads(const std::vector<int64_t>& src_pad, size_t src_dim_count, size_t new_dim_count,
-                        size_t inner_no_pad_size, std::vector<int64_t>& reshaped_pad) {
+static void ReshapePads(const Vector<int64_t>& src_pad, size_t src_dim_count, size_t new_dim_count,
+                        size_t inner_no_pad_size, Vector<int64_t>& reshaped_pad) {
   size_t inner_axis = new_dim_count - 1;
   std::copy(src_pad.begin(), src_pad.begin() + inner_axis, reshaped_pad.begin());
   std::copy(src_pad.begin() + src_dim_count, src_pad.begin() + src_dim_count + inner_axis, reshaped_pad.begin() + new_dim_count);
@@ -193,13 +193,13 @@ static void ReshapePads(const std::vector<int64_t>& src_pad, size_t src_dim_coun
 
 template <typename T>
 Status PadCpuImpl(OpKernelContext* ctx,
-                  const std::vector<int64_t>& pads,
-                  const std::vector<int64_t>& slices,
+                  const Vector<int64_t>& pads,
+                  const Vector<int64_t>& slices,
                   const Mode& mode,
                   T value) {
   const auto& input_tensor = *ctx->Input<Tensor>(0);
   const auto& orig_input_shape = input_tensor.Shape();
-  std::vector<int64_t> output_dims(orig_input_shape.GetDims());
+  Vector<int64_t> output_dims(orig_input_shape.GetDims());
   size_t data_rank = output_dims.size();
 
   // make copy of raw_pads as it may be mutated below
@@ -207,20 +207,20 @@ Status PadCpuImpl(OpKernelContext* ctx,
   ORT_ENFORCE(data_rank * 2 == pads.size(), "'pads' has wrong number of values");
 
   // Reshape input dims
-  std::vector<int64_t> reshaped_input_dims;
+  Vector<int64_t> reshaped_input_dims;
   FlattenInnerShape(output_dims, pads, slices, reshaped_input_dims);
 
   // Reshape padding
   size_t new_dims_count = reshaped_input_dims.size();
   size_t inner_axis = new_dims_count - 1;
   size_t inner_no_pad_size = output_dims[inner_axis] > 0 ? reshaped_input_dims[inner_axis] / output_dims[inner_axis] : 0;
-  std::vector<int64_t> reshaped_pad(2 * new_dims_count), reshaped_slice(2 * new_dims_count);
+  Vector<int64_t> reshaped_pad(2 * new_dims_count), reshaped_slice(2 * new_dims_count);
   ReshapePads(pads, data_rank, new_dims_count, inner_no_pad_size, reshaped_pad);
   ReshapePads(slices, data_rank, new_dims_count, inner_no_pad_size, reshaped_slice);
 
-  std::vector<int64_t> reshaped_output_dims = reshaped_input_dims;
-  std::vector<int64_t> input_starts;
-  std::vector<int64_t> input_extents;
+  Vector<int64_t> reshaped_output_dims = reshaped_input_dims;
+  Vector<int64_t> input_starts;
+  Vector<int64_t> input_extents;
 
   // Calculate output dimensions, and handle any negative padding
   input_starts.reserve(2 * new_dims_count);
@@ -364,7 +364,7 @@ Status Pad<T>::Compute(OpKernelContext* ctx) const {
     size_t data_rank = input_tensor.Shape().NumDimensions();
 
     const Tensor& pads_tensor = *ctx->Input<Tensor>(1);
-    const std::vector<int64_t>& pads_tensor_dims = pads_tensor.Shape().GetDims();
+    const Vector<int64_t>& pads_tensor_dims = pads_tensor.Shape().GetDims();
     ORT_ENFORCE(utils::IsPrimitiveDataType<int64_t>(pads_tensor.DataType()),
                 "Pads tensor should be an INT64 tensor");
     ORT_ENFORCE(pads_tensor_dims.size() == 1 || (pads_tensor_dims.size() == 2 && pads_tensor_dims[0] == 1),
@@ -375,14 +375,14 @@ Status Pad<T>::Compute(OpKernelContext* ctx) const {
     ORT_ENFORCE(pads_size == 2 * data_rank,
                 "Pads tensor size should be equal to twice the input dimension count ");
 
-    std::vector<int64_t> pads;
+    Vector<int64_t> pads;
     pads.reserve(2 * data_rank);
     for (size_t i = 0; i < pads_size; ++i) {
       pads.push_back(pads_tensor_raw_data[i]);
     }
 
     // Separate out any negative pads into the slices array
-    std::vector<int64_t> slices(pads.size(), 0);
+    Vector<int64_t> slices(pads.size(), 0);
     for (size_t index = 0; index < pads.size(); index++) {
       if (pads[index] < 0) {
         slices[index] = pads[index];

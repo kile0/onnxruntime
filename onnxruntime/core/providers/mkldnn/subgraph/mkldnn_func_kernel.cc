@@ -186,9 +186,9 @@ class SubgraphPrimitive : public PrimitiveBase {
 
   struct SubgraphContext {
     std::unique_ptr<mkldnn::stream> stream;
-    std::vector<mkldnn::primitive> net;
-    std::vector<std::unordered_map<int, mkldnn::memory>> net_args;
-    std::vector<std::shared_ptr<MklDnnKernel>> kernels;
+    Vector<mkldnn::primitive> net;
+    Vector<std::unordered_map<int, mkldnn::memory>> net_args;
+    Vector<std::shared_ptr<MklDnnKernel>> kernels;
 
     SubgraphContext() : stream(nullptr) {}
   };

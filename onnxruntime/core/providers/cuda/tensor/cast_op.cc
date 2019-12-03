@@ -9,7 +9,7 @@ using namespace onnxruntime::common;
 namespace onnxruntime {
 namespace cuda {
 
-const std::vector<MLDataType> castOpTypeConstraints{
+const Vector<MLDataType> castOpTypeConstraints{
     DataTypeImpl::GetTensorType<MLFloat16>(),
     DataTypeImpl::GetTensorType<float>(),
     DataTypeImpl::GetTensorType<double>(),

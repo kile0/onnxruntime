@@ -50,7 +50,7 @@ class ImageScaler final : public OpKernel {
 
  protected:
   float scale_;
-  std::vector<float> bias_;
+  Vector<float> bias_;
 };
 }
 }  //namespace onnxruntime

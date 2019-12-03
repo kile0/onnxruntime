@@ -39,7 +39,7 @@ class SessionStateInitializer {
   // First perform any transformations and create the execution plan
   // Then initialize tensors, and save. save kernels and input/output node mappings
   common::Status CreatePlan(_In_opt_ const Node* parent_node,
-                            _In_opt_ const ConstPointerContainer<std::vector<NodeArg*>>* outer_scope_node_args,
+                            _In_opt_ const ConstPointerContainer<Vector<NodeArg*>>* outer_scope_node_args,
                             ExecutionMode execution_mode);
 
  private:

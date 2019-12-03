@@ -21,7 +21,7 @@ public:
     {
         ML_CHECK_VALID_ARGUMENT(kernelInfo.GetInputCount() >= 2);
 
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2};
         DmlOperator::Initialize(kernelInfo, kernelInputIndices);
 
         // Vibranium DirectML is limited to handle only 2D and 3D convolution (4D and 5D tensors). So for 1D tensors,
@@ -58,8 +58,8 @@ public:
 
         std::optional<ActivationOperatorDesc> fusedActivation = FusionHelpers::TryGetFusedActivationDesc(kernelInfo);
         DML_OPERATOR_DESC fusedActivationDmlDesc = fusedActivation ? fusedActivation->GetDmlDesc() : DML_OPERATOR_DESC();
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         // Form transient kernel arguments with spatial dimensions padded up to at least 2,
         // since the DirectML API rejects 1D convolution. Leave the base m_kernel alone

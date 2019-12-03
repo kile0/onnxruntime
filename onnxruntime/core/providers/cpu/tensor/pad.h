@@ -62,8 +62,8 @@ class PadBase {
   ~PadBase() = default;
 
   Mode mode_{Mode::Constant};
-  std::vector<int64_t> pads_;    // After construction, only >=0 values are in here
-  std::vector<int64_t> slices_;  // All of the negative padding values are separated out into slices_
+  Vector<int64_t> pads_;    // After construction, only >=0 values are in here
+  Vector<int64_t> slices_;  // All of the negative padding values are separated out into slices_
   const float value_;            // will always be float (when 'value' parsed from attribute - opset 10 and below)
 
   // flag used to differentiate the cases where some input values to the op are
@@ -80,8 +80,8 @@ struct Pad final : public OpKernel, public PadBase {
 
 template <typename T>
 Status PadCpuImpl(OpKernelContext* ctx,
-                  const std::vector<int64_t>& pads,
-                  const std::vector<int64_t>& slices,
+                  const Vector<int64_t>& pads,
+                  const Vector<int64_t>& slices,
                   const Mode& mode,
                   T value);
 

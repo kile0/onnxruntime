@@ -18,8 +18,8 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetInputCount() == 2);
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetOutputCount() == 1);
 
-        std::vector<std::optional<uint32_t>> inputIndices = { 0 }; // The second tensor is not bound to Identity operator.
-        std::vector<std::optional<uint32_t>> outputIndices = { 0 };
+        Vector<std::optional<uint32_t>> inputIndices = { 0 }; // The second tensor is not bound to Identity operator.
+        Vector<std::optional<uint32_t>> outputIndices = { 0 };
         Initialize(kernelCreationContext, inputIndices, outputIndices);
 
         TensorDesc inputTensorDesc = 
@@ -49,8 +49,8 @@ public:
         m_outputTensorDescs[0] = outputTensorDesc;
 
         // Create the operator with new shape after calling UpdateShape.
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         
         DML_ELEMENT_WISE_IDENTITY_OPERATOR_DESC operatorDesc = {};
         operatorDesc.InputTensor = &inputDescs[0];

@@ -14,7 +14,7 @@ inline bool AreIntervalsOverlap(int start1, int end1, int start2, int end2) {
 }
 
 template <typename T>
-inline bool AreVectorsOverlap(const std::vector<T>& v1, const std::vector<T>& v2) {
+inline bool AreVectorsOverlap(const Vector<T>& v1, const Vector<T>& v2) {
   for (T type : v1) {
     if (std::find(v2.begin(), v2.end(), type) != v2.end()) {
       return true;
@@ -115,19 +115,19 @@ KernelDefBuilder& KernelDefBuilder::Provider(const char* provider_type) {
 }
 
 KernelDefBuilder& KernelDefBuilder::TypeConstraint(const std::string& arg_name,
-                                                   const std::vector<MLDataType>& supported_types) {
+                                                   const Vector<MLDataType>& supported_types) {
   kernel_def_->type_constraints_[arg_name] = supported_types;
   return *this;
 }
 
 KernelDefBuilder& KernelDefBuilder::TypeConstraint(const char* arg_name,
-                                                   const std::vector<MLDataType>& supported_types) {
+                                                   const Vector<MLDataType>& supported_types) {
   return TypeConstraint(std::string(arg_name), supported_types);
 }
 
 KernelDefBuilder& KernelDefBuilder::TypeConstraint(const std::string& arg_name,
                                                    MLDataType supported_type) {
-  kernel_def_->type_constraints_[arg_name] = std::vector<MLDataType>{supported_type};
+  kernel_def_->type_constraints_[arg_name] = Vector<MLDataType>{supported_type};
   return *this;
 }
 
@@ -136,7 +136,7 @@ KernelDefBuilder& KernelDefBuilder::TypeConstraint(const char* arg_name,
   return TypeConstraint(std::string(arg_name), supported_type);
 }
 
-KernelDefBuilder& KernelDefBuilder::MayInplace(const std::vector<std::pair<int, int>>& inplaces) {
+KernelDefBuilder& KernelDefBuilder::MayInplace(const Vector<std::pair<int, int>>& inplaces) {
   kernel_def_->inplace_map_ = inplaces;
   return *this;
 }
@@ -147,7 +147,7 @@ KernelDefBuilder& KernelDefBuilder::MayInplace(int input_index, int output_index
   return *this;
 }
 
-KernelDefBuilder& KernelDefBuilder::Alias(const std::vector<std::pair<int, int>>& aliases) {
+KernelDefBuilder& KernelDefBuilder::Alias(const Vector<std::pair<int, int>>& aliases) {
   kernel_def_->alias_map_ = aliases;
   return *this;
 }

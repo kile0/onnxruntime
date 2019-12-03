@@ -32,22 +32,22 @@ NnapiExecutionProvider::NnapiExecutionProvider()
 
 NnapiExecutionProvider::~NnapiExecutionProvider() {}
 
-std::vector<std::vector<int>> NnapiExecutionProvider::GetSupportedNodes(const ONNX_NAMESPACE::ModelProto& model_proto) const {
+Vector<Vector<int>> NnapiExecutionProvider::GetSupportedNodes(const ONNX_NAMESPACE::ModelProto& model_proto) const {
   dnn::OnnxConverter converter;
   return converter.GetSupportedNodes(model_proto);
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 NnapiExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
-                                      const std::vector<const KernelRegistry*>& /*kernel_registries*/) const {
+                                      const Vector<const KernelRegistry*>& /*kernel_registries*/) const {
   // This method is based on that of TRT EP
   // Construct modelproto from graph
   onnxruntime::Model model(graph.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph.DomainToVersionMap());
   onnxruntime::Graph& graph_build = model.MainGraph();
-  const std::vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
+  const Vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
   std::set<NodeArg*> all_node_inputs;
   for (const auto& node : graph.Nodes()) {
-    std::vector<onnxruntime::NodeArg*> inputs, outputs;
+    Vector<onnxruntime::NodeArg*> inputs, outputs;
     for (auto input : node.InputDefs()) {
       auto& n_input = graph_build.GetOrCreateNodeArg(input->Name(), input->TypeAsProto());
       inputs.push_back(&n_input);
@@ -75,7 +75,7 @@ NnapiExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
   std::unique_ptr<IndexedSubGraph> sub_graph = onnxruntime::make_unique<IndexedSubGraph>();
 
   // Find inputs, initializers and outputs for each supported subgraph
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+  Vector<std::unique_ptr<ComputeCapability>> result;
 
   int counter = 0;
 
@@ -192,8 +192,8 @@ NnapiExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
   return result;
 }
 
-common::Status NnapiExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                                               std::vector<NodeComputeInfo>& node_compute_funcs) {
+common::Status NnapiExecutionProvider::Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                                               Vector<NodeComputeInfo>& node_compute_funcs) {
   for (const auto* fused_node : fused_nodes) {
     // Reconstruct graph proto from fused node's function body
     const auto* func_body = fused_node->GetFunctionBody();
@@ -233,12 +233,12 @@ common::Status NnapiExecutionProvider::Compile(const std::vector<onnxruntime::No
       ORT_ENFORCE(model->GetInputs().size() <= num_inputs, "Inconsistent input sizes");
       ORT_ENFORCE(model->GetOutputs().size() == num_outputs, "Inconsistent output sizes");
       // Maintain the created nhwc buffers so that they can be deleted after inferencing
-      std::vector<float*> nhwc_inputs;
-      std::vector<std::tuple<size_t, float*, std::vector<int64_t>>> nhwc_outputs;
+      Vector<float*> nhwc_inputs;
+      Vector<std::tuple<size_t, float*, Vector<int64_t>>> nhwc_outputs;
       for (size_t i = 0; i < num_outputs; i++) {
         const auto output_name = model->GetOutputs()[i];
         const auto output_shape = model->GetShape(output_name);
-        std::vector<int64_t> int64_output_shape(output_shape.begin(), output_shape.end());
+        Vector<int64_t> int64_output_shape(output_shape.begin(), output_shape.end());
         if (int64_output_shape.size() == 4) {
           // NHWC to NCHW
           std::swap(int64_output_shape[1], int64_output_shape[3]);
@@ -251,7 +251,7 @@ common::Status NnapiExecutionProvider::Compile(const std::vector<onnxruntime::No
           model->SetOutputBuffer(i, ort.GetTensorMutableData<float>(output_tensor));
         }
       }
-      std::vector<float*> inputs;
+      Vector<float*> inputs;
       for (size_t i = 0; i < model->GetInputs().size(); i++) {
         const OrtValue* input_tensor = ort.KernelContext_GetInput(context, i);
         float* input = const_cast<float*>(ort.GetTensorData<float>(input_tensor));
@@ -285,7 +285,7 @@ common::Status NnapiExecutionProvider::Compile(const std::vector<onnxruntime::No
         const auto output = nhwc_outputs[i];
         size_t index;
         float* nhwc_data;
-        std::vector<int64_t> nchw_shape;
+        Vector<int64_t> nchw_shape;
         std::tie(index, nhwc_data, nchw_shape) = output;
         auto* output_tensor = ort.KernelContext_GetOutput(context, index, nchw_shape.data(), nchw_shape.size());
         const int N = nchw_shape[0], C = nchw_shape[1], H = nchw_shape[2], W = nchw_shape[3];

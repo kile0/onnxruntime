@@ -204,7 +204,7 @@ class Cast final : public OpKernel {
   ONNX_NAMESPACE::TensorProto_DataType to_;
 };
 
-const std::vector<MLDataType> castOpTypeConstraints{
+const Vector<MLDataType> castOpTypeConstraints{
     DataTypeImpl::GetTensorType<bool>(),
     DataTypeImpl::GetTensorType<float>(),
     DataTypeImpl::GetTensorType<double>(),

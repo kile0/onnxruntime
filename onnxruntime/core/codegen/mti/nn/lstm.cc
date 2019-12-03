@@ -78,7 +78,7 @@ void LSTM_cell(
     sum_proj = Add(sum_proj, reduce_B);
   }
 
-  std::vector<int64_t> iofc_sum_split_sizes(4, lstm_attrs.hidden_size);
+  Vector<int64_t> iofc_sum_split_sizes(4, lstm_attrs.hidden_size);
   // Split sum_proj into iofc, where each gate proj is of (batch_size, hidden_size)
   tvm::Array<tvm::Tensor> iofc_sum_projs = Split(sum_proj, ToTvmArray(iofc_sum_split_sizes), /*axis*/ 1);
   MTI_ASSERT(iofc_sum_projs.size() == 4);
@@ -89,7 +89,7 @@ void LSTM_cell(
 
   tvm::Tensor P_i, P_o, P_f;
   if (has_P) {
-    std::vector<int64_t> iof_p_split_sizes(3, lstm_attrs.hidden_size);
+    Vector<int64_t> iof_p_split_sizes(3, lstm_attrs.hidden_size);
     // Split P into P_i, P_o, P_f, in const pre-processing (P_i, P_f might be merged?)
     // where each P_[iof] has the shape of (hidden_size)
     tvm::Array<tvm::Tensor> iof_P_projs = Split(P, ToTvmArray(iof_p_split_sizes), /*axis*/ 0);

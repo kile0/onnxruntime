@@ -19,7 +19,7 @@ class Initializer final {
   // Construct an initializer with the provided name and data type, with all values initialized to 0
   Initializer(ONNX_NAMESPACE::TensorProto_DataType data_type,
               const std::string& name,
-              const std::vector<int64_t>& dims) : dims_(dims), size_(0) {
+              const Vector<int64_t>& dims) : dims_(dims), size_(0) {
     data_type_ = data_type;
     name_ = name;
     size_ = std::accumulate(dims_.begin(), dims_.end(), int64_t(1), std::multiplies<int64_t>{});
@@ -255,11 +255,11 @@ class Initializer final {
     return nullptr;
   }
 
-  const std::vector<int64_t>& dims() const {
+  const Vector<int64_t>& dims() const {
     return dims_;
   }
 
-  const std::vector<int64_t>& dims() {
+  const Vector<int64_t>& dims() {
     return dims_;
   }
 
@@ -591,15 +591,15 @@ class Initializer final {
  private:
   int data_type_;
   std::string name_;
-  std::vector<int64_t> dims_;
+  Vector<int64_t> dims_;
   int64_t size_;
 
   std::string raw_data_;
-  std::vector<float> float_data_;
-  std::vector<uint16_t> float16_data_;
-  std::vector<double> double_data_;
-  std::vector<int32_t> int32_data_;
-  std::vector<int64_t> int64_data_;
+  Vector<float> float_data_;
+  Vector<uint16_t> float16_data_;
+  Vector<double> double_data_;
+  Vector<int32_t> int32_data_;
+  Vector<int64_t> int64_data_;
 };
 
 }  // namespace onnxruntime

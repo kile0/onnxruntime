@@ -35,7 +35,7 @@ class TVMScheduleBuilder {
   const std::string& Name() const;
 
  private:
-  std::vector<std::unique_ptr<TVMScheduleDispatcher>> dispatchers_;
+  Vector<std::unique_ptr<TVMScheduleDispatcher>> dispatchers_;
   std::string name_;
 
  private:

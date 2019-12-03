@@ -37,8 +37,8 @@ class ShapeInferenceTest : public ::testing::Test {
   }
 
   onnxruntime::Node& Node(const std::string& op, const std::string& input, const std::string& output) {
-    std::vector<onnxruntime::NodeArg*> input_args({Arg(input)});
-    std::vector<onnxruntime::NodeArg*> output_args({Arg(output)});
+    Vector<onnxruntime::NodeArg*> input_args({Arg(input)});
+    Vector<onnxruntime::NodeArg*> output_args({Arg(output)});
     int num = node_count_++;
     return model_.MainGraph().AddNode("node" + std::to_string(num), op, "test op", input_args, output_args);
   }

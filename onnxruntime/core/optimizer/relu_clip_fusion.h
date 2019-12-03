@@ -16,7 +16,7 @@ class FuseReluClip : public RewriteRule {
  public:
   FuseReluClip() noexcept : RewriteRule("FuseReluClip") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Relu"};
   }
 

@@ -31,7 +31,7 @@ Model::Model(const std::string& graph_name,
              const ModelMetaData& model_metadata,
              const IOnnxRuntimeOpSchemaRegistryList& local_registries,
              const std::unordered_map<std::string, int>& domain_to_version,
-             const std::vector<ONNX_NAMESPACE::FunctionProto>& model_functions,
+             const Vector<ONNX_NAMESPACE::FunctionProto>& model_functions,
              const logging::Logger& logger) {
   model_proto_ = onnxruntime::make_unique<ModelProto>();
   model_proto_->set_ir_version(ONNX_NAMESPACE::Version::IR_VERSION);

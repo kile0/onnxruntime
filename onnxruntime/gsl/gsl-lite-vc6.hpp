@@ -227,7 +227,7 @@ T narrow( U u )
 //
 
 //
-// at() - Bounds-checked way of accessing static arrays, std::array, std::vector.
+// at() - Bounds-checked way of accessing static arrays, std::array, Vector.
 //
 
 namespace detail {
@@ -370,7 +370,7 @@ private:
         return span( arr, gsl_DIMENSION_OF( arr ) );
     }
 
-    span create( std::vector<T> & cont, T*, precedence_1 const & ) const
+    span create( Vector<T> & cont, T*, precedence_1 const & ) const
     {
         return span( &cont[0], cont.size() );
     }
@@ -595,7 +595,7 @@ namespace detail {
 template< class T >
 struct mk
 {
-    static span<T> view( std::vector<T> & cont )
+    static span<T> view( Vector<T> & cont )
     {
         return span<T>( cont );
     }
@@ -603,7 +603,7 @@ struct mk
 }
 
 template< class T >
-span<T> as_span( std::vector<T> & cont )
+span<T> as_span( Vector<T> & cont )
 {
     return detail::mk<T>::view( cont );
 }
@@ -688,9 +688,9 @@ span<T> ensure_z( T * sz, size_t max = (std::numeric_limits<size_t>::max)() )
 
 } // namespace gsl
 
-// at( std::vector ):
+// at( Vector ):
 
-gsl_MK_AT( std::vector )
+gsl_MK_AT( Vector )
 
 #endif // GSL_GSL_LITE_H_INCLUDED
 

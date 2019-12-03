@@ -31,8 +31,8 @@ class NodeCounter {
 int NodeCounter::node_count_ = 0;
 
 struct UnaryNode {
-  std::vector<onnxruntime::NodeArg*> input_args;
-  std::vector<onnxruntime::NodeArg*> output_args;
+  Vector<onnxruntime::NodeArg*> input_args;
+  Vector<onnxruntime::NodeArg*> output_args;
   onnxruntime::Node* p_node;
 
   UnaryNode(onnxruntime::Graph& graph, const std::string& op, onnxruntime::NodeArg* p_input_arg,
@@ -66,21 +66,21 @@ using namespace modelbuilder;
 
 class AllocationPlanTestUtility {
  public:
-  static void CheckAllocationKind(const SequentialExecutionPlan& plan, std::vector<AllocKind>& expected) {
+  static void CheckAllocationKind(const SequentialExecutionPlan& plan, Vector<AllocKind>& expected) {
     ASSERT_EQ(plan.allocation_plan.size(), expected.size()) << "Allocation plan of wrong size";
     for (size_t i = 0; i < expected.size(); ++i) {
       EXPECT_EQ(plan.allocation_plan[i].alloc_kind, expected[i]) << "Error in allocation kind at position " << i;
     }
   }
 
-  static void CheckToBeFreed(const SequentialExecutionPlan& plan, const std::vector<OrtValueIndex>& expected) {
+  static void CheckToBeFreed(const SequentialExecutionPlan& plan, const Vector<OrtValueIndex>& expected) {
     ASSERT_EQ(plan.to_be_freed.size(), expected.size()) << "Allocation plan's to_be_freed of wrong size";
     for (size_t i = 0; i < expected.size(); ++i) {
       EXPECT_EQ(plan.to_be_freed[i], expected[i]) << "Error in to_be_freed at position " << i;
     }
   }
 
-  static void CheckFreedAtEachStep(const SequentialExecutionPlan& plan, const std::vector<int>& expected_num_freed) {
+  static void CheckFreedAtEachStep(const SequentialExecutionPlan& plan, const Vector<int>& expected_num_freed) {
     ASSERT_EQ(plan.execution_plan.size(), expected_num_freed.size()) << "Execution plan is of wrong size";
     int start = 0;
     for (size_t i = 0; i < expected_num_freed.size(); ++i) {
@@ -152,9 +152,9 @@ class PlannerTest : public ::testing::Test {
   std::unique_ptr<::onnxruntime::KernelDef> in_place_kernel_;  // a unary kernel with in-place
 
   std::unordered_map<std::string, onnxruntime::NodeArg*> name_to_arg_;
-  std::vector<std::unique_ptr<UnaryNode>> nodes_;
-  std::vector<std::unique_ptr<OpKernelInfo>> op_kernel_infos_;
-  std::vector<std::pair<onnxruntime::Node*, KernelDef&>> kernel_bindings_;
+  Vector<std::unique_ptr<UnaryNode>> nodes_;
+  Vector<std::unique_ptr<OpKernelInfo>> op_kernel_infos_;
+  Vector<std::pair<onnxruntime::Node*, KernelDef&>> kernel_bindings_;
   ExecutionProviders execution_providers_;
   concurrency::ThreadPool tp_;
   SessionState state_;
@@ -219,7 +219,7 @@ class PlannerTest : public ::testing::Test {
     }
   }
 
-  void CreatePlan(const std::vector<const NodeArg*>& outer_scope_node_args = {}) {
+  void CreatePlan(const Vector<const NodeArg*>& outer_scope_node_args = {}) {
     EXPECT_EQ(graph_.Resolve(), Status::OK());
 
     state_.SetGraph(graph_);

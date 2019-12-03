@@ -16,7 +16,7 @@ template <typename T>
 class SVMCommon {
  protected:
   SVMCommon(const OpKernelInfo& info) : kernel_type_(MakeKernel(info.GetAttrOrDefault<std::string>("kernel_type", "LINEAR"))) {
-    std::vector<float> kernel_params;
+    Vector<float> kernel_params;
     ORT_ENFORCE(info.GetAttrs<float>("kernel_params", kernel_params).IsOK());
 
     if (!kernel_params.empty()) {
@@ -29,7 +29,7 @@ class SVMCommon {
   void set_kernel_type(KERNEL new_kernel_type) { kernel_type_ = new_kernel_type; }
   KERNEL get_kernel_type() const { return kernel_type_; }
 
-  float kernel_dot(const T* A, int64_t a, const std::vector<float>& B, int64_t b, int64_t len, KERNEL k) const {
+  float kernel_dot(const T* A, int64_t a, const Vector<float>& B, int64_t b, int64_t len, KERNEL k) const {
     double sum = 0;
     const T* pA = A + a;
     const float* pB = B.data() + b;
@@ -79,15 +79,15 @@ class SVMClassifier final : public OpKernel, private SVMCommon<T> {
   int64_t class_count_;
   int64_t vector_count_;
   bool using_strings_;
-  std::vector<int64_t> vectors_per_class_;
-  std::vector<int64_t> starting_vector_;
-  std::vector<float> rho_;
-  std::vector<float> proba_;
-  std::vector<float> probb_;
-  std::vector<float> coefficients_;
-  std::vector<float> support_vectors_;
-  std::vector<int64_t> classlabels_ints_;
-  std::vector<std::string> classlabels_strings_;
+  Vector<int64_t> vectors_per_class_;
+  Vector<int64_t> starting_vector_;
+  Vector<float> rho_;
+  Vector<float> proba_;
+  Vector<float> probb_;
+  Vector<float> coefficients_;
+  Vector<float> support_vectors_;
+  Vector<int64_t> classlabels_ints_;
+  Vector<std::string> classlabels_strings_;
   POST_EVAL_TRANSFORM post_transform_;
   SVM_TYPE mode_;  //how are we computing SVM? 0=LibSVC, 1=LibLinear
 };

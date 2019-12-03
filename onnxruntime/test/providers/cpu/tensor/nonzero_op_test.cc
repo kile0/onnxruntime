@@ -16,10 +16,10 @@ template <typename TTarget, typename TNarrow = int8_t>
 void NonZeroBasicNumericTest() {
   OpTester test{kOpName, kOpVersion};
 
-  std::vector<int64_t> X_dims{1, 2, 3};
-  std::vector<TNarrow> X{0, 1, 2,
+  Vector<int64_t> X_dims{1, 2, 3};
+  Vector<TNarrow> X{0, 1, 2,
                          0, 3, 4};
-  test.AddInput<TTarget>("X", X_dims, std::vector<TTarget>{X.begin(), X.end()});
+  test.AddInput<TTarget>("X", X_dims, Vector<TTarget>{X.begin(), X.end()});
   test.AddOutput<int64_t>(
       "Y", {3, 4},
       {0, 0, 0, 0,
@@ -51,13 +51,13 @@ TEST(NonZeroOpTest, BasicBool) {
 TEST(NonZeroOpTest, ThreeDims) {
   OpTester test{kOpName, kOpVersion};
 
-  std::vector<int64_t> X_dims{2, 2, 2};
-  std::vector<int64_t> X{0, 1,
+  Vector<int64_t> X_dims{2, 2, 2};
+  Vector<int64_t> X{0, 1,
                          1, 0,
 
                          1, 0,
                          1, 0};
-  test.AddInput<int64_t>("X", X_dims, std::vector<int64_t>{X.begin(), X.end()});
+  test.AddInput<int64_t>("X", X_dims, Vector<int64_t>{X.begin(), X.end()});
   test.AddOutput<int64_t>(
       "Y", {3, 4},
       {0, 0, 1, 1,

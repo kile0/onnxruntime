@@ -31,7 +31,7 @@ static Status TensorizeGEMVInteger16(const tvm::Tensor& tensor,
   InputRootScheduleWithVectorizationX86(tensor, ctx_codegen, ctx_sched);
 
   // decide kernel shape
-  std::vector<int32_t> kernel_shape;
+  Vector<int32_t> kernel_shape;
   kernel_shape.push_back(1);
   if (input_dim <= 64) {
     kernel_shape.push_back(input_dim);
@@ -66,7 +66,7 @@ static Status TensorizeGEMVInteger(const tvm::Tensor& tensor,
   InputRootScheduleWithVectorizationX86(tensor, ctx_codegen, ctx_sched);
 
   // decide kernel shape
-  std::vector<int32_t> kernel_shape;
+  Vector<int32_t> kernel_shape;
   kernel_shape.push_back(1);
   if (input_dim <= 256) {
     kernel_shape.push_back(input_dim);
@@ -110,7 +110,7 @@ static Status TensorizeIGEMV(const tvm::Tensor& tensor,
   int tensorize_input = (target_str == "avx512-skylake") ? 1024 : (target_str == "avx2") ? 512 : 256;
 
   // Tensorize kernel shape
-  std::vector<int32_t> kernel_shape;
+  Vector<int32_t> kernel_shape;
   kernel_shape.push_back(tensorize_embed);
   kernel_shape.push_back(tensorize_input);
 
@@ -139,8 +139,8 @@ static Status TensorizeIGEMM(const tvm::Tensor& tensor,
                              tvm_codegen::CodeGenContext& ctx_codegen,
                              tvm_codegen::ScheduleContext& ctx_sched,
                              tvm::Expr batchseq_expr,
-                             const std::vector<int64_t> embed_dim_vec,
-                             const std::vector<int64_t> input_dim_vec,
+                             const Vector<int64_t> embed_dim_vec,
+                             const Vector<int64_t> input_dim_vec,
                              const std::string& target_str) {
   // Schedule tensor and inputs as root
   bool status_imatmul = InsertRootScheduleAndClosure(tensor, ctx_sched);
@@ -203,7 +203,7 @@ static Status TensorizeIGEMM(const tvm::Tensor& tensor,
   tensorize_input = std::min(std::max(4, tensorize_input), input_dim_padded);
 
   // Tensorize kernel shape
-  std::vector<int32_t> kernel_shape;
+  Vector<int32_t> kernel_shape;
   kernel_shape.push_back(tensorize_batch);
   kernel_shape.push_back(tensorize_embed);
   kernel_shape.push_back(tensorize_input);

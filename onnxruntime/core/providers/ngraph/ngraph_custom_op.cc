@@ -187,8 +187,8 @@ Status NGRAPHCustomOp::Compute(const OrtApi* api, OrtKernelContext* context) con
 
   ORT_ENFORCE(ng_curr_exe_ != nullptr);
 
-  std::vector<std::shared_ptr<ngraph::runtime::Tensor>> ng_inputs;
-  std::vector<std::shared_ptr<ngraph::runtime::Tensor>> ng_outputs;
+  Vector<std::shared_ptr<ngraph::runtime::Tensor>> ng_inputs;
+  Vector<std::shared_ptr<ngraph::runtime::Tensor>> ng_outputs;
 
   // Write ONNXR input data to nGraph input tensors.
   try {
@@ -213,7 +213,7 @@ Status NGRAPHCustomOp::Compute(const OrtApi* api, OrtKernelContext* context) con
       const auto& dtype = ng_result->get_element_type();
       const auto& shape = ng_result->get_shape();
 
-      std::vector<int64_t> ort_shape{shape.begin(), shape.end()};
+      Vector<int64_t> ort_shape{shape.begin(), shape.end()};
       OrtValue* output_tensor = ort.KernelContext_GetOutput(context, output_index++, ort_shape.data(), ort_shape.size());
       void* output_data = ort.GetTensorMutableData<void>(output_tensor);
       std::lock_guard<std::mutex> lock(compute_lock_);

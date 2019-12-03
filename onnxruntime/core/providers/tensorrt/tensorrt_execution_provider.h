@@ -43,9 +43,9 @@ struct TensorrtFuncState {
   nvonnxparser::IParser* parser = nullptr;
   nvinfer1::ICudaEngine* engine = nullptr;
   nvinfer1::IExecutionContext* context = nullptr;
-  std::vector<std::vector<int>> input_info;
-  std::vector<std::vector<int>> output_info;
-  std::vector<std::vector<int64_t>> output_shapes;
+  Vector<Vector<int>> input_info;
+  Vector<Vector<int>> output_info;
+  Vector<Vector<int64_t>> output_shapes;
   OrtMutex* tensorrt_mu_ptr = nullptr;
 };
 
@@ -58,14 +58,14 @@ class TensorrtExecutionProvider : public IExecutionProvider {
   virtual std::shared_ptr<KernelRegistry> GetKernelRegistry() const override;
   std::unique_ptr<onnxruntime::IDataTransfer> GetDataTransfer() const override;
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph,
-                const std::vector<const KernelRegistry*>& /*kernel_registries*/) const override;
+                const Vector<const KernelRegistry*>& /*kernel_registries*/) const override;
 
   int GetDeviceId() const { return device_id_; }
 
-  common::Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                         std::vector<NodeComputeInfo>& node_compute_funcs) override;
+  common::Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                         Vector<NodeComputeInfo>& node_compute_funcs) override;
 
   AllocatorPtr GetAllocator(int id, OrtMemType mem_type) const override;
 
@@ -99,9 +99,9 @@ class TensorrtExecutionProvider : public IExecutionProvider {
   std::unordered_map<std::string, unique_pointer<nvonnxparser::IParser>> parsers_;
   std::unordered_map<std::string, unique_pointer<nvinfer1::ICudaEngine>> engines_;
   std::unordered_map<std::string, unique_pointer<nvinfer1::IExecutionContext>> contexts_;
-  std::unordered_map<std::string, std::vector<std::vector<int>>> input_info_;
-  std::unordered_map<std::string, std::vector<std::vector<int>>> output_info_;
-  std::unordered_map<std::string, std::vector<std::vector<int64_t>>> output_shapes_;
+  std::unordered_map<std::string, Vector<Vector<int>>> input_info_;
+  std::unordered_map<std::string, Vector<Vector<int>>> output_info_;
+  std::unordered_map<std::string, Vector<Vector<int64_t>>> output_shapes_;
 
   /**Get IndexedSubGraph based on node list of the subgraph*/
   std::unique_ptr<IndexedSubGraph> GetSubGraph(SubGraph_t graph_nodes_index, int& kernels_index,

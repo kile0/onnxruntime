@@ -25,7 +25,7 @@ tvm::Schedule CreateSchedule(const DemoTVMTensorCtx& ctx);
 tvm::runtime::Module BuildStackVMModule(tvm::Schedule schedule,
                                         tvm::BuildConfig config,
                                         tvm::Array<tvm::Tensor> tvm_args,
-                                        std::vector<std::string>& target_func_names);
+                                        Vector<std::string>& target_func_names);
 
 }  // namespace tvm_demo
 }  // namespace onnxruntime

@@ -12,7 +12,7 @@
 namespace onnxruntime {
 namespace nuphar {
 
-void CreateExecBlock(std::vector<std::unique_ptr<ExecBlock>>& exec_blocks,
+void CreateExecBlock(Vector<std::unique_ptr<ExecBlock>>& exec_blocks,
                      const NupharFuncInfo* func_info,
                      const nuphar::NupharSubgraphUnit& subgraph,
                      bool /*enable_tiling*/) {

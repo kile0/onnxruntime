@@ -25,9 +25,9 @@ class NodeIndexInfo;
 
 class IExecutionFrame {
  protected:
-  IExecutionFrame(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
-                  const std::unordered_map<int, OrtValue>& initializers, const std::vector<int>& fetch_mlvalue_idxs,
-                  const std::vector<OrtValue>& fetches, const OrtValueNameIdxMap& ort_value_idx_map,
+  IExecutionFrame(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
+                  const std::unordered_map<int, OrtValue>& initializers, const Vector<int>& fetch_mlvalue_idxs,
+                  const Vector<OrtValue>& fetches, const OrtValueNameIdxMap& ort_value_idx_map,
                   const NodeIndexInfo& node_index_info);
 
  public:
@@ -52,7 +52,7 @@ class IExecutionFrame {
    * write the output values to the 'fetches' vector
    * Don't access the values after SessionState is destroyed 
    */
-  Status GetOutputs(std::vector<OrtValue>& fetches);
+  Status GetOutputs(Vector<OrtValue>& fetches);
 
   AllocatorPtr GetAllocator(const OrtMemoryInfo& info) const;
 
@@ -72,9 +72,9 @@ class IExecutionFrame {
  private:
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(IExecutionFrame);
 
-  void Init(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
+  void Init(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
             const std::unordered_map<int, OrtValue>& initializers,
-            const std::vector<OrtValue>& fetches);
+            const Vector<OrtValue>& fetches);
 
   const OrtValue& GetMLValue(int ort_value_index) const {
     ORT_ENFORCE(ort_value_index >= 0 && static_cast<size_t>(ort_value_index) < all_values_size_);
@@ -89,18 +89,18 @@ class IExecutionFrame {
 
   // All the intermediate values for the entire graph.
   // Input and Output values are passed in by executors
-  std::vector<OrtValue> all_values_;
+  Vector<OrtValue> all_values_;
 
   // perf optimization to avoid calling all_values_.size() repeatedly as the size is fixed once constructed
   const size_t all_values_size_;
 
-  const std::vector<int> fetch_mlvalue_idxs_;
+  const Vector<int> fetch_mlvalue_idxs_;
 };
 
 class ExecutionFrame final : public IExecutionFrame {
  public:
-  ExecutionFrame(const std::vector<int>& feed_mlvalue_idxs, const std::vector<OrtValue>& feeds,
-                 const std::vector<int>& fetch_mlvalue_idxs, const std::vector<OrtValue>& fetches,
+  ExecutionFrame(const Vector<int>& feed_mlvalue_idxs, const Vector<OrtValue>& feeds,
+                 const Vector<int>& fetch_mlvalue_idxs, const Vector<OrtValue>& fetches,
                  // optional custom allocators. key is index in fetches
                  const std::unordered_map<size_t, IExecutor::CustomAllocator>& fetch_allocators,
                  const SessionState& session_state);

@@ -85,10 +85,10 @@ namespace Dml
 
         STDMETHOD(UploadToResource)(ID3D12Resource* dstData, const void* srcData, uint64_t srcDataSize) const noexcept final;
 
-        std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+        Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
         GetCapability(
             const onnxruntime::GraphViewer& graph,
-            const std::vector<const onnxruntime::KernelRegistry*>& registries
+            const Vector<const onnxruntime::KernelRegistry*>& registries
             ) const;
 
         uint32_t GetSuppportedDeviceDataTypeMask() const;
@@ -235,9 +235,9 @@ namespace Dml
             return m_impl->GetKernelRegistry();
         }
 
-        std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+        Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
             GetCapability(const onnxruntime::GraphViewer& graph,
-                const std::vector<const onnxruntime::KernelRegistry*>& kernel_registries) const final;
+                const Vector<const onnxruntime::KernelRegistry*>& kernel_registries) const final;
 
         // Not to be confused with IExecutionProvider::Sync() const.  The DML provider handles 
         // synchronization when copying inputs and outputs, therefore doesn't override the 

@@ -22,7 +22,7 @@ class GraphPartitioner : public Partitioner {
       : Partitioner(), is_op_type_supported_func_(is_op_type_supported_func) {}
 
   Status Partition(const onnxruntime::GraphViewer& graph,
-                   std::vector<std::unique_ptr<ComputeCapability>>& result);
+                   Vector<std::unique_ptr<ComputeCapability>>& result);
 
  private:
   IsOpTypeSupportedFunc is_op_type_supported_func_;
@@ -31,7 +31,7 @@ class GraphPartitioner : public Partitioner {
 
   void HandleSubgraph(const onnxruntime::GraphViewer& graph) override;
 
-  void CreateNewPartition(const Node& node, const std::vector<NodeIndex>& immedidate_rejected_partitions) override;
+  void CreateNewPartition(const Node& node, const Vector<NodeIndex>& immedidate_rejected_partitions) override;
 
   // FORCE_ONE_SUBGRAPH is a marco to generate single subgraph partition
   // It is mainly for debug and reproducing older version
@@ -39,8 +39,8 @@ class GraphPartitioner : public Partitioner {
   bool ForcePartition(
       const onnxruntime::GraphViewer& /*graph*/,
       const Node& node,
-      const std::vector<NodeIndex>& candiates,
-      const std::vector<NodeIndex>& immedidate_rejected_partitions) override;
+      const Vector<NodeIndex>& candiates,
+      const Vector<NodeIndex>& immedidate_rejected_partitions) override;
 #endif
 };
 

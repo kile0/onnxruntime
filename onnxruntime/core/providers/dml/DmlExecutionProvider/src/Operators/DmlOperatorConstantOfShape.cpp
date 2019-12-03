@@ -18,8 +18,8 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetInputCount() == 1); // ignored shape tensor
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetOutputCount() == 1); // output tensor
 
-        std::vector<std::optional<uint32_t>> inputIndices = {}; // The shape tensor is not GPU bound.
-        std::vector<std::optional<uint32_t>> outputIndices = { 0 };
+        Vector<std::optional<uint32_t>> inputIndices = {}; // The shape tensor is not GPU bound.
+        Vector<std::optional<uint32_t>> outputIndices = { 0 };
         Initialize(kernelCreationContext, inputIndices, outputIndices);
 
         // Read the tensor attribute for the output fill pattern.
@@ -47,12 +47,12 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext) override
     {
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
         THROW_IF_FAILED(m_executionProvider->FillTensorWithPattern(outputTensors.front(), valueBytes));
     }
 
 private:
-    std::vector<std::byte> valueBytes;
+    Vector<std::byte> valueBytes;
 };
 
 DML_OP_DEFINE_CREATION_FUNCTION(ConstantOfShape, DmlOperatorConstantOfShape);

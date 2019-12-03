@@ -13,7 +13,7 @@ using namespace onnxruntime::common;
 namespace onnxruntime {
 
 // Gelu supports limited data types.
-static std::vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)", "tensor(double)"};
+static Vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)", "tensor(double)"};
 
 static bool IsSupportedDataType(const Node& node) {
   for (const auto& input_arg : node.InputDefs()) {
@@ -115,7 +115,7 @@ Status GeluFusion::ApplyImpl(Graph& graph, bool& modified, int graph_level, cons
       continue;
     }
 
-    const std::vector<NodeArg*> gelu_input_defs{div.MutableInputDefs()[0]};
+    const Vector<NodeArg*> gelu_input_defs{div.MutableInputDefs()[0]};
     Node& gelu_node = graph.AddNode(graph.GenerateNodeName("Gelu"),
                                     "Gelu",
                                     "fused Gelu subgraphs ",

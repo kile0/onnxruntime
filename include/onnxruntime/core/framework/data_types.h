@@ -34,8 +34,8 @@ using MapInt64ToFloat = std::map<int64_t, float>;
 using MapInt64ToDouble = std::map<int64_t, double>;
 
 //vectors/sequences
-using VectorMapStringToFloat = std::vector<MapStringToFloat>;
-using VectorMapInt64ToFloat = std::vector<MapInt64ToFloat>;
+using VectorMapStringToFloat = Vector<MapStringToFloat>;
+using VectorMapInt64ToFloat = Vector<MapInt64ToFloat>;
 
 class DataTypeImpl;
 class TensorTypeBase;
@@ -217,13 +217,13 @@ class DataTypeImpl {
   static void RegisterDataType(MLDataType);
   static MLDataType GetDataType(const std::string&);
 
-  static const std::vector<MLDataType>& AllTensorTypes();
-  static const std::vector<MLDataType>& AllSequenceTensorTypes();
-  static const std::vector<MLDataType>& AllFixedSizeTensorTypes();
-  static const std::vector<MLDataType>& AllNumericTensorTypes();
-  static const std::vector<MLDataType>& AllIEEEFloatTensorTypes();
-  static const std::vector<MLDataType>& AllFixedSizeTensorExceptHalfTypes();
-  static const std::vector<MLDataType>& AllIEEEFloatTensorExceptHalfTypes();
+  static const Vector<MLDataType>& AllTensorTypes();
+  static const Vector<MLDataType>& AllSequenceTensorTypes();
+  static const Vector<MLDataType>& AllFixedSizeTensorTypes();
+  static const Vector<MLDataType>& AllNumericTensorTypes();
+  static const Vector<MLDataType>& AllIEEEFloatTensorTypes();
+  static const Vector<MLDataType>& AllFixedSizeTensorExceptHalfTypes();
+  static const Vector<MLDataType>& AllIEEEFloatTensorExceptHalfTypes();
 };
 
 std::ostream& operator<<(std::ostream& out, MLDataType data_type);

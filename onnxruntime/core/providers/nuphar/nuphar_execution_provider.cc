@@ -143,9 +143,9 @@ void NupharExecutionProvider::CreateTVMTarget() {
   tvm_target_ = tvm::Target::create(codegen_target_->GetTargetName());
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 NupharExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                                       const std::vector<const KernelRegistry*>&) const {
+                                       const Vector<const KernelRegistry*>&) const {
   // Perform shape inference. If shape inference failed,
   // do not run the model through Nuphar
   if (!ShapeInference(graph_viewer, *whole_graph_shape_infer_).IsOK()) {
@@ -187,7 +187,7 @@ NupharExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_vie
     nodes_indexes.insert(node.Index());
   }
 
-  std::vector<std::unique_ptr<ComputeCapability>> results;
+  Vector<std::unique_ptr<ComputeCapability>> results;
 
   typedef std::function<bool(const Node&)> IsSupportedFunc;
   IsSupportedFunc is_supported_func = [&](const Node& node) {
@@ -230,8 +230,8 @@ NupharExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_vie
     if (node.OpType() == "Slice") {
       auto num_inputs = inputs.size();
       ORT_ENFORCE(num_inputs > 0);
-      std::vector<int64_t> axes;
-      std::vector<int64_t> steps;
+      Vector<int64_t> axes;
+      Vector<int64_t> steps;
       if (num_inputs > 1) {
         // Slice-10
         bool is_starts_dynamic = !graph_viewer.IsConstantInitializer(inputs[1]->Name(), true);
@@ -268,7 +268,7 @@ NupharExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_vie
 
     if (node.OpType() == "Split") {
       const onnxruntime::NodeAttributes& attrs = node.GetAttributes();
-      auto axis = std::vector<int64_t>(1);
+      auto axis = Vector<int64_t>(1);
       auto it = attrs.find("axis");
       if (it != attrs.end()) {
         axis[0] = it->second.i();
@@ -340,7 +340,7 @@ Status NupharExecutionProvider::SaveInitializer(
     // note that session has not call SaveInitializedTensors yet,
     // so we need to make our own copy
     const auto& dims = proto->dims();
-    std::vector<int64_t> shape_dims(dims.size());
+    Vector<int64_t> shape_dims(dims.size());
     for (int i = 0; i < dims.size(); ++i)
       shape_dims[i] = dims[i];
 
@@ -389,8 +389,8 @@ Status NupharExecutionProvider::SaveInitializer(
 // Compile nodes into node_compute_funcs
 // Here, each of nodes is a fuse node
 Status NupharExecutionProvider::Compile(
-    const std::vector<onnxruntime::Node*>& nodes,
-    std::vector<NodeComputeInfo>& node_compute_funcs) {
+    const Vector<onnxruntime::Node*>& nodes,
+    Vector<NodeComputeInfo>& node_compute_funcs) {
   for (const auto* node : nodes) {
     NodeComputeInfo info;
 

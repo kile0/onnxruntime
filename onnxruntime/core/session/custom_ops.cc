@@ -92,14 +92,14 @@ struct CustomOpKernel : OpKernel {
   void* op_kernel_;
 };
 
-common::Status CreateCustomRegistry(const std::vector<OrtCustomOpDomain*>& op_domains, std::shared_ptr<CustomRegistry>& output) {
+common::Status CreateCustomRegistry(const Vector<OrtCustomOpDomain*>& op_domains, std::shared_ptr<CustomRegistry>& output) {
   output = std::make_shared<CustomRegistry>();
 
   for (auto& domain : op_domains) {
     if (domain->domain_[0])
       ONNX_NAMESPACE::OpSchemaRegistry::DomainToVersionRange::Instance().AddDomainToVersion(domain->domain_, 1, 1000);
 
-    std::vector<ONNX_NAMESPACE::OpSchema> schemas_list;
+    Vector<ONNX_NAMESPACE::OpSchema> schemas_list;
 
     for (auto& op : domain->custom_ops_) {
       ONNX_NAMESPACE::OpSchema schema(op->GetName(op), "unknown", 0);

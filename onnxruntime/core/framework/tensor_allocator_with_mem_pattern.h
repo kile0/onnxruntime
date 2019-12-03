@@ -15,7 +15,7 @@ class TensorAllocatorWithMemPattern : public ITensorAllocator {
  private:
   OrtValuePatternPlanner planner_;
   MemoryPatternGroup mem_patterns_;
-  std::vector<BufferUniquePtr>& weights_buffers_;
+  Vector<BufferUniquePtr>& weights_buffers_;
   std::map<OrtMemoryInfo, void*> buffers_;
   bool is_sealed_ = false;
   const ExecutionPlanBase& seq_plan_;
@@ -44,7 +44,7 @@ class TensorAllocatorWithMemPattern : public ITensorAllocator {
 
  public:
   TensorAllocatorWithMemPattern(const ExecutionPlanBase& execution_plan, const ExecutionProviders& exec_providers,
-                                std::vector<BufferUniquePtr>& weights_buffers)
+                                Vector<BufferUniquePtr>& weights_buffers)
       : ITensorAllocator(exec_providers),
         planner_(execution_plan),
         weights_buffers_(weights_buffers),

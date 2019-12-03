@@ -27,7 +27,7 @@ using onnxruntime::common::Status;
 //OnnxRuntimeSetEventWhenCallbackReturns
 class OnnxRuntimeCallbackInstance {
  private:
-  std::vector<ORT_EVENT> events_to_signal_;
+  Vector<ORT_EVENT> events_to_signal_;
 
  public:
   void AddEvent(ORT_EVENT event);

@@ -176,10 +176,10 @@ TEST(ConvTransposeTest, ConvTranspose_2D_OutputShape_1) {
   int image_size = 4 * 4;
   int input_channels = 3;
   int output_channels = 3;
-  std::vector<float> X;
+  Vector<float> X;
   for (int i = 0; i < input_channels * image_size; i++)
     X.push_back(1.0f);
-  std::vector<float> W;
+  Vector<float> W;
   int kernel_size = output_channels * input_channels * 3 * 3;
   for (int i = 0; i < kernel_size; i++)
     W.push_back(1.0f);

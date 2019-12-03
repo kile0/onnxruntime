@@ -43,10 +43,10 @@ static void CheckTensor(const Tensor& expected_tensor, const Tensor& output_tens
 class LayerNormOpTester : public OpTester {
  public:
   LayerNormOpTester(const char* op,
-                    const std::vector<int64_t>& X_dims,
-                    const std::vector<int64_t>& scale_dims,
-                    const std::vector<int64_t>& B_dims,
-                    const std::vector<int64_t>& Y_dims,
+                    const Vector<int64_t>& X_dims,
+                    const Vector<int64_t>& scale_dims,
+                    const Vector<int64_t>& B_dims,
+                    const Vector<int64_t>& Y_dims,
                     float epsilon,
                     int64_t axis = -1,
                     int64_t keep_dims = 1,
@@ -91,9 +91,9 @@ class LayerNormOpTester : public OpTester {
 #ifndef NDEBUG
     run_called_ = true;
 #endif
-    std::vector<MLValue> cpu_fetches;
-    std::vector<MLValue> cuda_fetches;
-    std::vector<MLValue> subgraph_fetches;
+    Vector<MLValue> cpu_fetches;
+    Vector<MLValue> cuda_fetches;
+    Vector<MLValue> subgraph_fetches;
     ComputeWithCPU(cpu_fetches);
     ComputeWithCUDA(cuda_fetches);
     ComputeOriSubgraphWithCPU(subgraph_fetches);
@@ -120,27 +120,27 @@ class LayerNormOpTester : public OpTester {
   }
 
  private:
-  void ComputeWithCPU(std::vector<MLValue>& cpu_fetches);
-  void ComputeWithCUDA(std::vector<MLValue>& cuda_fetches);
-  void ComputeOriSubgraphWithCPU(std::vector<MLValue>& subgraph_fetches);
+  void ComputeWithCPU(Vector<MLValue>& cpu_fetches);
+  void ComputeWithCUDA(Vector<MLValue>& cuda_fetches);
+  void ComputeOriSubgraphWithCPU(Vector<MLValue>& subgraph_fetches);
 
  private:
-  std::vector<int64_t> X_dims_;
-  std::vector<int64_t> scale_dims_;
-  std::vector<int64_t> B_dims_;
-  std::vector<int64_t> Y_dims_;
+  Vector<int64_t> X_dims_;
+  Vector<int64_t> scale_dims_;
+  Vector<int64_t> B_dims_;
+  Vector<int64_t> Y_dims_;
 
-  std::vector<float> X_data_;
-  std::vector<float> scale_data_;
-  std::vector<float> B_data_;
-  std::vector<float> Y_data_;
+  Vector<float> X_data_;
+  Vector<float> scale_data_;
+  Vector<float> B_data_;
+  Vector<float> Y_data_;
 
   float epsilon_;
   int64_t axis_;
   int64_t keep_dims_;
 };
 
-void LayerNormOpTester::ComputeWithCPU(std::vector<MLValue>& cpu_fetches) {
+void LayerNormOpTester::ComputeWithCPU(Vector<MLValue>& cpu_fetches) {
   auto p_model = BuildGraph();
   auto& graph = p_model->MainGraph();
 
@@ -149,7 +149,7 @@ void LayerNormOpTester::ComputeWithCPU(std::vector<MLValue>& cpu_fetches) {
 
   // Hookup the inputs and outputs
   std::unordered_map<std::string, MLValue> feeds;
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   FillFeedsAndOutputNames(feeds, output_names);
 
   SessionOptions so;
@@ -170,7 +170,7 @@ void LayerNormOpTester::ComputeWithCPU(std::vector<MLValue>& cpu_fetches) {
   ASSERT_TRUE((status = layernorm_session_object.Run(run_options, feeds, output_names, &cpu_fetches)).IsOK());
 }
 
-void LayerNormOpTester::ComputeWithCUDA(std::vector<MLValue>& cuda_fetches) {
+void LayerNormOpTester::ComputeWithCUDA(Vector<MLValue>& cuda_fetches) {
   if (DefaultCudaExecutionProvider() == nullptr) {
     return;
   }
@@ -183,7 +183,7 @@ void LayerNormOpTester::ComputeWithCUDA(std::vector<MLValue>& cuda_fetches) {
 
   // Hookup the inputs and outputs
   std::unordered_map<std::string, MLValue> feeds;
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   FillFeedsAndOutputNames(feeds, output_names);
 
   SessionOptions so;
@@ -207,10 +207,10 @@ void LayerNormOpTester::ComputeWithCUDA(std::vector<MLValue>& cuda_fetches) {
   EXPECT_TRUE((status = cuda_session_object.Run(run_options, feeds, output_names, &cuda_fetches)).IsOK()) << status;
 }
 
-void LayerNormOpTester::ComputeOriSubgraphWithCPU(std::vector<MLValue>& subgraph_fetches) {
+void LayerNormOpTester::ComputeOriSubgraphWithCPU(Vector<MLValue>& subgraph_fetches) {
   NameMLValMap feeds;
   OrtValue ml_value;
-  std::vector<std::string> output_names{"Y"};
+  Vector<std::string> output_names{"Y"};
 
   CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), X_dims_, X_data_, &ml_value);
   feeds.insert(std::make_pair("X", ml_value));
@@ -236,10 +236,10 @@ void LayerNormOpTester::ComputeOriSubgraphWithCPU(std::vector<MLValue>& subgraph
 
 TEST(LayerNormTest, BERTLayerNorm) {
   float epsilon = 1e-12f;
-  std::vector<int64_t> X_dims{4, 128};
-  std::vector<int64_t> scale_dims{128};
-  std::vector<int64_t> B_dims{128};
-  std::vector<int64_t> Y_dims{4, 128};
+  Vector<int64_t> X_dims{4, 128};
+  Vector<int64_t> scale_dims{128};
+  Vector<int64_t> B_dims{128};
+  Vector<int64_t> Y_dims{4, 128};
   LayerNormOpTester test("LayerNormalization", X_dims, scale_dims, B_dims, Y_dims, epsilon, -1, 1);
   test.Run();
 }

@@ -26,8 +26,8 @@ class MklDnnRelu : public MklDnnKernel {
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
                         mkldnn::engine& cpu_engine,
-                        std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) {
+                        Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) {
     Ort::CustomOpApi ort{*api};
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
 

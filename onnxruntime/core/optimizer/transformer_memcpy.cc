@@ -271,8 +271,8 @@ void TransformerMemcpyImpl::AddCopyNode(onnxruntime::NodeArg* arg, bool is_input
 
   const auto op_name = is_input ? "MemcpyFromHost" : "MemcpyToHost";
   auto& new_node = graph_.AddNode(new_node_name, op_name, "Copy from/to host memory",
-                                  std::vector<onnxruntime::NodeArg*>{src_arg},
-                                  std::vector<onnxruntime::NodeArg*>{dst_arg});
+                                  Vector<onnxruntime::NodeArg*>{src_arg},
+                                  Vector<onnxruntime::NodeArg*>{dst_arg});
   new_node.SetExecutionProviderType(provider_);
   std::map<const onnxruntime::NodeArg*, onnxruntime::NodeArg*> map = {{arg, new_arg}};
   auto it = provider_input_nodes_.find(arg);

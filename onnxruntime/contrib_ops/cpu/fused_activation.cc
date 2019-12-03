@@ -30,7 +30,7 @@ common::Status GetFusedActivationAttr(const OpKernelInfo& info, MLAS_ACTIVATION&
         return Status(common::ONNXRUNTIME, common::INVALID_ARGUMENT, "unimplemented activation: " + activation_type);
       }
 
-      std::vector<float> activation_params;
+      Vector<float> activation_params;
       common::Status status = info.GetAttrs<float>("activation_params", activation_params);
       if (!status.IsOK()) {
         return status;

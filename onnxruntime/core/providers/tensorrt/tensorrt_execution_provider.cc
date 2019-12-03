@@ -109,7 +109,7 @@ std::unique_ptr<onnxruntime::IDataTransfer> TensorrtExecutionProvider::GetDataTr
 }
 
 std::unique_ptr<IndexedSubGraph> TensorrtExecutionProvider::GetSubGraph(SubGraph_t graph_nodes_index, int& kernels_index, const onnxruntime::GraphViewer& graph) const {
-  const std::vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
+  const Vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
   std::unordered_set<size_t> node_set;
   node_set.reserve(graph_nodes_index.first.size());
   for (const auto& index : graph_nodes_index.first) {
@@ -213,7 +213,7 @@ SubGraphCollection_t TensorrtExecutionProvider::GetSupportedList(SubGraphCollect
   }
 
   iterations++;
-  const std::vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
+  const Vector<NodeIndex>& node_index = graph.GetNodesInTopologicalOrder();
   int counter = 0;
   for (const auto& group : nodes_vector_input) {
     //construct subgraph
@@ -223,13 +223,13 @@ SubGraphCollection_t TensorrtExecutionProvider::GetSupportedList(SubGraphCollect
       if (group.second) {
         nodes_list_output.push_back(group);
       } else {
-        onnxruntime::Model model_build(graph.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph.DomainToVersionMap(), std::vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
+        onnxruntime::Model model_build(graph.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph.DomainToVersionMap(), Vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
         onnxruntime::Graph& graph_build = model_build.MainGraph();
 
         //Add node and node args
         for (const auto& index : group.first) {
           const auto& node = graph.GetNode(node_index[index]);
-          std::vector<onnxruntime::NodeArg*> inputs, outputs;
+          Vector<onnxruntime::NodeArg*> inputs, outputs;
           for (auto input : node->InputDefs()) {
             auto& n_input = graph_build.GetOrCreateNodeArg(input->Name(), input->TypeAsProto());
             inputs.push_back(&n_input);
@@ -267,7 +267,7 @@ SubGraphCollection_t TensorrtExecutionProvider::GetSupportedList(SubGraphCollect
 
         SubGraphCollection_t next_nodes_list;
         const onnxruntime::GraphViewer graph_viewer(graph_build);
-        const std::vector<NodeIndex>& subgraph_node_index = graph_viewer.GetNodesInTopologicalOrder();
+        const Vector<NodeIndex>& subgraph_node_index = graph_viewer.GetNodesInTopologicalOrder();
         next_nodes_list = GetSupportedList(parser_nodes_list, iterations, max_iterations, graph_viewer, early_termination);
         for (int i = 0, end = next_nodes_list.size(); i < end; ++i) {
           for (int j = 0, end = next_nodes_list[i].first.size(); j < end; ++j) {
@@ -281,14 +281,14 @@ SubGraphCollection_t TensorrtExecutionProvider::GetSupportedList(SubGraphCollect
   return nodes_list_output;
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 TensorrtExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
-                                         const std::vector<const KernelRegistry*>& /*kernel_registries*/) const {
+                                         const Vector<const KernelRegistry*>& /*kernel_registries*/) const {
   // Construct modelproto from graph
-  onnxruntime::Model model(graph.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph.DomainToVersionMap(), std::vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
+  onnxruntime::Model model(graph.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph.DomainToVersionMap(), Vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
   onnxruntime::Graph& graph_build = model.MainGraph();
   for (const auto& node : graph.Nodes()) {
-    std::vector<onnxruntime::NodeArg*> inputs, outputs;
+    Vector<onnxruntime::NodeArg*> inputs, outputs;
     for (auto input : node.InputDefs()) {
       auto& n_input = graph_build.GetOrCreateNodeArg(input->Name(), input->TypeAsProto());
       inputs.push_back(&n_input);
@@ -335,7 +335,7 @@ TensorrtExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
   }
 
   // Construct subgraph capability from node list
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+  Vector<std::unique_ptr<ComputeCapability>> result;
   int counter = 0;
   for (const auto& group : supported_nodes_vector) {
     if (!group.first.empty()) {
@@ -347,15 +347,15 @@ TensorrtExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
   return result;
 }
 
-common::Status TensorrtExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                                                  std::vector<NodeComputeInfo>& node_compute_funcs) {
+common::Status TensorrtExecutionProvider::Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                                                  Vector<NodeComputeInfo>& node_compute_funcs) {
   for (const auto* fused_node : fused_nodes) {
-    std::vector<int> input_indexes;
-    std::vector<int> input_dim_sizes;
-    std::vector<int> output_indexes;
-    std::vector<int> output_dim_sizes;
-    std::vector<std::vector<int64_t>> output_shapes;
-    std::vector<int> output_types;
+    Vector<int> input_indexes;
+    Vector<int> input_dim_sizes;
+    Vector<int> output_indexes;
+    Vector<int> output_dim_sizes;
+    Vector<Vector<int64_t>> output_shapes;
+    Vector<int> output_types;
 
     // Build map from input name to its index in input definitions
     std::unordered_map<std::string, int> input_map;
@@ -379,7 +379,7 @@ common::Status TensorrtExecutionProvider::Compile(const std::vector<onnxruntime:
       return common::Status(common::ONNXRUNTIME, common::INVALID_ARGUMENT, "Function body is empty");
     }
     const Graph& graph_body = func_body->Body();
-    onnxruntime::Model model(graph_body.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph_body.DomainToVersionMap(), std::vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
+    onnxruntime::Model model(graph_body.Name(), true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), graph_body.DomainToVersionMap(), Vector<ONNX_NAMESPACE::FunctionProto>(), *GetLogger());
     ONNX_NAMESPACE::ModelProto model_proto = model.ToProto();
     *(model_proto.mutable_graph()) = graph_body.ToGraphProto();
     model_proto.set_ir_version(ONNX_NAMESPACE::Version::IR_VERSION);
@@ -529,14 +529,14 @@ common::Status TensorrtExecutionProvider::Compile(const std::vector<onnxruntime:
     compute_info.compute_func = [](FunctionState state, const OrtCustomOpApi* api, OrtKernelContext* context) {
       Ort::CustomOpApi ort{*api};
       TensorrtFuncState* trt_state = reinterpret_cast<TensorrtFuncState*>(state);
-      const std::vector<int>& input_indexes = (trt_state->input_info)[0];
-      const std::vector<int>& output_indexes = (trt_state->output_info)[0];
-      const std::vector<int>& output_types = (trt_state->output_info)[2];
+      const Vector<int>& input_indexes = (trt_state->input_info)[0];
+      const Vector<int>& output_indexes = (trt_state->output_info)[0];
+      const Vector<int>& output_types = (trt_state->output_info)[2];
 
       int num_binding_inputs = input_indexes.size();
       int num_binding_outputs = output_indexes.size();
       int total_bindings = num_binding_inputs + num_binding_outputs;
-      std::vector<void*> buffers(total_bindings);
+      Vector<void*> buffers(total_bindings);
 
       bool dynamic_shape = false;
       if (!trt_state->context->allInputDimensionsSpecified()) {
@@ -581,8 +581,8 @@ common::Status TensorrtExecutionProvider::Compile(const std::vector<onnxruntime:
       }
 
       // Allocate CUDA memory for outputs
-      std::vector<int> output_dim_size(num_binding_outputs, 1);
-      std::vector<OrtValue*> output_tensor(num_binding_outputs, nullptr);
+      Vector<int> output_dim_size(num_binding_outputs, 1);
+      Vector<OrtValue*> output_tensor(num_binding_outputs, nullptr);
       for (int i = 0, end = num_binding_outputs; i < end; ++i) {
         // Set dynamic shapes
         nvinfer1::Dims dimensions = trt_state->context->getBindingDimensions(static_cast<int>(i + num_binding_inputs));

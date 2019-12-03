@@ -11,7 +11,7 @@ using namespace onnxruntime::common;
 namespace onnxruntime {
 
 // LayerNorm supports limited data types.
-static std::vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)"};
+static Vector<std::string> supported_data_types{"tensor(float16)", "tensor(float)"};
 
 static bool IsSupportedDataType(const Node& node) {
   for (const auto& input_arg : node.InputDefs()) {
@@ -121,7 +121,7 @@ Note: This fusion doesn't consider the following case:
 Status SkipLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_level, const logging::Logger& logger) const {
   GraphViewer graph_viewer(graph);
   const auto& node_topology_list = graph_viewer.GetNodesInTopologicalOrder();
-  std::vector<std::reference_wrapper<Node>> nodes_to_remove;
+  Vector<std::reference_wrapper<Node>> nodes_to_remove;
   for (auto node_index : node_topology_list) {
     nodes_to_remove.clear();
     Node* p_layernorm = graph.GetNode(node_index);
@@ -149,11 +149,11 @@ Status SkipLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_le
     Format matched_format = Format::None;
 
     // Format 1
-    std::vector<graph_utils::EdgeEndToMatch> format1_parent_path{
+    Vector<graph_utils::EdgeEndToMatch> format1_parent_path{
         {0, 0, "Add", {7}, kOnnxDomain},
         {0, 0, "Add", {7}, kOnnxDomain}};
 
-    std::vector<const Node::EdgeEnd*> edges;
+    Vector<const Node::EdgeEnd*> edges;
     if (graph_utils::FindPath(ln_node, true, format1_parent_path, edges, logger)) {
       p_add1 = const_cast<Node*>(&edges[0]->GetNode());
       p_add2 = const_cast<Node*>(&edges[1]->GetNode());
@@ -166,7 +166,7 @@ Status SkipLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_le
 
     if (matched_format == Format::None) {
       // Format 2
-      std::vector<graph_utils::EdgeEndToMatch> format2_parent_path{
+      Vector<graph_utils::EdgeEndToMatch> format2_parent_path{
           {0, 0, "Add", {7}, kOnnxDomain},
           {0, 1, "Add", {7}, kOnnxDomain}};
 
@@ -183,7 +183,7 @@ Status SkipLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_le
 
     if (matched_format == Format::None) {
       // Format 3
-      std::vector<graph_utils::EdgeEndToMatch> format3_parent_path{
+      Vector<graph_utils::EdgeEndToMatch> format3_parent_path{
           {0, 0, "Add", {7}, kOnnxDomain}};
 
       if (graph_utils::FindPath(ln_node, true, format3_parent_path, edges, logger)) {
@@ -200,7 +200,7 @@ Status SkipLayerNormFusion::ApplyImpl(Graph& graph, bool& modified, int graph_le
     }
 
     // Get the inputs for the new SkipLayerNormalization node.
-    std::vector<NodeArg*> skip_layer_norm_input_defs{p_add1->MutableInputDefs()[0],
+    Vector<NodeArg*> skip_layer_norm_input_defs{p_add1->MutableInputDefs()[0],
                                                      p_add1->MutableInputDefs()[1],
                                                      ln_node.MutableInputDefs()[1],
                                                      ln_node.MutableInputDefs()[2]};

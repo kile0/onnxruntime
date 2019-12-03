@@ -29,7 +29,7 @@ Status BiasGelu::ApplyImpl(Graph& graph, bool& modified, int graph_level, const 
       continue;
     }
 
-    std::vector<NodeArg*> gelu_input;
+    Vector<NodeArg*> gelu_input;
     const TensorShapeProto* add_input1_shape = node.MutableInputDefs()[0]->Shape();
     const TensorShapeProto* add_input2_shape = node.MutableInputDefs()[1]->Shape();
     if (add_input1_shape != nullptr &&

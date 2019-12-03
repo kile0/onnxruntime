@@ -57,7 +57,7 @@ Status Compress::ComputeInternal(OpKernelContext* ctx) const {
   int32_t positive_condition_count = 0;
   CUDA_RETURN_IF_ERROR(cudaMemcpy(&positive_condition_count, condition_cumulative_sum + valid_condition_length - 1, sizeof(int32_t), cudaMemcpyDeviceToHost));
 
-  std::vector<int64_t> output_dims(input_dimensions);
+  Vector<int64_t> output_dims(input_dimensions);
   if (has_axis_) {
     output_dims[axis] = positive_condition_count;
   } else {

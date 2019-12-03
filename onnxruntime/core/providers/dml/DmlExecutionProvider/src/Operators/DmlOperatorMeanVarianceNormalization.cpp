@@ -12,14 +12,14 @@ public:
     DmlOperatorMeanVarNormalization(const MLOperatorKernelCreationContext& kernelCreationContext)
     :   DmlOperator(kernelCreationContext)
     {
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {0, std::nullopt, std::nullopt};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {0, std::nullopt, std::nullopt};
         DmlOperator::Initialize(kernelCreationContext, kernelInputIndices);
 
         const bool acrossChannels = (static_cast<bool>(kernelCreationContext.GetOptionalAttribute<int>(AttrName::AcrossChannels, 0)));
         const bool normalizeVariance = (static_cast<bool>(kernelCreationContext.GetOptionalAttribute<int>(AttrName::NormalizeVariance, 0)));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         std::optional<ActivationOperatorDesc> fusedActivation = FusionHelpers::TryGetFusedActivationDesc(kernelCreationContext);
         DML_OPERATOR_DESC fusedActivationDmlDesc = fusedActivation ? fusedActivation->GetDmlDesc() : DML_OPERATOR_DESC();
 

@@ -15,11 +15,11 @@ TEST(PoolTest, MaxPool) {
   OpTester test("MaxPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       0.19151945412158966, 0.6221087574958801, 0.43772774934768677, 0.7853586077690125, 0.7799758315086365, 0.27259260416030884, 0.2764642536640167, 0.801872193813324,
       0.9581393599510193, 0.8759326338768005, 0.35781726241111755, 0.5009950995445251, 0.683462917804718, 0.7127020359039307, 0.37025076150894165, 0.5611962080001831,
       0.5030831694602966, 0.013768449425697327, 0.772826611995697, 0.8826411962509155, 0.36488598585128784, 0.6153962016105652, 0.07538124173879623, 0.3688240051269531,
@@ -46,9 +46,9 @@ TEST(PoolTest, MaxPool) {
       0.8905571699142456, 0.9732648134231567, 0.5934113264083862, 0.36607450246810913, 0.3230946958065033, 0.8714232444763184, 0.2156340628862381, 0.7349451780319214,
       0.36561909317970276, 0.8016026020050049, 0.7827355861663818, 0.7013553977012634, 0.6227765679359436, 0.4936826527118683, 0.8405377268791199, 0.7120969891548157,
       0.4439089894294739, 0.031034860759973526, 0.36323976516723633, 0.7307217717170715, 0.475566565990448, 0.3444169759750366, 0.6408804059028625, 0.12620532512664795};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -67,11 +67,11 @@ TEST(PoolTest, MaxPool_F16) {
   OpTester test("MaxPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       0.19151945412158966, 0.6221087574958801, 0.43772774934768677, 0.7853586077690125, 0.7799758315086365, 0.27259260416030884, 0.2764642536640167, 0.801872193813324,
       0.9581393599510193, 0.8759326338768005, 0.35781726241111755, 0.5009950995445251, 0.683462917804718, 0.7127020359039307, 0.37025076150894165, 0.5611962080001831,
       0.5030831694602966, 0.013768449425697327, 0.772826611995697, 0.8826411962509155, 0.36488598585128784, 0.6153962016105652, 0.07538124173879623, 0.3688240051269531,
@@ -98,13 +98,13 @@ TEST(PoolTest, MaxPool_F16) {
       0.8905571699142456, 0.9732648134231567, 0.5934113264083862, 0.36607450246810913, 0.3230946958065033, 0.8714232444763184, 0.2156340628862381, 0.7349451780319214,
       0.36561909317970276, 0.8016026020050049, 0.7827355861663818, 0.7013553977012634, 0.6227765679359436, 0.4936826527118683, 0.8405377268791199, 0.7120969891548157,
       0.4439089894294739, 0.031034860759973526, 0.36323976516723633, 0.7307217717170715, 0.475566565990448, 0.3444169759750366, 0.6408804059028625, 0.12620532512664795};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
   int x_size = 1 * 3 * 8 * 8;
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
 
-  std::vector<MLFloat16> f_X(x_size);
-  std::vector<MLFloat16> f_Y(3);
+  Vector<MLFloat16> f_X(x_size);
+  Vector<MLFloat16> f_Y(3);
   ConvertFloatToMLFloat16(x_vals.data(), f_X.data(), x_size);
   ConvertFloatToMLFloat16(expected_vals.data(), f_Y.data(), 3);
 
@@ -118,12 +118,12 @@ static void MaxPool_8_WithIndexTest(bool has_index, int64_t storage_order = 0) {
   OpTester test("MaxPool", 8);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
   test.AddAttribute("storage_order", storage_order);
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       0.19151945412158966, 0.6221087574958801, 0.43772774934768677, 0.7853586077690125, 0.7799758315086365, 0.27259260416030884, 0.2764642536640167, 0.801872193813324,
       0.9581393599510193, 0.8759326338768005, 0.35781726241111755, 0.5009950995445251, 0.683462917804718, 0.7127020359039307, 0.37025076150894165, 0.5611962080001831,
       0.5030831694602966, 0.013768449425697327, 0.772826611995697, 0.8826411962509155, 0.36488598585128784, 0.6153962016105652, 0.07538124173879623, 0.3688240051269531,
@@ -150,11 +150,11 @@ static void MaxPool_8_WithIndexTest(bool has_index, int64_t storage_order = 0) {
       0.8905571699142456, 0.9732648134231567, 0.5934113264083862, 0.36607450246810913, 0.3230946958065033, 0.8714232444763184, 0.2156340628862381, 0.7349451780319214,
       0.36561909317970276, 0.8016026020050049, 0.7827355861663818, 0.7013553977012634, 0.6227765679359436, 0.4936826527118683, 0.8405377268791199, 0.7120969891548157,
       0.4439089894294739, 0.031034860759973526, 0.36323976516723633, 0.7307217717170715, 0.475566565990448, 0.3444169759750366, 0.6408804059028625, 0.12620532512664795};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
-  std::vector<int64_t> expected_indices_row = {57, 67, 136};
-  std::vector<int64_t> expected_indices_col = {15, 88, 129};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
+  Vector<int64_t> expected_indices_row = {57, 67, 136};
+  Vector<int64_t> expected_indices_col = {15, 88, 129};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -175,14 +175,14 @@ TEST(PoolTest, MaxPool1D) {
   OpTester test("MaxPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("pads", vector<int64_t>{0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
-  std::vector<int64_t> x_dims = {1, 2, 4};
-  std::vector<int64_t> expected_dims = {1, 2, 2};
-  std::vector<float> expected_vals = {2, 4, 6, 8};
+  Vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
+  Vector<int64_t> x_dims = {1, 2, 4};
+  Vector<int64_t> expected_dims = {1, 2, 2};
+  Vector<float> expected_vals = {2, 4, 6, 8};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -193,16 +193,16 @@ static void MaxPool1D_8_WithIndexTest(int64_t storage_order) {
   OpTester test("MaxPool", 8);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("pads", vector<int64_t>{0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
   test.AddAttribute("storage_order", storage_order);
 
-  std::vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
-  std::vector<int64_t> x_dims = {1, 2, 4};
-  std::vector<int64_t> expected_dims = {1, 2, 2};
-  std::vector<float> expected_vals = {2, 4, 6, 8};
-  std::vector<int64_t> expected_indices = {1, 3, 5, 7};
+  Vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
+  Vector<int64_t> x_dims = {1, 2, 4};
+  Vector<int64_t> expected_dims = {1, 2, 2};
+  Vector<float> expected_vals = {2, 4, 6, 8};
+  Vector<int64_t> expected_indices = {1, 3, 5, 7};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -219,16 +219,16 @@ TEST(PoolTest, MaxPool_10_Dilation_1d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1});
+  test.AddAttribute("strides", Vector<int64_t>{1});
   test.AddAttribute("pads", vector<int64_t>{0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{3});
   test.AddAttribute("dilations", vector<int64_t>{3});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1, -3, -2, -4, -6, -5, -4, -2};
-  std::vector<int64_t> x_dims = {1, 1, 12};
-  std::vector<int64_t> expected_dims = {1, 1, 6};
-  std::vector<float> expected_vals = {4, 3, 2, 4, -1, -2};
+  Vector<int64_t> x_dims = {1, 1, 12};
+  Vector<int64_t> expected_dims = {1, 1, 6};
+  Vector<float> expected_vals = {4, 3, 2, 4, -1, -2};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -240,13 +240,13 @@ TEST(PoolTest, MaxPool_DefaultDilations) {
 
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<int64_t> x_dims = {1, 3, 3};
-  std::vector<float> x_vals = {0.f, 1.f, 2.f,
+  Vector<int64_t> x_dims = {1, 3, 3};
+  Vector<float> x_vals = {0.f, 1.f, 2.f,
                                3.f, 4.f, 5.f,
                                6.f, 7.f, 8.f};
 
-  std::vector<int64_t> expected_dims = {1, 3, 2};
-  std::vector<float> expected_vals = {1.f, 2.f,
+  Vector<int64_t> expected_dims = {1, 3, 2};
+  Vector<float> expected_vals = {1.f, 2.f,
                                       4.f, 5.f,
                                       7.f, 8.f};
 
@@ -259,16 +259,16 @@ TEST(PoolTest, MaxPool_10_DilationPadding_1d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1});
+  test.AddAttribute("strides", Vector<int64_t>{1});
   test.AddAttribute("pads", vector<int64_t>{1, 1});
   test.AddAttribute("kernel_shape", vector<int64_t>{3});
   test.AddAttribute("dilations", vector<int64_t>{3});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1, -3, -2, -4, -6, -5, -4, -2};
-  std::vector<int64_t> x_dims = {1, 1, 12};
-  std::vector<int64_t> expected_dims = {1, 1, 8};
-  std::vector<float> expected_vals = {2, 4, 3, 2, 4, -1, -2, -2};
+  Vector<int64_t> x_dims = {1, 1, 12};
+  Vector<int64_t> expected_dims = {1, 1, 8};
+  Vector<float> expected_vals = {2, 4, 3, 2, 4, -1, -2, -2};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -279,19 +279,19 @@ TEST(PoolTest, MaxPool_10_Dilation_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("dilations", vector<int64_t>{2, 2});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1,
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
       13, 15, 14, 16, -4};
-  std::vector<int64_t> x_dims = {1, 1, 4, 5};
-  std::vector<int64_t> expected_dims = {1, 1, 2, 3};
-  std::vector<float> expected_vals = {10, 12, 10, 14, 16, 14};
+  Vector<int64_t> x_dims = {1, 1, 4, 5};
+  Vector<int64_t> expected_dims = {1, 1, 2, 3};
+  Vector<float> expected_vals = {10, 12, 10, 14, 16, 14};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -302,19 +302,19 @@ TEST(PoolTest, MaxPool_10_DilationPadding_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("dilations", vector<int64_t>{2, 2});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1,
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
       13, 15, 14, 16, -4};
-  std::vector<int64_t> x_dims = {1, 1, 4, 5};
-  std::vector<int64_t> expected_dims = {1, 1, 4, 5};
-  std::vector<float> expected_vals = {
+  Vector<int64_t> x_dims = {1, 1, 4, 5};
+  Vector<int64_t> expected_dims = {1, 1, 4, 5};
+  Vector<float> expected_vals = {
       7, 6, 8, 6, 8,
       11, 10, 12, 10, 12,
       15, 14, 16, 14, 16,
@@ -330,19 +330,19 @@ TEST(PoolTest, MaxPool_10_Dilation_Ceil0_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{2, 1});
+  test.AddAttribute("strides", Vector<int64_t>{2, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("dilations", vector<int64_t>{2, 2});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1,
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
       13, 15, 14, 16, -4};
-  std::vector<int64_t> x_dims = {1, 1, 4, 5};
-  std::vector<int64_t> expected_dims = {1, 1, 1, 3};
-  std::vector<float> expected_vals = {10, 12, 10};
+  Vector<int64_t> x_dims = {1, 1, 4, 5};
+  Vector<int64_t> expected_dims = {1, 1, 1, 3};
+  Vector<float> expected_vals = {10, 12, 10};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -353,20 +353,20 @@ TEST(PoolTest, MaxPool_10_Dilation_Ceil1_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{2, 1});
+  test.AddAttribute("strides", Vector<int64_t>{2, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("dilations", vector<int64_t>{2, 2});
   test.AddAttribute("ceil_mode", (int64_t)1);
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1,
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
       13, 15, 14, 16, -4};
-  std::vector<int64_t> x_dims = {1, 1, 4, 5};
-  std::vector<int64_t> expected_dims = {1, 1, 2, 3};
-  std::vector<float> expected_vals = {10, 12, 10, 10, 12, 10};
+  Vector<int64_t> x_dims = {1, 1, 4, 5};
+  Vector<int64_t> expected_dims = {1, 1, 2, 3};
+  Vector<float> expected_vals = {10, 12, 10, 10, 12, 10};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -377,12 +377,12 @@ TEST(PoolTest, MaxPool_10_DilationPadding_3d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1, 1});
   test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1, 1, 1});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
   test.AddAttribute("dilations", vector<int64_t>{2, 2, 2});
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4, -1,
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
@@ -391,9 +391,9 @@ TEST(PoolTest, MaxPool_10_DilationPadding_3d) {
       5, 7, 6, 8, -2,
       9, 11, 10, 12, -3,
       13, 15, 14, 16, -4};
-  std::vector<int64_t> x_dims = {1, 1, 2, 4, 5};
-  std::vector<int64_t> expected_dims = {1, 1, 2, 4, 5};
-  std::vector<float> expected_vals = {
+  Vector<int64_t> x_dims = {1, 1, 2, 4, 5};
+  Vector<int64_t> expected_dims = {1, 1, 2, 4, 5};
+  Vector<float> expected_vals = {
       7, 6, 8, 6, 8,
       11, 10, 12, 10, 12,
       15, 14, 16, 14, 16,
@@ -411,7 +411,7 @@ TEST(PoolTest, MaxPool_10_DilationPadding_3d) {
 TEST(PoolTest, GlobalMaxPool) {
   OpTester test("GlobalMaxPool");
 
-  std::vector<float> x_vals = {0.19151945412158966, 0.6221087574958801, 0.43772774934768677,
+  Vector<float> x_vals = {0.19151945412158966, 0.6221087574958801, 0.43772774934768677,
                                0.7853586077690125, 0.7799758315086365, 0.27259260416030884,
                                0.2764642536640167, 0.801872193813324, 0.9581393599510193,
                                0.8759326338768005, 0.35781726241111755, 0.5009950995445251,
@@ -475,9 +475,9 @@ TEST(PoolTest, GlobalMaxPool) {
                                0.7120969891548157, 0.4439089894294739, 0.031034860759973526,
                                0.36323976516723633, 0.7307217717170715, 0.475566565990448,
                                0.3444169759750366, 0.6408804059028625, 0.12620532512664795};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -487,7 +487,7 @@ TEST(PoolTest, GlobalMaxPool) {
 TEST(PoolTest, GlobalMaxPool3D) {
   OpTester test("GlobalMaxPool");
 
-  std::vector<float> x_vals = {0.19151945412158966, 0.6221087574958801, 0.43772774934768677,
+  Vector<float> x_vals = {0.19151945412158966, 0.6221087574958801, 0.43772774934768677,
                                0.7853586077690125, 0.7799758315086365, 0.27259260416030884,
                                0.2764642536640167, 0.801872193813324, 0.9581393599510193,
                                0.8759326338768005, 0.35781726241111755, 0.5009950995445251,
@@ -551,9 +551,9 @@ TEST(PoolTest, GlobalMaxPool3D) {
                                0.7120969891548157, 0.4439089894294739, 0.031034860759973526,
                                0.36323976516723633, 0.7307217717170715, 0.475566565990448,
                                0.3444169759750366, 0.6408804059028625, 0.12620532512664795};
-  std::vector<int64_t> x_dims = {1, 3, 8, 4, 2};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1, 1};
-  std::vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
+  Vector<int64_t> x_dims = {1, 3, 8, 4, 2};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1, 1};
+  Vector<float> expected_vals = {0.9920814633369446, 0.9820047616958618, 0.9946538209915161};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -564,11 +564,11 @@ TEST(PoolTest, AveragePool) {
   OpTester test("AveragePool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
 
-  std::vector<float> x_vals = {0.3337382376194, 0.8794041872024536, 0.33745908737182617,
+  Vector<float> x_vals = {0.3337382376194, 0.8794041872024536, 0.33745908737182617,
                                0.666634202003479, 0.44255536794662476, 0.6473854184150696,
                                0.7674617171287537, 0.8822641968727112, 0.8852233290672302,
                                0.7453723549842834, 0.2818361520767212, 0.8706393241882324,
@@ -632,9 +632,9 @@ TEST(PoolTest, AveragePool) {
                                0.4528728425502777, 0.2815922796726227, 0.820142388343811,
                                0.4963360130786896, 0.46687841415405273, 0.7405545115470886,
                                0.40191709995269775, 0.21238186955451965, 0.46927347779273987};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.5146896243095398, 0.4851023256778717, 0.4756942689418793};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.5146896243095398, 0.4851023256778717, 0.4756942689418793};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -645,17 +645,17 @@ TEST(PoolTest, AveragePool_IncludePadPixel) {
   OpTester test("AveragePool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("count_include_pad", (int64_t)1);
-  std::vector<float> x_vals = {0.3337f, 0.8794f, 0.3375f,
+  Vector<float> x_vals = {0.3337f, 0.8794f, 0.3375f,
                                0.6666f, 0.4426f, 0.6474f,
                                0.7675f, 0.8823f, 0.8852f};
 
-  std::vector<int64_t> x_dims = {1, 1, 3, 3};
-  std::vector<int64_t> expected_dims = {1, 1, 4, 4};
-  std::vector<float> expected_vals = {0.0834f, 0.3033f, 0.3042f, 0.0844f,
+  Vector<int64_t> x_dims = {1, 1, 3, 3};
+  Vector<int64_t> expected_dims = {1, 1, 4, 4};
+  Vector<float> expected_vals = {0.0834f, 0.3033f, 0.3042f, 0.0844f,
                                       0.2501f, 0.5806f, 0.5767f, 0.2462f,
                                       0.3585f, 0.6897f, 0.7144f, 0.3832f,
                                       0.1919f, 0.4124f, 0.4419f, 0.2213f};
@@ -669,13 +669,13 @@ TEST(PoolTest, AveragePool_IncludePadPixel) {
 TEST(PoolTest, AveragePool_DefaultStrides) {
   OpTester test("AveragePool");
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
-  std::vector<float> x_vals = {0.f, 1.f, 2.f,
+  Vector<float> x_vals = {0.f, 1.f, 2.f,
                                3.f, 4.f, 5.f,
                                6.f, 7.f, 8.f};
 
-  std::vector<int64_t> x_dims = {1, 3, 3};
-  std::vector<int64_t> expected_dims = {1, 3, 2};
-  std::vector<float> expected_vals = {0.5f, 1.5f,
+  Vector<int64_t> x_dims = {1, 3, 3};
+  Vector<int64_t> expected_dims = {1, 3, 2};
+  Vector<float> expected_vals = {0.5f, 1.5f,
                                       3.5f, 4.5f,
                                       6.5f, 7.5f};
 
@@ -688,19 +688,19 @@ TEST(PoolTest, AveragePool_10_ceil1_2d) {
   OpTester test("AveragePool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{3, 1});
+  test.AddAttribute("strides", Vector<int64_t>{3, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("ceil_mode", (int64_t)1);
 
-  std::vector<float> x_vals = {
+  Vector<float> x_vals = {
       1, 3, 2, 4,
       5, 7, 6, 8,
       9, 11, 10, 12,
       13, 15, 14, 16};
-  std::vector<int64_t> x_dims = {1, 1, 4, 4};
-  std::vector<int64_t> expected_dims = {1, 1, 2, 3};
-  std::vector<float> expected_vals = {4.0f, 4.5f, 5.0f, 14.0f, 14.5f, 15.0f};
+  Vector<int64_t> x_dims = {1, 1, 4, 4};
+  Vector<int64_t> expected_dims = {1, 1, 2, 3};
+  Vector<float> expected_vals = {4.0f, 4.5f, 5.0f, 14.0f, 14.5f, 15.0f};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -710,7 +710,7 @@ TEST(PoolTest, AveragePool_10_ceil1_2d) {
 TEST(PoolTest, GlobalAveragePool) {
   OpTester test("GlobalAveragePool");
 
-  std::vector<float> x_vals = {0.3337382376194, 0.8794041872024536, 0.33745908737182617,
+  Vector<float> x_vals = {0.3337382376194, 0.8794041872024536, 0.33745908737182617,
                                0.666634202003479, 0.44255536794662476, 0.6473854184150696,
                                0.7674617171287537, 0.8822641968727112, 0.8852233290672302,
                                0.7453723549842834, 0.2818361520767212, 0.8706393241882324,
@@ -774,9 +774,9 @@ TEST(PoolTest, GlobalAveragePool) {
                                0.4528728425502777, 0.2815922796726227, 0.820142388343811,
                                0.4963360130786896, 0.46687841415405273, 0.7405545115470886,
                                0.40191709995269775, 0.21238186955451965, 0.46927347779273987};
-  std::vector<int64_t> x_dims = {1, 3, 8, 8};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {0.5146896243095398, 0.4851023256778717, 0.4756942689418793};
+  Vector<int64_t> x_dims = {1, 3, 8, 8};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {0.5146896243095398, 0.4851023256778717, 0.4756942689418793};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);
@@ -787,11 +787,11 @@ TEST(PoolTest, LpPool) {
   OpTester test("LpPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", Vector<int64_t>{1, 1});
   test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{3, 3});
 
-  std::vector<float> x_vals = {0.688458621501922607421875,
+  Vector<float> x_vals = {0.688458621501922607421875,
                                0.8835647106170654296875,
                                0.782541573047637939453125,
                                0.300049364566802978515625,
@@ -1033,9 +1033,9 @@ TEST(PoolTest, LpPool) {
                                0.0714503824710845947265625,
                                0.906627714633941650390625,
                                0.0333719812333583831787109375, 0.654077053070068359375};
-  std::vector<int64_t> x_dims = {1, 3, 9, 9};
-  std::vector<int64_t> expected_dims = {1, 3, 7, 7};
-  std::vector<float> expected_vals = {2.1165919303894043, 1.9042642116546631, 1.5751385688781738,
+  Vector<int64_t> x_dims = {1, 3, 9, 9};
+  Vector<int64_t> expected_dims = {1, 3, 7, 7};
+  Vector<float> expected_vals = {2.1165919303894043, 1.9042642116546631, 1.5751385688781738,
                                       1.4826388359069824, 1.5885931253433228, 1.7165449857711792,
                                       1.8440124988555908, 1.9269057512283325, 1.7515288591384888,
                                       1.5131627321243286, 1.5648597478866577, 1.7481330633163452,
@@ -1093,7 +1093,7 @@ TEST(PoolTest, LpPool) {
 TEST(PoolTest, GlobalLpPool) {
   OpTester test("GlobalLpPool");
   test.AddAttribute("p", static_cast<int64_t>(3));
-  std::vector<float> x_vals = {0.688458621501922607421875,
+  Vector<float> x_vals = {0.688458621501922607421875,
                                0.8835647106170654296875,
                                0.782541573047637939453125,
                                0.300049364566802978515625,
@@ -1335,9 +1335,9 @@ TEST(PoolTest, GlobalLpPool) {
                                0.0714503824710845947265625,
                                0.906627714633941650390625,
                                0.0333719812333583831787109375, 0.654077053070068359375};
-  std::vector<int64_t> x_dims = {1, 3, 9, 9};
-  std::vector<int64_t> expected_dims = {1, 3, 1, 1};
-  std::vector<float> expected_vals = {2.7576668262481689453125, 2.6182243824005126953125,
+  Vector<int64_t> x_dims = {1, 3, 9, 9};
+  Vector<int64_t> expected_dims = {1, 3, 1, 1};
+  Vector<float> expected_vals = {2.7576668262481689453125, 2.6182243824005126953125,
                                       2.682276248931884765625};
 
   test.AddInput<float>("X", x_dims, x_vals);
@@ -1348,14 +1348,14 @@ TEST(PoolTest, GlobalLpPool) {
 TEST(PoolTest, MaxPoolDimWithZeroForN) {
   OpTester test("MaxPool", 10);
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("pads", vector<int64_t>{0, 0});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> x_vals = {};
-  std::vector<int64_t> x_dims = {0, 2, 4};  // N of 0 should be handled
-  std::vector<int64_t> expected_dims = {0, 2, 2};
-  std::vector<float> expected_vals = {};
+  Vector<float> x_vals = {};
+  Vector<int64_t> x_dims = {0, 2, 4};  // N of 0 should be handled
+  Vector<int64_t> expected_dims = {0, 2, 2};
+  Vector<float> expected_vals = {};
 
   test.AddInput<float>("X", x_dims, x_vals);
   test.AddOutput<float>("Y", expected_dims, expected_vals);

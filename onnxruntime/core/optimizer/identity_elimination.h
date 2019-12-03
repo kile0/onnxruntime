@@ -18,7 +18,7 @@ class EliminateIdentity : public RewriteRule {
  public:
   EliminateIdentity() noexcept : RewriteRule("EliminateIdentity") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Identity"};
   }
 

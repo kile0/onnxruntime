@@ -33,7 +33,7 @@ Status DynamicQuantizeLinear<T>::Compute(OpKernelContext* ctx) const {
   const auto* x_data = x.template Data<float>();
 
   auto& y = *ctx->Output(0, x.Shape());
-  std::vector<int64_t> shape({});
+  Vector<int64_t> shape({});
   auto& y_scale = *ctx->Output(1, shape);
   auto& y_zeropoint = *ctx->Output(2, shape); 
   

@@ -16,9 +16,9 @@ public:
         ConcatHelper(kernelInfo, kernelInfo.GetTensorShapeDescription())
     {
         auto tensorShapeDescription = kernelInfo.GetTensorShapeDescription();
-        std::vector<std::optional<uint32_t>> kernelInputIndices;
+        Vector<std::optional<uint32_t>> kernelInputIndices;
 
-        std::vector<DimensionType> tensorShape;
+        Vector<DimensionType> tensorShape;
 
         for (uint32_t i = 0; i < kernelInfo.GetInputCount(); i++)
         {
@@ -36,7 +36,7 @@ public:
         {
             uint32_t dmlAxis = GetDmlAdjustedAxis(m_axis, kernelInfo, m_inputTensorDescs.front().GetDimensionCount());
 
-            std::vector<DML_TENSOR_DESC> inputDescs;
+            Vector<DML_TENSOR_DESC> inputDescs;
             inputDescs.reserve(m_inputTensorDescs.size());
 
             for (size_t i = 0; i < m_inputTensorDescs.size(); i++)
@@ -48,7 +48,7 @@ public:
                 }
             }
 
-            std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+            Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
             DML_JOIN_OPERATOR_DESC joinDesc = {};
             joinDesc.InputCount = gsl::narrow_cast<uint32_t>(inputDescs.size());
@@ -64,8 +64,8 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
 
         if (!inputTensors.empty())
         {

@@ -17,7 +17,7 @@ struct Prepare {
     int64_t axis_pitch;
     int64_t num_elements;
   };
-  std::vector<InputInfo> inputs;
+  Vector<InputInfo> inputs;
   int64_t output_num_elements;
   int64_t output_axis_pitch;
   Tensor* output_tensor;
@@ -41,7 +41,7 @@ class ConcatBase {
 
   // the core method that will be invoked by the 'Concat' (CPU and GPU) 
   // and 'ConcatFromSequence' kernels
-  Status PrepareForCompute(OpKernelContext* ctx, const std::vector<const Tensor*>& input_tensors,
+  Status PrepareForCompute(OpKernelContext* ctx, const Vector<const Tensor*>& input_tensors,
                            Prepare& p) const;
 
   Status ComputeImpl(Prepare& p) const;

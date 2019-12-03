@@ -24,7 +24,7 @@ class ServerEnvironment {
 
   const Ort::Session& GetSession(const std::string& model_name, const std::string& model_version) const;
   void InitializeModel(const std::string& model_path, const std::string& model_name, const std::string& model_version);
-  const std::vector<std::string>& GetModelOutputNames(const std::string& model_name, const std::string& model_version) const;
+  const Vector<std::string>& GetModelOutputNames(const std::string& model_name, const std::string& model_version) const;
   std::shared_ptr<spdlog::logger> GetLogger(const std::string& request_id) const;
   std::shared_ptr<spdlog::logger> GetAppLogger() const;
   void UnloadModel(const std::string& model_name, const std::string& model_version);
@@ -33,7 +33,7 @@ class ServerEnvironment {
  private:
   const OrtLoggingLevel severity_;
   const std::string logger_id_;
-  const std::vector<spdlog::sink_ptr> sink_;
+  const Vector<spdlog::sink_ptr> sink_;
   const std::shared_ptr<spdlog::logger> default_logger_;
 
   Ort::Env runtime_environment_;
@@ -41,7 +41,7 @@ class ServerEnvironment {
 
   struct SessionHolder {
     Ort::Session session;
-    std::vector<std::string> output_names;
+    Vector<std::string> output_names;
     explicit SessionHolder(Ort::Env& env, std::string path, const Ort::SessionOptions& options) : session(nullptr) {
       session = Ort::Session(env, path.c_str(), options);
     };

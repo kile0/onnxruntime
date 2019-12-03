@@ -84,7 +84,7 @@ void GraphPartitioner::HandleSubgraph(const onnxruntime::GraphViewer& graph) {
 
 void GraphPartitioner::CreateNewPartition(
     const Node& node,
-    const std::vector<NodeIndex>& immedidate_rejected_partitions) {
+    const Vector<NodeIndex>& immedidate_rejected_partitions) {
   Partitioner::CreateNewPartition(node, immedidate_rejected_partitions);
   const NodeIndex node_idx = node.Index();
   PartitionMeta& part_meta = partitions_[node_idx];
@@ -101,8 +101,8 @@ void GraphPartitioner::CreateNewPartition(
 #ifdef FORCE_ONE_SUBGRAPH
 bool GraphPartitioner::ForcePartition(
     const onnxruntime::GraphViewer& /*graph*/,
-    const Node& node, const std::vector<NodeIndex>& candiates,
-    const std::vector<NodeIndex>& immedidate_rejected_partitions) {
+    const Node& node, const Vector<NodeIndex>& candiates,
+    const Vector<NodeIndex>& immedidate_rejected_partitions) {
   const NodeIndex node_idx = node.Index();
   if (IsRecurrentNode(node)) {
     // a new partition
@@ -140,11 +140,11 @@ bool GraphPartitioner::ForcePartition(
 
 // Partition the graph (fusing ops) based on the dependency and whether ops are supported:
 Status GraphPartitioner::Partition(const onnxruntime::GraphViewer& graph,
-                                   std::vector<std::unique_ptr<ComputeCapability>>& result) {
+                                   Vector<std::unique_ptr<ComputeCapability>>& result) {
   // call partition
   ORT_RETURN_IF_ERROR(Evaluate(graph, /*distinguish_subgraph*/ true));
 
-  std::vector<NodeIndex> erase_partitions;
+  Vector<NodeIndex> erase_partitions;
 
   // remove single alias node (aka isolated alias op)
   // TODO: change this logic to removing a partition with only all alias ops

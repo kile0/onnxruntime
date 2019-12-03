@@ -67,23 +67,23 @@ Status Conv<T>::Compute(OpKernelContext* context) const {
 
   ORT_RETURN_IF_ERROR(conv_attrs_.ValidateInputShape(X, W));
 
-  std::vector<int64_t> kernel_shape;
+  Vector<int64_t> kernel_shape;
   ORT_RETURN_IF_ERROR(conv_attrs_.ComputeKernelShape(W->Shape(), kernel_shape));
 
-  std::vector<int64_t> pads(conv_attrs_.pads);
+  Vector<int64_t> pads(conv_attrs_.pads);
   if (pads.empty()) {
     pads.resize(kernel_shape.size() * 2, 0);
   }
-  std::vector<int64_t> dilations(conv_attrs_.dilations);
+  Vector<int64_t> dilations(conv_attrs_.dilations);
   if (dilations.empty()) {
     dilations.resize(kernel_shape.size(), 1);
   }
-  std::vector<int64_t> strides(conv_attrs_.strides);
+  Vector<int64_t> strides(conv_attrs_.strides);
   if (strides.empty()) {
     strides.resize(kernel_shape.size(), 1);
   }
 
-  std::vector<int64_t> Y_dims;
+  Vector<int64_t> Y_dims;
   Y_dims.insert(Y_dims.begin(), {N, M});
   TensorShape input_shape = X->Shape().Slice(2);
   ORT_RETURN_IF_ERROR(conv_attrs_.InferOutputShape(input_shape, kernel_shape, strides, dilations, &pads, &Y_dims));
@@ -134,11 +134,11 @@ Status Conv<T>::Compute(OpKernelContext* context) const {
     const int idx_channel = arm_compute::get_data_layout_dimension_index(data_layout, arm_compute::DataLayoutDimension::CHANNEL);
     bool isDepthwise = (1 == tconv.k->info()->tensor_shape()[idx_channel]);
 
-    std::vector<int64_t> aclStrides(2);
+    Vector<int64_t> aclStrides(2);
     aclStrides[0] = (strides.size() == 2) ? strides[1] : 1;
     aclStrides[1] = strides[0];
 
-    std::vector<int64_t> aclPads(4);
+    Vector<int64_t> aclPads(4);
     if (pads.size() == 2) {
       if (strides.size() == 1) {
         aclPads[0] = 0;

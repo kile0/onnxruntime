@@ -8,11 +8,11 @@ namespace onnxruntime {
 namespace test {
 
 template <typename TInput, typename TOutput>
-static void RunTest(const std::vector<int64_t>& dims, const std::vector<TInput>& input, const std::vector<TOutput>& output) {
+static void RunTest(const Vector<int64_t>& dims, const Vector<TInput>& input, const Vector<TOutput>& output) {
   OpTester test("CategoryMapper", 1, onnxruntime::kMLDomain);
 
-  static const std::vector<std::string> categories = {"Three", "Two", "One"};
-  static const std::vector<int64_t> indexes = {3, 2, 1};
+  static const Vector<std::string> categories = {"Three", "Two", "One"};
+  static const Vector<int64_t> indexes = {3, 2, 1};
 
   test.AddAttribute("cats_strings", categories);
   test.AddAttribute("cats_int64s", indexes);
@@ -27,19 +27,19 @@ static void RunTest(const std::vector<int64_t>& dims, const std::vector<TInput>&
 }
 
 TEST(CategoryMapper, StringToInt) {
-  std::vector<int64_t> dims{2, 2, 2};
+  Vector<int64_t> dims{2, 2, 2};
 
-  std::vector<std::string> input{"Unknown", "Two", "Three", "B", "A", "One", "one", "two"};
-  std::vector<int64_t> output{99, 2, 3, 99, 99, 1, 99, 99};
+  Vector<std::string> input{"Unknown", "Two", "Three", "B", "A", "One", "one", "two"};
+  Vector<int64_t> output{99, 2, 3, 99, 99, 1, 99, 99};
 
   RunTest(dims, input, output);
 }
 
 TEST(CategoryMapper, IntToString) {
-  std::vector<int64_t> dims{2, 3};
+  Vector<int64_t> dims{2, 3};
 
-  std::vector<int64_t> input{1, 2, 3, 4, 5, 6};
-  std::vector<std::string> output{"One", "Two", "Three", "default", "default", "default"};
+  Vector<int64_t> input{1, 2, 3, 4, 5, 6};
+  Vector<std::string> output{"One", "Two", "Three", "default", "default", "default"};
 
   RunTest(dims, input, output);
 }

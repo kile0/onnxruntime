@@ -180,7 +180,7 @@ TreeEnsembleClassifier<T>::TreeEnsembleClassifier(const OpKernelInfo& info)
 template <typename T>
 void TreeEnsembleClassifier<T>::Initialize() {
   int64_t current_tree_id = 1234567891L;
-  std::vector<int64_t> tree_offsets;
+  Vector<int64_t> tree_offsets;
   weights_are_all_positive_ = true;
 
   for (int64_t i = 0, size_node_treeids = static_cast<int64_t>(nodes_treeids_.size());
@@ -312,7 +312,7 @@ common::Status TreeEnsembleClassifier<T>::Compute(OpKernelContext* context) cons
   const T* x_data = X.template Data<T>();
 
   // for each class
-  std::vector<float> scores;
+  Vector<float> scores;
   scores.reserve(class_count_);
   for (int64_t i = 0; i < N; ++i) {
     scores.clear();

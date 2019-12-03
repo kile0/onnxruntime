@@ -61,7 +61,7 @@ class BatchNormHelper {
     return common::Status::OK();
   }
 
-  static void NormalizeDims(const TensorShape& x_shape, std::vector<int64_t>& new_dims) {
+  static void NormalizeDims(const TensorShape& x_shape, Vector<int64_t>& new_dims) {
     new_dims.clear();
     auto& orig_dims = x_shape.GetDims();
     if (orig_dims.size() == 4 /*supported size by CUDA*/ ||
@@ -100,8 +100,8 @@ class MklDnnBatchNorm : public MklDnnKernel {
   void CreatePrimitives(const OrtCustomOpApi* api,
                         OrtKernelContext* context,
                         mkldnn::engine& cpu_engine,
-                        std::vector<mkldnn::primitive>& net,
-                        std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
+                        Vector<mkldnn::primitive>& net,
+                        Vector<std::unordered_map<int, mkldnn::memory>>& net_args) override {
     Ort::CustomOpApi ort{*api};
     int input_index = mklnode_ptr_->input_start_index < 0 ? 0 : mklnode_ptr_->input_start_index;
 

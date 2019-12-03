@@ -66,7 +66,7 @@ ONNX_CPU_OPERATOR_KERNEL(If,
 struct If::Info {
   Info(const onnxruntime::Node& node, const GraphViewer& subgraph_in) : subgraph(subgraph_in) {
     num_implicit_inputs = static_cast<int>(node.ImplicitInputDefs().size());
-    used_implicit_inputs = std::vector<bool>(num_implicit_inputs, true);
+    used_implicit_inputs = Vector<bool>(num_implicit_inputs, true);
     num_outputs = static_cast<int>(node.OutputDefs().size());
 
     auto& subgraph_outputs = subgraph.GetOutputs();
@@ -85,11 +85,11 @@ struct If::Info {
 
   const GraphViewer& subgraph;
 
-  std::vector<bool> used_implicit_inputs;
+  Vector<bool> used_implicit_inputs;
   int num_implicit_inputs;
   int num_outputs;
 
-  std::vector<std::string> subgraph_output_names;
+  Vector<std::string> subgraph_output_names;
 };
 
 class IfImpl {
@@ -112,7 +112,7 @@ class IfImpl {
   const SessionState& session_state_;
   const If::Info& info_;
 
-  const std::vector<const OrtValue*>& implicit_inputs_;
+  const Vector<const OrtValue*>& implicit_inputs_;
 
   enum class AllocationType {
     Delayed,  // allocation of If output will be done by subgraph execution
@@ -120,7 +120,7 @@ class IfImpl {
   };
 
   // track where the fetches provided to subgraph execution were allocated.
-  std::vector<std::pair<AllocationType, OrtValue>> outputs_;
+  Vector<std::pair<AllocationType, OrtValue>> outputs_;
 };
 
 If::If(const OpKernelInfo& info) : OpKernel(info) {
@@ -150,7 +150,7 @@ common::Status If::SetupSubgraphExecutionInfo(const SessionState& session_state,
   info = onnxruntime::make_unique<If::Info>(node, *subgraph_session_state.GetGraphViewer());
 
   // all inputs for the If subgraph are implicit
-  std::vector<std::string> feed_names;
+  Vector<std::string> feed_names;
   feed_names.reserve(info->num_implicit_inputs);
 
   const auto& subgraph_map = subgraph_session_state.GetOrtValueNameIdxMap();
@@ -174,10 +174,10 @@ common::Status If::SetupSubgraphExecutionInfo(const SessionState& session_state,
   ORT_RETURN_IF_ERROR(utils::InitializeFeedFetchCopyInfo(subgraph_session_state, *ffm));
 
   // find the location all the feeds will be coming from
-  std::vector<OrtDevice> feed_locations;
+  Vector<OrtDevice> feed_locations;
   controlflow::detail::FindDevicesForValues(session_state, feed_names, feed_locations);
 
-  std::vector<const OrtMemoryInfo*> fetch_locations;
+  Vector<const OrtMemoryInfo*> fetch_locations;
   fetch_locations.reserve(info->num_outputs);
 
   // we need the allocator info for each output from the If node
@@ -282,7 +282,7 @@ Status IfImpl::Execute(const FeedsFetchesManager& ffm) {
   auto& feed_names = ffm.GetFeedsFetchesInfo().feed_names;
 
   auto num_inputs = feed_names.size();
-  std::vector<OrtValue> feeds;
+  Vector<OrtValue> feeds;
   feeds.reserve(num_inputs);
 
   // order of implicit_inputs_ matches order of feed names. skip implicit inputs that don't apply to this subgraph
@@ -292,7 +292,7 @@ Status IfImpl::Execute(const FeedsFetchesManager& ffm) {
     }
   }
 
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
   std::unordered_map<size_t, IExecutor::CustomAllocator> fetch_allocators;
 
   fetches.reserve(info_.num_outputs);

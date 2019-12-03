@@ -25,7 +25,7 @@ PredictRequest GetRequest() {
   proto.add_dims(3);
   proto.add_dims(2);
   proto.set_data_type(1);
-  std::vector<float> floats = {1.f, 2.f, 3.f, 4.f, 5.f, 6.f};
+  Vector<float> floats = {1.f, 2.f, 3.f, 4.f, 5.f, 6.f};
   std::for_each(floats.begin(), floats.end(), [&proto](float f) { proto.add_float_data(f); });
   (*req.mutable_inputs())["X"] = proto;
   return req;

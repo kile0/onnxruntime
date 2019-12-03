@@ -113,7 +113,7 @@ class Node {
   @returns common::Status with success or error information.
   @remarks Returns immediately on error.
   */
-  static common::Status ForEachWithIndex(const ConstPointerContainer<std::vector<NodeArg*>>& node_args,
+  static common::Status ForEachWithIndex(const ConstPointerContainer<Vector<NodeArg*>>& node_args,
                                          std::function<common::Status(const NodeArg& arg, size_t index)> func) {
     for (size_t index = 0; index < node_args.size(); ++index) {
       auto arg = node_args[index];
@@ -125,44 +125,44 @@ class Node {
   }
 
   /** Gets the count of arguments for each of the Node's explicit inputs. */
-  const std::vector<int>& InputArgCount() const noexcept { return definitions_.input_arg_count; }
+  const Vector<int>& InputArgCount() const noexcept { return definitions_.input_arg_count; }
 
   /** Gets a modifiable count of arguments for each of the Node's explicit inputs.
   @todo This should be removed in favor of a method that updates the input args and the count.
         Currently these operations are separate which is not a good setup. */
-  std::vector<int>& MutableInputArgsCount() { return definitions_.input_arg_count; }
+  Vector<int>& MutableInputArgsCount() { return definitions_.input_arg_count; }
 
   /** Gets the Node's input definitions.
   @remarks requires ConstPointerContainer wrapper to apply const to the NodeArg pointers so access is read-only. */
-  ConstPointerContainer<std::vector<NodeArg*>> InputDefs() const noexcept {
-    return ConstPointerContainer<std::vector<NodeArg*>>(definitions_.input_defs);
+  ConstPointerContainer<Vector<NodeArg*>> InputDefs() const noexcept {
+    return ConstPointerContainer<Vector<NodeArg*>>(definitions_.input_defs);
   }
 
   /** Gets a modifiable collection of the Node's input definitions. */
-  std::vector<NodeArg*>& MutableInputDefs() noexcept {
+  Vector<NodeArg*>& MutableInputDefs() noexcept {
     return definitions_.input_defs;
   }
 
   /** Gets the implicit inputs to this Node.
   If this Node contains a subgraph, these are the NodeArg's that are implicitly consumed by Nodes within that
   subgraph. e.g. If and Loop operators.*/
-  ConstPointerContainer<std::vector<NodeArg*>> ImplicitInputDefs() const noexcept {
-    return ConstPointerContainer<std::vector<NodeArg*>>(definitions_.implicit_input_defs);
+  ConstPointerContainer<Vector<NodeArg*>> ImplicitInputDefs() const noexcept {
+    return ConstPointerContainer<Vector<NodeArg*>>(definitions_.implicit_input_defs);
   }
 
   /** Gets a modifiable collection of the Node's implicit input definitions. */
-  std::vector<NodeArg*>& MutableImplicitInputDefs() noexcept {
+  Vector<NodeArg*>& MutableImplicitInputDefs() noexcept {
     return definitions_.implicit_input_defs;
   }
 
   /** Gets the Node's output definitions.
   @remarks requires ConstPointerContainer wrapper to apply const to the NodeArg pointers so access is read-only. */
-  ConstPointerContainer<std::vector<NodeArg*>> OutputDefs() const noexcept {
-    return ConstPointerContainer<std::vector<NodeArg*>>(definitions_.output_defs);
+  ConstPointerContainer<Vector<NodeArg*>> OutputDefs() const noexcept {
+    return ConstPointerContainer<Vector<NodeArg*>>(definitions_.output_defs);
   }
 
   /** Gets a modifiable collection of the Node's output definitions. */
-  std::vector<NodeArg*>& MutableOutputDefs() noexcept {
+  Vector<NodeArg*>& MutableOutputDefs() noexcept {
     return definitions_.output_defs;
   }
 
@@ -247,7 +247,7 @@ class Node {
 #define ADD_ATTR_INTERFACES(TypeName)                                     \
   void AddAttribute(const std::string& attr_name, const TypeName& value); \
   void AddAttribute(const std::string& attr_name,                         \
-                    const std::vector<TypeName>& values);
+                    const Vector<TypeName>& values);
 
   ADD_ATTR_INTERFACES(int64_t)
   ADD_ATTR_INTERFACES(float)
@@ -283,7 +283,7 @@ class Node {
 
   /** Get the const subgraphs from a node. 
   @remarks Creates a new vector so calling ContainsSubgraphs first is preferred. */
-  std::vector<gsl::not_null<const Graph*>> GetSubgraphs() const;
+  Vector<gsl::not_null<const Graph*>> GetSubgraphs() const;
 
   /** Gets a map of attribute name to the mutable Graph instances for all subgraphs of the Node.
   @returns Map of the attribute name that defines the subgraph to the subgraph's Graph instance.
@@ -328,7 +328,7 @@ class Node {
     Definitions() = default;
 
     /** The Node's explicit input definitions. */
-    std::vector<NodeArg*> input_defs;
+    Vector<NodeArg*> input_defs;
 
     /**
     The number of inputs for each argument of the operator or function which this node refers.
@@ -336,17 +336,17 @@ class Node {
     This means that 4 elements (inputs) of input_defs map to the first argument of the operator or function, and
     the other 6 map to the second argument.
     */
-    std::vector<int> input_arg_count;
+    Vector<int> input_arg_count;
 
     /** The Node's output definitions. */
-    std::vector<NodeArg*> output_defs;
+    Vector<NodeArg*> output_defs;
 
     /** The Node's implicit input definitions if the Node contains one or more subgraphs
     (i.e. GraphProto attributes) and the subgraph/s implicitly consume these values.
     @remarks For example, a subgraph in an 'If' node gets all its input values via this mechanism rather than
     there being explicit inputs to the 'If' node that are passed to the subgraph.
     They are pseudo-inputs to this Node as it has an implicit dependency on them. */
-    std::vector<NodeArg*> implicit_input_defs;
+    Vector<NodeArg*> implicit_input_defs;
 
    private:
     ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(Definitions);
@@ -391,8 +391,8 @@ class Node {
   void Init(const std::string& name,
             const std::string& op_type,
             const std::string& description,
-            const std::vector<NodeArg*>& input_args,
-            const std::vector<NodeArg*>& output_args,
+            const Vector<NodeArg*>& input_args,
+            const Vector<NodeArg*>& output_args,
             const NodeAttributes* attributes,
             const std::string& domain);
 
@@ -405,7 +405,7 @@ class Node {
   // internal only method to allow selected classes to directly alter the links between nodes.
   Relationships& MutableRelationships() noexcept;
 
-  const std::vector<std::unique_ptr<Graph>>& MutableSubgraphs() noexcept { return subgraphs_; }
+  const Vector<std::unique_ptr<Graph>>& MutableSubgraphs() noexcept { return subgraphs_; }
 
   const Definitions& GetDefinitions() const noexcept { return definitions_; }
   const Relationships& GetRelationships() const noexcept { return relationships_; }
@@ -459,7 +459,7 @@ class Node {
   std::unordered_map<std::string, gsl::not_null<Graph*>> attr_to_subgraph_map_;
 
   // Graph instances for subgraphs that are owned by this Node
-  std::vector<std::unique_ptr<Graph>> subgraphs_;
+  Vector<std::unique_ptr<Graph>> subgraphs_;
 };
 
 /**
@@ -524,12 +524,12 @@ class Graph {
   /** Gets the Graph inputs excluding initializers.
   These are the required inputs to the Graph as the initializers can be optionally overridden via graph inputs.
   @remarks Contains no nullptr values. */
-  const std::vector<const NodeArg*>& GetInputs() const noexcept { return graph_inputs_excluding_initializers_; }
+  const Vector<const NodeArg*>& GetInputs() const noexcept { return graph_inputs_excluding_initializers_; }
 
   /** Gets the Graph inputs including initializers.
   This is the full set of inputs, in the same order as defined in the GraphProto.
   @remarks Contains no nullptr values. */
-  const std::vector<const NodeArg*>& GetInputsIncludingInitializers() const noexcept {
+  const Vector<const NodeArg*>& GetInputsIncludingInitializers() const noexcept {
     return graph_inputs_including_initializers_;
   }
 
@@ -537,18 +537,18 @@ class Graph {
   These are overridable initializers. This is a difference between 
   graph_inputs_including_initializers_ and graph_inputs_excluding_initializers_
   @remarks Contains no nullptr values. */
-  const std::vector<const NodeArg*>& GetOverridableInitializers() const {
+  const Vector<const NodeArg*>& GetOverridableInitializers() const {
     return graph_overridable_initializers_;
   }
 
   /** Gets the Graph outputs.
   @remarks Contains no nullptr values.*/
-  const std::vector<const NodeArg*>& GetOutputs() const noexcept { return graph_outputs_; }
+  const Vector<const NodeArg*>& GetOutputs() const noexcept { return graph_outputs_; }
 
   /** Returns a vector with the indexes of the outputs of the given Node that are also Graph outputs. */
-  std::vector<int> GetNodeOutputsInGraphOutputs(const Node& node) const {
+  Vector<int> GetNodeOutputsInGraphOutputs(const Node& node) const {
     int output_idx = 0;
-    std::vector<int> indexes;
+    Vector<int> indexes;
     for (auto output_def : node.OutputDefs()) {
       if (std::find(GetOutputs().cbegin(), GetOutputs().cend(), output_def) != GetOutputs().cend()) {
         indexes.push_back(output_idx);
@@ -563,7 +563,7 @@ class Graph {
   /** Gets the NodeArgs that represent value_info instances in the Graph.
   These are the values that are neither Graph inputs nor outputs.
   @remarks Contains no nullptr values. */
-  const std::vector<const NodeArg*>& GetValueInfo() const noexcept;
+  const Vector<const NodeArg*>& GetValueInfo() const noexcept;
 
   /** Gets the Node with the specified node index.
   @returns Node instance if found. nullptr if node_index is invalid or node has been freed.
@@ -640,8 +640,8 @@ class Graph {
   Node& AddNode(const std::string& name,
                 const std::string& op_type,
                 const std::string& description,
-                const std::vector<NodeArg*>& input_args,
-                const std::vector<NodeArg*>& output_args,
+                const Vector<NodeArg*>& input_args,
+                const Vector<NodeArg*>& output_args,
                 const NodeAttributes* attributes = nullptr,
                 const std::string& domain = "");
 
@@ -717,7 +717,7 @@ class Graph {
   @param leave Visit function invoked on the node after its parents have all been visited.
   @param comp Comparison function to stabilize the traversal order by making Node ordering deterministic.
   */
-  void ReverseDFSFrom(const std::vector<NodeIndex>& from,
+  void ReverseDFSFrom(const Vector<NodeIndex>& from,
                       const std::function<void(const Node*)>& enter,
                       const std::function<void(const Node*)>& leave,
                       const std::function<bool(const Node*, const Node*)>& comp = {}) const;
@@ -729,7 +729,7 @@ class Graph {
   @param leave Visit function invoked on the node after its parents have all been visited.
   @param comp Comparison function to stabilize the traversal order by making Node ordering deterministic.
   */
-  void ReverseDFSFrom(const std::vector<const Node*>& from,
+  void ReverseDFSFrom(const Vector<const Node*>& from,
                       const std::function<void(const Node*)>& enter,
                       const std::function<void(const Node*)>& leave,
                       const std::function<bool(const Node*, const Node*)>& comp = {}) const;
@@ -774,12 +774,12 @@ class Graph {
   /** When programmatically constructing a Graph, explicitly set graph inputs.
   @param inputs NodeArgs that represent complete graph inputs which need to be explicitly ordered.
   @remarks If the Graph was loaded from a GraphProto this has no effect.*/
-  void SetInputs(const std::vector<const NodeArg*>& inputs);
+  void SetInputs(const Vector<const NodeArg*>& inputs);
 
   /** When programmatically constructing a Graph, explicitly set graph outputs.
   @param outputs NodeArgs that represent complete graph outputs which need to be explicitly ordered.
   @remarks If the Graph was loaded from a GraphProto this has no effect.*/
-  void SetOutputs(const std::vector<const NodeArg*>& outputs);
+  void SetOutputs(const Vector<const NodeArg*>& outputs);
 
   /** Returns true if this is a subgraph or fase if it is a high-level graph. */
   bool IsSubgraph() const { return parent_graph_ != nullptr; }
@@ -910,17 +910,17 @@ class Graph {
   common::Status Resolve(bool no_proto_sync_required);
 
   // Recursively find all subgraphs including nested subgraphs
-  void FindAllSubgraphs(std::vector<Graph*>& subgraphs);
+  void FindAllSubgraphs(Vector<Graph*>& subgraphs);
 
   // Iterate this Graph instance and all subgraphs, calling the provided function for each.
-  common::Status ForThisAndAllSubgraphs(const std::vector<Graph*>& subgraphs, std::function<Status(Graph&)> func);
+  common::Status ForThisAndAllSubgraphs(const Vector<Graph*>& subgraphs, std::function<Status(Graph&)> func);
 
   common::Status InferAndVerifyTypeMatch(Node& node, const ONNX_NAMESPACE::OpSchema& op);
 
   // perform type and shape inferencing on the subgraph and Resolve to validate
   static common::Status InferAndVerifySubgraphTypes(const Node& node, Graph& subgraph,
-                                                    const std::vector<const ONNX_NAMESPACE::TypeProto*>& input_types,
-                                                    std::vector<const ONNX_NAMESPACE::TypeProto*>& output_types);
+                                                    const Vector<const ONNX_NAMESPACE::TypeProto*>& input_types,
+                                                    Vector<const ONNX_NAMESPACE::TypeProto*>& output_types);
 
   // Apply type-inference and type-checking to all inputs and initializers:
   common::Status TypeCheckInputsAndInitializers();
@@ -954,7 +954,7 @@ class Graph {
     return nodes_[node_index].get();
   }
 
-  std::vector<NodeArg*> CreateNodeArgs(const google::protobuf::RepeatedPtrField<std::string>& names,
+  Vector<NodeArg*> CreateNodeArgs(const google::protobuf::RepeatedPtrField<std::string>& names,
                                        const ArgNameToTypeMap& name_to_type_map);
 
   void AddFunction(const ONNX_NAMESPACE::FunctionProto* func_proto);
@@ -972,11 +972,11 @@ class Graph {
 
   IOnnxRuntimeOpSchemaCollectionPtr schema_registry_;
 
-  std::vector<std::unique_ptr<onnxruntime::Function>> function_container_;
+  Vector<std::unique_ptr<onnxruntime::Function>> function_container_;
 
   // Graph nodes.
   // Element in <nodes_> may be nullptr due to graph optimization.
-  std::vector<std::unique_ptr<Node>> nodes_;
+  Vector<std::unique_ptr<Node>> nodes_;
 
   // Wrapper of Graph nodes to provide iteration services that hide nullptr entries
   GraphNodes iterable_nodes_{nodes_};
@@ -993,25 +993,25 @@ class Graph {
   bool graph_proto_sync_needed_ = false;
 
   // The topological order of node index used to do node and op match verification temporarily.
-  std::vector<NodeIndex> nodes_in_topological_order_;
+  Vector<NodeIndex> nodes_in_topological_order_;
 
   // Full list of graph inputs. Matches number and order of inputs in the GraphProto.
-  std::vector<const NodeArg*> graph_inputs_including_initializers_;
+  Vector<const NodeArg*> graph_inputs_including_initializers_;
   bool graph_inputs_manually_set_ = false;
 
   // Graph inputs excluding initializers.
-  std::vector<const NodeArg*> graph_inputs_excluding_initializers_;
+  Vector<const NodeArg*> graph_inputs_excluding_initializers_;
 
   // Overridable Initializers. The difference between graph_inputs_including_initializers_
   // and graph_inputs_excluding_initializers_
-  std::vector<const NodeArg*> graph_overridable_initializers_;
+  Vector<const NodeArg*> graph_overridable_initializers_;
 
   // Graph outputs.
-  std::vector<const NodeArg*> graph_outputs_;
+  Vector<const NodeArg*> graph_outputs_;
   bool graph_outputs_manually_set_ = false;
 
   // Graph value_info.
-  std::vector<const NodeArg*> value_info_;
+  Vector<const NodeArg*> value_info_;
 
   // All node args owned by <*this> graph. Key is node arg name.
   std::unordered_map<std::string, std::unique_ptr<NodeArg>> node_args_;

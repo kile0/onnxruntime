@@ -20,10 +20,10 @@ namespace onnxruntime {
 namespace server {
 namespace test {
 
-void CreateMLValueBool(AllocatorPtr alloc, const std::vector<int64_t>& dims, const bool* value, Ort::Value& p_mlvalue);
+void CreateMLValueBool(AllocatorPtr alloc, const Vector<int64_t>& dims, const bool* value, Ort::Value& p_mlvalue);
 
 template <typename T>
-void CreateMLValue(AllocatorPtr alloc, const std::vector<int64_t>& dims, const std::vector<T>& value,
+void CreateMLValue(AllocatorPtr alloc, const Vector<int64_t>& dims, const Vector<T>& value,
                    Ort::Value& p_mlvalue) {
   OrtValue* ml_value = new OrtValue{};
   onnxruntime::test::CreateMLValue<T>(alloc, dims, value, ml_value);
@@ -87,8 +87,8 @@ TEST(MLDataTypeToTensorProtoDataTypeTests, MLDataTypeToTensorProtoDataTypeTests)
 }
 
 TEST(MLValueToTensorProtoTests, FloatToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -105,7 +105,7 @@ TEST(MLValueToTensorProtoTests, FloatToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -123,8 +123,8 @@ TEST(MLValueToTensorProtoTests, FloatToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, FloatToFloatData) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<float> values_mul_x = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -140,7 +140,7 @@ TEST(MLValueToTensorProtoTests, FloatToFloatData) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -155,8 +155,8 @@ TEST(MLValueToTensorProtoTests, FloatToFloatData) {
 }
 
 TEST(MLValueToTensorProtoTests, Int32ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int32_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -173,7 +173,7 @@ TEST(MLValueToTensorProtoTests, Int32ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -191,8 +191,8 @@ TEST(MLValueToTensorProtoTests, Int32ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, Int32ToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int32_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -208,7 +208,7 @@ TEST(MLValueToTensorProtoTests, Int32ToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -223,8 +223,8 @@ TEST(MLValueToTensorProtoTests, Int32ToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt8ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint8_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -241,7 +241,7 @@ TEST(MLValueToTensorProtoTests, UInt8ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -259,8 +259,8 @@ TEST(MLValueToTensorProtoTests, UInt8ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt8ToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint8_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -276,7 +276,7 @@ TEST(MLValueToTensorProtoTests, UInt8ToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -291,8 +291,8 @@ TEST(MLValueToTensorProtoTests, UInt8ToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt8ProtoRoundTrip) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
 
   onnx::TensorProto tp;
   for (auto const& val : values_mul_x) {
@@ -322,7 +322,7 @@ TEST(MLValueToTensorProtoTests, UInt8ProtoRoundTrip) {
 
   // Verify dimensions
   const auto& dims = tp_out.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -340,8 +340,8 @@ TEST(MLValueToTensorProtoTests, UInt8ProtoRoundTrip) {
 }
 
 TEST(MLValueToTensorProtoTests, Int8ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int8_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -358,7 +358,7 @@ TEST(MLValueToTensorProtoTests, Int8ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -376,8 +376,8 @@ TEST(MLValueToTensorProtoTests, Int8ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, Int8ToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int8_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int8_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -393,7 +393,7 @@ TEST(MLValueToTensorProtoTests, Int8ToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -409,8 +409,8 @@ TEST(MLValueToTensorProtoTests, Int8ToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt16ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 3};
-  std::vector<uint16_t> values_mul_x = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  Vector<int64_t> dims_mul_x = {3, 3};
+  Vector<uint16_t> values_mul_x = {1, 2, 3, 4, 5, 6, 7, 8, 9};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint16_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -427,7 +427,7 @@ TEST(MLValueToTensorProtoTests, UInt16ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -445,8 +445,8 @@ TEST(MLValueToTensorProtoTests, UInt16ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt16ToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 3};
-  std::vector<uint16_t> values_mul_x = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  Vector<int64_t> dims_mul_x = {3, 3};
+  Vector<uint16_t> values_mul_x = {1, 2, 3, 4, 5, 6, 7, 8, 9};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint16_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -462,7 +462,7 @@ TEST(MLValueToTensorProtoTests, UInt16ToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -478,8 +478,8 @@ TEST(MLValueToTensorProtoTests, UInt16ToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, Int16ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int16_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int16_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int16_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -496,7 +496,7 @@ TEST(MLValueToTensorProtoTests, Int16ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -514,8 +514,8 @@ TEST(MLValueToTensorProtoTests, Int16ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, Int16ToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int16_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int16_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int16_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -531,7 +531,7 @@ TEST(MLValueToTensorProtoTests, Int16ToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -547,7 +547,7 @@ TEST(MLValueToTensorProtoTests, Int16ToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, BoolToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int64_t> dims_mul_x = {3, 2};
   bool values_mul_x[] = {true, false, false, true, true, false};
   Ort::Value ml_value{nullptr};
   CreateMLValueBool(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
@@ -565,7 +565,7 @@ TEST(MLValueToTensorProtoTests, BoolToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -583,7 +583,7 @@ TEST(MLValueToTensorProtoTests, BoolToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, BoolToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int64_t> dims_mul_x = {3, 2};
   bool values_mul_x[] = {true, false, false, true, true, false};
   Ort::Value ml_value{nullptr};
   CreateMLValueBool(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
@@ -600,7 +600,7 @@ TEST(MLValueToTensorProtoTests, BoolToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -616,8 +616,8 @@ TEST(MLValueToTensorProtoTests, BoolToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, Float16ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<onnxruntime::MLFloat16> values_mul_x{
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<onnxruntime::MLFloat16> values_mul_x{
       onnxruntime::MLFloat16(1),
       onnxruntime::MLFloat16(2),
       onnxruntime::MLFloat16(3),
@@ -640,7 +640,7 @@ TEST(MLValueToTensorProtoTests, Float16ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -658,8 +658,8 @@ TEST(MLValueToTensorProtoTests, Float16ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, FloatToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<onnxruntime::MLFloat16> values_mul_x{
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<onnxruntime::MLFloat16> values_mul_x{
       onnxruntime::MLFloat16(1),
       onnxruntime::MLFloat16(2),
       onnxruntime::MLFloat16(3),
@@ -681,7 +681,7 @@ TEST(MLValueToTensorProtoTests, FloatToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -699,8 +699,8 @@ TEST(MLValueToTensorProtoTests, FloatToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, BFloat16ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<onnxruntime::BFloat16> values_mul_x{
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<onnxruntime::BFloat16> values_mul_x{
       onnxruntime::BFloat16(1.0f),
       onnxruntime::BFloat16(2.0f),
       onnxruntime::BFloat16(3.0f),
@@ -723,7 +723,7 @@ TEST(MLValueToTensorProtoTests, BFloat16ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -741,8 +741,8 @@ TEST(MLValueToTensorProtoTests, BFloat16ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, BFloatToInt32Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<onnxruntime::BFloat16> values_mul_x{
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<onnxruntime::BFloat16> values_mul_x{
       onnxruntime::BFloat16(1.0f),
       onnxruntime::BFloat16(2.0f),
       onnxruntime::BFloat16(3.0f),
@@ -764,7 +764,7 @@ TEST(MLValueToTensorProtoTests, BFloatToInt32Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -782,8 +782,8 @@ TEST(MLValueToTensorProtoTests, BFloatToInt32Data) {
 }
 
 TEST(MLValueToTensorProtoTests, StringToStringData) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<std::string> values_mul_x{"A", "BC", "DEF", "123", "45", "6"};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<std::string> values_mul_x{"A", "BC", "DEF", "123", "45", "6"};
   OrtValue* p_mlValue = new OrtValue{};
   onnxruntime::test::AllocateMLValue<std::string>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, p_mlValue);
 
@@ -805,7 +805,7 @@ TEST(MLValueToTensorProtoTests, StringToStringData) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -821,8 +821,8 @@ TEST(MLValueToTensorProtoTests, StringToStringData) {
 }
 
 TEST(MLValueToTensorProtoTests, Int64ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -839,7 +839,7 @@ TEST(MLValueToTensorProtoTests, Int64ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -857,8 +857,8 @@ TEST(MLValueToTensorProtoTests, Int64ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, Int64ToInt64Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<int64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<int64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<int64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -874,7 +874,7 @@ TEST(MLValueToTensorProtoTests, Int64ToInt64Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -889,8 +889,8 @@ TEST(MLValueToTensorProtoTests, Int64ToInt64Data) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt32ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint32_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -907,7 +907,7 @@ TEST(MLValueToTensorProtoTests, UInt32ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -925,8 +925,8 @@ TEST(MLValueToTensorProtoTests, UInt32ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt32ToUint64Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint32_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint32_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -942,7 +942,7 @@ TEST(MLValueToTensorProtoTests, UInt32ToUint64Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -959,8 +959,8 @@ TEST(MLValueToTensorProtoTests, UInt32ToUint64Data) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt64ToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -977,7 +977,7 @@ TEST(MLValueToTensorProtoTests, UInt64ToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -995,8 +995,8 @@ TEST(MLValueToTensorProtoTests, UInt64ToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, UInt64ToInt64Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<uint64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<uint64_t> values_mul_x = {1, 2, 3, 4, 5, 6};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<uint64_t>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -1012,7 +1012,7 @@ TEST(MLValueToTensorProtoTests, UInt64ToInt64Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -1027,8 +1027,8 @@ TEST(MLValueToTensorProtoTests, UInt64ToInt64Data) {
 }
 
 TEST(MLValueToTensorProtoTests, DoubleToRaw) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<double> values_mul_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<double> values_mul_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<double>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -1045,7 +1045,7 @@ TEST(MLValueToTensorProtoTests, DoubleToRaw) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -1063,8 +1063,8 @@ TEST(MLValueToTensorProtoTests, DoubleToRaw) {
 }
 
 TEST(MLValueToTensorProtoTests, DoubleToInt64Data) {
-  std::vector<int64_t> dims_mul_x = {3, 2};
-  std::vector<double> values_mul_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+  Vector<int64_t> dims_mul_x = {3, 2};
+  Vector<double> values_mul_x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
   Ort::Value ml_value{nullptr};
   onnxruntime::server::test::CreateMLValue<double>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims_mul_x, values_mul_x, ml_value);
 
@@ -1080,7 +1080,7 @@ TEST(MLValueToTensorProtoTests, DoubleToInt64Data) {
 
   // Verify dimensions
   const auto& dims = tp.dims();
-  std::vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
+  Vector<int64_t> tensor_shape_vec(static_cast<size_t>(dims.size()));
   for (int i = 0; i < dims.size(); ++i) {
     EXPECT_EQ(dims[i], dims_mul_x[i]);
   }
@@ -1094,7 +1094,7 @@ TEST(MLValueToTensorProtoTests, DoubleToInt64Data) {
   }
 }
 
-void CreateMLValueBool(AllocatorPtr alloc, const std::vector<int64_t>& dims, const bool* value, Ort::Value& p_value) {
+void CreateMLValueBool(AllocatorPtr alloc, const Vector<int64_t>& dims, const bool* value, Ort::Value& p_value) {
   TensorShape shape(dims);
   OrtValue* p_mlvalue = new OrtValue{};
   auto element_type = DataTypeImpl::GetType<bool>();

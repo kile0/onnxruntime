@@ -48,7 +48,7 @@ Status SVMRegressor<T>::Compute(OpKernelContext* ctx) const {
 
   for (int64_t n = 0; n < N; n++) {  //for each example
     int64_t current_weight_0 = n * stride;
-    std::vector<float> scores;
+    Vector<float> scores;
 
     float sum = 0.f;
     if (mode_ == SVM_TYPE::SVM_SVC) {

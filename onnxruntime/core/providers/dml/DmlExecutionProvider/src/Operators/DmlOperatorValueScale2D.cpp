@@ -15,15 +15,15 @@ public:
     {
         DmlOperator::Initialize(kernelCreationContext);
 
-        std::vector<float> bias = kernelCreationContext.GetAttributeVector<float>(AttrName::Bias);
+        Vector<float> bias = kernelCreationContext.GetAttributeVector<float>(AttrName::Bias);
         float scale = kernelCreationContext.GetOptionalAttribute<float>(AttrName::Scale, 1.0f);
 
-        std::vector<DimensionType> inputDimensions = kernelCreationContext.GetTensorShapeDescription().GetInputTensorShape(0);
+        Vector<DimensionType> inputDimensions = kernelCreationContext.GetTensorShapeDescription().GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() == NchwDimensionCount, "Wrong number of dimensions.");
         ML_CHECK_VALID_ARGUMENT(inputDimensions[C] == bias.size(), "input dimension count for channel C must equal bias count.");
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         ML_CHECK_VALID_ARGUMENT(inputDescs.size() >= 1);
         ML_CHECK_VALID_ARGUMENT(outputDescs.size() >= 1);
 

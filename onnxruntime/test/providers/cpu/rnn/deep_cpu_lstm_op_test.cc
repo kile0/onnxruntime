@@ -23,29 +23,29 @@ T DuplicateContainer(const T& container) {
   return doubled;
 }
 
-static void RunLstmTest(const std::vector<float>& X_data,
-                        const std::vector<float>& W_data,
-                        const std::vector<float>& R_data,
-                        const std::vector<float>& Y_data,
-                        const std::vector<float>& Y_h_data,
-                        const std::vector<float>& Y_c_data,
+static void RunLstmTest(const Vector<float>& X_data,
+                        const Vector<float>& W_data,
+                        const Vector<float>& R_data,
+                        const Vector<float>& Y_data,
+                        const Vector<float>& Y_h_data,
+                        const Vector<float>& Y_c_data,
                         int64_t input_size,
                         int batch_size,
                         int64_t hidden_size,
                         int64_t seq_length,
-                        const std::vector<float>* B_data = nullptr,
-                        const std::vector<float>* P_data = nullptr,
-                        const std::vector<float>* initial_h_data = nullptr,
-                        const std::vector<float>* initial_c_data = nullptr,
-                        const std::vector<int>* sequence_lengths = nullptr,
+                        const Vector<float>* B_data = nullptr,
+                        const Vector<float>* P_data = nullptr,
+                        const Vector<float>* initial_h_data = nullptr,
+                        const Vector<float>* initial_c_data = nullptr,
+                        const Vector<int>* sequence_lengths = nullptr,
                         const std::string& direction = "forward",
                         float clip = 9999.f,
                         bool output_sequence = true,
                         bool input_forget = false,
                         // copy the following vectors as we may modify them
-                        std::vector<string> activations = {},
-                        std::vector<float> activation_alphas = {},
-                        std::vector<float> activation_betas = {},
+                        Vector<string> activations = {},
+                        Vector<float> activation_alphas = {},
+                        Vector<float> activation_betas = {},
                         bool hasClip = true) {
   OpTester test("LSTM");
 
@@ -59,11 +59,11 @@ static void RunLstmTest(const std::vector<float>& X_data,
     activations = DuplicateContainer(activations);
   }
 
-  test.AddAttribute<std::vector<string>>("activations", activations);
+  test.AddAttribute<Vector<string>>("activations", activations);
   if (!activation_alphas.empty())
-    test.AddAttribute<std::vector<float>>("activation_alpha", activation_alphas);
+    test.AddAttribute<Vector<float>>("activation_alpha", activation_alphas);
   if (!activation_betas.empty())
-    test.AddAttribute<std::vector<float>>("activation_beta", activation_betas);
+    test.AddAttribute<Vector<float>>("activation_beta", activation_betas);
 
   test.AddAttribute("direction", direction);
   test.AddAttribute("hidden_size", hidden_size);
@@ -73,51 +73,51 @@ static void RunLstmTest(const std::vector<float>& X_data,
     test.AddAttribute<float>("clip", clip);
   }
 
-  std::vector<int64_t> X_dims = {seq_length, batch_size, input_size};
-  std::vector<int64_t> W_dims = {num_directions, 4 * hidden_size, input_size};
-  std::vector<int64_t> R_dims = {num_directions, 4 * hidden_size, hidden_size};
+  Vector<int64_t> X_dims = {seq_length, batch_size, input_size};
+  Vector<int64_t> W_dims = {num_directions, 4 * hidden_size, input_size};
+  Vector<int64_t> R_dims = {num_directions, 4 * hidden_size, hidden_size};
 
   test.AddInput<float>("X", X_dims, X_data);
   test.AddInput<float>("W", W_dims, W_data);
   test.AddInput<float>("R", R_dims, R_data);
 
   if (B_data) {
-    std::vector<int64_t> B_dims = {num_directions, 8 * hidden_size};
+    Vector<int64_t> B_dims = {num_directions, 8 * hidden_size};
     test.AddInput<float>("B", B_dims, *B_data);
   } else {
     test.AddMissingOptionalInput<float>();
   }
 
   if (sequence_lengths) {
-    std::vector<int64_t> sequence_lens_dims{batch_size};
+    Vector<int64_t> sequence_lens_dims{batch_size};
     test.AddInput<int>("sequence_lens", sequence_lens_dims, *sequence_lengths);
   } else {
     test.AddMissingOptionalInput<int>();
   }
 
   if (initial_h_data && !initial_h_data->empty()) {
-    std::vector<int64_t> initial_h_dims = {num_directions, batch_size, hidden_size};
+    Vector<int64_t> initial_h_dims = {num_directions, batch_size, hidden_size};
     test.AddInput<float>("initial_h", initial_h_dims, *initial_h_data);
   } else {
     test.AddMissingOptionalInput<float>();
   }
 
   if (initial_c_data && !initial_c_data->empty()) {
-    std::vector<int64_t> initial_c_dims = {num_directions, batch_size, hidden_size};
+    Vector<int64_t> initial_c_dims = {num_directions, batch_size, hidden_size};
     test.AddInput<float>("initial_c", initial_c_dims, *initial_c_data);
   } else {
     test.AddMissingOptionalInput<float>();
   }
 
   if (P_data && !P_data->empty()) {
-    std::vector<int64_t> P_dims = {num_directions, 3 * hidden_size};
+    Vector<int64_t> P_dims = {num_directions, 3 * hidden_size};
     test.AddInput<float>("P", P_dims, *P_data);
   } else {
     test.AddMissingOptionalInput<float>();
   }
 
   if (output_sequence != 0 && !Y_data.empty()) {
-    std::vector<int64_t> Y_dims = {seq_length, num_directions, batch_size, hidden_size};
+    Vector<int64_t> Y_dims = {seq_length, num_directions, batch_size, hidden_size};
     test.AddOutput<float>("Y", Y_dims, Y_data);
   } else {
     // add placeholder so node counts match as Y_h will always be the second Y_data,
@@ -126,14 +126,14 @@ static void RunLstmTest(const std::vector<float>& X_data,
   }
 
   if (!Y_h_data.empty()) {
-    std::vector<int64_t> Y_h_dims{num_directions, batch_size, hidden_size};
+    Vector<int64_t> Y_h_dims{num_directions, batch_size, hidden_size};
     test.AddOutput<float>("Y_h", Y_h_dims, Y_h_data);
   } else {
     test.AddMissingOptionalOutput<float>();
   }
 
   if (!Y_c_data.empty()) {
-    std::vector<int64_t> Y_c_dims{num_directions, batch_size, hidden_size};
+    Vector<int64_t> Y_c_dims{num_directions, batch_size, hidden_size};
     test.AddOutput<float>("Y_c", Y_c_dims, Y_c_data);
   } else {
     test.AddMissingOptionalOutput<float>();
@@ -143,10 +143,10 @@ static void RunLstmTest(const std::vector<float>& X_data,
 }
 
 void SimpleWeightsNoBiasTwoRows(std::string direction,
-                                const std::vector<float>& Y_data,
-                                const std::vector<float>& Y_h_data,
-                                const std::vector<float>& Y_c_data,
-                                const std::vector<int>* seq_lengths = nullptr) {
+                                const Vector<float>& Y_data,
+                                const Vector<float>& Y_h_data,
+                                const Vector<float>& Y_c_data,
+                                const Vector<int>* seq_lengths = nullptr) {
   int64_t seq_length = 2;
   int batch_size = 2;
   int64_t input_size = 1;
@@ -154,14 +154,14 @@ void SimpleWeightsNoBiasTwoRows(std::string direction,
 
   int num_directions = direction == "bidirectional" ? 2 : 1;
 
-  std::vector<float> X_data{1.f, 2.f, 10.f, 11.f};
+  Vector<float> X_data{1.f, 2.f, 10.f, 11.f};
 
-  std::vector<float> W_data{
+  Vector<float> W_data{
       0.1f, 0.2f, 0.3f, 0.4f,
       1.f, 2.f, 3.f, 4.f,
       10.f, 11.f, 12.f, 13.f};
 
-  std::vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
+  Vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
 
   // duplicate for bidirectional
   if (num_directions == 2) {
@@ -181,18 +181,18 @@ void SimpleWeightsNoBiasTwoRows(std::string direction,
 }
 
 TEST(LSTMTest, ForwardSimpleWeightsNoBiasTwoRows) {
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.28828835f, 0.36581863f, 0.45679406f,
       0.34526032f, 0.47220859f, 0.55850911f,
 
       0.84196719f, 0.89402526f, 0.91073048f,
       0.85882828f, 0.90703777f, 0.92382453f};
 
-  std::vector<float> Y_h_data{
+  Vector<float> Y_h_data{
       0.84196719f, 0.89402526f, 0.91073048f,
       0.85882828f, 0.90703777f, 0.92382453f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       1.27731147f, 1.44181041f, 1.53179041f,
       1.3249796f, 1.51063104f, 1.61451544f};
 
@@ -203,18 +203,18 @@ TEST(LSTMTest, ForwardSimpleWeightsNoBiasTwoRows) {
 }
 
 TEST(LSTMTest, ReverseSimpleWeightsNoBiasTwoRows) {
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.55391603f, 0.69201493f, 0.82696019f,
       0.64046413f, 0.82303363f, 0.91610711f,
 
       0.61249432f, 0.70678632f, 0.74094619f,
       0.62759886f, 0.71640738f, 0.74624585f};
 
-  std::vector<float> Y_h_data{
+  Vector<float> Y_h_data{
       0.55391603f, 0.69201493f, 0.82696019f,
       0.64046413f, 0.82303363f, 0.91610711f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       1.27850552f, 1.46799496f, 1.57641257f,
       1.34960834f, 1.54772296f, 1.65633056f};
 
@@ -222,7 +222,7 @@ TEST(LSTMTest, ReverseSimpleWeightsNoBiasTwoRows) {
 }
 
 TEST(LSTMTest, BidirectionalSimpleWeightsNoBiasTwoRows) {
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.28828835f, 0.36581863f, 0.45679406f,
       0.34526032f, 0.47220859f, 0.55850911f,
 
@@ -235,7 +235,7 @@ TEST(LSTMTest, BidirectionalSimpleWeightsNoBiasTwoRows) {
       0.61249432f, 0.70678632f, 0.74094619f,
       0.62759886f, 0.71640738f, 0.74624585f};
 
-  std::vector<float> Y_h_data{
+  Vector<float> Y_h_data{
       // we did the forward processing of X_data[1] last
       0.84196719f, 0.89402526f, 0.91073048f,
       0.85882828f, 0.90703777f, 0.92382453f,
@@ -244,7 +244,7 @@ TEST(LSTMTest, BidirectionalSimpleWeightsNoBiasTwoRows) {
       0.55391603f, 0.69201493f, 0.82696019f,
       0.64046413f, 0.82303363f, 0.91610711f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       1.27731147f, 1.44181041f, 1.53179041f,
       1.3249796f, 1.51063104f, 1.61451544f,
 
@@ -258,20 +258,20 @@ TEST(LSTMTest, BidirectionalSimpleWeightsNoBiasTwoRows) {
 TEST(LSTMTest, MixedSequenceLengths) {
   // we don't have numpy output for this, but by testing twice and swapping which batch is smaller
   // we can largely verify the behaviour by comparing to ForwardSimpleWeightsNoBiasTwoRows output.
-  std::vector<int> seq_lengths{1, 2};
+  Vector<int> seq_lengths{1, 2};
 
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.28828835f, 0.36581863f, 0.45679406f,
       0.34526032f, 0.47220859f, 0.55850911f,
 
       0.f, 0.f, 0.f,
       0.85882828f, 0.90703777f, 0.92382453f};
 
-  std::vector<float> Y_h_data{
+  Vector<float> Y_h_data{
       0.28828835f, 0.36581863f, 0.45679406f,
       0.85882828f, 0.90703777f, 0.92382453f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       0.52497941f, 0.54983425f, 0.5744428f,  // see intermediate output from ForwardSimpleWeightsNoBiasTwoRows
       1.3249796f, 1.51063104f, 1.61451544f};
 
@@ -302,20 +302,20 @@ TEST(LSTMTest, MixedSequenceLengths) {
 TEST(LSTMTest, MixedSequenceLengthsReverse) {
   // we don't have numpy output for this, but by testing twice and swapping which batch is smaller
   // we can largely verify the behaviour by comparing to ReverseSimpleWeightsNoBiasTwoRows output.
-  std::vector<int> seq_lengths{1, 2};
+  Vector<int> seq_lengths{1, 2};
 
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.28828844f, 0.36581877f, 0.45679423f,
       0.64046413f, 0.82303363f, 0.91610711f,
 
       0.f, 0.f, 0.f,
       0.62759886f, 0.71640738f, 0.74624585f};
 
-  std::vector<float> Y_h_data{
+  Vector<float> Y_h_data{
       0.28828844f, 0.36581877f, 0.45679423f,
       0.64046413f, 0.82303363f, 0.91610711f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       0.52497941f, 0.54983425f, 0.5744428f,
       1.34960834f, 1.54772296f, 1.65633056f};
 
@@ -351,19 +351,19 @@ TEST(LSTMTest, BatchParallelFalseSeqLengthGreaterThanOne) {
 
   int num_directions = 1;
 
-  std::vector<float> X_data{1.f, 2.f};
+  Vector<float> X_data{1.f, 2.f};
 
-  std::vector<float> W_data{
+  Vector<float> W_data{
       0.1f, 0.2f, 0.3f, 0.4f,
       1.f, 2.f, 3.f, 4.f};
 
-  std::vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
+  Vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
 
-  std::vector<float> Y_data{
+  Vector<float> Y_data{
       0.27546653f, 0.29941525f,
       0.50903179f, 0.57476457f};
 
-  std::vector<float> Y_c_data{
+  Vector<float> Y_c_data{
       1.02721067f, 1.15254318f};
 
   RunLstmTest(X_data, W_data, R_data, Y_data, {}, Y_c_data,
@@ -371,7 +371,7 @@ TEST(LSTMTest, BatchParallelFalseSeqLengthGreaterThanOne) {
 }
 
 // make sure GateComputations works correctly if batch_parallel_ is true due to large batch size
-static void LargeBatchWithClip(const std::vector<float>& Y_h_data, float clip = 9999.0) {
+static void LargeBatchWithClip(const Vector<float>& Y_h_data, float clip = 9999.0) {
   int64_t seq_length = 2;
   int batch_size = 32;
   int64_t input_size = 1;
@@ -380,17 +380,17 @@ static void LargeBatchWithClip(const std::vector<float>& Y_h_data, float clip = 
   const std::string direction = "forward";
   int num_directions = 1;
 
-  std::vector<float> X_data;
+  Vector<float> X_data;
 
   // generate input of 64 values
   float i = 0.f, increment = 1.f;
   std::generate_n(std::back_inserter(X_data), batch_size * seq_length, [&]() { return i += increment; });
 
-  std::vector<float> W_data{0.1f, 0.2f, 0.3f, 0.4f,
+  Vector<float> W_data{0.1f, 0.2f, 0.3f, 0.4f,
                             1.f, 2.f, 3.f, 4.f,
                             10.f, 11.f, 12.f, 13.f};
 
-  std::vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
+  Vector<float> R_data(num_directions * 4 * hidden_size * hidden_size, 0.1f);
 
   RunLstmTest(X_data, W_data, R_data, {}, Y_h_data, {},
               input_size, batch_size, hidden_size, seq_length,
@@ -398,7 +398,7 @@ static void LargeBatchWithClip(const std::vector<float>& Y_h_data, float clip = 
 }
 
 TEST(LSTMTest, LargeBatchNoClipping) {
-  std::vector<float> Y_h_data = {
+  Vector<float> Y_h_data = {
       0.90387899f, 0.9135572f, 0.91772245f,
       0.90897038f, 0.92132433f, 0.92825467f,
       0.91365823f, 0.92815113f, 0.93676105f,
@@ -437,7 +437,7 @@ TEST(LSTMTest, LargeBatchNoClipping) {
 
 // make sure GateComputations with clipping works correctly if batch_parallel_ is true due to large batch size
 TEST(LSTMTest, LargeBatchWithClip) {
-  std::vector<float> Y_h_data = {
+  Vector<float> Y_h_data = {
       0.88572926f, 0.89251395f, 0.89655037f,
       0.89074291f, 0.90035688f, 0.90727429f,
       0.89535827f, 0.90727429f, 0.91596163f,
@@ -478,9 +478,9 @@ TEST(LSTMTest, LargeBatchWithClip) {
 class LstmOpContext2x1x2x2 {
  public:
   LstmOpContext2x1x2x2(const std::string direction,
-                       const std::vector<std::string>& activations = {},
-                       const std::vector<float>& activation_alphas = {},
-                       const std::vector<float>& activation_betas = {})
+                       const Vector<std::string>& activations = {},
+                       const Vector<float>& activation_alphas = {},
+                       const Vector<float>& activation_betas = {})
       : direction_(direction),
         num_directions_(direction == "bidirectional" ? 2 : 1),
         activation_func_names_{activations},
@@ -597,15 +597,15 @@ class LstmOpContext2x1x2x2 {
     // RunTest(seq_len, batch_size, num_direction, Y_data, output_first);
   }
 
-  void RunTest(const std::vector<float>& X,
+  void RunTest(const Vector<float>& X,
                const int batch_size,
                const int seq_length,
-               const std::vector<float>* initial_h,
-               const std::vector<float>* initial_c,
-               const std::vector<float>& expected_Y,
-               const std::vector<float>& expected_Y_h = {},
-               const std::vector<float>& expected_Y_c = {},
-               const std::vector<int>* sequence_lens = nullptr,
+               const Vector<float>* initial_h,
+               const Vector<float>* initial_c,
+               const Vector<float>& expected_Y,
+               const Vector<float>& expected_Y_h = {},
+               const Vector<float>& expected_Y_c = {},
+               const Vector<int>* sequence_lens = nullptr,
                bool use_bias = true,
                bool use_peepholes = true,
                float clip = 9999.f,
@@ -650,23 +650,23 @@ class LstmOpContext2x1x2x2 {
   const int hidden_size_ = 2;
   const std::string direction_;
   int num_directions_;
-  const std::vector<std::string> activation_func_names_;
-  const std::vector<float> activation_alphas_;
-  const std::vector<float> activation_betas_;
-  std::vector<float> input_weights_;
-  std::vector<float> recurrent_weights_;
-  std::vector<float> bias_;
-  std::vector<float> peephole_weights_;
+  const Vector<std::string> activation_func_names_;
+  const Vector<float> activation_alphas_;
+  const Vector<float> activation_betas_;
+  Vector<float> input_weights_;
+  Vector<float> recurrent_weights_;
+  Vector<float> bias_;
+  Vector<float> peephole_weights_;
 };
 
 TEST(LSTMTest, ONNXRuntime_TestLSTMForwardPeepHole) {
   ///////////////Attributes////////////////////////
   const int seq_len = 2, batch_size = 1;
 
-  std::vector<float> input = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
-  std::vector<float> Y_data = {-0.0251062475f, 0.0561261699f, -0.03277518f, 0.05935364f};
-  std::vector<float> Y_h_data = {-0.03277518f, 0.05935364f};
-  std::vector<float> Y_c_data = {-0.0780206f, 0.098829f};
+  Vector<float> input = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> Y_data = {-0.0251062475f, 0.0561261699f, -0.03277518f, 0.05935364f};
+  Vector<float> Y_h_data = {-0.03277518f, 0.05935364f};
+  Vector<float> Y_c_data = {-0.0780206f, 0.098829f};
 
   std::string direction = "forward";
 
@@ -678,15 +678,15 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardPeepHole) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMBidirectionalBasic) {
   const int seq_len = 2, batch_size = 1;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f,
+  Vector<float> X_data = {-0.455351f, -0.276391f,
                                -0.185934f, -0.269585f};
-  std::vector<float> Y_data = {-0.0251062f, 0.0561262f,
+  Vector<float> Y_data = {-0.0251062f, 0.0561262f,
                                -0.0318928f, 0.0762679f,
                                -0.0327752f, 0.0593536f,
                                -0.0306872f, 0.028035f};
-  std::vector<float> Y_h_data = {-0.0327752f, 0.0593536f,
+  Vector<float> Y_h_data = {-0.0327752f, 0.0593536f,
                                  -0.0318928f, 0.0762679f};
-  std::vector<float> Y_c_data = {-0.0780206f, 0.098829f,
+  Vector<float> Y_c_data = {-0.0780206f, 0.098829f,
                                  -0.0753684f, 0.120794f};
 
   LstmOpContext2x1x2x2 context("bidirectional");
@@ -698,13 +698,13 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardNoBiasUsePeepholes) {
 
   bool use_bias = false;
   bool use_peepholes = true;
-  std::vector<float> X_data = {-0.455351f, -0.276391f,
+  Vector<float> X_data = {-0.455351f, -0.276391f,
                                -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {0.04154162f, 0.01969122f,
+  Vector<float> Y_data = {0.04154162f, 0.01969122f,
                                0.05298181f, 0.0030589f};
-  std::vector<float> Y_h_data = {0.05298181f, 0.0030589f};
-  std::vector<float> Y_c_data = {0.11169686f, 0.00625722f};
+  Vector<float> Y_h_data = {0.05298181f, 0.0030589f};
+  Vector<float> Y_c_data = {0.11169686f, 0.00625722f};
 
   LstmOpContext2x1x2x2 context("forward");
   context.RunTest(X_data, batch_size, seq_len, nullptr, nullptr, Y_data, Y_h_data, Y_c_data, nullptr,
@@ -719,12 +719,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardInputForget) {
   bool input_forget = true;
   float clip = 999.0f;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.02510626f, 0.05612619f,
+  Vector<float> Y_data = {-0.02510626f, 0.05612619f,
                                -0.0314321f, 0.05087372f};
-  std::vector<float> Y_h_data = {-0.0314321f, 0.05087372f};
-  std::vector<float> Y_c_data = {-0.07474898f, 0.08480116f};
+  Vector<float> Y_h_data = {-0.0314321f, 0.05087372f};
+  Vector<float> Y_c_data = {-0.07474898f, 0.08480116f};
 
   LstmOpContext2x1x2x2 context("forward");
   // cudnn don't support peepholes
@@ -739,12 +739,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardClip) {
   bool use_peepholes = true;
   float clip = 0.1f;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.02280854f, 0.02744377f,
+  Vector<float> Y_data = {-0.02280854f, 0.02744377f,
                                -0.03516197f, 0.03875681f};
-  std::vector<float> Y_h_data = {-0.03516197f, 0.03875681f};
-  std::vector<float> Y_c_data = {-0.07415761f, 0.07395997f};
+  Vector<float> Y_h_data = {-0.03516197f, 0.03875681f};
+  Vector<float> Y_c_data = {-0.07415761f, 0.07395997f};
 
   LstmOpContext2x1x2x2 context("forward");
   context.RunTest(X_data, batch_size, seq_len, nullptr, nullptr, Y_data, Y_h_data, Y_c_data, nullptr,
@@ -754,12 +754,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardClip) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMBackward) {
   const int seq_len = 2, batch_size = 1;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.03189282f, 0.07626793f,
+  Vector<float> Y_data = {-0.03189282f, 0.07626793f,
                                -0.03068724f, 0.02803503f};
-  std::vector<float> Y_h_data = {-0.03189282f, 0.07626793f};
-  std::vector<float> Y_c_data = {-0.07536839f, 0.12079399f};
+  Vector<float> Y_h_data = {-0.03189282f, 0.07626793f};
+  Vector<float> Y_c_data = {-0.07536839f, 0.12079399f};
 
   LstmOpContext2x1x2x2 context("reverse");
   context.RunTest(X_data, batch_size, seq_len, nullptr, nullptr, Y_data, Y_h_data, Y_c_data);
@@ -768,12 +768,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMBackward) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMBackward_gpu) {
   const int seq_len = 2, batch_size = 1;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.033075746f, 0.074455738f,
+  Vector<float> Y_data = {-0.033075746f, 0.074455738f,
                                -0.031248707f, 0.027853041f};
-  std::vector<float> Y_h_data = {-0.033075746f, 0.074455738f};
-  std::vector<float> Y_c_data = {-0.076699793f, 0.11975205f};
+  Vector<float> Y_h_data = {-0.033075746f, 0.074455738f};
+  Vector<float> Y_c_data = {-0.076699793f, 0.11975205f};
 
   LstmOpContext2x1x2x2 context("reverse");
   // Disable peephole since cudnn doesn't support it
@@ -786,13 +786,13 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardHiddenState) {
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
-  std::vector<float> hidden_state = {0.34f, 0.72f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> hidden_state = {0.34f, 0.72f};
 
-  std::vector<float> Y_data = {0.01797521f, -0.07104912f,
+  Vector<float> Y_data = {0.01797521f, -0.07104912f,
                                -0.03174796f, -0.0152949f};
-  std::vector<float> Y_h_data = {-0.03174796f, -0.0152949f};
-  std::vector<float> Y_c_data = {-0.07285583f, -0.02545788f};
+  Vector<float> Y_h_data = {-0.03174796f, -0.0152949f};
+  Vector<float> Y_c_data = {-0.07285583f, -0.02545788f};
 
   LstmOpContext2x1x2x2 context("forward");
   context.RunTest(X_data, batch_size, seq_len, &hidden_state, nullptr, Y_data, Y_h_data, Y_c_data,
@@ -805,14 +805,14 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardCellState) {
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
-  std::vector<float> hidden_state = {0.34f, 0.72f};
-  std::vector<float> cell_state = {0.63f, 0.21f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> hidden_state = {0.34f, 0.72f};
+  Vector<float> cell_state = {0.63f, 0.21f};
 
-  std::vector<float> Y_data = {0.12797015f, 0.0097284f,
+  Vector<float> Y_data = {0.12797015f, 0.0097284f,
                                0.02716939f, 0.01842997f};
-  std::vector<float> Y_h_data = {0.02716939f, 0.01842997f};
-  std::vector<float> Y_c_data = {0.06408449f, 0.03139432f};
+  Vector<float> Y_h_data = {0.02716939f, 0.01842997f};
+  Vector<float> Y_c_data = {0.06408449f, 0.03139432f};
 
   LstmOpContext2x1x2x2 context("forward");
   context.RunTest(X_data, batch_size, seq_len, &hidden_state, &cell_state, Y_data, Y_h_data, Y_c_data,
@@ -822,17 +822,17 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardCellState) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMActivation) {
   const int seq_len = 2, batch_size = 1;
 
-  std::vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
+  Vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.0660155f, 0.0351227f,
+  Vector<float> Y_data = {-0.0660155f, 0.0351227f,
                                -0.04236888f, 0.0177365f};
-  std::vector<float> Y_h_data = {-0.04236888f, 0.0177365f};
-  std::vector<float> Y_c_data = {0.1624992f, 0.04672481f};
+  Vector<float> Y_h_data = {-0.04236888f, 0.0177365f};
+  Vector<float> Y_c_data = {0.1624992f, 0.04672481f};
 
   LstmOpContext2x1x2x2 context("forward", activations);
   context.RunTest(X_data, batch_size, seq_len, nullptr, nullptr, Y_data, Y_h_data, Y_c_data,
@@ -850,17 +850,17 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMBatchReallocation) {
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
+  Vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
 
   //////////////////Inputs///////////////////////////////////
   std::string direction = "forward";
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f,
+  Vector<float> X_data = {-0.455351f, -0.276391f,
                                -0.185934f, -0.269585f};
-  std::vector<float> Y_data = {-0.0660155f, 0.0351227f,
+  Vector<float> Y_data = {-0.0660155f, 0.0351227f,
                                -0.04236888f, 0.0177365f};
-  std::vector<float> Y_h_data = {-0.04236888f, 0.0177365f};
-  std::vector<float> Y_c_data = {0.1624992f, 0.04672481f};
+  Vector<float> Y_h_data = {-0.04236888f, 0.0177365f};
+  Vector<float> Y_c_data = {0.1624992f, 0.04672481f};
 
   LstmOpContext2x1x2x2 context(direction, activations);
   context.RunTest(X_data, batch_size, seq_len, nullptr, nullptr, Y_data, Y_h_data, Y_c_data,
@@ -906,21 +906,21 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMBatchReallocation) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMOutputWrite) {
   const int seq_len = 2;
   int batch_size = 1;
-  std::vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
+  Vector<float> X_data = {-0.455351f, -0.276391f, -0.185934f, -0.269585f};
 
-  std::vector<float> Y_data = {-0.06601551f, 0.03512269f,
+  Vector<float> Y_data = {-0.06601551f, 0.03512269f,
                                -0.05520744f, 0.03879774f,
 
                                -0.04236888f, 0.01773649f,
                                -0.05332068f, 0.00207076f};
-  std::vector<float> Y_h_data = {-0.04236888f, 0.01773649f,
+  Vector<float> Y_h_data = {-0.04236888f, 0.01773649f,
                                  -0.05520744f, 0.03879774f};
-  std::vector<float> Y_c_data = {0.1624992f, 0.04672481f,
+  Vector<float> Y_c_data = {0.1624992f, 0.04672481f,
                                  0.22009919f, 0.08087098f};
 
   std::string direction = "bidirectional";
@@ -978,20 +978,20 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMOutputWrite) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthAllZeros) {
   const int seq_len = 2;
   int batch_size = 2;
-  std::vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.776391f,
+  Vector<float> X_data = {-0.455351f, -0.776391f,
                                -0.355351f, -0.576391f,
 
                                -0.185934f, -0.169585f,
                                -0.285934f, -0.469585f};
 
-  std::vector<int> sequence_length = {0, 0};
+  Vector<int> sequence_length = {0, 0};
 
-  std::vector<float> Y_data = {0.0f, 0.0f,
+  Vector<float> Y_data = {0.0f, 0.0f,
                                0.0f, 0.0f,
                                0.0f, 0.0f,
                                0.0f, 0.0f,
@@ -1001,13 +1001,13 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthAllZeros) {
                                0.0f, 0.0f,
                                0.0f, 0.0f};
 
-  std::vector<float> Y_h_data = {0.0f, 0.0f,
+  Vector<float> Y_h_data = {0.0f, 0.0f,
                                  0.0f, 0.0f,
 
                                  0.0f, 0.0f,
                                  0.0f, 0.0f};
 
-  std::vector<float> Y_c_data = {0.0f, 0.0f,
+  Vector<float> Y_c_data = {0.0f, 0.0f,
                                  0.0f, 0.0f,
 
                                  0.0f, 0.0f,
@@ -1022,20 +1022,20 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthAllZeros) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthPartialZeros) {
   const int seq_len = 2;
   int batch_size = 2;
-  std::vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.776391f,
+  Vector<float> X_data = {-0.455351f, -0.776391f,
                                0.0f, 0.0f,
 
                                -0.185934f, -0.169585f,
                                0.0f, 0.0f};
 
-  std::vector<int> sequence_length = {2, 0};
+  Vector<int> sequence_length = {2, 0};
 
-  std::vector<float> Y_data = {-0.1269719f, -0.01049645f,
+  Vector<float> Y_data = {-0.1269719f, -0.01049645f,
                                0.0f, 0.0f,
 
                                -0.12206709f, -0.0051103f,
@@ -1047,13 +1047,13 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthPartialZeros) {
                                -0.04350187f, 0.01127771f,
                                0.0f, 0.0f};
 
-  std::vector<float> Y_h_data = {-0.02778835f, 0.00775075f,
+  Vector<float> Y_h_data = {-0.02778835f, 0.00775075f,
                                  0.0f, 0.0f,
 
                                  -0.12206709f, -0.0051103f,
                                  0.0f, 0.0f};
 
-  std::vector<float> Y_c_data = {0.14675268f, 0.01759163f,
+  Vector<float> Y_c_data = {0.14675268f, 0.01759163f,
                                  0.0f, 0.0f,
 
                                  0.26577898f, -0.01694398f,
@@ -1071,24 +1071,24 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthShorterThanInputSequenceLength)
   const int seq_len = 2;
   const int batch_size = 1;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f,
+  Vector<float> X_data = {-0.455351f, -0.276391f,
                                -0.185934f, -0.269585f};
 
-  std::vector<int> sequence_length = {1};
+  Vector<int> sequence_length = {1};
 
-  std::vector<float> initial_h = {0.0f, 0.0f,
+  Vector<float> initial_h = {0.0f, 0.0f,
                                   -0.0306872f, 0.028035f};
 
-  std::vector<float> initial_c = {0.0f, 0.0f,
+  Vector<float> initial_c = {0.0f, 0.0f,
                                   -0.07243599f, 0.0467052f};
 
-  std::vector<float> Y_data = {-0.0251062f, 0.0561262f,
+  Vector<float> Y_data = {-0.0251062f, 0.0561262f,
                                -0.0318928f, 0.0762679f,
 
                                0.0f, 0.0f,
                                0.0f, 0.0f};
 
-  std::vector<float> Y_h_data = {-0.0251062f, 0.0561262f,
+  Vector<float> Y_h_data = {-0.0251062f, 0.0561262f,
                                  -0.0318928f, 0.0762679f};
 
   std::string direction = "bidirectional";
@@ -1101,24 +1101,24 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthShorterThanInputSequenceLengthN
   const int seq_len = 2;
   const int batch_size = 1;
 
-  std::vector<float> X_data = {-0.455351f, -0.276391f,
+  Vector<float> X_data = {-0.455351f, -0.276391f,
                                -0.185934f, -0.269585f};
 
-  std::vector<int> sequence_length = {1};
+  Vector<int> sequence_length = {1};
 
-  std::vector<float> initial_h = {0.0f, 0.0f,
+  Vector<float> initial_h = {0.0f, 0.0f,
                                   -0.0306872f, 0.028035f};
 
-  std::vector<float> initial_c = {0.0f, 0.0f,
+  Vector<float> initial_c = {0.0f, 0.0f,
                                   -0.07243599f, 0.0467052f};
 
-  std::vector<float> Y_data = {0.0415416f, 0.0196912f,
+  Vector<float> Y_data = {0.0415416f, 0.0196912f,
                                0.0295027f, 0.0334400f,
 
                                0.0f, 0.0f,
                                0.0f, 0.0f};
 
-  std::vector<float> Y_h_data = {0.0415416f, 0.0196912f,
+  Vector<float> Y_h_data = {0.0415416f, 0.0196912f,
                                  0.0295027f, 0.0334400f};
 
   std::string direction = "bidirectional";
@@ -1131,12 +1131,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthShorterThanInputSequenceLengthN
 TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
   const int seq_len = 2;
   int batch_size = 3;
-  std::vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
+  Vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.776391f,
+  Vector<float> X_data = {-0.455351f, -0.776391f,
                                0.0f, 0.0f,
                                0.348763f, 0.678345f,
 
@@ -1144,9 +1144,9 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
                                0.0f, 0.0f,
                                0.078053f, 0.163457f};
 
-  std::vector<int> sequence_length = {2, 1, 2};
+  Vector<int> sequence_length = {2, 1, 2};
 
-  std::vector<float> Y_data = {0.02907280f, 0.01765226f, -0.06724346f, 0.02957184f, -0.15355367f, 0.04701351f,
+  Vector<float> Y_data = {0.02907280f, 0.01765226f, -0.06724346f, 0.02957184f, -0.15355367f, 0.04701351f,
 
                                0.01841230f, 0.04093486f, -0.06724346f, 0.02957184f, -0.17994503f, 0.07397783f,
 
@@ -1154,11 +1154,11 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
 
                                -0.04350187f, 0.03531464f, 0.0f, 0.0f, -0.08877515f, 0.03413615f};
 
-  std::vector<float> Y_h_data = {-0.0291254f, 0.04120104f, -0.06724346f, 0.02957184f, -0.12768818f, 0.07457943f,
+  Vector<float> Y_h_data = {-0.0291254f, 0.04120104f, -0.06724346f, 0.02957184f, -0.12768818f, 0.07457943f,
 
                                  0.01841230f, 0.04093486f, -0.06724346f, 0.02957184f, -0.17994503f, 0.07397783f};
 
-  std::vector<float> Y_c_data = {-0.06609819f, 0.06838701f, -0.14596788f, 0.04902556f, -0.26768601f, 0.12119407f,
+  Vector<float> Y_c_data = {-0.06609819f, 0.06838701f, -0.14596788f, 0.04902556f, -0.26768601f, 0.12119407f,
 
                                  0.04934450f, 0.07126625f, -0.14596788f, 0.04902556f, -0.34139895f, 0.11673255f};
 
@@ -1171,12 +1171,12 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMZeroSeqInMiddle) {
   const int seq_len = 2;
   int batch_size = 4;
-  std::vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
+  Vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
 
-  std::vector<float> X_data = {-0.455351f, -0.776391f,
+  Vector<float> X_data = {-0.455351f, -0.776391f,
                                0.0f, 0.0f,
                                0.348763f, 0.678345f,
                                0.877836f, 0.543859f,
@@ -1186,19 +1186,19 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMZeroSeqInMiddle) {
                                0.078053f, 0.163457f,
                                0.846098f, 0.987531f};
 
-  std::vector<int> sequence_length = {2, 0, 1, 2};
+  Vector<int> sequence_length = {2, 0, 1, 2};
 
-  std::vector<float> Y_data = {0.02907280f, 0.01765226f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.12951779f, -0.00989562f,
+  Vector<float> Y_data = {0.02907280f, 0.01765226f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.12951779f, -0.00989562f,
                                0.01841230f, 0.04093486f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.17956293f, 0.01607513f,
 
                                -0.02912546f, 0.04120104f, 0.0f, 0.0f, 0.0f, 0.0f, -0.22162350f, 0.03132058f,
                                -0.04350187f, 0.03531464f, 0.0f, 0.0f, 0.0f, 0.0f, -0.17885581f, 0.01959856f};
 
-  std::vector<float> Y_h_data = {-0.02912546f, 0.04120104f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.22162350f, 0.03132058f,
+  Vector<float> Y_h_data = {-0.02912546f, 0.04120104f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.22162350f, 0.03132058f,
 
                                  0.01841230f, 0.04093486f, 0.0f, 0.0f, -0.15355367f, 0.04701351f, -0.17956293f, 0.01607513f};
 
-  std::vector<float> Y_c_data = {-0.06609819f, 0.06838701f, 0.0f, 0.0f, -0.2894889f, 0.07438067f, -0.39655977f, 0.05050645f,
+  Vector<float> Y_c_data = {-0.06609819f, 0.06838701f, 0.0f, 0.0f, -0.2894889f, 0.07438067f, -0.39655977f, 0.05050645f,
 
                                  0.04934450f, 0.07126625f, 0.0f, 0.0f, -0.28948891f, 0.07438067f, -0.34931409f, 0.02799958f};
 

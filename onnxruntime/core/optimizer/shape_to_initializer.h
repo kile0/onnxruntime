@@ -19,7 +19,7 @@ class ShapeToInitializer : public RewriteRule {
  public:
   ShapeToInitializer() noexcept : RewriteRule("ShapeToInitializer") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Shape"};
   }
 

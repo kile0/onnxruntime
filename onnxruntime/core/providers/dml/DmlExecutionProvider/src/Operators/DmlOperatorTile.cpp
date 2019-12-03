@@ -18,8 +18,8 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetInputCount() == 2, "Tile expects 2 input tensors.");
         ML_CHECK_VALID_ARGUMENT(kernelCreationContext.GetOutputCount() == 1, "Tile expects 1 output tensor.");
 
-        std::vector<std::optional<uint32_t>> inputIndices = { 0 }; // Use only the first tensor. The second tensor is CPU based and should not be passed to Tile.
-        std::vector<std::optional<uint32_t>> outputIndices = { 0 };
+        Vector<std::optional<uint32_t>> inputIndices = { 0 }; // Use only the first tensor. The second tensor is CPU based and should not be passed to Tile.
+        Vector<std::optional<uint32_t>> outputIndices = { 0 };
         DmlOperator::Initialize(kernelCreationContext, inputIndices, outputIndices);
 
         // Because DirectML supports a limited number of dimensions, try to squeeze the dimension count
@@ -27,10 +27,10 @@ public:
         // even though those dimensions have no significance and can be elided (nop 1's), coercing the
         // total dimension count back down to a supported value.
 
-        std::vector<uint32_t> squeezedInputShape = m_inputDimensions;
-        std::vector<uint32_t> squeezedOutputShape = m_outputDimensions;
-        std::vector<uint32_t> squeezableDimensionIndices;
-        std::vector<uint32_t> paddedRepeatsData = m_repeatsData;
+        Vector<uint32_t> squeezedInputShape = m_inputDimensions;
+        Vector<uint32_t> squeezedOutputShape = m_outputDimensions;
+        Vector<uint32_t> squeezableDimensionIndices;
+        Vector<uint32_t> paddedRepeatsData = m_repeatsData;
         FindValueIndices<uint32_t>(gsl::make_span(squeezedOutputShape), 1u, /*out*/ squeezableDimensionIndices);
 
         RemoveValuesByIndex(squeezableDimensionIndices, /*keepOneValue*/ true, /*inout*/ squeezedInputShape);
@@ -55,8 +55,8 @@ public:
         }
 
         // Create the operator description.
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_TILE_OPERATOR_DESC operatorDesc = {};
         operatorDesc.InputTensor = inputDescs.data();

@@ -27,7 +27,7 @@ void LoopExecBlock::Run(KernelComputeCtx* kernel_compute_ctx) {
   const tvm::runtime::PackedFunc& func = func_info_->packed_func;
   int num_func_args = gsl::narrow<int>(func_info_->func_input_count + func_info_->func_output_count);
 
-  // Note tvm_args holds ptr of std::vector<TVMValue> not value, so we only need to assign once.
+  // Note tvm_args holds ptr of Vector<TVMValue> not value, so we only need to assign once.
   tvm::TVMArgs tvm_args(subgraph_compute_ctx.lvalues.data(),
                         func_info_->type_codes.data(),
                         num_func_args);
@@ -35,7 +35,7 @@ void LoopExecBlock::Run(KernelComputeCtx* kernel_compute_ctx) {
 
   // Do it sequentially sicne it is a sequential ExecBlock
   while (subgraph_compute_ctx.loop_cf_ctx->IsValid()) {
-    // Note InitIteration would change values of std::vector<DLTensor> and std::vector<TVMValue>, not ptr.
+    // Note InitIteration would change values of Vector<DLTensor> and Vector<TVMValue>, not ptr.
     subgraph_compute_ctx.loop_cf_ctx->InitIteration(kernel_compute_ctx, func_info_);
 
     // Profiling event (no op for non-profiling build)

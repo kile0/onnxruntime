@@ -31,7 +31,7 @@ class TestCaseResult {
 
   void SetResult(size_t task_id, EXECUTE_RESULT r);
 
-  const std::vector<EXECUTE_RESULT>& GetExcutionResult() const {
+  const Vector<EXECUTE_RESULT>& GetExcutionResult() const {
     return excution_result_;
   }
 
@@ -50,5 +50,5 @@ class TestCaseResult {
 
  private:
   ::onnxruntime::TIME_SPEC spent_time_;
-  std::vector<EXECUTE_RESULT> excution_result_;
+  Vector<EXECUTE_RESULT> excution_result_;
 };

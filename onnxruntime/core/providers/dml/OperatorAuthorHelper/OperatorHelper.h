@@ -11,7 +11,7 @@ namespace OperatorHelper
 {
 bool ContainsEmptyDimensions(gsl::span<const DimensionType> dimensions);
 
-std::vector<DimensionType> BroadcastTensorShape(
+Vector<DimensionType> BroadcastTensorShape(
     gsl::span<const DimensionType> inputShape0,
     gsl::span<const DimensionType> inputShape1
     );
@@ -23,7 +23,7 @@ std::vector<DimensionType> BroadcastTensorShape(
 //      output indices = {1,3,4}
 #pragma optimize("", off)
 template<typename T>
-void FindValueIndices(gsl::span<const T> values, T value, /*out*/ std::vector<uint32_t>& indices)
+void FindValueIndices(gsl::span<const T> values, T value, /*out*/ Vector<uint32_t>& indices)
 {
     indices.clear();
     for (size_t i = 0, valuesCount = values.size(); i < valuesCount; ++i)
@@ -52,7 +52,7 @@ void HandleNegativeAxes(gsl::span<int32_t> onnxAxes, uint32_t dimCount);
 //      ellidable input indices = {1,3,4}
 //      output values = {2,3,5}
 template<typename T>
-void RemoveValuesByIndex(gsl::span<const uint32_t> indices, bool keepOneValue, /*inout*/ std::vector<T>& values)
+void RemoveValuesByIndex(gsl::span<const uint32_t> indices, bool keepOneValue, /*inout*/ Vector<T>& values)
 {
     assert(std::is_sorted(indices.begin(), indices.end()));
 
@@ -90,16 +90,16 @@ class EdgeShapes
 {
 public:
     EdgeShapes() = default;
-    EdgeShapes(const std::vector<uint32_t>& dim){ m_shapes = dim; }
+    EdgeShapes(const Vector<uint32_t>& dim){ m_shapes = dim; }
     EdgeShapes(const std::initializer_list<uint32_t>& dim) { m_shapes.assign(dim.begin(), dim.end()); }
     EdgeShapes(const gsl::span<const DimensionType> dim) { m_shapes.assign(dim.begin(), dim.end()); }
     
     bool IsTensor() { return true; }
     bool IsUnused() { return m_shapes.empty(); }
 
-    std::vector<uint32_t>& GetShape() { return m_shapes; }
+    Vector<uint32_t>& GetShape() { return m_shapes; }
 private:
-    std::vector<uint32_t> m_shapes;
+    Vector<uint32_t> m_shapes;
 };
 
 struct KernelArgs
@@ -166,12 +166,12 @@ struct KernelArgs
     uint32_t spatialDimensionCount;
 };
 
-std::vector<DimensionType> InitializeKernelOutputDimensions(
+Vector<DimensionType> InitializeKernelOutputDimensions(
     gsl::span<const DimensionType> inputDimensions,
     const KernelArgs& args
 );
 
-std::vector<DimensionType> InitializeKernelOutputDimsTranspose(
+Vector<DimensionType> InitializeKernelOutputDimsTranspose(
     gsl::span<const DimensionType> inputDimensions,
     const KernelArgs& args
 );
@@ -197,7 +197,7 @@ public:
     template<typename Info_t, typename Shape_t>
     GetOutputShapeAsInputShapeHelper(const Info_t& info, const Shape_t& shape) {};
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 };
 
 class GetBroadcastedOutputShapeHelper
@@ -208,7 +208,7 @@ public:
     template<typename Info_t, typename Shape_t>
     GetBroadcastedOutputShapeHelper(const Info_t& info, const Shape_t& shape) {};
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 };
 
 class RandomUniformHelperBase
@@ -247,10 +247,10 @@ public:
         m_tensorShape.assign(shapeAttribute.begin(), shapeAttribute.end());
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 private:
     // Returns an empty vector if the optional attribute is missing.
-    std::vector<uint32_t> m_tensorShape;
+    Vector<uint32_t> m_tensorShape;
 };
 
 class RandomNormalHelperBase
@@ -289,10 +289,10 @@ public:
         m_tensorShape.assign(shapeAttribute.begin(), shapeAttribute.end());
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 private:
     // Returns an empty vector if the optional attribute is missing.
-    std::vector<uint32_t> m_tensorShape;
+    Vector<uint32_t> m_tensorShape;
 };
 
 class ConvolutionHelperBase
@@ -322,7 +322,7 @@ public:
 
     void ResolvingPadding(gsl::span<const DimensionType> inputDimensions);
 
-    const std::vector<EdgeShapes>& GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
+    const Vector<EdgeShapes>& GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const
     {
         return m_outputShapes;
     }
@@ -330,8 +330,8 @@ public:
     template<typename Shape_t>
     void InitializeKernelAndShapes(const Shape_t& shapeInfo)
     {
-        const std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
-        const std::vector<DimensionType> filterDims = shapeInfo.GetInputTensorShape(1);
+        const Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        const Vector<DimensionType> filterDims = shapeInfo.GetInputTensorShape(1);
 
         ML_CHECK_VALID_ARGUMENT(
             inputDimensions.size() >= 3 && inputDimensions.size() <= 5,
@@ -349,7 +349,7 @@ public:
     template<typename Info_t, typename Shape_t>
     void InitializeKernelAndShapesTransposed(const Info_t& info, const Shape_t& shapeInfo)
     {
-        std::vector<int> outputShape = info.GetOptionalAttributeVectorInt32(AttrName::OutputShape);
+        Vector<int> outputShape = info.GetOptionalAttributeVectorInt32(AttrName::OutputShape);
         if (!outputShape.empty())
         {
             ML_CHECK_VALID_ARGUMENT(
@@ -358,8 +358,8 @@ public:
             );
         }
 
-        const std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
-        const std::vector<DimensionType> filterDims = shapeInfo.GetInputTensorShape(1);
+        const Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        const Vector<DimensionType> filterDims = shapeInfo.GetInputTensorShape(1);
 
         ML_CHECK_VALID_ARGUMENT(inputDimensions.size() > NonspatialDimensionCount, "Input dimensions must be >= 3");
 
@@ -412,7 +412,7 @@ public:
 protected:
     uint32_t m_groupCount;
     KernelArgs m_kernel;
-    std::vector<EdgeShapes> m_outputShapes;
+    Vector<EdgeShapes> m_outputShapes;
 };
 
 class ConvHelper : public ConvolutionHelperBase
@@ -444,7 +444,7 @@ public:
         m_beta = info.GetOptionalAttribute<float>(AttrName::Beta, 0.0f);
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
     enum InputTensors { IN_A, IN_B, IN_C };
 
@@ -472,10 +472,10 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<int> m_permutations;
+    Vector<int> m_permutations;
 };
 
 class SplitHelper
@@ -494,11 +494,11 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int m_axis = 0;
-    std::vector<int> m_split;
+    Vector<int> m_split;
 };
 
 class SliceHelper
@@ -517,13 +517,13 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<DimensionType> m_outputDimensions;
-    std::vector<uint32_t> m_offsets;
-    std::vector<uint32_t> m_sizes;
-    std::vector<uint32_t> m_strides;
+    Vector<DimensionType> m_outputDimensions;
+    Vector<uint32_t> m_offsets;
+    Vector<uint32_t> m_sizes;
+    Vector<uint32_t> m_strides;
 };
 
 class PaddingHelper
@@ -539,11 +539,11 @@ public:
         Initialize(info);
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<uint32_t> m_startPadding;
-    std::vector<uint32_t> m_endPadding;
+    Vector<uint32_t> m_startPadding;
+    Vector<uint32_t> m_endPadding;
 };
 
 class ReduceHelperBase
@@ -564,17 +564,17 @@ public:
             int axis = info.GetOptionalAttribute<int>(AttrName::Axis, 0);
             m_axes.push_back(axis);
         }
-        std::vector<uint32_t> inputShape = shape.GetInputTensorShape(0);
+        Vector<uint32_t> inputShape = shape.GetInputTensorShape(0);
         HandleNegativeAxes(/*inout*/ m_axes, gsl::narrow_cast<uint32_t>(inputShape.size()));
         AdjustAxesAndOutputShape(inputShape);
     }
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 private:
-    void AdjustAxesAndOutputShape(const std::vector<uint32_t>& inputShape);
+    void AdjustAxesAndOutputShape(const Vector<uint32_t>& inputShape);
 
 protected:
-    std::vector<int> m_axes;
+    Vector<int> m_axes;
     int m_keepDims = 0;
 };
 
@@ -604,7 +604,7 @@ public:
     template<typename Info_t, typename Shape_t>
     MatMulHelper(const Info_t& info, const Shape_t& shape) {}
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 };
 
 class TopKHelper
@@ -628,7 +628,7 @@ public:
         ML_CHECK_VALID_ARGUMENT(m_axis >= 0 && m_axis < gsl::narrow_cast<int32_t>(inputShape.size()));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int32_t m_k;
@@ -646,7 +646,7 @@ public:
         m_hiddenSize = info.GetOptionalAttribute<int>(AttrName::HiddenSize, 1);
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int m_hiddenSize = 0;
@@ -668,7 +668,7 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int m_axis;
@@ -693,7 +693,7 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     uint32_t m_offsets[NchwDimensionCount];
@@ -712,7 +712,7 @@ public:
         ML_CHECK_VALID_ARGUMENT(m_blockSize > 0, "Attribute blocksize is missing or equal to zero.");
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int32_t m_blockSize;
@@ -730,7 +730,7 @@ public:
         ML_CHECK_VALID_ARGUMENT(m_blockSize > 0, "Attribute blocksize is missing or equal to zero.");
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int32_t m_blockSize;
@@ -752,7 +752,7 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int m_axis = 1;
@@ -767,7 +767,7 @@ public:
     MultinomialHelper(const Info_t& info, const Shape_t& shape)
     {}
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 };
 
 class GatherHelper
@@ -786,7 +786,7 @@ public:
         Initialize(info, shape.GetInputTensorShape(0));
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int m_axis = 0;
@@ -813,7 +813,7 @@ public:
         }
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     KernelArgs m_kernel;
@@ -843,13 +843,13 @@ public:
     template<typename Info_t, typename Shape_t>
     RoiPoolingHelper(const Info_t& info, const Shape_t& shape)
     {
-        std::vector<int> pooledShape = info.GetOptionalAttributeVectorInt32(AttrName::PooledShape);
+        Vector<int> pooledShape = info.GetOptionalAttributeVectorInt32(AttrName::PooledShape);
         ML_CHECK_VALID_ARGUMENT(pooledShape.size() == 2, "Pooled shape must be 2.");
         m_pooledSizeH = pooledShape[0];
         m_pooledSizeW = pooledShape[1];
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     uint32_t m_pooledSizeW;
@@ -868,10 +868,10 @@ public:
         std::sort(m_axes.begin(), m_axes.end());
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<int> m_axes;
+    Vector<int> m_axes;
 };
 
 class UnsqueezeHelper
@@ -886,10 +886,10 @@ public:
         std::sort(m_axes.begin(), m_axes.end());
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<int32_t> m_axes;
+    Vector<int32_t> m_axes;
 };
 
 template<typename T>
@@ -899,7 +899,7 @@ void CALLBACK ShapeInferenceFunction(IMLOperatorShapeInferenceContext* inference
     T opHelper(helperContext, helperContext);
 
     // EdgeInfo to contain whether tensor, whether unused, and what shape is
-    std::vector<EdgeShapes> outputShapes = opHelper.GetOutputShapes(helperContext);
+    Vector<EdgeShapes> outputShapes = opHelper.GetOutputShapes(helperContext);
 
     for (uint32_t i = 0; i < outputShapes.size(); ++i)
     {
@@ -924,7 +924,7 @@ public:
         // The 'shape' tensor is a 1D tensor holding the new shape to reshape to,
         // and the first element of its own shape holds how many dimensions there
         // will be for the output.
-        std::vector<uint32_t> shapeTensorDimensions = shapeTensor.GetShape();
+        Vector<uint32_t> shapeTensorDimensions = shapeTensor.GetShape();
         ML_CHECK_VALID_ARGUMENT(shapeTensorDimensions.size() == 1, "Reshape's shape tensor must be 1D.");
         size_t dimCount = shapeTensorDimensions[0];
 
@@ -938,10 +938,10 @@ public:
         }
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<int> m_shapeDims;
+    Vector<int> m_shapeDims;
 };
 
 class ExpandHelper
@@ -952,7 +952,7 @@ public:
     {
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
 };
@@ -965,7 +965,7 @@ public:
     {
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
 };
@@ -979,7 +979,7 @@ public:
         m_inputDimensions = shapeInfo.GetInputTensorShape(0);
 
         // Read the repeats tensor.
-        const std::vector<uint32_t> repeatsTensorDimensions = shapeInfo.GetInputTensorShape(1);
+        const Vector<uint32_t> repeatsTensorDimensions = shapeInfo.GetInputTensorShape(1);
         ML_CHECK_VALID_ARGUMENT(repeatsTensorDimensions.size() == 1, "Tile's repeats tensor must be 1D.");
         const size_t dimCount = repeatsTensorDimensions[0];
 
@@ -1003,12 +1003,12 @@ public:
         }
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<uint32_t> m_repeatsData;
-    std::vector<uint32_t> m_inputDimensions;
-    std::vector<uint32_t> m_outputDimensions;
+    Vector<uint32_t> m_repeatsData;
+    Vector<uint32_t> m_inputDimensions;
+    Vector<uint32_t> m_outputDimensions;
 };
 
 class ResizeHelper
@@ -1046,12 +1046,12 @@ public:
         gsl::span<const DimensionType> inputDimensions
         );
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
-    std::vector<DimensionType> m_inputDimensions;
-    std::vector<DimensionType> m_outputDimensions;
-    std::vector<float> m_scales; // Cached scales to check for updates/invalidate operator.
+    Vector<DimensionType> m_inputDimensions;
+    Vector<DimensionType> m_outputDimensions;
+    Vector<float> m_scales; // Cached scales to check for updates/invalidate operator.
 };
 
 class OneHotHelper
@@ -1063,8 +1063,8 @@ public:
         ML_CHECK_VALID_ARGUMENT(info.GetInputCount() == 3);
         ML_CHECK_VALID_ARGUMENT(info.GetOutputCount() == 1);
 
-        const std::vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
-        std::vector<uint32_t> outputDimensions;
+        const Vector<DimensionType> inputDimensions = shapeInfo.GetInputTensorShape(0);
+        Vector<uint32_t> outputDimensions;
         
         m_onnxAxis = info.GetOptionalAttribute<int32_t>(AttrName::Axis, -1);
 
@@ -1087,13 +1087,13 @@ public:
         m_outputDimensions.insert(m_outputDimensions.begin() + m_absoluteAxis, depth);
     }
 
-    std::vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
+    Vector<EdgeShapes> GetOutputShapes(const MLShapeInferenceContext& shapeInfo) const;
 
 protected:
     int32_t m_onnxAxis = 0; // Original ONNX attribute value, including negative value.
     uint32_t m_absoluteAxis = 0; // Absolute index value.
-    std::vector<uint32_t> m_indicesDimensions;
-    std::vector<uint32_t> m_outputDimensions;
+    Vector<uint32_t> m_indicesDimensions;
+    Vector<uint32_t> m_outputDimensions;
 };
 
 using ShapeInferenceHelper_Conv = ConvHelper;

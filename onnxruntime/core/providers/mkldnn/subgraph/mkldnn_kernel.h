@@ -29,8 +29,8 @@ class MklDnnKernel {
   virtual void CreatePrimitives(const OrtCustomOpApi* api,
                                 OrtKernelContext* context,
                                 mkldnn::engine& cpu_engine,
-                                std::vector<mkldnn::primitive>& net,
-                                std::vector<std::unordered_map<int, mkldnn::memory>>& net_args) = 0;
+                                Vector<mkldnn::primitive>& net,
+                                Vector<std::unordered_map<int, mkldnn::memory>>& net_args) = 0;
 
   virtual void ReorderWeights(const OrtCustomOpApi* api, OrtKernelContext* context, mkldnn::engine& cpu_engine) {
     ORT_UNUSED_PARAMETER(api);
@@ -53,7 +53,7 @@ class MklDnnKernel {
     ORT_UNUSED_PARAMETER(attributes_prefix);
   }
 
-  Status GetIntsAttr(ONNX_NAMESPACE::AttributeProto& proto, std::vector<int64_t>& values) {
+  Status GetIntsAttr(ONNX_NAMESPACE::AttributeProto& proto, Vector<int64_t>& values) {
     ORT_RETURN_IF_NOT(proto.type() == ::ONNX_NAMESPACE::AttributeProto_AttributeType::AttributeProto_AttributeType_INTS);
     values.reserve(proto.ints_size());
     for (int i = 0; i < proto.ints_size(); i++) {
@@ -81,14 +81,14 @@ class MklDnnKernel {
 
   void InitDstReorderOutput(mkldnn::engine& cpu_engine,
                             mkldnn::memory::data_type& data_type,
-                            std::vector<mkldnn::primitive>& net,
-                            std::vector<std::unordered_map<int, mkldnn::memory>>& net_args);
+                            Vector<mkldnn::primitive>& net,
+                            Vector<std::unordered_map<int, mkldnn::memory>>& net_args);
 
   mkldnn::memory::format_tag GetSourceFormat(int dim_size);
 
  public:
   std::string name_;
-  std::vector<std::shared_ptr<MklDnnKernel>> parents_;
+  Vector<std::shared_ptr<MklDnnKernel>> parents_;
   bool fuse_relu_ = false;
   bool fuse_sum_ = false;
   std::shared_ptr<mkldnn::memory> primitive_dst_mem_;

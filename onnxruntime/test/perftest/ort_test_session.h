@@ -38,12 +38,12 @@ class OnnxRuntimeTestSession : public TestSession {
   Ort::Session session_{nullptr};
   std::mt19937 rand_engine_;
   std::uniform_int_distribution<int> dist_;
-  std::vector<std::vector<Ort::Value>> test_inputs_;
-  std::vector<std::string> output_names_;
+  Vector<Vector<Ort::Value>> test_inputs_;
+  Vector<std::string> output_names_;
   // The same size with output_names_.
   // TODO: implement a customized allocator, then we can remove output_names_ to simplify this code
-  std::vector<const char*> output_names_raw_ptr;
-  std::vector<char*> input_names_;
+  Vector<const char*> output_names_raw_ptr;
+  Vector<char*> input_names_;
   const int input_length_;
 };
 

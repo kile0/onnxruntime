@@ -97,7 +97,7 @@ class MemPatternPlanner {
     OrtValueAllocationBlock(int index, const MemoryBlock& block) : index_(index), block_(block) {}
   };
 
-  std::vector<OrtValueAllocationBlock> allocs_;
+  Vector<OrtValueAllocationBlock> allocs_;
   // blocks_ the list of currently allocated memory blocks, sorted in order of their offset
   std::list<int> blocks_;
   size_t buffer_size{0};

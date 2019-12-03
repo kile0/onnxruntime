@@ -64,7 +64,7 @@ struct OperatorRegistrationInformation
     gsl::span<const SupportedTensorDataTypes> supportedTensorDataTypes;
     DmGraphSupport DmGraphSupport;
 
-    std::vector<uint32_t> requiresFloatFormatsExceptConstInputs;
+    Vector<uint32_t> requiresFloatFormatsExceptConstInputs;
 
     // For use by operators such as Sum, which may require multiple calls to DML, in which case they
     // can't be represented as nodes in an optimized graph yet.
@@ -424,8 +424,8 @@ void RegisterDmlOperators(IMLOperatorRegistry* registry)
     ComPtr<IMLOperatorRegistryPrivate> registryPrivate;
     THROW_IF_FAILED(registry->QueryInterface(registryPrivate.GetAddressOf()));
 
-    std::vector<MLOperatorEdgeTypeConstrant> typeConstraints;
-    std::vector<MLOperatorEdgeDescription> edgeDescs;
+    Vector<MLOperatorEdgeTypeConstrant> typeConstraints;
+    Vector<MLOperatorEdgeDescription> edgeDescs;
 
     for (const OperatorRegistrationInformation& information : operatorRegistrationInformationTable)
     {
@@ -459,7 +459,7 @@ void RegisterDmlOperators(IMLOperatorRegistry* registry)
         {
             typeConstraints[i].typeLabel = information.tensorTypeNames[i];
 
-            std::vector<MLOperatorTensorDataType> supportedTypeList;
+            Vector<MLOperatorTensorDataType> supportedTypeList;
             SupportedTensorDataTypes supportedTypes = information.supportedTensorDataTypes[i];
 
             if (bool(supportedTypes & SupportedTensorDataTypes::Float32)) edgeDescs.push_back(EdgeDesc<float>());

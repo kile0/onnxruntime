@@ -142,8 +142,8 @@ struct Loop::Info {
   int num_subgraph_inputs;
   int num_subgraph_outputs;
 
-  std::vector<std::string> subgraph_input_names;
-  std::vector<std::string> subgraph_output_names;
+  Vector<std::string> subgraph_input_names;
+  Vector<std::string> subgraph_output_names;
 };
 
 class LoopImpl {
@@ -160,11 +160,11 @@ class LoopImpl {
   Status Execute(const FeedsFetchesManager& cached_ffm);
 
  private:
-  void CreateInitialFeeds(std::vector<OrtValue>& feeds);
-  void SaveOutputsAndUpdateFeeds(const std::vector<OrtValue>& last_outputs, std::vector<OrtValue>& next_inputs);
+  void CreateInitialFeeds(Vector<OrtValue>& feeds);
+  void SaveOutputsAndUpdateFeeds(const Vector<OrtValue>& last_outputs, Vector<OrtValue>& next_inputs);
 
   // create the single Loop output from a collection of per-iteration outputs
-  Status ConcatenateLoopOutput(std::vector<OrtValue>& per_iteration_output, int output_index);
+  Status ConcatenateLoopOutput(Vector<OrtValue>& per_iteration_output, int output_index);
 
   OpKernelContextInternal& context_;
   const SessionState& session_state_;
@@ -173,14 +173,14 @@ class LoopImpl {
   int64_t max_trip_count_;
   bool condition_;
 
-  const std::vector<const OrtValue*>& implicit_inputs_;
+  const Vector<const OrtValue*>& implicit_inputs_;
 
   OrtValue iter_num_mlvalue_;
   OrtValue condition_mlvalue_;
 
   // collection of OrtValue outputs from each loop iteration for the loop outputs.
   // the order from the subgraph matches the order from the loop output
-  std::vector<std::vector<OrtValue>> loop_output_tensors_;
+  Vector<Vector<OrtValue>> loop_output_tensors_;
 };
 
 Loop::Loop(const OpKernelInfo& info) : OpKernel(info) {
@@ -207,7 +207,7 @@ common::Status Loop::SetupSubgraphExecutionInfo(const SessionState& session_stat
 
   // the Loop inputs are matched to subgraph feeds based on order.
   // we first need the names of the Loop inputs to determine what device they are available on
-  std::vector<std::string> feed_names;
+  Vector<std::string> feed_names;
   feed_names.reserve(info_->num_subgraph_inputs + info_->num_implicit_inputs);
 
   // iter_num and cond subgraph inputs - created by the LoopImpl::Initialize so the name doesn't matter
@@ -228,7 +228,7 @@ common::Status Loop::SetupSubgraphExecutionInfo(const SessionState& session_stat
 
   // iter_num and cond are created on CPU via MakeScalarMLValue so skip those (they will correctly default to CPU)
   // use the SessionState from the control flow node for this lookup.
-  std::vector<OrtDevice> feed_locations;
+  Vector<OrtDevice> feed_locations;
   size_t start_at = 2;
   ORT_RETURN_IF_ERROR(controlflow::detail::FindDevicesForValues(session_state, feed_names, feed_locations, start_at));
 
@@ -246,7 +246,7 @@ common::Status Loop::SetupSubgraphExecutionInfo(const SessionState& session_stat
 
   // we don't provide pre-allocated fetches for Loop subgraph execution.
   // use nullptr for all the fetch locations to represent that
-  std::vector<const OrtMemoryInfo*> fetch_locations(info_->num_subgraph_outputs, nullptr);
+  Vector<const OrtMemoryInfo*> fetch_locations(info_->num_subgraph_outputs, nullptr);
   utils::FinalizeFeedFetchCopyInfo(subgraph_session_state, *ffm, feed_locations, fetch_locations);
 
   feeds_fetches_manager_ = std::move(ffm);
@@ -335,7 +335,7 @@ Status LoopImpl::Initialize() {
   return status;
 }
 
-void LoopImpl::CreateInitialFeeds(std::vector<OrtValue>& feeds) {
+void LoopImpl::CreateInitialFeeds(Vector<OrtValue>& feeds) {
   feeds.reserve(info_.num_subgraph_inputs + info_.num_implicit_inputs);
 
   // This ordering is the same as used in SetupSubgraphExecutionInfo
@@ -353,8 +353,8 @@ void LoopImpl::CreateInitialFeeds(std::vector<OrtValue>& feeds) {
   }
 }
 
-void LoopImpl::SaveOutputsAndUpdateFeeds(const std::vector<OrtValue>& last_outputs,
-                                         std::vector<OrtValue>& next_inputs) {
+void LoopImpl::SaveOutputsAndUpdateFeeds(const Vector<OrtValue>& last_outputs,
+                                         Vector<OrtValue>& next_inputs) {
   // last_output: cond, loop vars..., loop output...
   // next_input: iter_num, cond, loop_vars. iter_num is re-used
 
@@ -369,7 +369,7 @@ void LoopImpl::SaveOutputsAndUpdateFeeds(const std::vector<OrtValue>& last_outpu
   }
 }
 
-Status LoopImpl::ConcatenateLoopOutput(std::vector<OrtValue>& per_iteration_output, int output_index) {
+Status LoopImpl::ConcatenateLoopOutput(Vector<OrtValue>& per_iteration_output, int output_index) {
   const auto& first_output = per_iteration_output.front().Get<Tensor>();
   size_t bytes_per_iteration = first_output.SizeInBytes();
   const auto& per_iteration_shape = first_output.Shape();
@@ -377,7 +377,7 @@ Status LoopImpl::ConcatenateLoopOutput(std::vector<OrtValue>& per_iteration_outp
 
   // prepend number of iterations to the dimensions
   auto num_iterations = gsl::narrow_cast<int64_t>(per_iteration_output.size());
-  std::vector<int64_t> dims{num_iterations};
+  Vector<int64_t> dims{num_iterations};
   std::copy(per_iteration_dims.cbegin(), per_iteration_dims.cend(), std::back_inserter(dims));
   TensorShape output_shape{dims};
 
@@ -410,8 +410,8 @@ Status LoopImpl::ConcatenateLoopOutput(std::vector<OrtValue>& per_iteration_outp
 Status LoopImpl::Execute(const FeedsFetchesManager& ffm) {
   auto status = Status::OK();
 
-  std::vector<OrtValue> feeds;
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> feeds;
+  Vector<OrtValue> fetches;
 
   CreateInitialFeeds(feeds);
 
@@ -472,7 +472,7 @@ Status LoopImpl::Execute(const FeedsFetchesManager& ffm) {
       auto* graph_output = graph_outputs.at(i + 1);  // + 1 as first subgraph output is condition value
       auto* graph_output_shape = graph_output->Shape();
 
-      std::vector<int64_t> output_dims;
+      Vector<int64_t> output_dims;
       output_dims.reserve((graph_output_shape ? graph_output_shape->dim_size() : 0) + 1);
       output_dims.push_back(0);  // num iterations is first dim
 

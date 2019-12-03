@@ -13,7 +13,7 @@ namespace onnxruntime {
 namespace nuphar {
 
 using ReduceVFunc = tvm::Tensor (*)(const tvm::Tensor& X,
-                                    const std::vector<int64_t>& axes,
+                                    const Vector<int64_t>& axes,
                                     bool keep_dims,
                                     int32_t vector_size,
                                     bool last_dim_aligned,
@@ -25,7 +25,7 @@ using ReduceVFunc = tvm::Tensor (*)(const tvm::Tensor& X,
 // Fuse dim implies mulitple reduce axis could be fused together to form a longer vector_width
 // It can avoid too small vector_width
 static std::tuple<int, int> VectorWidthAndFuseDimForReduce(int natural_width,
-                                                           std::vector<int64_t> axes,
+                                                           Vector<int64_t> axes,
                                                            const NodeArg* def) {
   int64_t rank = ShapeRank(def);
   if (rank == 0) {
@@ -125,7 +125,7 @@ class FuncReduceV {
   }
 
   tvm::Tensor operator()(const tvm::Tensor& X) const {
-    std::vector<int64_t> axes;
+    Vector<int64_t> axes;
     for (auto i : axes_) {
       axes.push_back(HandleNegativeAxis(i, gsl::narrow_cast<int64_t>(X->shape.size())));
     }
@@ -147,7 +147,7 @@ class FuncReduceV {
   }
 
  private:
-  std::vector<int64_t> axes_;
+  Vector<int64_t> axes_;
   bool keep_dims_;
   ReduceVFunc func_;
   std::string name_;

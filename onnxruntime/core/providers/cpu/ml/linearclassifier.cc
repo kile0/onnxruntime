@@ -6,7 +6,7 @@
 namespace onnxruntime {
 namespace ml {
 
-const std::vector<MLDataType> linearClassifierOutputConstraints{
+const Vector<MLDataType> linearClassifierOutputConstraints{
     DataTypeImpl::GetTensorType<std::string>(),
     DataTypeImpl::GetTensorType<int64_t>()};
 
@@ -77,7 +77,7 @@ Status LinearClassifier<T>::Compute(OpKernelContext* ctx) const {
   const auto* x_data = X->template Data<T>();
 
   auto class_count = static_cast<size_t>(class_count_);
-  std::vector<float> scores;
+  Vector<float> scores;
   scores.reserve(class_count);
   for (int64_t i = 0; i < N; i++)  //for each point
   {

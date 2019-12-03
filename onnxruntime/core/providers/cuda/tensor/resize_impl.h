@@ -12,7 +12,7 @@ namespace onnxruntime {
 namespace cuda {
 
 size_t CalcResizeBufferSize(const onnxruntime::UpsampleMode upsample_mode,
-                            const std::vector<int64_t>& output_dims);
+                            const Vector<int64_t>& output_dims);
 
 template <typename T>
 void ResizeImpl(

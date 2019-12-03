@@ -30,16 +30,16 @@ tvm::Expr position(const tvm::Expr& dim, const tvm::Integer& offset, bool allow_
 }
 
 tvm::Tensor Slice(const tvm::Tensor& X,
-                  const std::vector<int64_t>& starts,
-                  const std::vector<int64_t>& ends,
-                  const std::vector<int64_t>& axes1,
-                  const std::vector<int64_t>& steps,
+                  const Vector<int64_t>& starts,
+                  const Vector<int64_t>& ends,
+                  const Vector<int64_t>& axes1,
+                  const Vector<int64_t>& steps,
                   const std::string& name) {
   MTI_ASSERT(starts.size() == ends.size());
   MTI_ASSERT(starts.size() == axes1.size());
   MTI_ASSERT(starts.size() == steps.size());
 
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   for (const auto& i : axes1) {
     axes.push_back(HandleNegativeAxis(i, X->shape.size()));
   }

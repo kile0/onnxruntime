@@ -79,7 +79,7 @@ namespace Dml
 
     private:
         ComPtr<ID3D12Device> m_device;
-        std::vector<DescriptorHeap> m_heaps;
+        Vector<DescriptorHeap> m_heaps;
         const uint32_t m_initialHeapCapacity;
 
         void CreateHeap(uint32_t numDescriptors, D3D12_DESCRIPTOR_HEAP_FLAGS heapFlags);

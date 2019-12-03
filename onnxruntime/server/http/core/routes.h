@@ -32,8 +32,8 @@ class Routes {
                         /* out */ HandlerFn& func) const;
 
  private:
-  std::vector<std::pair<std::string, HandlerFn>> post_fn_table;
-  std::vector<std::pair<std::string, HandlerFn>> get_fn_table;
+  Vector<std::pair<std::string, HandlerFn>> post_fn_table;
+  Vector<std::pair<std::string, HandlerFn>> get_fn_table;
 };
 
 }  //namespace server

@@ -25,7 +25,7 @@ class TFModelInfo : public TestModelInfo {
  private:
   TFModelInfo() = default;
   std::basic_string<PATH_CHAR_TYPE> model_url_;
-  std::vector<std::string> input_names_;
-  std::vector<std::string> output_names_;
+  Vector<std::string> input_names_;
+  Vector<std::string> output_names_;
   std::string node_name_;
 };

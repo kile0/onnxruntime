@@ -22,11 +22,11 @@ bool MatMulExternCpu(
     const tvm::Tensor& A,
     const tvm::Tensor& B,
     tvm::Tensor& Y,
-    const std::vector<int32_t>* permute_A,
-    const std::vector<int32_t>* permute_B,
+    const Vector<int32_t>* permute_A,
+    const Vector<int32_t>* permute_B,
     const std::string& name = "matmul_permute_extern_cpu");
 
-bool CanPermuteBeFusedInMatMul(const std::vector<int32_t>& perm);
+bool CanPermuteBeFusedInMatMul(const Vector<int32_t>& perm);
 
 tvm::Tensor MatMul(const tvm::Tensor& A, const tvm::Tensor& B, const std::string& name);
 

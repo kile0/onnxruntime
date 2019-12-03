@@ -20,7 +20,7 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Pad)::Evaluate(
   OpNodeProtoHelper<ProtoHelperNodeContext> attrs(&ctx);
 
   std::string mode;
-  std::vector<int64_t> pads;
+  Vector<int64_t> pads;
   float value;
 
   ORT_ENFORCE(attrs.GetAttr<std::string>("mode", &mode).IsOK());
@@ -33,7 +33,7 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Pad)::Evaluate(
   if (pads.size() != 2 * inputs[0]->shape.size())
     return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL, "Pad: pads rank does not match inputs rank!");
 
-  std::vector<int64_t> pad_before, pad_after;
+  Vector<int64_t> pad_before, pad_after;
   size_t offset = pads.size() / 2;
   for (size_t i = 0; i < offset; i++) {
     pad_before.push_back(pads[i]);

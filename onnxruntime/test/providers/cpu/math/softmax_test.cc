@@ -8,9 +8,9 @@
 namespace onnxruntime {
 namespace test {
 
-static void RunTest(const std::vector<float>& x_vals,
-                    const std::vector<float>& expected_vals,
-                    const std::vector<int64_t>& dimensions,
+static void RunTest(const Vector<float>& x_vals,
+                    const Vector<float>& expected_vals,
+                    const Vector<int64_t>& dimensions,
                     int64_t axis = 1,
                     bool is_tensorrt_supported = true,
                     OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
@@ -36,9 +36,9 @@ TEST(SoftmaxOperator, Simple) {
   //    x = np.array([[-1, 0, 1]]).astype(np.float32)
   //    y = np.exp(x) / np.sum(np.exp(x), axis = 1) #expected output[[0.09003058, 0.24472848, 0.66524094]]
 
-  std::vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
-  std::vector<float> expected_vals = {0.09003058f, 0.24472848f, 0.66524094f};
-  std::vector<int64_t> dimensions = {1, 3};
+  Vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
+  Vector<float> expected_vals = {0.09003058f, 0.24472848f, 0.66524094f};
+  Vector<int64_t> dimensions = {1, 3};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
@@ -48,17 +48,17 @@ TEST(SoftmaxOperator, LargeNumber) {
   // expected output[[0.0320586, 0.08714432, 0.23688284, 0.64391428],
   //                 [0.0320586, 0.08714432, 0.23688284, 0.64391428]]
 
-  std::vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f, 10000.0f, 10001.0f, 10002.0f, 10003.0f};
-  std::vector<float> expected_vals = {0.0320586f, 0.08714432f, 0.23688284f, 0.64391428f, 0.0320586f, 0.08714432f, 0.23688284f, 0.64391428f};
-  std::vector<int64_t> dimensions = {2, 4};
+  Vector<float> x_vals = {0.0f, 1.0f, 2.0f, 3.0f, 10000.0f, 10001.0f, 10002.0f, 10003.0f};
+  Vector<float> expected_vals = {0.0320586f, 0.08714432f, 0.23688284f, 0.64391428f, 0.0320586f, 0.08714432f, 0.23688284f, 0.64391428f};
+  Vector<int64_t> dimensions = {2, 4};
 
   RunTest(x_vals, expected_vals, dimensions);
 }
 
 //np.random.seed(123)   # Use a seed so we can replicate the input and expected values here and in python
 //x = np.abs(np.random.randn(3, 4, 5).astype(np.float32))
-static std::vector<int64_t> three_dimensions = {3, 4, 5};
-static std::vector<float> x_vals_3dims = {
+static Vector<int64_t> three_dimensions = {3, 4, 5};
+static Vector<float> x_vals_3dims = {
     1.0856307f, 0.99734545f, 0.2829785f, 1.5062947f, 0.5786002f,
     1.6514366f, 2.4266791f, 0.42891264f, 1.2659363f, 0.8667404f,
     0.6788862f, 0.09470897f, 1.4913896f, 0.638902f, 0.44398195f,
@@ -81,7 +81,7 @@ TEST(SoftmaxOperator, ThreeDimsAxis0) {
   // expect(node, inputs = [x], outputs = [y],
   //        name = 'test_softmax_axis_0')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.01424391f, 0.013040296f, 0.0063832495f, 0.021693084f, 0.0085788425f,
       0.02508162f, 0.054455176f, 0.007386185f, 0.017058268f, 0.011443698f,
       0.009483798f, 0.0052878284f, 0.021372143f, 0.009112078f, 0.0074983323f,
@@ -107,7 +107,7 @@ TEST(SoftmaxOperator, ThreeDimsAxis1) {
   // expect(node, inputs = [x], outputs = [y],
   //        name = 'test_softmax_axis_1')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.04113652f, 0.037660476f, 0.018434875f, 0.0626498f, 0.024775764f,
       0.072435915f, 0.15726697f, 0.021331362f, 0.049264412f, 0.03304949f,
       0.027389284f, 0.015271291f, 0.061722923f, 0.026315752f, 0.021655245f,
@@ -133,7 +133,7 @@ TEST(SoftmaxOperator, ThreeDimsAxis2) {
   // expect(node, inputs = [x], outputs = [y],
   //       name = 'test_softmax_axis_2')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.22277209f, 0.20394778f, 0.09983283f, 0.33927578f, 0.13417149f,
       0.21729809f, 0.47177994f, 0.06399124f, 0.14778666f, 0.099144064f,
       0.1797734f, 0.10023525f, 0.40512702f, 0.17272712f, 0.14213723f,
@@ -159,7 +159,7 @@ TEST(SoftmaxOperator, ThreeDimsNegativeAxis) {
   // expect(node, inputs = [x], outputs = [y],
   //       name = 'test_softmax_axis_2')
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0.22277209f, 0.20394778f, 0.09983283f, 0.33927578f, 0.13417149f,
       0.21729809f, 0.47177994f, 0.06399124f, 0.14778666f, 0.099144064f,
       0.1797734f, 0.10023525f, 0.40512702f, 0.17272712f, 0.14213723f,
@@ -180,9 +180,9 @@ TEST(SoftmaxOperator, ThreeDimsNegativeAxis) {
 }
 
 TEST(SoftmaxOperator, InvalidAxis) {
-  std::vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
-  std::vector<float> expected_vals = {0.0f, 0.0f, 0.0f};
-  std::vector<int64_t> dimensions = {1, 3};
+  Vector<float> x_vals = {-1.0f, 0.0f, 1.0f};
+  Vector<float> expected_vals = {0.0f, 0.0f, 0.0f};
+  Vector<int64_t> dimensions = {1, 3};
 
   RunTest(x_vals,
           expected_vals,
@@ -197,9 +197,9 @@ TEST(SoftmaxOperator, InvalidAxis) {
 }
 
 TEST(SoftmaxOperator, DimWithZero) {
-  std::vector<float> x_vals = {};
-  std::vector<float> expected_vals = {};
-  std::vector<int64_t> dimensions = {1, 0};  // dim with value of 0 should be handled
+  Vector<float> x_vals = {};
+  Vector<float> expected_vals = {};
+  Vector<int64_t> dimensions = {1, 0};  // dim with value of 0 should be handled
 
   RunTest(x_vals, expected_vals, dimensions, 0, false, OpTester::ExpectResult::kExpectSuccess, "", 10);
 }

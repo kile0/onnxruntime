@@ -60,7 +60,7 @@ struct TensorizeTargetInfo {
 
 class TensorizeIntGemm8bit : public tvm_codegen::TensorizeBase {
  public:
-  TensorizeIntGemm8bit(const std::string& name, const std::vector<int32_t>& vshape, const std::string& target);
+  TensorizeIntGemm8bit(const std::string& name, const Vector<int32_t>& vshape, const std::string& target);
   virtual ~TensorizeIntGemm8bit() = default;
 
   tvm::TensorIntrin CreateTensorIntrin() override;
@@ -69,9 +69,9 @@ class TensorizeIntGemm8bit : public tvm_codegen::TensorizeBase {
   tvm::Expr CreatePredicateMask(int tail_size);
   void InsertTensorizeDimInfo(std::string name, TensorizeDimMeta dim_meta);
 
-  void TensorizeReduceKernel(std::vector<tvm::Stmt>& inits,
-                             std::vector<tvm::Stmt>& bodys,
-                             std::vector<tvm::Stmt>& updates,
+  void TensorizeReduceKernel(Vector<tvm::Stmt>& inits,
+                             Vector<tvm::Stmt>& bodys,
+                             Vector<tvm::Stmt>& updates,
                              tvm::Buffer& a_buf,
                              tvm::Buffer& b_buf,
                              tvm::Buffer& c_buf,

@@ -29,7 +29,7 @@ static_assert(std::is_same<Traits<std::string>::nullable_type, Nullable<std::str
 static_assert(std::is_same<Traits<std::array<char, 4>>::nullable_type, Nullable<std::array<char, 4>>>::value, "Incorrect nullable type for std::array");
 static_assert(std::is_same<Traits<bool>::nullable_type, Nullable<bool>>::value, "Incorrect nullable type for std::string");
 static_assert(std::is_same<Traits<std::map<int,int>>::nullable_type, Nullable<std::map<int,int>>>::value, "Incorrect nullable type for std::string");
-static_assert(std::is_same<Traits<std::vector<int>>::nullable_type, Nullable<std::vector<int>>>::value, "Incorrect nullable type for std::string");
+static_assert(std::is_same<Traits<Vector<int>>::nullable_type, Nullable<Vector<int>>>::value, "Incorrect nullable type for std::string");
 static_assert(std::is_same<Traits<std::function<int>>::nullable_type, Nullable<std::function<int>>>::value, "Incorrect nullable type for std::string");
 static_assert(std::is_same<Traits<Nullable<int>>::nullable_type, Nullable<int>>::value, "Incorrect nullable type for std::string");
 static_assert(std::is_same<Traits<std::tuple<int>>::nullable_type, Nullable<std::tuple<int>>>::value, "Incorrect nullable type for std::string");

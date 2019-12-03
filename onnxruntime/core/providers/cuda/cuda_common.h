@@ -86,7 +86,7 @@ class CudaKernel : public OpKernel {
       }
     }
 
-    CudaAsyncBuffer(const CudaKernel* op_kernel, const std::vector<T>& vec) : CudaAsyncBuffer(op_kernel, vec.size()) {
+    CudaAsyncBuffer(const CudaKernel* op_kernel, const Vector<T>& vec) : CudaAsyncBuffer(op_kernel, vec.size()) {
       memcpy(CpuPtr(), vec.data(), vec.size() * sizeof(T));
     }
 
@@ -173,7 +173,7 @@ class ToCudaType<MLFloat16> {
   }
 };
 
-inline bool CalculateFdmStrides(gsl::span<fast_divmod> p, const std::vector<int64_t>& dims) {
+inline bool CalculateFdmStrides(gsl::span<fast_divmod> p, const Vector<int64_t>& dims) {
   int stride = 1;
   if (dims.empty() || p.size() < dims.size())
     return false;
@@ -188,7 +188,7 @@ inline bool CalculateFdmStrides(gsl::span<fast_divmod> p, const std::vector<int6
 }
 
 struct DeviceProp {
-  static const std::vector<cudaDeviceProp>& GetCachedDeviceProps() {
+  static const Vector<cudaDeviceProp>& GetCachedDeviceProps() {
     std::call_once(s_cachedDevicePropsInitFlag, [=] {
       int numDevices;
       // must wait GPU idle, otherwise cudaGetDeviceProperties might fail
@@ -215,7 +215,7 @@ struct DeviceProp {
   }
 
  private:
-  static std::vector<cudaDeviceProp> s_cachedDeviceProps;
+  static Vector<cudaDeviceProp> s_cachedDeviceProps;
   static std::once_flag s_cachedDevicePropsInitFlag;
 };
 

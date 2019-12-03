@@ -15,8 +15,8 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
 
   ORT_RETURN_IF_NOT(x_shape.NumDimensions() >= 3, "Input dimension cannot be less than 3.");
 
-  std::vector<int64_t> pads = pool_attrs_.pads;
-  std::vector<int64_t> kernel_shape = pool_attrs_.kernel_shape;
+  Vector<int64_t> pads = pool_attrs_.pads;
+  Vector<int64_t> kernel_shape = pool_attrs_.kernel_shape;
 
   if (pool_attrs_.global_pooling) {
     const auto& input_dims = x_shape.GetDims();
@@ -24,7 +24,7 @@ Status Pool<T, PoolType>::Compute(OpKernelContext* context) const {
     pads.assign(kernel_shape.size(), 0);
   }
 
-  std::vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
+  Vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
   Tensor* Y = context->Output(0, output_dims);
 
   const auto* X_data = X->template Data<float>();
@@ -184,8 +184,8 @@ Status PoolBase::Compute(OpKernelContext* context, MLAS_POOLING_KIND kind) const
                       "kernel_shape num_dims is not compatible with X num_dims.");
   }
 
-  std::vector<int64_t> pads = pool_attrs_.pads;
-  std::vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
+  Vector<int64_t> pads = pool_attrs_.pads;
+  Vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
   TensorShape output_shape(output_dims);
   Tensor* Y = context->Output(0, output_shape);
 
@@ -241,10 +241,10 @@ Status Pool<float, MaxPool<8 /*VERSION*/>>::Compute(OpKernelContext* context) co
 
   ORT_RETURN_IF_NOT(x_shape.NumDimensions() >= 3, "Input dimension cannot be less than 3.");
 
-  std::vector<int64_t> pads = pool_attrs_.pads;
-  std::vector<int64_t> kernel_shape = pool_attrs_.kernel_shape;
+  Vector<int64_t> pads = pool_attrs_.pads;
+  Vector<int64_t> kernel_shape = pool_attrs_.kernel_shape;
 
-  std::vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
+  Vector<int64_t> output_dims = pool_attrs_.SetOutputSize(x_shape, x_shape[1], &pads);
   Tensor* Y = context->Output(0, output_dims);
   Tensor* I = context->Output(1, output_dims);
 

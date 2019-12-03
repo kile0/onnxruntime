@@ -9,7 +9,7 @@ namespace test {
 
 TEST(Dropout, Opset7) {
   OpTester test("Dropout", 7, kOnnxDomain);
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, {1.0f, 2.0f, 3.0f, 4.0f});
   test.AddOutput<float>("Y", dims, {1.0f, 2.0f, 3.0f, 4.0f});
   test.Run();
@@ -17,7 +17,7 @@ TEST(Dropout, Opset7) {
 
 TEST(Dropout, Opset10) {
   OpTester test("Dropout", 10, kOnnxDomain);
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.AddOutput<float>("Y", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.Run();
@@ -25,7 +25,7 @@ TEST(Dropout, Opset10) {
 
 TEST(Dropout, WithOptionalOutputOpset10) {
   OpTester test("Dropout", 10, kOnnxDomain);
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.AddOutput<float>("Y", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.AddOutput<bool>("mask", dims, {false, false, false, false});
@@ -38,7 +38,7 @@ TEST(Dropout, WithOptionalOutputOpset7) {
   // output is tied with the type of the input in Opset 7 whereas
   // the type of 'mask' in Opset 10 is 'bool' always
   OpTester test("Dropout", 7, kOnnxDomain);
-  std::vector<int64_t> dims{2, 2};
+  Vector<int64_t> dims{2, 2};
   test.AddInput<float>("X", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.AddOutput<float>("Y", dims, {1.0f, 2.0f, 3.0f, 5.0f});
   test.AddOutput<float>("mask", dims, {0.0f, 0.0f, 0.0f, 0.0f});

@@ -19,9 +19,9 @@ class CudnnConvolutionDescriptor final {
   ~CudnnConvolutionDescriptor();
 
   Status Set(size_t rank,
-             const std::vector<int64_t>& pads,
-             const std::vector<int64_t>& strides,
-             const std::vector<int64_t>& dilations,
+             const Vector<int64_t>& pads,
+             const Vector<int64_t>& strides,
+             const Vector<int64_t>& dilations,
              cudnnConvolutionMode_t mode,
              cudnnDataType_t data_type);
 
@@ -33,7 +33,7 @@ class CudnnConvolutionDescriptor final {
 
 template <typename T>
 struct vector_hash {
-  std::size_t operator()(const std::vector<T>& values) const {
+  std::size_t operator()(const Vector<T>& values) const {
     std::size_t seed = values.size();
     for (auto& val : values)
       seed ^= std::hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -112,11 +112,11 @@ constexpr size_t MAX_CACHED_ALGO_PERF_RESULTS = 10000;
 template <typename AlgoPerfType>
 struct CudnnConvState {
   // if x/w dims changed, update algo and cudnnTensors
-  std::vector<int64_t> last_x_dims;
-  std::vector<int64_t> last_w_dims;
+  Vector<int64_t> last_x_dims;
+  Vector<int64_t> last_w_dims;
 
   // these would be recomputed if x/w dims change
-  std::vector<int64_t> y_dims;
+  Vector<int64_t> y_dims;
   size_t workspace_bytes;
   decltype(AlgoPerfType().algo) algo;
   CudnnTensor x_tensor;
@@ -131,7 +131,7 @@ struct CudnnConvState {
     decltype(AlgoPerfType().mathType) mathType;
   };
 
-  lru_unordered_map<std::vector<int64_t>, PerfResultParams, vector_hash<int64_t>> cached_benchmark_results { MAX_CACHED_ALGO_PERF_RESULTS };
+  lru_unordered_map<Vector<int64_t>, PerfResultParams, vector_hash<int64_t>> cached_benchmark_results { MAX_CACHED_ALGO_PERF_RESULTS };
 
   // note that conv objects are shared between execution frames, and a lock is needed to avoid multi-thread racing
   OrtMutex mutex;

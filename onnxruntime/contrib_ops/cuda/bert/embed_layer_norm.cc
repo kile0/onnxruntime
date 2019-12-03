@@ -49,7 +49,7 @@ Status EmbedLayerNorm<T>::ComputeInternal(OpKernelContext* context) const {
   const auto input_dims = input_ids->Shape().GetDims();
   int64_t hidden_size = word_embedding->Shape()[1];
 
-  std::vector<int64_t> out_dims;
+  Vector<int64_t> out_dims;
   out_dims.reserve(3);
   out_dims.push_back(input_dims[0]);
   out_dims.push_back(input_dims[1]);
@@ -57,7 +57,7 @@ Status EmbedLayerNorm<T>::ComputeInternal(OpKernelContext* context) const {
   TensorShape output_shape(out_dims);
   Tensor* output = context->Output(0, output_shape);
 
-  std::vector<int64_t> mask_index_dims;
+  Vector<int64_t> mask_index_dims;
   mask_index_dims.push_back(input_dims[0]);
   TensorShape mask_index_shape(mask_index_dims);
   Tensor* mask_index = context->Output(1, mask_index_shape);

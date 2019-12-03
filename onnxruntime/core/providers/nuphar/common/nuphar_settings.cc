@@ -85,7 +85,7 @@ void CreateNupharCodeGenSettings(const NupharExecutionProviderInfo& info) {
     std::regex reg("\\s*,\\s*");
     std::sregex_token_iterator iter(str.begin(), str.end(), reg, -1);
     std::sregex_token_iterator iter_end;
-    std::vector<std::string> pairs(iter, iter_end);
+    Vector<std::string> pairs(iter, iter_end);
 
     ORT_ENFORCE(pairs.size() > 0);
     for (const auto& pair : pairs) {

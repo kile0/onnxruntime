@@ -15,7 +15,7 @@ class ExecutionProviders;
 class SimpleTensorAllocator : public ITensorAllocator {
  private:
   MemoryPatternGroup mem_patterns_;
-  std::vector<BufferUniquePtr>& weights_buffers_;
+  Vector<BufferUniquePtr>& weights_buffers_;
   const ExecutionPlanBase& seq_plan_;
 
  private:
@@ -23,7 +23,7 @@ class SimpleTensorAllocator : public ITensorAllocator {
 
  public:
   SimpleTensorAllocator(const ExecutionPlanBase& execution_plan, const ExecutionProviders& exec_providers,
-                        std::vector<BufferUniquePtr>& weights_buffers)
+                        Vector<BufferUniquePtr>& weights_buffers)
       : ITensorAllocator(exec_providers),
         weights_buffers_(weights_buffers),
         seq_plan_(execution_plan) {}

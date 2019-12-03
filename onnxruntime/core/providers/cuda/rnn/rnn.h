@@ -17,7 +17,7 @@ class RNN final : public CudnnRnnBase<T> {
 
  public:
   RNN(const OpKernelInfo& info) : CudnnRnnBase<T>(info) {
-    std::vector<std::string> activations_;
+    Vector<std::string> activations_;
     ORT_ENFORCE(info.GetAttrs("activations", activations_).IsOK());
     if (activations_[0] == "Relu")
       CudnnRnnBase<T>::SetRNNMode(CUDNN_RNN_RELU);

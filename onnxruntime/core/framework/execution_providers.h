@@ -87,7 +87,7 @@ class ExecutionProviders {
 
   size_t NumProviders() const { return exec_providers_.size(); }
 
-  using const_iterator = typename std::vector<std::unique_ptr<IExecutionProvider>>::const_iterator;
+  using const_iterator = typename Vector<std::unique_ptr<IExecutionProvider>>::const_iterator;
   const_iterator begin() const noexcept { return exec_providers_.cbegin(); }
   const_iterator end() const noexcept { return exec_providers_.cend(); }
 
@@ -95,15 +95,15 @@ class ExecutionProviders {
     return Get(onnxruntime::kCpuExecutionProvider)->GetAllocator(0, OrtMemTypeDefault)->Info();
   }
 
-  const std::vector<std::string>& GetIds() const { return exec_provider_ids_; }
+  const Vector<std::string>& GetIds() const { return exec_provider_ids_; }
 
  private:
   // Some compilers emit incomprehensive output if this is allowed
   // with a container that has unique_ptr or something move-only.
   ORT_DISALLOW_COPY_AND_ASSIGNMENT(ExecutionProviders);
 
-  std::vector<std::unique_ptr<IExecutionProvider>> exec_providers_;
-  std::vector<std::string> exec_provider_ids_;
+  Vector<std::unique_ptr<IExecutionProvider>> exec_providers_;
+  Vector<std::string> exec_provider_ids_;
 
   // maps for fast lookup of an index into exec_providers_
   std::unordered_map<std::string, size_t> provider_idx_map_;

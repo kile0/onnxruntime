@@ -10,14 +10,14 @@ namespace test {
 TEST(MLOpTest, ImputerOpFloat) {
   OpTester test("Imputer", 1, onnxruntime::kMLDomain);
   const int N = 5;
-  std::vector<float> impute = {10.0f};
+  Vector<float> impute = {10.0f};
   float replace = 1.f;
   test.AddAttribute("imputed_value_floats", impute);
   test.AddAttribute("replaced_value_float", replace);
-  std::vector<float> X = {0.8f, -0.5f, 0.0f, 1.f, 1.0f};
+  Vector<float> X = {0.8f, -0.5f, 0.0f, 1.f, 1.0f};
 
   // setup expected output
-  std::vector<float> expected_output;
+  Vector<float> expected_output;
   for (auto& elem : X) {
     if (elem == replace) {
       expected_output.push_back(impute[0]);
@@ -32,14 +32,14 @@ TEST(MLOpTest, ImputerOpFloat) {
 
 TEST(MLOpTest, ImputerOpInts) {
   OpTester test("Imputer", 1, onnxruntime::kMLDomain);
-  std::vector<int64_t> impute = {10, 20, 30, 40, 50};
+  Vector<int64_t> impute = {10, 20, 30, 40, 50};
   int64_t replace = 2;
   test.AddAttribute("imputed_value_int64s", impute);
   test.AddAttribute("replaced_value_int64", replace);
-  std::vector<int64_t> X = {2, 0, 2, 1, 1};
+  Vector<int64_t> X = {2, 0, 2, 1, 1};
 
   // setup expected output
-  std::vector<int64_t> expected_output;
+  Vector<int64_t> expected_output;
   int impute_idx = 0;
   for (auto& elem : X) {
     if (elem == replace) {
@@ -49,7 +49,7 @@ TEST(MLOpTest, ImputerOpInts) {
     }
     ++impute_idx;
   }
-  std::vector<int64_t> dims{1, 5};
+  Vector<int64_t> dims{1, 5};
   test.AddInput<int64_t>("X", dims, X);
   test.AddOutput<int64_t>("Y", dims, expected_output);
   test.Run();

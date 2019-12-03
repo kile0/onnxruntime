@@ -18,7 +18,7 @@ class UnsqueezeElimination : public RewriteRule {
  public:
   UnsqueezeElimination() noexcept : RewriteRule("UnsqueezeElimination") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Unsqueeze"};
   }
 

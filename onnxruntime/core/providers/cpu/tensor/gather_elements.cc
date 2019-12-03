@@ -11,7 +11,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     11,
     KernelDefBuilder()
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("Tind", std::vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
+        .TypeConstraint("Tind", Vector<MLDataType>{DataTypeImpl::GetTensorType<int32_t>(),
                                                         DataTypeImpl::GetTensorType<int64_t>()}),
     GatherElements);
 
@@ -23,7 +23,7 @@ ONNX_CPU_OPERATOR_KERNEL(
 // 'indices' value
 // This prevents the need to compute this offset for every element within the same 'inner_dimension' chunk
 // as this value just differs by 1 for the chunk elements and we can have this cached and re-use as needed
-static inline int64_t compute_base_offset(const std::vector<int64_t>& shape, const TensorPitches& pitches, int64_t skip_axis) {
+static inline int64_t compute_base_offset(const Vector<int64_t>& shape, const TensorPitches& pitches, int64_t skip_axis) {
   // in this context, rank can never be < 1, so saving checking overhead
   auto loop_size = static_cast<int64_t>(shape.size()) - 1;
 
@@ -53,7 +53,7 @@ static int64_t calculate_num_inner_dim(const TensorShape& dims) {
 
 // Example 2: current_dims = [0, 0, x] tensor_dims = [1, 2, 2], then current_dims = [0, 1, x]
 //            current_dims = [0, 1, x] tensor_dims = [1, 2, 2], then current_dims = [0, 0, x]
-static inline void increment_over_inner_dim(std::vector<int64_t>& current_dims, const TensorShape& tensor_dims) {
+static inline void increment_over_inner_dim(Vector<int64_t>& current_dims, const TensorShape& tensor_dims) {
   // in this context, rank can never be < 1, so saving checking overhead
   int64_t rank = static_cast<int64_t>(current_dims.size());
 
@@ -77,11 +77,11 @@ static inline void increment_over_inner_dim(std::vector<int64_t>& current_dims, 
 }
 
 // parse indices_tensor and along the way validate its shape and contents
-static std::vector<int64_t> parse_and_validate_indices_tensor(const Tensor* indices_tensor,
+static Vector<int64_t> parse_and_validate_indices_tensor(const Tensor* indices_tensor,
                                                               int64_t axis, const TensorShape& input_shape) {
   // first parse 'indices' data
   auto num_elements = indices_tensor->Shape().Size();
-  std::vector<int64_t> indices_data;
+  Vector<int64_t> indices_data;
   // reserving memory ahead as we know the size of the container
   indices_data.reserve(num_elements);
   if (utils::IsPrimitiveDataType<int32_t>(indices_tensor->DataType())) {
@@ -144,7 +144,7 @@ static void core_impl(const Tensor* input_tensor, const Tensor* indices_tensor,
   const int64_t input_rank = static_cast<int64_t>(input_tensor->Shape().NumDimensions());
   const TensorPitches input_shape_pitches(*input_tensor);
 
-  const std::vector<int64_t>& indices_data = parse_and_validate_indices_tensor(indices_tensor, axis, input_tensor->Shape());
+  const Vector<int64_t>& indices_data = parse_and_validate_indices_tensor(indices_tensor, axis, input_tensor->Shape());
   const TensorShape& indices_shape = indices_tensor->Shape();
 
   int64_t num_inner_dim = calculate_num_inner_dim(indices_shape);
@@ -156,7 +156,7 @@ static void core_impl(const Tensor* input_tensor, const Tensor* indices_tensor,
   int64_t output_counter = -1;
   size_t element_size = input_tensor->DataType()->Size();
 
-  std::vector<int64_t> process_dims(input_rank, 0);
+  Vector<int64_t> process_dims(input_rank, 0);
 
   if (!processing_inner_dim) {
     while (num_inner_dim-- != 0) {

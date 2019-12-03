@@ -105,7 +105,7 @@ void ServerEnvironment::InitializeModel(const std::string& model_path, const std
   }
 }
 
-const std::vector<std::string>& ServerEnvironment::GetModelOutputNames(const std::string& model_name, const std::string& model_version) const {
+const Vector<std::string>& ServerEnvironment::GetModelOutputNames(const std::string& model_name, const std::string& model_version) const {
   auto identifier = std::make_pair(model_name, model_version);
   auto it = sessions_.find(identifier);
   if (it == sessions_.end()) {

@@ -335,7 +335,7 @@ size_t OpenVINOGraph::DeduceBatchSize(Ort::CustomOpApi ort, const OrtValue* inpu
 
 // Starts an asynchronous inference request for data in slice indexed by batch_slice_idx on
 // an Infer Request indexed by infer_req_idx
-void OpenVINOGraph::StartAsyncInference(Ort::CustomOpApi ort, std::vector<const OrtValue*> input_tensors,
+void OpenVINOGraph::StartAsyncInference(Ort::CustomOpApi ort, Vector<const OrtValue*> input_tensors,
                                         size_t batch_slice_idx,
                                         size_t infer_req_idx) {
   auto infer_request = infer_requests_[infer_req_idx];
@@ -363,7 +363,7 @@ void OpenVINOGraph::StartAsyncInference(Ort::CustomOpApi ort, std::vector<const 
 
 // Wait for asynchronous inference completion on an Infer Request object indexed by infer_req_idx
 // and copy the results into a slice location within the batched output buffer indexed by batch_slice_idx
-void OpenVINOGraph::CompleteAsyncInference(Ort::CustomOpApi ort, std::vector<OrtValue*> output_tensors,
+void OpenVINOGraph::CompleteAsyncInference(Ort::CustomOpApi ort, Vector<OrtValue*> output_tensors,
                                            size_t batch_slice_idx,
                                            size_t infer_req_idx) {
   auto infer_request = infer_requests_[infer_req_idx];
@@ -389,8 +389,8 @@ void OpenVINOGraph::CompleteAsyncInference(Ort::CustomOpApi ort, std::vector<Ort
   }
 }
 
-std::vector<const OrtValue*> OpenVINOGraph::GetInputTensors(Ort::CustomOpApi ort, OrtKernelContext* context) {
-  std::vector<const OrtValue*> input_tensors;
+Vector<const OrtValue*> OpenVINOGraph::GetInputTensors(Ort::CustomOpApi ort, OrtKernelContext* context) {
+  Vector<const OrtValue*> input_tensors;
   size_t input_count = openvino_network_->getInputsInfo().size();
 
   for (size_t i = 0; i < input_count; i++) {
@@ -399,8 +399,8 @@ std::vector<const OrtValue*> OpenVINOGraph::GetInputTensors(Ort::CustomOpApi ort
   return input_tensors;
 }
 
-std::vector<OrtValue*> OpenVINOGraph::GetOutputTensors(Ort::CustomOpApi ort, OrtKernelContext* context, size_t batch_size) {
-  std::vector<OrtValue*> output_tensors;
+Vector<OrtValue*> OpenVINOGraph::GetOutputTensors(Ort::CustomOpApi ort, OrtKernelContext* context, size_t batch_size) {
+  Vector<OrtValue*> output_tensors;
   auto graph_output_info = openvino_network_->getOutputsInfo();
 
   // All infer_requests process identical tensor slices from the batch.

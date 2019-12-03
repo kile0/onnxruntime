@@ -13,7 +13,7 @@ const char* gemv_update_func_name = "gemv_update";
 const char* gemv_reset_func_name = "gemv_reset";
 
 NaiveLLVMExternGemvTensorization::NaiveLLVMExternGemvTensorization(const std::string& name,
-                                                                   const std::vector<int32_t>& shape)
+                                                                   const Vector<int32_t>& shape)
     : TensorizeWithLLVMImport(name, "NaiveLLVMExternGemvTensorization_Parameter", shape) {}
 
 tvm::TensorIntrin NaiveLLVMExternGemvTensorization::CreateTensorIntrin() {

@@ -44,7 +44,7 @@ Status Conv<T>::ComputeInternal(OpKernelContext* context) const {
 
   const Tensor* W = context->Input<Tensor>(1);
   const TensorShape& w_shape = W->Shape();
-  std::vector<int64_t> w_dims = w_shape.GetDims();
+  Vector<int64_t> w_dims = w_shape.GetDims();
   auto w_data = reinterpret_cast<const CudaT*>(W->template Data<T>());
 
   size_t num_inputs = OpKernel::Node().InputDefs().size();
@@ -71,23 +71,23 @@ Status Conv<T>::ComputeInternal(OpKernelContext* context) const {
 
       ORT_RETURN_IF_ERROR(conv_attrs_.ValidateInputShape(X, W));
 
-      std::vector<int64_t> kernel_shape;
+      Vector<int64_t> kernel_shape;
       ORT_RETURN_IF_ERROR(conv_attrs_.ComputeKernelShape(W->Shape(), kernel_shape));
       auto rank = kernel_shape.size();
-      std::vector<int64_t> pads(conv_attrs_.pads);
+      Vector<int64_t> pads(conv_attrs_.pads);
       if (pads.empty()) {
         pads.resize(rank * 2, 0);
       }
-      std::vector<int64_t> dilations(conv_attrs_.dilations);
+      Vector<int64_t> dilations(conv_attrs_.dilations);
       if (dilations.empty()) {
         dilations.resize(rank, 1);
       }
-      std::vector<int64_t> strides(conv_attrs_.strides);
+      Vector<int64_t> strides(conv_attrs_.strides);
       if (strides.empty()) {
         strides.resize(rank, 1);
       }
 
-      std::vector<int64_t> y_dims;
+      Vector<int64_t> y_dims;
       y_dims.insert(y_dims.begin(), {N, M});
       ORT_RETURN_IF_ERROR(conv_attrs_.InferOutputShape<true>(x_shape.Slice(2), kernel_shape,
                                                              strides, dilations, &pads, &y_dims));
@@ -99,8 +99,8 @@ Status Conv<T>::ComputeInternal(OpKernelContext* context) const {
       if (Y->Shape().Size() == 0)
         return Status::OK();
 
-      std::vector<int64_t> x_dims_cudnn = x_dims;
-      std::vector<int64_t> y_dims_cudnn = y_dims;
+      Vector<int64_t> x_dims_cudnn = x_dims;
+      Vector<int64_t> y_dims_cudnn = y_dims;
       if (rank < 2) {
         // cudnn only takes 4D or 5D input, so pad dimensions if needed
         x_dims_cudnn.push_back(1);
@@ -127,7 +127,7 @@ Status Conv<T>::ComputeInternal(OpKernelContext* context) const {
         const Tensor* B = context->Input<Tensor>(2);
         const auto& b_shape = B->Shape();
         ORT_RETURN_IF_NOT(b_shape.NumDimensions() == 1, "bias should be 1D");
-        std::vector<int64_t> b_dims(2 + kernel_shape.size());
+        Vector<int64_t> b_dims(2 + kernel_shape.size());
         b_dims[0] = 1;           // N
         b_dims[1] = b_shape[0];  // C
         for (size_t i = 0; i < kernel_shape.size(); i++)
@@ -218,17 +218,17 @@ CudnnConvolutionDescriptor::~CudnnConvolutionDescriptor() {
 
 Status CudnnConvolutionDescriptor::Set(
     size_t rank,
-    const std::vector<int64_t>& pads,
-    const std::vector<int64_t>& strides,
-    const std::vector<int64_t>& dilations,
+    const Vector<int64_t>& pads,
+    const Vector<int64_t>& strides,
+    const Vector<int64_t>& dilations,
     cudnnConvolutionMode_t mode,
     cudnnDataType_t data_type) {
   if (!desc_)
     CUDNN_RETURN_IF_ERROR(cudnnCreateConvolutionDescriptor(&desc_));
 
-  std::vector<int> pad_dims(rank);
-  std::vector<int> stride_dims(rank);
-  std::vector<int> dilation_dims(rank);
+  Vector<int> pad_dims(rank);
+  Vector<int> stride_dims(rank);
+  Vector<int> dilation_dims(rank);
   for (size_t i = 0; i < rank; i++) {
     pad_dims[i] = gsl::narrow_cast<int>(pads[i]);
     stride_dims[i] = gsl::narrow_cast<int>(strides[i]);

@@ -11,7 +11,7 @@
 namespace onnxruntime {
 
 template <typename T1, typename T2>
-void DumpArrayRecursive(const T1* data, int64_t& data_offset, const std::vector<T2>& shape, int idx) {
+void DumpArrayRecursive(const T1* data, int64_t& data_offset, const Vector<T2>& shape, int idx) {
   int dim = static_cast<int>(shape.size());
   if (dim == 0) {
     std::cout << "[]\n";
@@ -51,7 +51,7 @@ void DumpArrayRecursive(const T1* data, int64_t& data_offset, const std::vector<
 
 // A helper function to dump multidimensional arrays in a way similar to numpy
 template <typename T1, typename T2>
-void DumpArray(const std::string& tag, const T1* data, const std::vector<T2>& shape) {
+void DumpArray(const std::string& tag, const T1* data, const Vector<T2>& shape) {
   std::cout << tag << "\n";
   int64_t data_offset = 0;
   DumpArrayRecursive(data, data_offset, shape, 0);

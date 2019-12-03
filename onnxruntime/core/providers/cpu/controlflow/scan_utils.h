@@ -44,8 +44,8 @@ struct Info {
 
   int num_implicit_inputs;
 
-  std::vector<std::string> subgraph_input_names;
-  std::vector<std::string> subgraph_output_names;
+  Vector<std::string> subgraph_input_names;
+  Vector<std::string> subgraph_output_names;
 };
 
 /**
@@ -167,8 +167,8 @@ class OutputIterator {
   bool is_concrete_shape_;
 
   // one or more slicers for writing to the output
-  std::vector<OrtValueTensorSlicer<OrtValue>::Iterator> slicer_iterators_;
-  std::vector<OrtValueTensorSlicer<OrtValue>::Iterator>::iterator cur_slicer_iterator_;
+  Vector<OrtValueTensorSlicer<OrtValue>::Iterator> slicer_iterators_;
+  Vector<OrtValueTensorSlicer<OrtValue>::Iterator>::iterator cur_slicer_iterator_;
 
   // if true allocate temporary_final_output_mlvalue_ with data_type_ using the temporary allocator
   // and point final_output_value_ at that.
@@ -184,7 +184,7 @@ class OutputIterator {
 };
 
 void ReadDirections(const OpKernelInfo& info, const std::string& attr_name,
-                    std::vector<int64_t>& directions, int64_t num_entries);
+                    Vector<int64_t>& directions, int64_t num_entries);
 
 Status AllocateOutput(OpKernelContextInternal& context, const GraphViewer& subgraph,
                       int output_index, bool is_loop_state_var, int64_t batch_size, int64_t sequence_len,
@@ -201,11 +201,11 @@ Status CreateFeedsFetchesManager(const Node& node, const Info& info,
                                  std::unique_ptr<FeedsFetchesManager>& feeds_fetches_manager);
 
 Status IterateSequence(OpKernelContextInternal& context, const SessionState& session_state,
-                       std::vector<LoopStateVariable>& loop_state_variables,
-                       std::vector<OrtValueTensorSlicer<const OrtValue>::Iterator>& scan_input_stream_iterators,
+                       Vector<LoopStateVariable>& loop_state_variables,
+                       Vector<OrtValueTensorSlicer<const OrtValue>::Iterator>& scan_input_stream_iterators,
                        int64_t seq_length, int num_loop_state_variables, int num_variadic_inputs,
-                       int num_variadic_outputs, const std::vector<const OrtValue*>& implicit_inputs,
-                       std::vector<std::unique_ptr<OutputIterator>>& output_iterators,
+                       int num_variadic_outputs, const Vector<const OrtValue*>& implicit_inputs,
+                       Vector<std::unique_ptr<OutputIterator>>& output_iterators,
                        const FeedsFetchesManager& ffm);
 
 OrtValue AllocateTensorInMLValue(MLDataType data_type, const TensorShape& shape, AllocatorPtr& allocator);
@@ -218,7 +218,7 @@ e.g. if shape is {2, 3, 4} and axis 1 is chosen the permutations will be {1, 0, 
      if axis 2 is chosen the permutations will be {2, 0, 1} and the output shape will be {4, 2, 3}
 */
 void CalculateTransposedShapeForInput(const TensorShape& original_shape, int64_t axis,
-                                      std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape);
+                                      Vector<size_t>& permutations, Vector<int64_t>& transposed_shape);
 
 /**
 Calculate the transpose permutations and shape by shifting the chosen axis FROM the first dimension.
@@ -227,7 +227,7 @@ e.g. if shape is {4, 2, 3} and axis 2 is chosen, dimension 0 will move to dimens
      the permutations will be {1, 2, 0} and output shape will be {2, 3, 4}
 */
 void CalculateTransposedShapeForOutput(const TensorShape& original_shape, int64_t axis,
-                                       std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape);
+                                       Vector<size_t>& permutations, Vector<int64_t>& transposed_shape);
 
 }  // namespace detail
 }  // namespace scan

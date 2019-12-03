@@ -452,7 +452,7 @@ void UniDirectionalAttnLstm<T>::GateComputations(span_T_iter& out, span_T_iter& 
 
     // the C_prev_clipped location is not actually used as input - it's temporary storage for writing
     // the clipped Ct value to, before calling h(). As such a) it could just be a local variable
-    // of std::vector<float> with size of hidden_size_, b) the previous version wasn't 'broken' by never
+    // of Vector<float> with size of hidden_size_, b) the previous version wasn't 'broken' by never
     // incrementing what C_prev_clipped pointed to.
     float* pC_prev_clipped = SafeRawPointer<T>(C_prev_clipped + b * hidden_size_, C_prev_clipped_end, hidden_size_);
 

@@ -103,7 +103,7 @@ std::ostream& operator<<(std::ostream& out, std::pair<const SequentialExecutionP
 class PlannerImpl {
  public:
   PlannerImpl(const Node* parent_node, const onnxruntime::GraphViewer& graph_viewer,
-              const std::vector<const NodeArg*>& outer_scope_node_args, const ExecutionProviders& providers,
+              const Vector<const NodeArg*>& outer_scope_node_args, const ExecutionProviders& providers,
               const KernelRegistryManager& kernel_registry, const OrtValueNameIdxMap& ort_value_name_idx_map,
               const ISequentialPlannerContext& context, SequentialExecutionPlan& plan)
       : context_(context),
@@ -123,7 +123,7 @@ class PlannerImpl {
 
   const Node* parent_node_;
   const onnxruntime::GraphViewer& graph_viewer_;
-  const std::vector<const NodeArg*>& outer_scope_node_args_;
+  const Vector<const NodeArg*>& outer_scope_node_args_;
   const ExecutionProviders& execution_providers_;
 
   const KernelRegistryManager& kernel_registry_;
@@ -137,7 +137,7 @@ class PlannerImpl {
   };
 
   // ort_value_info_ is indexed by an OrtValueIndex
-  std::vector<OrtValueInfo> ort_value_info_;
+  Vector<OrtValueInfo> ort_value_info_;
 
   // FreeBufferInfo is used to track information about ml-values whose buffers are
   // free to be reused.
@@ -212,7 +212,7 @@ class PlannerImpl {
       return false;
     }
 
-    const std::vector<std::pair<int, int>>& alias_map = ci->kernel_def->Alias();
+    const Vector<std::pair<int, int>>& alias_map = ci->kernel_def->Alias();
     auto input_args = node.InputDefs();
     for (auto pair : alias_map) {
       if (pair.second == output_arg_num) {
@@ -227,7 +227,7 @@ class PlannerImpl {
       }
     }
 
-    const std::vector<std::pair<int, int>>& inplace_map = ci->kernel_def->MayInplace();
+    const Vector<std::pair<int, int>>& inplace_map = ci->kernel_def->MayInplace();
     for (auto pair : inplace_map) {
       if (pair.second == output_arg_num) {
         if ((0 <= pair.first) && (static_cast<size_t>(pair.first) < input_args.size())) {
@@ -476,7 +476,7 @@ class PlannerImpl {
 
   Status GeneratePlanForWeights() {
     auto& weights = graph_viewer_.GetAllInitializedTensors();
-    std::vector<std::vector<OrtMemoryInfo>> locations(plan_.allocation_plan.size());
+    Vector<Vector<OrtMemoryInfo>> locations(plan_.allocation_plan.size());
     for (auto& node : graph_viewer_.Nodes()) {
       ORT_RETURN_IF_ERROR(onnxruntime::Node::ForEachWithIndex(
           node.InputDefs(), [this, &locations, &node, &weights](const onnxruntime::NodeArg& def, size_t index) {
@@ -492,7 +492,7 @@ class PlannerImpl {
           }));
     }
     for (size_t i = 0; i != locations.size(); ++i) {
-      const std::vector<OrtMemoryInfo>& loc = locations[i];
+      const Vector<OrtMemoryInfo>& loc = locations[i];
       if (loc.empty()) continue;
       plan_.allocation_plan[i].alloc_kind = AllocKind::kAllocateStatically;
       plan_.allocation_plan[i].location = loc[0];
@@ -509,7 +509,7 @@ class PlannerImpl {
 
   // Should only be used after ProcessDef()
   Status ComputeReusePlan() {
-    std::vector<SequentialExecutionPlan::NodeExecutionPlan>& execution_plan(plan_.execution_plan);
+    Vector<SequentialExecutionPlan::NodeExecutionPlan>& execution_plan(plan_.execution_plan);
 
     // Identify allocation/deallocation plan for every ml-value
 
@@ -720,7 +720,7 @@ Status PlannerImpl::CreatePlan() {
 }
 
 Status SequentialPlanner::CreatePlan(const Node* parent_node, const onnxruntime::GraphViewer& graph_viewer,
-                                     const std::vector<const NodeArg*>& outer_scope_node_args,
+                                     const Vector<const NodeArg*>& outer_scope_node_args,
                                      const ExecutionProviders& providers, const KernelRegistryManager& kernel_registry,
                                      const OrtValueNameIdxMap& ort_value_name_idx_map,
                                      const ISequentialPlannerContext& context,

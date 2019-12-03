@@ -34,7 +34,7 @@ class GraphStatsBase {
   }
 
   // Set passes externally
-  void SetAllPasses(const std::vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>>& passes) {
+  void SetAllPasses(const Vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>>& passes) {
     passes_.clear();
     for (auto& pass : passes) {
       passes_.push_back(pass);
@@ -43,7 +43,7 @@ class GraphStatsBase {
 
   // Set existed evaluated passes externally
   void SetAllExistedEvaluatedPasses(
-      const std::vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>>& passes) {
+      const Vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>>& passes) {
     existed_eval_passes_.clear();
     for (auto& pass : passes) {
       existed_eval_passes_.push_back(pass);
@@ -57,11 +57,11 @@ class GraphStatsBase {
  protected:
   const std::string name_{"Unknown"};
 
-  std::vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>> passes_;
+  Vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>> passes_;
 
  private:
   // existed eval passes not requiring evaluation
-  std::vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>> existed_eval_passes_;
+  Vector<std::shared_ptr<AnalysisBase<INPUT_TYPE>>> existed_eval_passes_;
 
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(GraphStatsBase);
 };

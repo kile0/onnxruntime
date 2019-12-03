@@ -64,8 +64,8 @@ struct DmlBufferTensorDesc
 {
     DML_TENSOR_DATA_TYPE dataType = DML_TENSOR_DATA_TYPE_UNKNOWN;
     DML_TENSOR_FLAGS flags = DML_TENSOR_FLAG_NONE;
-    std::vector<uint32_t> sizes;
-    std::optional<std::vector<uint32_t>> strides;
+    Vector<uint32_t> sizes;
+    std::optional<Vector<uint32_t>> strides;
     uint64_t totalTensorSizeInBytes = 0;
     uint32_t guaranteedBaseOffsetAlignment = 0;
 

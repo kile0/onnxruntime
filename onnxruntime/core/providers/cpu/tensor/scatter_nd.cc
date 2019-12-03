@@ -81,7 +81,7 @@ Status ScatterNDBase::PrepareForCompute(OpKernelContext* context, Prepare& p) co
     }
   }
 
-  std::vector<int64_t> element_counts(last_indice_dimension, 0LL); // Number of elements for each input dimension
+  Vector<int64_t> element_counts(last_indice_dimension, 0LL); // Number of elements for each input dimension
 
 #ifdef USE_OPENMP
 #pragma omp parallel for

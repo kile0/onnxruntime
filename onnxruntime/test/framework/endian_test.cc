@@ -23,13 +23,13 @@ TEST(EndianTest, EndiannessDetection) {
 }
 
 TEST(EndianTest, SwapByteOrderCopy) {
-  const auto src = std::vector<char>{
+  const auto src = Vector<char>{
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'};
 
-  auto result = std::vector<char>(src.size());
+  auto result = Vector<char>(src.size());
   {
     SwapByteOrderCopy(3, gsl::make_span(src), gsl::make_span(result));
-    const auto expected = std::vector<char>{
+    const auto expected = Vector<char>{
         'c', 'b', 'a',
         'f', 'e', 'd',
         'i', 'h', 'g',
@@ -39,7 +39,7 @@ TEST(EndianTest, SwapByteOrderCopy) {
 
   {
     SwapByteOrderCopy(4, gsl::make_span(src), gsl::make_span(result));
-    const auto expected = std::vector<char>{
+    const auto expected = Vector<char>{
         'd', 'c', 'b', 'a',
         'h', 'g', 'f', 'e',
         'l', 'k', 'j', 'i'};

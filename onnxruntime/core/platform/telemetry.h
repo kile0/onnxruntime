@@ -41,7 +41,7 @@ class Telemetry {
                                   const std::unordered_map<std::string, int>& domain_to_version_map,
                                   const std::string& model_graph_name,
                                   const std::unordered_map<std::string, std::string>& model_metadata,
-                                  const std::string& loadedFrom, const std::vector<std::string>& execution_provider_ids) const;
+                                  const std::string& loadedFrom, const Vector<std::string>& execution_provider_ids) const;
 
   virtual void LogRuntimeError(uint32_t session_id, const common::Status& status, const char* file,
                                const char* function, uint32_t line) const;

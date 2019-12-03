@@ -23,9 +23,9 @@ class ParallelExecutor : public IExecutor {
  public:
   ParallelExecutor(const SessionState& session_state, const bool& terminate_flag = false);
 
-  common::Status Execute(const SessionState& session_state, const std::vector<int>& feed_mlvalue_idxs,
-                         const std::vector<OrtValue>& feeds, const std::vector<int>& fetch_mlvalue_idxs,
-                         std::vector<OrtValue>& fetches,
+  common::Status Execute(const SessionState& session_state, const Vector<int>& feed_mlvalue_idxs,
+                         const Vector<OrtValue>& feeds, const Vector<int>& fetch_mlvalue_idxs,
+                         Vector<OrtValue>& fetches,
                          const std::unordered_map<size_t, CustomAllocator>& fetch_allocators,
                          const logging::Logger& logger) override;
 
@@ -53,12 +53,12 @@ class ParallelExecutor : public IExecutor {
   }
 
   std::unique_ptr<ExecutionFrame> root_frame_;
-  std::vector<size_t> node_refs_;
+  Vector<size_t> node_refs_;
   OrtMutex ref_mutex_;
   int out_standings_;  //protected by complete_mutex_
   OrtMutex complete_mutex_;
   OrtCondVar complete_cv_;
-  std::vector<Status> errors_;
+  Vector<Status> errors_;
 
   const bool& terminate_flag_;
   // TODO: Temporary threadpool for the executor.  This is a costly way to handle the problem.

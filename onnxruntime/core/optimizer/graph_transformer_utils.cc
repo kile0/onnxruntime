@@ -37,9 +37,9 @@ std::string GenerateRuleBasedTransformerName(TransformerLevel level) {
   return "Level" + std::to_string(static_cast<uint32_t>(level)) + "_RuleBasedTransformer";
 }
 
-std::vector<std::unique_ptr<RewriteRule>> GenerateRewriteRules(TransformerLevel level,
-                                                               const std::vector<std::string>& rules_to_enable) {
-  std::vector<std::unique_ptr<RewriteRule>> rules;
+Vector<std::unique_ptr<RewriteRule>> GenerateRewriteRules(TransformerLevel level,
+                                                               const Vector<std::string>& rules_to_enable) {
+  Vector<std::unique_ptr<RewriteRule>> rules;
   switch (level) {
     case TransformerLevel::Level1:
       rules.push_back(onnxruntime::make_unique<EliminateIdentity>());
@@ -65,7 +65,7 @@ std::vector<std::unique_ptr<RewriteRule>> GenerateRewriteRules(TransformerLevel 
   }
 
   if (!rules_to_enable.empty()) {
-    std::vector<std::unique_ptr<RewriteRule>> filtered_list;
+    Vector<std::unique_ptr<RewriteRule>> filtered_list;
     for (const auto& rule_name : rules_to_enable) {
       std::for_each(rules.begin(), rules.end(), [&](std::unique_ptr<RewriteRule>& item) {
         if ((item != nullptr) && (item->Name() == rule_name)) {
@@ -80,7 +80,7 @@ std::vector<std::unique_ptr<RewriteRule>> GenerateRewriteRules(TransformerLevel 
 }
 
 std::unique_ptr<RuleBasedGraphTransformer> GenerateRuleBasedGraphTransformer(TransformerLevel level,
-                                                                             const std::vector<std::string>& rules_to_enable,
+                                                                             const Vector<std::string>& rules_to_enable,
                                                                              const std::unordered_set<std::string>& compatible_execution_providers) {
   auto rewrite_rules_to_register = GenerateRewriteRules(level, rules_to_enable);
   if (rewrite_rules_to_register.empty()) {
@@ -97,10 +97,10 @@ std::unique_ptr<RuleBasedGraphTransformer> GenerateRuleBasedGraphTransformer(Tra
   return rule_transformer;
 }
 
-std::vector<std::unique_ptr<GraphTransformer>> GenerateTransformers(TransformerLevel level,
+Vector<std::unique_ptr<GraphTransformer>> GenerateTransformers(TransformerLevel level,
                                                                     gsl::span<const FreeDimensionOverride> free_dimension_overrides,
-                                                                    const std::vector<std::string>& transformers_and_rules_to_enable) {
-  std::vector<std::unique_ptr<GraphTransformer>> transformers;
+                                                                    const Vector<std::string>& transformers_and_rules_to_enable) {
+  Vector<std::unique_ptr<GraphTransformer>> transformers;
   std::unique_ptr<RuleBasedGraphTransformer> rule_transformer = nullptr;
   switch (level) {
     case TransformerLevel::Level1: {
@@ -160,7 +160,7 @@ std::vector<std::unique_ptr<GraphTransformer>> GenerateTransformers(TransformerL
     }
     return transformers;
   }
-  std::vector<std::unique_ptr<GraphTransformer>> filtered_list;
+  Vector<std::unique_ptr<GraphTransformer>> filtered_list;
   // If the rule-based transformer is not empty, it should be included in the custom transformer list below.
   if (rule_transformer != nullptr) {
     filtered_list.emplace_back(std::move(rule_transformer));

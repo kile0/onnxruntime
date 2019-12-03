@@ -60,9 +60,9 @@ class CUDAExecutionProvider : public IExecutionProvider {
   virtual std::shared_ptr<KernelRegistry> GetKernelRegistry() const override;
   std::unique_ptr<onnxruntime::IDataTransfer> GetDataTransfer() const override;
 
-  virtual std::vector<std::unique_ptr<ComputeCapability>>
+  virtual Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph,
-                const std::vector<const KernelRegistry*>& kernel_registries) const override;
+                const Vector<const KernelRegistry*>& kernel_registries) const override;
 
   int GetDeviceId() const { return device_id_; }
 
@@ -71,7 +71,7 @@ class CUDAExecutionProvider : public IExecutionProvider {
 
   struct DeferredReleaseCPUPtrs {
     bool recorded = false;
-    std::vector<void*> cpu_ptrs;
+    Vector<void*> cpu_ptrs;
   };
   std::unordered_map<cudaEvent_t, DeferredReleaseCPUPtrs> deferred_release_cpu_ptr_;
   OrtMutex deferred_release_cpu_ptr_mutex_;

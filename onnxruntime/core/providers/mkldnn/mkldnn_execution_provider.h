@@ -76,24 +76,24 @@ class MKLDNNExecutionProvider : public IExecutionProvider {
     biass_buffers_.push_back(std::move(buffer));
   }
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph,
-                const std::vector<const KernelRegistry*>& /*kernel_registries*/) const override;
+                const Vector<const KernelRegistry*>& /*kernel_registries*/) const override;
 
-  common::Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                         std::vector<NodeComputeInfo>& node_compute_funcs) override;
+  common::Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                         Vector<NodeComputeInfo>& node_compute_funcs) override;
 
  private:
   // mkldnn weights(filer data) memory blocks from first iteration
   // saved by weights name
   std::unordered_map<std::string, std::shared_ptr<mkldnn::memory>> weights_mem_map_;
   // Save reordered memory buffers in list so that memory is not freed.
-  std::vector<IAllocatorUniquePtr<void>> reordered_buffers_;
+  Vector<IAllocatorUniquePtr<void>> reordered_buffers_;
 
   // conv+batchnorm fusion. normalized bias memory blocks from first iteration
   std::unordered_map<std::string, std::shared_ptr<mkldnn::memory>> bias_mem_map_;
   // Conv+BathNorm fusion bias memory buffer.
-  std::vector<IAllocatorUniquePtr<void>> biass_buffers_;
+  Vector<IAllocatorUniquePtr<void>> biass_buffers_;
   OrtMutex mutex_;
 
   // SUBGRAPH
@@ -162,7 +162,7 @@ class MKLDNNExecutionProvider : public IExecutionProvider {
                      const NodeAttributes& subgraph_attributes,
                      std::shared_ptr<mkl_dnn::Subgraph>& subgraph_ptr,
                      mkl_dnn::Subgraph::SubgraphVariables& sub_var,
-                     std::vector<std::unique_ptr<ComputeCapability>>& result) const;
+                     Vector<std::unique_ptr<ComputeCapability>>& result) const;
 
  public:
   const std::shared_ptr<mkl_dnn::Subgraph> GetMklDnnSubgraph(const std::string& subgraph_id) {

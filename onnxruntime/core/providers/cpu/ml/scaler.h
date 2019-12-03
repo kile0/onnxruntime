@@ -14,8 +14,8 @@ class ScalerOp final : public OpKernel {
   common::Status Compute(OpKernelContext* context) const override;
 
  private:
-  std::vector<float> scale_;
-  std::vector<float> offset_;
+  Vector<float> scale_;
+  Vector<float> offset_;
 };
 }  // namespace ml
 }  // namespace onnxruntime

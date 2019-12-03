@@ -66,14 +66,14 @@ class CudnnReduceDescriptor final {
 
 static Status PrepareForReduce(OpKernelContext* ctx,
                                bool keepdims,
-                               const std::vector<int64_t>& axes,
+                               const Vector<int64_t>& axes,
                                const Tensor** x_pp,
                                Tensor** y_pp,
                                int64_t& input_count,
                                int64_t& output_count,
-                               std::vector<int64_t>& output_dims,
-                               std::vector<int64_t>& input_dims_cudnn,
-                               std::vector<int64_t>& output_dims_cudnn) {
+                               Vector<int64_t>& output_dims,
+                               Vector<int64_t>& input_dims_cudnn,
+                               Vector<int64_t>& output_dims_cudnn) {
   const Tensor* X = ctx->Input<Tensor>(0);
   ORT_ENFORCE(nullptr != X);
   *x_pp = X;
@@ -87,8 +87,8 @@ static Status PrepareForReduce(OpKernelContext* ctx,
   }
 
   const auto& input_dims = input_shape.GetDims();
-  std::vector<bool> reduced(rank, false);
-  std::vector<int64_t> squeezed_output_dims;
+  Vector<bool> reduced(rank, false);
+  Vector<int64_t> squeezed_output_dims;
   output_dims.reserve(input_dims.size());
   if (axes.size() > 0) {
     output_dims = input_dims;
@@ -133,7 +133,7 @@ static Status PrepareForReduce(OpKernelContext* ctx,
   input_dims_cudnn = input_dims;
   output_dims_cudnn = output_dims;
   if (rank < 3) {
-    std::vector<int64_t> pads(3 - rank, 1);
+    Vector<int64_t> pads(3 - rank, 1);
     input_dims_cudnn.insert(input_dims_cudnn.end(), pads.begin(), pads.end());
     output_dims_cudnn.insert(output_dims_cudnn.end(), pads.begin(), pads.end());
   }
@@ -152,9 +152,9 @@ Status ReduceKernel<allow_multi_axes>::ComputeImpl(OpKernelContext* ctx, cudnnRe
 
   int64_t input_count = 0;
   int64_t output_count = 0;
-  std::vector<int64_t> output_dims;
-  std::vector<int64_t> input_dims_cudnn;
-  std::vector<int64_t> output_dims_cudnn;
+  Vector<int64_t> output_dims;
+  Vector<int64_t> input_dims_cudnn;
+  Vector<int64_t> output_dims_cudnn;
   ORT_RETURN_IF_ERROR(PrepareForReduce(ctx,
                                        keepdims_,
                                        axes_,
@@ -320,9 +320,9 @@ Status ReduceKernel<true>::ComputeImpl<int32_t, CUDNN_REDUCE_TENSOR_NO_INDICES>(
 
   int64_t input_count = 0;
   int64_t output_count = 0;
-  std::vector<int64_t> output_dims;
-  std::vector<int64_t> input_dims_cudnn;
-  std::vector<int64_t> output_dims_cudnn;
+  Vector<int64_t> output_dims;
+  Vector<int64_t> input_dims_cudnn;
+  Vector<int64_t> output_dims_cudnn;
   ORT_RETURN_IF_ERROR(PrepareForReduce(ctx,
                                        keepdims_,
                                        axes_,

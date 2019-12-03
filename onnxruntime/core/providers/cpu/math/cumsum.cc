@@ -10,14 +10,14 @@ using namespace onnxruntime;
 
 namespace {
 // static section
-std::vector<int64_t> GetStarts(int64_t rank, int64_t axis, int64_t index) {
-  std::vector<int64_t> starts(rank, 0);
+Vector<int64_t> GetStarts(int64_t rank, int64_t axis, int64_t index) {
+  Vector<int64_t> starts(rank, 0);
   starts[axis] = index;
   return starts;
 }
 template <typename T>
 void ZeroOutSliceAtIndex(Tensor& output, int64_t rank, int64_t axis, int64_t index,
-                         const std::vector<int64_t>& slice_dims, const std::vector<int64_t>& steps, const int64_t slice_size) {
+                         const Vector<int64_t>& slice_dims, const Vector<int64_t>& steps, const int64_t slice_size) {
   T zero{};
   auto output_starts(GetStarts(rank, axis, index));
   WritableSliceIterator<T> output_iterator(output, output_starts, slice_dims, steps);
@@ -27,8 +27,8 @@ void ZeroOutSliceAtIndex(Tensor& output, int64_t rank, int64_t axis, int64_t ind
 }
 template <typename T>
 void CopySlices(const Tensor& input, Tensor& output,
-                const std::vector<int64_t>& input_starts, const std::vector<int64_t>& output_starts,
-                const std::vector<int64_t>& slice_dims, const std::vector<int64_t>& steps, const int64_t slice_size) {
+                const Vector<int64_t>& input_starts, const Vector<int64_t>& output_starts,
+                const Vector<int64_t>& slice_dims, const Vector<int64_t>& steps, const int64_t slice_size) {
   SliceIterator<T> input_iterator(input, input_starts, slice_dims, steps);
   WritableSliceIterator<T> output_iterator(output, output_starts, slice_dims, steps);
   for (int64_t k = 0; k < slice_size; ++k, ++output_iterator, ++input_iterator) {
@@ -37,8 +37,8 @@ void CopySlices(const Tensor& input, Tensor& output,
 }
 template <typename T>
 void SumSlices(const Tensor& input, Tensor& output,
-               const std::vector<int64_t>& input_starts, const std::vector<int64_t>& output_starts, const std::vector<int64_t>& previous_output_starts,
-               const std::vector<int64_t>& slice_dims, const std::vector<int64_t>& steps, const int64_t slice_size) {
+               const Vector<int64_t>& input_starts, const Vector<int64_t>& output_starts, const Vector<int64_t>& previous_output_starts,
+               const Vector<int64_t>& slice_dims, const Vector<int64_t>& steps, const int64_t slice_size) {
   SliceIterator<T> input_iterator(input, input_starts, slice_dims, steps);
   WritableSliceIterator<T> output_iterator(output, output_starts, slice_dims, steps);
   SliceIterator<T> previous_output_iterator(output, previous_output_starts, slice_dims, steps);
@@ -105,7 +105,7 @@ Status CumSum<T>::Compute(OpKernelContext* ctx) const {
   auto slice_size(slice_shape.Size());     // total number of elements in each slice
   auto slice_dims(slice_shape.GetDims());  // dim array for the slice
 
-  std::vector<int64_t> steps(rank, 1);  // steps for the slice -- always set to 1
+  Vector<int64_t> steps(rank, 1);  // steps for the slice -- always set to 1
 
   if (!reverse_) {
     int64_t index(0);  // the index we use as we walkthrough the given axis

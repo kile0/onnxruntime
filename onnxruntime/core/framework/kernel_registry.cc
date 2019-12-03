@@ -161,7 +161,7 @@ bool KernelRegistry::VerifyKernelDef(const onnxruntime::Node& node,
 
   for (auto& constraint : kernel_type_constraints) {
     const std::string& name = constraint.first;
-    const std::vector<MLDataType>& allowed_types = constraint.second;
+    const Vector<MLDataType>& allowed_types = constraint.second;
     const ONNX_NAMESPACE::TypeProto* actual_type = type_binding_resolver.Resolve(name);
 
     // If actual_type is null, this represents a type-constraint on a
@@ -237,7 +237,7 @@ Status KernelRegistry::TryCreateKernel(const onnxruntime::Node& node,
   return Status::OK();
 }
 
-static std::string ToString(const std::vector<std::string>& error_strs) {
+static std::string ToString(const Vector<std::string>& error_strs) {
   std::ostringstream ostr;
   std::for_each(std::begin(error_strs), std::end(error_strs),
                 [&ostr](const std::string& str) { ostr << str << " "; });
@@ -255,7 +255,7 @@ const KernelCreateInfo* KernelRegistry::TryFindKernel(const onnxruntime::Node& n
   const auto& expected_provider = (node_provider.empty() ? exec_provider : node_provider);
 
   auto range = kernel_creator_fn_map_.equal_range(GetMapKey(node.OpType(), node.Domain(), expected_provider));
-  std::vector<std::string> verify_kernel_def_error_strs;
+  Vector<std::string> verify_kernel_def_error_strs;
   for (auto i = range.first; i != range.second; ++i) {
     if (!i->second.status.IsOK()) {
       LOGS_DEFAULT(ERROR) << "Failed to create kernel for op: " << node.OpType()

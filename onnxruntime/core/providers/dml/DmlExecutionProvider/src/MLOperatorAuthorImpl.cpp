@@ -1151,7 +1151,7 @@ void STDMETHODCALLTYPE TensorWrapper::GetDataInterface(IUnknown** dataInterface)
 
 void OpKernelContextWrapper::TransitionResourcesForOperatorIfRequired(bool isBeforeOp) {
   if (m_winmlProvider->TransitionsRequiredForOperator(m_internalOperator)) {
-    std::vector<IUnknown*> resourcesToTransition;
+    Vector<IUnknown*> resourcesToTransition;
     resourcesToTransition.reserve(m_inputTensors.size() + m_outputTensors.size() + m_temporaryAllocations.size());
 
     for (uint32_t i = 0; i < m_inputTensors.size(); ++i) {
@@ -1305,7 +1305,7 @@ HRESULT STDMETHODCALLTYPE OpKernelContextWrapper::GetOutputTensor(uint32_t outpu
         return E_INVALIDARG;
       }
     }
-    std::vector<int64_t> convertedSizes(dimensions);
+    Vector<int64_t> convertedSizes(dimensions);
     for (size_t i = 0; i < dimensions; ++i) {
       convertedSizes[i] = dimensionSizes[i];
     }
@@ -1369,8 +1369,8 @@ void STDMETHODCALLTYPE OpKernelContextWrapper::GetExecutionInterface(IUnknown** 
   m_abiExecutionObject.CopyTo(executionInterface);
 }
 
-std::vector<IMLOperatorTensor*> OpKernelContextWrapper::GetInputTensors() {
-  std::vector<IMLOperatorTensor*> ret;
+Vector<IMLOperatorTensor*> OpKernelContextWrapper::GetInputTensors() {
+  Vector<IMLOperatorTensor*> ret;
   ret.reserve(m_inputTensors.size());
 
   for (int i = 0; i < m_impl->InputCount(); ++i) {
@@ -1382,8 +1382,8 @@ std::vector<IMLOperatorTensor*> OpKernelContextWrapper::GetInputTensors() {
   return ret;
 }
 
-std::vector<IMLOperatorTensor*> OpKernelContextWrapper::GetOutputTensors(const EdgeShapes& outputShapes) {
-  std::vector<IMLOperatorTensor*> ret;
+Vector<IMLOperatorTensor*> OpKernelContextWrapper::GetOutputTensors(const EdgeShapes& outputShapes) {
+  Vector<IMLOperatorTensor*> ret;
   ret.reserve(m_outputTensors.size());
 
   THROW_HR_IF(E_INVALIDARG, m_impl->OutputCount() != outputShapes.EdgeCount());
@@ -1778,7 +1778,7 @@ CATCH_RETURN();
 
 bool TryGetStaticShapeIfTensor(
     const onnx::TypeProto* inputProto,
-    std::vector<uint32_t>& shapeDims) {
+    Vector<uint32_t>& shapeDims) {
   // Skip this input if it is not valid.
   if (inputProto == nullptr) {
     return true;
@@ -1842,7 +1842,7 @@ bool TryGetStaticOutputShapes(const onnxruntime::Node& node, EdgeShapes& outputS
 
 bool ContainsEmptyDimensions(const EdgeShapes& shapes) {
   for (size_t i = 0; i < shapes.EdgeCount(); i++) {
-    const std::vector<uint32_t>& shape = shapes.GetShape(i);
+    const Vector<uint32_t>& shape = shapes.GetShape(i);
 
     if (std::find(shape.begin(), shape.end(), 0) != shape.end()) {
       return true;

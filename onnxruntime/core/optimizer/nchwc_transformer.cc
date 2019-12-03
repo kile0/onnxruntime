@@ -366,7 +366,7 @@ void NchwcTransformerImpl::TransformConv(Node& node) {
   } else {
     auto conv_W = onnxruntime::make_unique<Initializer>(*conv_W_tensor_proto);
 
-    std::vector<float> reordered_filter(conv_W->size() / output_channels * nchwc_output_channels);
+    Vector<float> reordered_filter(conv_W->size() / output_channels * nchwc_output_channels);
 
     // Reorder the weights tensor statically.
     if (reorder_filter_OIHWBo) {
@@ -402,7 +402,7 @@ void NchwcTransformerImpl::TransformConv(Node& node) {
     } else {
       auto conv_B = onnxruntime::make_unique<Initializer>(*conv_B_tensor_proto);
 
-      std::vector<float> aligned_bias(nchwc_output_channels);
+      Vector<float> aligned_bias(nchwc_output_channels);
       std::copy_n(conv_B->data<float>(), output_channels, aligned_bias.data());
 
       ONNX_NAMESPACE::TensorProto nchwc_conv_B_tensor_proto;
@@ -513,7 +513,7 @@ void NchwcTransformerImpl::TransformAdd(Node& node) {
   auto& input_defs = node.MutableInputDefs();
 
   // Verify that all of the inputs to this operator are from NCHWc outputs.
-  std::vector<NchwcArgument*> nchwc_inputs;
+  Vector<NchwcArgument*> nchwc_inputs;
   size_t input_defs_count = input_defs.size();
   nchwc_inputs.reserve(input_defs_count);
   for (size_t i = 0; i < input_defs_count; i++) {
@@ -607,7 +607,7 @@ void NchwcTransformerImpl::TransformConcat(Node& node) {
   const size_t nchwc_block_size = MlasNchwcGetBlockSize();
 
   // Verify that all of the inputs to this operator are from NCHWc outputs.
-  std::vector<NchwcArgument*> nchwc_inputs;
+  Vector<NchwcArgument*> nchwc_inputs;
   size_t input_defs_count = input_defs.size();
   nchwc_inputs.reserve(input_defs_count);
   int64_t total_channels = 0;

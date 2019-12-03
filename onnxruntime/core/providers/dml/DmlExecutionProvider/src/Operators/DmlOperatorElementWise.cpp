@@ -34,8 +34,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         TOperatorDesc opDesc = {};
         opDesc.InputTensor = inputDescs.data();
@@ -69,8 +69,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         std::optional<ActivationOperatorDesc> fusedActivation = FusionHelpers::TryGetFusedActivationDesc(kernelInfo);
         DML_OPERATOR_DESC fusedActivationDmlDesc = fusedActivation ? fusedActivation->GetDmlDesc() : DML_OPERATOR_DESC();
@@ -119,8 +119,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
         const size_t inputCount = m_inputTensorDescs.size();
 
         std::optional<ActivationOperatorDesc> fusedActivation = FusionHelpers::TryGetFusedActivationDesc(kernelInfo);
@@ -224,7 +224,7 @@ public:
     // The size of the vector will either be empty if all tensor pairs have identical properties,
     // or it will equal inputCount - 2, with the first operator in this vector corresponding to the
     // 3rd input tensor combined with the output of the previous 2 input tensors.
-    std::vector<ComPtr<IDMLCompiledOperator>> m_compiledOperators;
+    Vector<ComPtr<IDMLCompiledOperator>> m_compiledOperators;
 };
 
 class DmlOperatorElementwiseMean : public DmlOperator
@@ -240,8 +240,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         const size_t inputCount = m_inputTensorDescs.size();
         if (inputCount == 1)
@@ -366,7 +366,7 @@ public:
     }
 
     // If multiple compiled operators are needed, beyond m_compiledOperator, they are appended here.
-    std::vector<ComPtr<IDMLCompiledOperator>> m_compiledOperators;
+    Vector<ComPtr<IDMLCompiledOperator>> m_compiledOperators;
 };
 
 class DmlOperatorElementwiseClip : public DmlOperator
@@ -379,8 +379,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ELEMENT_WISE_CLIP_OPERATOR_DESC opDesc = {};
         opDesc.InputTensor = inputDescs.data();
@@ -402,8 +402,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ELEMENT_WISE_POW_OPERATOR_DESC opDesc = {};
         opDesc.InputTensor = &inputDescs[0];
@@ -423,7 +423,7 @@ public:
         ML_CHECK_VALID_ARGUMENT(kernelInfo.GetInputCount() == 3);
         ML_CHECK_VALID_ARGUMENT(kernelInfo.GetOutputCount()  == 1);
 
-        std::vector<uint32_t> outputShape = kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0);
+        Vector<uint32_t> outputShape = kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0);
         const uint32_t outputShapeDimCount = gsl::narrow_cast<uint32_t>(outputShape.size());
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, outputShape);
@@ -445,7 +445,7 @@ public:
 
                 // Fix up the the tensor shape by filling with trailing ones. So input[2,3] with axis=0 and scale[2]
                 // becomes scale[2,1], so that broadcasting works correctly.
-                std::vector<uint32_t> adjustedInputTensorShape = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(index);
+                Vector<uint32_t> adjustedInputTensorShape = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(index);
                 ML_CHECK_VALID_ARGUMENT(adjustedInputTensorShape.size() == 1);
                 ML_CHECK_VALID_ARGUMENT(adjustedInputTensorShape[0] == broadcastAxisLength);
                 adjustedInputTensorShape.insert(adjustedInputTensorShape.end(), outputShapeDimCount - 1 - axis, 1);
@@ -463,8 +463,8 @@ public:
             }
         }
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         TOperatorDesc opDesc = {};
         opDesc.InputTensor = &inputDescs[0];
@@ -486,8 +486,8 @@ public:
 
         Initialize(kernelInfo, std::nullopt, std::nullopt, kernelInfo.GetTensorShapeDescription().GetOutputTensorShape(0));
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ELEMENT_WISE_IF_OPERATOR_DESC opDesc = {};
         opDesc.ConditionTensor = &inputDescs[0];

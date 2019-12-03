@@ -17,25 +17,25 @@
 
 struct Input {
   const char* name;
-  std::vector<int64_t> dims;
-  std::vector<float> values;
+  Vector<int64_t> dims;
+  Vector<float> values;
 };
 
 template <typename OutT>
 void RunSession(OrtAllocator* allocator, Ort::Session& session_object,
-                const std::vector<Input>& inputs,
+                const Vector<Input>& inputs,
                 const char* output_name,
-                const std::vector<int64_t>& dims_y,
-                const std::vector<OutT>& values_y,
+                const Vector<int64_t>& dims_y,
+                const Vector<OutT>& values_y,
                 Ort::Value* output_tensor) {
-  std::vector<Ort::Value> ort_inputs;
-  std::vector<const char*> input_names;
+  Vector<Ort::Value> ort_inputs;
+  Vector<const char*> input_names;
   for (size_t i = 0; i < inputs.size(); i++) {
     input_names.emplace_back(inputs[i].name);
     ort_inputs.emplace_back(Ort::Value::CreateTensor<float>(allocator->Info(allocator), const_cast<float*>(inputs[i].values.data()), inputs[i].values.size(), inputs[i].dims.data(), inputs[i].dims.size()));
   }
 
-  std::vector<Ort::Value> ort_outputs;
+  Vector<Ort::Value> ort_outputs;
   if (output_tensor)
     session_object.Run(Ort::RunOptions{nullptr}, input_names.data(), ort_inputs.data(), ort_inputs.size(), &output_name, output_tensor, 1);
   else {
@@ -58,10 +58,10 @@ void RunSession(OrtAllocator* allocator, Ort::Session& session_object,
 
 template <typename T, typename OutT>
 void TestInference(Ort::Env& env, T model_uri,
-                   const std::vector<Input>& inputs,
+                   const Vector<Input>& inputs,
                    const char* output_name,
-                   const std::vector<int64_t>& expected_dims_y,
-                   const std::vector<OutT>& expected_values_y,
+                   const Vector<int64_t>& expected_dims_y,
+                   const Vector<OutT>& expected_values_y,
                    int provider_type, 
                    OrtCustomOpDomain* custom_op_domain_ptr,
                    const char* custom_op_library_filename) {
@@ -143,15 +143,15 @@ class CApiTestWithProvider : public CApiTest,
 TEST_P(CApiTestWithProvider, simple) {
   // simple inference test
   // prepare inputs
-  std::vector<Input> inputs(1);
+  Vector<Input> inputs(1);
   Input& input = inputs.back();
   input.name = "X";
   input.dims = {3, 2};
   input.values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
-  std::vector<float> expected_values_y = {1.0f, 4.0f, 9.0f, 16.0f, 25.0f, 36.0f};
+  Vector<int64_t> expected_dims_y = {3, 2};
+  Vector<float> expected_values_y = {1.0f, 4.0f, 9.0f, 16.0f, 25.0f, 36.0f};
 
   TestInference<PATH_TYPE, float>(env_, MODEL_URI, inputs, "Y", expected_dims_y, expected_values_y, GetParam(), nullptr, nullptr);
 }
@@ -188,10 +188,10 @@ INSTANTIATE_TEST_CASE_P(CApiTestWithProviders,
                         CApiTestWithProvider,
                         ::testing::Values(0, 1, 2, 3, 4));
 
-struct OrtTensorDimensions : std::vector<int64_t> {
+struct OrtTensorDimensions : Vector<int64_t> {
   OrtTensorDimensions(Ort::CustomOpApi ort, const OrtValue* value) {
     OrtTensorTypeAndShapeInfo* info = ort.GetTensorTypeAndShape(value);
-    std::vector<int64_t>::operator=(ort.GetTensorShape(info));
+    Vector<int64_t>::operator=(ort.GetTensorShape(info));
     ort.ReleaseTensorTypeAndShapeInfo(info);
   }
 };
@@ -244,15 +244,15 @@ struct MyCustomOp : Ort::CustomOpBase<MyCustomOp, MyCustomKernel> {
 TEST_F(CApiTest, custom_op_handler) {
   std::cout << "Running custom op inference" << std::endl;
 
-  std::vector<Input> inputs(1);
+  Vector<Input> inputs(1);
   Input& input = inputs[0];
   input.name = "X";
   input.dims = {3, 2};
   input.values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 2};
-  std::vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
+  Vector<int64_t> expected_dims_y = {3, 2};
+  Vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f};
 
   MyCustomOp custom_op;
   Ort::CustomOpDomain custom_op_domain("");
@@ -264,7 +264,7 @@ TEST_F(CApiTest, custom_op_handler) {
 TEST_F(CApiTest, test_custom_op_library) {
   std::cout << "Running inference using custom op shared library" << std::endl;
 
-  std::vector<Input> inputs(2);
+  Vector<Input> inputs(2);
   inputs[0].name = "input_1";
   inputs[0].dims = {3, 5};
   inputs[0].values = {1.1f,   2.2f,   3.3f,   4.4f,   5.5f, 
@@ -277,8 +277,8 @@ TEST_F(CApiTest, test_custom_op_library) {
                       5.5f,    4.4f,    3.3f,    2.2f,    1.1f};
 
   // prepare expected inputs and outputs
-  std::vector<int64_t> expected_dims_y = {3, 5};
-  std::vector<int32_t> expected_values_y = 
+  Vector<int64_t> expected_dims_y = {3, 5};
+  Vector<int32_t> expected_values_y = 
                     {17, 17, 17, 17, 17,
                      17, 18, 18, 18, 17,
                      17, 17, 17, 17, 17};
@@ -311,13 +311,13 @@ TEST_F(CApiTest, DISABLED_test_pyop) {
   module << "\t\t"
          << "return x*2" << std::endl;
   module.close();
-  std::vector<Input> inputs(1);
+  Vector<Input> inputs(1);
   Input& input = inputs[0];
   input.name = "X";
   input.dims = {2, 2};
   input.values = {1.0f, 2.0f, 3.0f, 4.0f};
-  std::vector<int64_t> expected_dims_y = {2, 2};
-  std::vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f};
+  Vector<int64_t> expected_dims_y = {2, 2};
+  Vector<float> expected_values_y = {2.0f, 4.0f, 6.0f, 8.0f};
   TestInference<PATH_TYPE, float>(env_, PYOP_FLOAT_MODEL_URI, inputs, "Y", expected_dims_y, expected_values_y, 0, nullptr, nullptr);
 }
 #endif
@@ -342,11 +342,11 @@ TEST_F(CApiTest, create_tensor) {
 
   int64_t len = shape_info.GetElementCount();
   ASSERT_EQ(len, expected_len);
-  std::vector<int64_t> shape_array(len);
+  Vector<int64_t> shape_array(len);
 
   size_t data_len = tensor.GetStringTensorDataLength();
   std::string result(data_len, '\0');
-  std::vector<size_t> offsets(len);
+  Vector<size_t> offsets(len);
   tensor.GetStringTensorContent((void*)result.data(), data_len, offsets.data(), offsets.size());
 }
 
@@ -356,7 +356,7 @@ TEST_F(CApiTest, create_tensor_with_data) {
 
   Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);
 
-  std::vector<int64_t> dims = {4};
+  Vector<int64_t> dims = {4};
   Ort::Value tensor = Ort::Value::CreateTensor<float>(info, values, values_length, dims.data(), dims.size());
 
   float* new_pointer = tensor.GetTensorMutableData<float>();
@@ -374,7 +374,7 @@ TEST_F(CApiTest, override_initializer) {
   auto allocator = onnxruntime::make_unique<MockedOrtAllocator>();
   // CreateTensor which is not owning this ptr
   bool Label_input[] = {true};
-  std::vector<int64_t> dims = {1, 1};
+  Vector<int64_t> dims = {1, 1};
   Ort::Value label_input_tensor = Ort::Value::CreateTensor<bool>(info, Label_input, 1U, dims.data(), dims.size());
 
   std::string f2_data{"f2_string"};
@@ -402,15 +402,15 @@ TEST_F(CApiTest, override_initializer) {
   float f11_input_data[] = {2.0f};
   Ort::Value f11_input_tensor = Ort::Value::CreateTensor<float>(info, f11_input_data, 1U, dims.data(), dims.size());
 
-  std::vector<Ort::Value> ort_inputs;
+  Vector<Ort::Value> ort_inputs;
   ort_inputs.push_back(std::move(label_input_tensor));
   ort_inputs.push_back(std::move(f2_input_tensor));
   ort_inputs.push_back(std::move(f11_input_tensor));
 
-  std::vector<const char*> input_names = {"Label", "F2", "F1"};
+  Vector<const char*> input_names = {"Label", "F2", "F1"};
 
   const char* const output_names[] = {"Label0", "F20", "F11"};
-  std::vector<Ort::Value> ort_outputs = session.Run(Ort::RunOptions{nullptr}, input_names.data(),
+  Vector<Ort::Value> ort_outputs = session.Run(Ort::RunOptions{nullptr}, input_names.data(),
                                                     ort_inputs.data(), ort_inputs.size(),
                                                     output_names, countof(output_names));
 

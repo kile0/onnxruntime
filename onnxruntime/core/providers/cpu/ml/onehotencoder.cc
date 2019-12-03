@@ -50,8 +50,8 @@ REG_KERNEL(string);
 
 template <typename T>
 OneHotEncoderOp<T>::OneHotEncoderOp(const OpKernelInfo& info) : OpKernel(info), zeros_(info.GetAttrOrDefault<int64_t>("zeros", 1)), num_categories_(0) {
-  std::vector<int64_t> tmp_cats_int64s = info.GetAttrsOrDefault<int64_t>("cats_int64s");
-  std::vector<std::string> tmp_cats_strings = info.GetAttrsOrDefault<string>("cats_strings");
+  Vector<int64_t> tmp_cats_int64s = info.GetAttrsOrDefault<int64_t>("cats_int64s");
+  Vector<std::string> tmp_cats_strings = info.GetAttrsOrDefault<string>("cats_strings");
   ORT_ENFORCE(tmp_cats_int64s.empty() || tmp_cats_strings.empty(),
               "One and only one of the 'cats_*' attributes must be defined");
   if (!tmp_cats_int64s.empty()) {
@@ -73,7 +73,7 @@ common::Status OneHotEncoderOp<T>::Compute(OpKernelContext* context) const {
   const auto* X = context->Input<Tensor>(0);
   const TensorShape& input_shape = X->Shape();
 
-  std::vector<int64_t> output_shape(input_shape.GetDims());
+  Vector<int64_t> output_shape(input_shape.GetDims());
   output_shape.push_back(num_categories_);
 
   Tensor* Y = context->Output(0, TensorShape(output_shape));
@@ -98,7 +98,7 @@ common::Status OneHotEncoderOp<std::string>::Compute(OpKernelContext* context) c
   const auto* X = context->Input<Tensor>(0);
   const TensorShape& input_shape = X->Shape();
 
-  std::vector<int64_t> output_shape(input_shape.GetDims());
+  Vector<int64_t> output_shape(input_shape.GetDims());
   output_shape.push_back(num_categories_);
 
   Tensor* Y = context->Output(0, TensorShape(output_shape));

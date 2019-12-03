@@ -177,8 +177,8 @@ struct Traits<std::map<KeyT, T, CompareT, AllocatorT>> : public TraitsImpl<std::
 };
 
 template <typename T, typename AllocatorT>
-struct Traits<std::vector<T, AllocatorT>> : public TraitsImpl<std::vector<T, AllocatorT>> {
-  // static std::string ToString(std::vector<T, AllocatorT> const& value) {
+struct Traits<Vector<T, AllocatorT>> : public TraitsImpl<Vector<T, AllocatorT>> {
+  // static std::string ToString(Vector<T, AllocatorT> const& value) {
   //     // Decide what to return here
   //     throw std::logic_error("Function not yet implemented");
   // }

@@ -34,7 +34,7 @@ public:
     DmlOperatorInstanceNormalization(const MLOperatorKernelCreationContext& kernelCreationContext)
     :   DmlOperator(kernelCreationContext)
     {
-        std::vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2};
+        Vector<std::optional<uint32_t>> kernelInputIndices = {0, 1, 2};
         DmlOperator::Initialize(kernelCreationContext, kernelInputIndices);
 
         const float epsilon = kernelCreationContext.GetOptionalAttribute<float>(AttrName::Epsilon, DefaultEpsilon);
@@ -44,8 +44,8 @@ public:
         // Shift IN_SCALE and IN_BIAS input tensor descs {1, C, 1, 1} out of 1D tensors.
         Shift1DInputsTensorDesc(kernelCreationContext, IN_SCALE, 2, C);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_MEAN_VARIANCE_NORMALIZATION_OPERATOR_DESC operatorDesc = {};
         operatorDesc.InputTensor = &inputDescs[0];

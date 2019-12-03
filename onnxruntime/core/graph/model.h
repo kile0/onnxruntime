@@ -35,7 +35,7 @@ class Model {
                  const ModelMetaData& model_metadata,
                  const IOnnxRuntimeOpSchemaRegistryList& local_registries,
                  const std::unordered_map<std::string, int>& domain_to_version,
-                 const std::vector<ONNX_NAMESPACE::FunctionProto>& model_specific_functions,
+                 const Vector<ONNX_NAMESPACE::FunctionProto>& model_specific_functions,
                  const logging::Logger& logger);
 
   // NOTE: after calling this constructor, <*this> model will

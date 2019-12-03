@@ -20,13 +20,13 @@ Status GENERIC_OP_IR_CREATOR_CLASS(Transpose)::Evaluate(
   OpNodeProtoHelper<ProtoHelperNodeContext> attrs(&ctx);
 
   size_t input_0_shape_rank = inputs[0]->shape.size();
-  std::vector<int64_t> permute;
+  Vector<int64_t> permute;
   bool is_ok = attrs.GetAttrs<int64_t>("perm", permute).IsOK();
   if (permute.size() != 0 && permute.size() != input_0_shape_rank)
     return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL, "Transpose: Incorrect permute size");
 
-  std::vector<int64_t> default_permute;
-  const std::vector<int64_t>* perm;
+  Vector<int64_t> default_permute;
+  const Vector<int64_t>* perm;
   // either we don't have perm attribute or the perm attribute is empty
   bool use_default_perm = !is_ok || permute.size() == 0;
   if (use_default_perm) {

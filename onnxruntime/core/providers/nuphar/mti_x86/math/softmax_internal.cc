@@ -15,8 +15,8 @@ namespace onnxruntime {
 namespace nuphar {
 namespace internal {
 
-static std::vector<int64_t> ReduceAxes(int64_t axis, std::size_t size) {
-  std::vector<int64_t> reduce_axis;
+static Vector<int64_t> ReduceAxes(int64_t axis, std::size_t size) {
+  Vector<int64_t> reduce_axis;
   for (int64_t i = axis; i < gsl::narrow_cast<int64_t>(size); ++i)
     reduce_axis.push_back(i);
   return reduce_axis;

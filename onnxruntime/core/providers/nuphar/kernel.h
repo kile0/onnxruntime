@@ -40,7 +40,7 @@ class NupharKernelState {
 
   void Compile(const NupharSubgraphUnit& subgraph);
 
-  void BuildExecBlocksAndCalls(const std::vector<NupharSubgraphUnit>& subgraphs);
+  void BuildExecBlocksAndCalls(const Vector<NupharSubgraphUnit>& subgraphs);
 
  private:
   const NupharExecutionProvider& provider_;
@@ -55,14 +55,14 @@ class NupharKernelState {
   std::unique_ptr<OrtSubgraphAllocationInfo> partition_info_;
 
   // Hold NupharFuncInfo from codegen.
-  std::vector<std::unique_ptr<NupharFuncInfo>> func_infos_;
+  Vector<std::unique_ptr<NupharFuncInfo>> func_infos_;
 
   // ExecBlocks of runtime
   // Ownership of ExecBlock
-  std::vector<std::unique_ptr<ExecBlock>> exec_blocks_;
+  Vector<std::unique_ptr<ExecBlock>> exec_blocks_;
 
   // Calls
-  std::vector<ExecBlock*> exec_block_calls_;
+  Vector<ExecBlock*> exec_block_calls_;
 
   // Here ComputeContext of Ort is used for allocator
   ComputeContext ctx_;  // the compute context from IExecutionProvider::Compile interface

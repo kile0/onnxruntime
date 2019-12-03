@@ -11,7 +11,7 @@ namespace onnxruntime {
 IOBinding::IOBinding(const SessionState& session_state) : session_state_(session_state) {
 }
 
-static std::pair<bool, size_t> Contains(const std::vector<std::string>& names, const std::string& name) {
+static std::pair<bool, size_t> Contains(const Vector<std::string>& names, const std::string& name) {
   auto it = std::find(std::begin(names), std::end(names), name);
   if (it == std::end(names)) {
     return {false, 0};
@@ -85,17 +85,17 @@ common::Status IOBinding::BindOutput(const std::string& name, const OrtValue& ml
   return Status::OK();
 }
 
-const std::vector<std::string>& IOBinding::GetOutputNames() const {
+const Vector<std::string>& IOBinding::GetOutputNames() const {
   return output_names_;
 }
 
-std::vector<OrtValue>& IOBinding::GetOutputs() { return outputs_; }
+Vector<OrtValue>& IOBinding::GetOutputs() { return outputs_; }
 
-const std::vector<std::string>& IOBinding::GetInputNames() const {
+const Vector<std::string>& IOBinding::GetInputNames() const {
   return feed_names_;
 }
 
-const std::vector<OrtValue>& IOBinding::GetInputs() const { return feeds_; }
+const Vector<OrtValue>& IOBinding::GetInputs() const { return feeds_; }
 
 AllocatorPtr IOBinding::GetCPUAllocator(int id, onnxruntime::ProviderType provider_type) const {
   auto& exec_providers = session_state_.GetExecutionProviders();

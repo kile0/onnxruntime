@@ -35,8 +35,8 @@ class Executor {
                                             OrtMemoryInfo* cpu_memory_info,
                                             /* out */ Ort::Value& ml_value);
 
-  google::protobuf::util::Status SetNameMLValueMap(/* out */ std::vector<std::string>& input_names,
-                                                   /* out */ std::vector<Ort::Value>& input_values,
+  google::protobuf::util::Status SetNameMLValueMap(/* out */ Vector<std::string>& input_names,
+                                                   /* out */ Vector<Ort::Value>& input_values,
                                                    const onnxruntime::server::PredictRequest& request,
                                                    MemBufferArray& buffers);
 };

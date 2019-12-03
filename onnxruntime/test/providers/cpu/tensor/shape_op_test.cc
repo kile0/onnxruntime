@@ -5,7 +5,7 @@ namespace onnxruntime {
 namespace test {
 
 template<typename T>
-void TestShape(const std::initializer_list<T>& data, const std::vector<int64_t>& shape)
+void TestShape(const std::initializer_list<T>& data, const Vector<int64_t>& shape)
 {
   OpTester test("Shape");
   test.AddInput<T>("data", shape, data);

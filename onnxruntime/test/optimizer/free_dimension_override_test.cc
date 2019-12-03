@@ -29,7 +29,7 @@ TEST(FreeDimensionOverrideTransformerTest, Test) {
   // The model's input shape has two free dimensions, which have the denotation of DATA_BATCH
   // and DATA_CHANNEL. Supplying these overrides to the transformer should replace those free
   // dimensions with values of 1 and 42, respectively.
-  std::vector<FreeDimensionOverride> overrides =
+  Vector<FreeDimensionOverride> overrides =
   {
     FreeDimensionOverride{ onnx::DATA_BATCH, 1 },
     FreeDimensionOverride{ onnx::DATA_CHANNEL, 42 },

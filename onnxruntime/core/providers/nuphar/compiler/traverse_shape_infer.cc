@@ -42,8 +42,8 @@ static bool CreateInput(const NodeArg* def,
 // local shape infernece function for output
 static Status CreateOutputs(
     const Node* node,
-    const std::vector<const ShapeExpr*>& inputs,
-    std::vector<ShapeExpr>& outputs) {
+    const Vector<const ShapeExpr*>& inputs,
+    Vector<ShapeExpr>& outputs) {
   outputs.resize(node->OutputDefs().size());
   node->ForEachWithIndex(
       node->OutputDefs(),
@@ -104,13 +104,13 @@ Status ShapeInference(
     }
 
     // collect inputs before creating outputs
-    std::vector<const ShapeExpr*> inputs;
+    Vector<const ShapeExpr*> inputs;
     for (const NodeArg* def : node.InputDefs()) {
       inputs.push_back(def->Exists() ? context.Lookup(def) : nullptr);
     }
 
     // create outputs
-    std::vector<ShapeExpr> op_outputs;
+    Vector<ShapeExpr> op_outputs;
     ORT_RETURN_IF_ERROR(CreateOutputs(&node, inputs, op_outputs));
     context.ops.emplace(&node, std::move(op_outputs));
 

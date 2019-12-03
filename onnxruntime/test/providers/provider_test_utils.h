@@ -45,16 +45,16 @@ struct SessionOptions;
 namespace test {
 template <typename T>
 struct SeqTensors {
-  void AddTensor(const std::vector<int64_t>& shape0, const std::vector<T>& data0) {
+  void AddTensor(const Vector<int64_t>& shape0, const Vector<T>& data0) {
     tensors.push_back(Tensor<T>{shape0, data0});
   }
 
   template <typename U>
   struct Tensor {
-    std::vector<int64_t> shape;
-    std::vector<U> data;
+    Vector<int64_t> shape;
+    Vector<U> data;
   };
-  std::vector<Tensor<T>> tensors;
+  Vector<Tensor<T>> tensors;
 };
 
 // unfortunately std::optional is in C++17 so use a miniversion of it
@@ -150,7 +150,7 @@ constexpr ONNX_NAMESPACE::TensorProto_DataType TypeToDataType<BFloat16>() {
 
 template <typename T>
 struct TTypeProto : ONNX_NAMESPACE::TypeProto {
-  TTypeProto(const std::vector<int64_t>* shape = nullptr) {
+  TTypeProto(const Vector<int64_t>* shape = nullptr) {
     mutable_tensor_type()->set_elem_type(TypeToDataType<T>());
 
     if (shape) {
@@ -275,16 +275,16 @@ class OpTester {
     return *this;
   }
 
-  // We have an initializer_list and vector version of the Add functions because std::vector is specialized for
+  // We have an initializer_list and vector version of the Add functions because Vector is specialized for
   // bool and we can't get the raw data out. So those cases must use an initializer_list
   template <typename T>
-  void AddInput(const char* name, const std::vector<int64_t>& dims, const std::initializer_list<T>& values,
+  void AddInput(const char* name, const Vector<int64_t>& dims, const std::initializer_list<T>& values,
                 bool is_initializer = false) {
     AddData(input_data_, name, dims, values.begin(), values.size(), is_initializer);
   }
 
   template <typename T>
-  void AddInput(const char* name, const std::vector<int64_t>& dims, const std::vector<T>& values,
+  void AddInput(const char* name, const Vector<int64_t>& dims, const Vector<T>& values,
                 bool is_initializer = false) {
     AddData(input_data_, name, dims, values.data(), values.size(), is_initializer);
   }
@@ -342,13 +342,13 @@ class OpTester {
   }
 
   template <typename T>
-  void AddOutput(const char* name, const std::vector<int64_t>& dims, const std::initializer_list<T>& expected_values,
+  void AddOutput(const char* name, const Vector<int64_t>& dims, const std::initializer_list<T>& expected_values,
                  bool sort_output = false) {
     AddData(output_data_, name, dims, expected_values.begin(), expected_values.size(), false, sort_output);
   }
 
   template <typename T>
-  void AddOutput(const char* name, const std::vector<int64_t>& dims, const std::vector<T>& expected_values,
+  void AddOutput(const char* name, const Vector<int64_t>& dims, const Vector<T>& expected_values,
                  bool sort_output = false) {
     AddData(output_data_, name, dims, expected_values.data(), expected_values.size(), false, sort_output);
   }
@@ -387,11 +387,11 @@ class OpTester {
 
   // Add non tensor output
   template <typename TKey, typename TVal>
-  void AddOutput(const char* name, const std::vector<std::map<TKey, TVal>>& val) {
-    auto ptr = onnxruntime::make_unique<std::vector<std::map<TKey, TVal>>>(val);
+  void AddOutput(const char* name, const Vector<std::map<TKey, TVal>>& val) {
+    auto ptr = onnxruntime::make_unique<Vector<std::map<TKey, TVal>>>(val);
     OrtValue ml_value;
-    ml_value.Init(ptr.release(), DataTypeImpl::GetType<std::vector<std::map<TKey, TVal>>>(),
-                  DataTypeImpl::GetType<std::vector<std::map<TKey, TVal>>>()->GetDeleteFunc());
+    ml_value.Init(ptr.release(), DataTypeImpl::GetType<Vector<std::map<TKey, TVal>>>(),
+                  DataTypeImpl::GetType<Vector<std::map<TKey, TVal>>>()->GetDeleteFunc());
     output_data_.push_back(Data(NodeArg(name, &VectorOfMapType<TKey, TVal>::s_vec_map_type_proto), std::move(ml_value),
                                 optional<float>(), optional<float>()));
   }
@@ -425,7 +425,7 @@ class OpTester {
   void Run(ExpectResult expect_result = ExpectResult::kExpectSuccess, const std::string& expected_failure_string = "",
            const std::unordered_set<std::string>& excluded_provider_types = {},
            const RunOptions* run_options = nullptr,
-           std::vector<std::unique_ptr<IExecutionProvider>>* execution_providers = nullptr,
+           Vector<std::unique_ptr<IExecutionProvider>>* execution_providers = nullptr,
            ExecutionMode execution_mode = ExecutionMode::ORT_SEQUENTIAL);
 
   void Run(SessionOptions session_options,
@@ -433,7 +433,7 @@ class OpTester {
            const std::string& expected_failure_string = "",
            const std::unordered_set<std::string>& excluded_provider_types = {},
            const RunOptions* run_options = nullptr,
-           std::vector<std::unique_ptr<IExecutionProvider>>* execution_providers = nullptr);
+           Vector<std::unique_ptr<IExecutionProvider>>* execution_providers = nullptr);
 
   struct Data {
     onnxruntime::NodeArg def_;
@@ -453,14 +453,14 @@ class OpTester {
   };
 
  protected:
-  virtual void AddNodes(onnxruntime::Graph& graph, std::vector<onnxruntime::NodeArg*>& graph_input_defs,
-                        std::vector<onnxruntime::NodeArg*>& graph_output_defs,
-                        std::vector<std::function<void(onnxruntime::Node& node)>>& add_attribute_funcs);
+  virtual void AddNodes(onnxruntime::Graph& graph, Vector<onnxruntime::NodeArg*>& graph_input_defs,
+                        Vector<onnxruntime::NodeArg*>& graph_output_defs,
+                        Vector<std::function<void(onnxruntime::Node& node)>>& add_attribute_funcs);
 
   void AddInitializers(onnxruntime::Graph& graph);
 
   void FillFeedsAndOutputNames(std::unordered_map<std::string, OrtValue>& feeds,
-                               std::vector<std::string>& output_names);
+                               Vector<std::string>& output_names);
 
   std::unique_ptr<onnxruntime::Model> BuildGraph();
 
@@ -472,7 +472,7 @@ class OpTester {
 
  private:
   template <typename T>
-  void AddData(std::vector<Data>& data, const char* name, const std::vector<int64_t>& dims, const T* values,
+  void AddData(Vector<Data>& data, const char* name, const Vector<int64_t>& dims, const T* values,
                int64_t values_count, bool is_initializer = false, bool sort_output = false) {
     try {
       TensorShape shape{dims};
@@ -487,7 +487,7 @@ class OpTester {
         data_ptr[i] = values[i];
       }
 
-      std::vector<int64_t> dims_for_proto{dims};
+      Vector<int64_t> dims_for_proto{dims};
       if (add_symbolic_dim_to_tensor_data_ >= 0 &&
           dims.size() > static_cast<size_t>(add_symbolic_dim_to_tensor_data_)) {
         dims_for_proto[add_symbolic_dim_to_tensor_data_] = -1;
@@ -506,7 +506,7 @@ class OpTester {
   }
 
   template <typename T>
-  void AddSeqData(std::vector<Data>& data, const char* name, const SeqTensors<T>& seq_tensors) {
+  void AddSeqData(Vector<Data>& data, const char* name, const SeqTensors<T>& seq_tensors) {
     auto mltype = DataTypeImpl::GetType<TensorSeq>();
     ORT_ENFORCE(mltype != nullptr, "TensorSeq must be a registered cpp type");
     auto ptr = onnxruntime::make_unique<TensorSeq>();
@@ -541,7 +541,7 @@ class OpTester {
 
   void ExecuteModel(Model& model, InferenceSession& session_object, ExpectResult expect_result,
                     const std::string& expected_failure_string, const RunOptions* run_options,
-                    std::unordered_map<std::string, OrtValue> feeds, std::vector<std::string> output_names,
+                    std::unordered_map<std::string, OrtValue> feeds, Vector<std::string> output_names,
                     const std::string& provider_type);
 
   const char* domain_;
@@ -549,13 +549,13 @@ class OpTester {
   bool add_shape_to_tensor_data_ = true;
   int add_symbolic_dim_to_tensor_data_ = -1;
   int num_run_calls_ = 1;
-  std::vector<Data> input_data_;
-  std::vector<Data> output_data_;
-  std::vector<size_t> initializer_index_;
-  std::vector<std::function<void(onnxruntime::Node& node)>> add_attribute_funcs_;
+  Vector<Data> input_data_;
+  Vector<Data> output_data_;
+  Vector<size_t> initializer_index_;
+  Vector<std::function<void(onnxruntime::Node& node)>> add_attribute_funcs_;
 
   IOnnxRuntimeOpSchemaRegistryList custom_schema_registries_;
-  std::vector<std::shared_ptr<CustomRegistry>> custom_session_registries_;
+  Vector<std::shared_ptr<CustomRegistry>> custom_session_registries_;
 };
 
 template <typename TException>

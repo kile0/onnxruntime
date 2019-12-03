@@ -131,10 +131,10 @@ TVM_REGISTER_GLOBAL("tvm.contrib.onnxruntime.batched_matmul_cpu")
         // matmul fused with transpose, modify lda/ldb and step_a/step_b for the zero-cost transpose
         DCHECK(A->ndim == B->ndim);
         DCHECK(args.num_args - 3 == A->ndim + B->ndim);
-        std::vector<int32_t> permute_A(A->ndim);
-        std::vector<int64_t> stride_A(A->ndim);
-        std::vector<int32_t> permute_B(B->ndim);
-        std::vector<int64_t> stride_B(B->ndim);
+        Vector<int32_t> permute_A(A->ndim);
+        Vector<int64_t> stride_A(A->ndim);
+        Vector<int32_t> permute_B(B->ndim);
+        Vector<int64_t> stride_B(B->ndim);
         int arg_idx = 3;
         int num_matmuls = 1;
         for (int i = 0; i < A->ndim; ++i) {
@@ -195,7 +195,7 @@ static bool ShouldUseMatMulExtern() {
   return true;
 }
 
-bool CanPermuteBeFusedInMatMul(const std::vector<int32_t>& perm) {
+bool CanPermuteBeFusedInMatMul(const Vector<int32_t>& perm) {
   auto rank = gsl::narrow<int32_t>(perm.size());
   if (rank < 2) return true;
 
@@ -245,8 +245,8 @@ bool MatMulExternCpu(
     const tvm::Tensor& A,
     const tvm::Tensor& B,
     tvm::Tensor& Y,
-    const std::vector<int32_t>* permute_A,
-    const std::vector<int32_t>* permute_B,
+    const Vector<int32_t>* permute_A,
+    const Vector<int32_t>* permute_B,
     const std::string& name) {
   if (permute_A != nullptr) {
     ORT_ENFORCE(permute_B != nullptr);

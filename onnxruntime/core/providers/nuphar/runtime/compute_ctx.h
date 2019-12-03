@@ -30,13 +30,13 @@ using DataAllocFunc = std::function<void*(size_t)>;
 
 struct FuncComputeCtx {
   // ort context
-  std::vector<const void*> ort_input_data;
-  std::vector<const int64_t*> ort_input_shapes;
+  Vector<const void*> ort_input_data;
+  Vector<const int64_t*> ort_input_shapes;
 
   // tvm context
-  std::vector<TVMValue> lvalues;
-  std::vector<DLTensor> dl_tensors;
-  std::vector<std::vector<int64_t>> dl_output_shapes;
+  Vector<TVMValue> lvalues;
+  Vector<DLTensor> dl_tensors;
+  Vector<Vector<int64_t>> dl_output_shapes;
 
   // LoopExecCtx
   std::unique_ptr<LoopExecCtx> loop_cf_ctx;
@@ -68,9 +68,9 @@ class KernelComputeCtx {
     FuncComputeCtx& func_compute_ctx = func_compute_ctx_map_.at(func_info);
 
     const auto& ort_input_allocators = func_info->ort_input_allocators;
-    const std::vector<bool>& ort_input_allocator_is_collided_output = func_info->ort_input_allocator_is_collided_output;
-    std::vector<const void*>& ort_input_data = func_compute_ctx.ort_input_data;
-    std::vector<const int64_t*>& ort_input_shapes = func_compute_ctx.ort_input_shapes;
+    const Vector<bool>& ort_input_allocator_is_collided_output = func_info->ort_input_allocator_is_collided_output;
+    Vector<const void*>& ort_input_data = func_compute_ctx.ort_input_data;
+    Vector<const int64_t*>& ort_input_shapes = func_compute_ctx.ort_input_shapes;
 
     for (int i = 0; i < gsl::narrow_cast<int>(ort_input_allocators.size()); ++i) {
       int offset = ort_input_allocators[i].index;
@@ -148,7 +148,7 @@ class KernelComputeCtx {
   // when Tensors' shapes in a subgraph are sliced from the main grahp.
   // Using the sliced axis as insert_inclusive_axis can find the correct shape dim in the main graph
   inline void UpdateRealizedDims(
-      const std::vector<std::pair<size_t, std::string>>& symbols,
+      const Vector<std::pair<size_t, std::string>>& symbols,
       const int64_t* input_shape,
       size_t insert_inclusive_axis = 65535 /*minimal maximum of size_t*/) {
     for (const auto& s_pair : symbols) {
@@ -183,8 +183,8 @@ class KernelComputeCtx {
   // when Tensors' shapes in a subgraph are sliced from the main grahp.
   // Using the sliced axis as insert_exclusive_axis can find the correct shape dim in the main graph
   inline void UpdateRealizedDims(
-      const std::vector<std::pair<size_t, std::string>>& symbols,
-      std::vector<int64_t>& realized_output_shape,
+      const Vector<std::pair<size_t, std::string>>& symbols,
+      Vector<int64_t>& realized_output_shape,
       size_t insert_exclusive_axis = 65535 /*minimal maximum of size_t*/) {
     for (const auto& s_pair : symbols) {
       size_t dim = s_pair.first;
@@ -222,7 +222,7 @@ class KernelComputeCtx {
   // Owner of non-real inputs, outputs, and even state buffers
   // Here, "non-real" means edge across subgraph only, but not across boundary of Partition.
   // Non-real inputs and outputs is managed by Nuphar.
-  std::vector<InternalTensor> internal_ort_buffer_unique_ptrs_;
+  Vector<InternalTensor> internal_ort_buffer_unique_ptrs_;
 
   std::map<const NupharFuncInfo*, FuncComputeCtx> func_compute_ctx_map_;
 

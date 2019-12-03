@@ -21,7 +21,7 @@ class NodeIndexInfo final {
 
   // construct from a subset of nodes. The min and max NodeIndex values will be calculated by iterating 'nodes'.
   NodeIndexInfo(const GraphNodes& nodes, const OrtValueNameIdxMap& ort_value_idx_map);
-  NodeIndexInfo(const std::vector<const Node*>& nodes, const OrtValueNameIdxMap& ort_value_idx_map);
+  NodeIndexInfo(const Vector<const Node*>& nodes, const OrtValueNameIdxMap& ort_value_idx_map);
 
   enum { kInvalidEntry = -1 };
 
@@ -52,7 +52,7 @@ class NodeIndexInfo final {
 
   // This vector contains the indices from the OrtValueNameIdxMap in the SessionState for each Node's input/outputs.
   // Order is node inputs, implicit inputs, outputs.
-  std::vector<int> node_values_;
+  Vector<int> node_values_;
 
   // the minimum NodeIndex. we use this to minimize the size of node_offsets_.
   NodeIndex min_node_index_ = 0;
@@ -60,7 +60,7 @@ class NodeIndexInfo final {
   // The entry at node_offsets_[GetNodeOffsetsIndex(Node::Index())] contains the index in node_values_
   // where the information for the Node begins.
   size_t GetNodeOffsetsIndex(NodeIndex node_index) const { return node_index - min_node_index_; }
-  std::vector<int> node_offsets_;
+  Vector<int> node_offsets_;
 
   const int max_mlvalue_idx_;
 

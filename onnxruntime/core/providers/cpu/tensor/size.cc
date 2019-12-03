@@ -30,7 +30,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     Size,
     1,
     KernelDefBuilder().TypeConstraint("T",
-                                      std::vector<MLDataType>({DataTypeImpl::GetTensorType<float>(),
+                                      Vector<MLDataType>({DataTypeImpl::GetTensorType<float>(),
                                                                DataTypeImpl::GetTensorType<double>(),
                                                                DataTypeImpl::GetTensorType<int8_t>(),
                                                                DataTypeImpl::GetTensorType<int16_t>(),

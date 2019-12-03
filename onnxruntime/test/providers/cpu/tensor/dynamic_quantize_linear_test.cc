@@ -10,7 +10,7 @@ namespace test {
 // range = [-ve, +ve]
 TEST(QuantizeLinearOpTest, DynamicQuantizeLinear) {
   OpTester test("DynamicQuantizeLinear", 11);
-  std::vector<int64_t> dims{6};
+  Vector<int64_t> dims{6};
   test.AddInput<float>("x", dims, {0, 2, -3, -2.5f, 1.34f, 0.5f});  
   test.AddOutput<uint8_t>("y", dims, {153, 255, 0, 26, 221, 179});
   test.AddOutput<float>("y_scale", {}, {0.0196078438f});
@@ -21,7 +21,7 @@ TEST(QuantizeLinearOpTest, DynamicQuantizeLinear) {
 // quantize with 2D data with min adjustment to include 0 in the input range.
 TEST(QuantizeLinearOpTest, DynamicQuantizeLinear_Min_Adjusted) {
   OpTester test("DynamicQuantizeLinear", 11);
-  std::vector<int64_t> dims{3, 4};
+  Vector<int64_t> dims{3, 4};
   test.AddInput<float>("x", dims,
                        {1, 2.1f, 1.3f, 2.5f,
                         3.34f, 4.0f, 1.5f, 2.6f,
@@ -39,7 +39,7 @@ TEST(QuantizeLinearOpTest, DynamicQuantizeLinear_Min_Adjusted) {
 // quantize max adjustment to include 0 in the input range.
 TEST(QuantizeLinearOpTest, DynamicQuantizeLinear_Max_Adjusted) {
   OpTester test("DynamicQuantizeLinear", 11);
-  std::vector<int64_t> dims{6};
+  Vector<int64_t> dims{6};
   test.AddInput<float>("x", dims, {-1.0f, -2.1f, -1.3f, -2.5f, -3.34f, -4.0f});
   test.AddOutput<uint8_t>("y", dims, {191, 121, 172, 96, 42, 0});
   test.AddOutput<float>("y_scale", {}, {0.01568628f});

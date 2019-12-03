@@ -32,7 +32,7 @@ Status Pad<T>::ComputeInternal(OpKernelContext* ctx) const {
   CudaAsyncBuffer<fast_divmod> fdm_output_strides(this, dimension_count);
 
   TensorPitches::Calculate(input_strides.CpuSpan(), input_shape.GetDims());
-  std::vector<int64_t> output_dims(input_shape.GetDims());
+  Vector<int64_t> output_dims(input_shape.GetDims());
 
   ORT_ENFORCE(dimension_count * 2 == pads_.size(), "'pads' attribute has wrong number of values");
 

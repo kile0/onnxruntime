@@ -80,7 +80,7 @@ class OnnxRuntimeOpSchemaRegistry : public IOnnxRuntimeOpSchemaCollection {
 
   // OnnxRuntimeOpSchemaRegistry must register complete delta for a opset.
   common::Status RegisterOpSet(
-      std::vector<ONNX_NAMESPACE::OpSchema>& schemas,
+      Vector<ONNX_NAMESPACE::OpSchema>& schemas,
       const std::string& domain,
       int baseline_opset_version,
       int opset_version);

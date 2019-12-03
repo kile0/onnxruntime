@@ -49,7 +49,7 @@ class IExecutionProvider {
   /**
      Get all IAllocators for <*this> execution provider.
   */
-  const std::vector<gsl::not_null<const IAllocator*>>& GetAllocators() const {
+  const Vector<gsl::not_null<const IAllocator*>>& GetAllocators() const {
     return allocator_list_;
   }
 
@@ -76,9 +76,9 @@ class IExecutionProvider {
      have overlap, and it's ONNXRuntime's responsibility to do the partition
      and decide whether a node will be assigned to <*this> execution provider.
   */
-  virtual std::vector<std::unique_ptr<ComputeCapability>>
+  virtual Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph_viewer,
-                const std::vector<const KernelRegistry*>& kernel_registries) const;
+                const Vector<const KernelRegistry*>& kernel_registries) const;
 
   /**
      Get kernel registry per execution provider type.
@@ -141,8 +141,8 @@ class IExecutionProvider {
   /**
   Given a list of fused_node, return create_state/compute/release_state func for each node.
   */
-  virtual common::Status Compile(const std::vector<onnxruntime::Node*>& fused_node,
-                                 std::vector<NodeComputeInfo>& node_compute_funcs);
+  virtual common::Status Compile(const Vector<onnxruntime::Node*>& fused_node,
+                                 Vector<NodeComputeInfo>& node_compute_funcs);
 
   /**
   Given a list of fused_node, return a dll that expose functions for each node.
@@ -151,7 +151,7 @@ class IExecutionProvider {
      Compute_${node_name}
      Release_State_${node_name}
   */
-  virtual common::Status Compile(const std::vector<onnxruntime::Node*>& fused_node,
+  virtual common::Status Compile(const Vector<onnxruntime::Node*>& fused_node,
                                  std::string& dll_path);
 
   void SetLogger(const logging::Logger* logger) {
@@ -169,6 +169,6 @@ class IExecutionProvider {
   const logging::Logger* logger_ = nullptr;
   // convenience list of the allocators so GetAllocatorList doesn't have to build a new vector each time
   // contains the same instances as allocators_
-  std::vector<gsl::not_null<const IAllocator*>> allocator_list_;
+  Vector<gsl::not_null<const IAllocator*>> allocator_list_;
 };
 }  // namespace onnxruntime

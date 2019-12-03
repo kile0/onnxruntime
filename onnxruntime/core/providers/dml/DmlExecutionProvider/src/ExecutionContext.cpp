@@ -36,7 +36,7 @@ namespace Dml
 
         SetCommandRecorder(&m_dmlRecorder);
 
-        std::vector<D3D12_RESOURCE_BARRIER> barriers;
+        Vector<D3D12_RESOURCE_BARRIER> barriers;
 
         if (!(dstState & D3D12_RESOURCE_STATE_COPY_DEST))
         {

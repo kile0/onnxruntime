@@ -33,7 +33,7 @@ static bool ValidateAddBiasInitializer(const Graph& graph, const Node& add, int6
 
 // Merge 1-D weights (q, k and v) by concanating them one by one.
 template <typename T>
-void MergeWeights(const T* q, const T* k, const T* v, std::vector<T>& result, int64_t element_count) {
+void MergeWeights(const T* q, const T* k, const T* v, Vector<T>& result, int64_t element_count) {
   for (int64_t i = 0; i < element_count; i++) {
     result.push_back(*q);
     q++;
@@ -52,7 +52,7 @@ void MergeWeights(const T* q, const T* k, const T* v, std::vector<T>& result, in
 
 // Merge 2-D weights (q, k and v) by concanating them row by row.
 template <typename T>
-void MergeMatMulWeights(const T* q_weight, const T* k_weight, const T* v_weight, std::vector<T>& result, int64_t hidden_size) {
+void MergeMatMulWeights(const T* q_weight, const T* k_weight, const T* v_weight, Vector<T>& result, int64_t hidden_size) {
   const T* q = q_weight;
   const T* k = k_weight;
   const T* v = v_weight;
@@ -122,7 +122,7 @@ static NodeArg& MergeQkvWeights(Graph& graph, int64_t hidden_size,
     const float* q_weight = q_initializer->data<float>();
     const float* k_weight = k_initializer->data<float>();
     const float* v_weight = v_initializer->data<float>();
-    std::vector<float> result;
+    Vector<float> result;
     result.reserve(element_count);
     if (is_matmul) {
       MergeMatMulWeights<float>(q_weight, k_weight, v_weight, result, hidden_size);
@@ -134,7 +134,7 @@ static NodeArg& MergeQkvWeights(Graph& graph, int64_t hidden_size,
     const MLFloat16* q_weight = q_initializer->data<MLFloat16>();
     const MLFloat16* k_weight = k_initializer->data<MLFloat16>();
     const MLFloat16* v_weight = v_initializer->data<MLFloat16>();
-    std::vector<MLFloat16> result;
+    Vector<MLFloat16> result;
     result.reserve(element_count);
     if (is_matmul) {
       MergeMatMulWeights<MLFloat16>(q_weight, k_weight, v_weight, result, hidden_size);
@@ -180,8 +180,8 @@ static NodeArg& CastMaskToInt32(Graph& graph, NodeArg* mask_input, ProviderType 
 static NodeArg& AddMaskReduceSum(Graph& graph, NodeArg* reduce_sum_input, TypeProto& output_type, ProviderType provider_type) {
   NodeArg& reduce_sum_output = graph.GetOrCreateNodeArg(graph.GenerateNodeArgName("MaskIndex_Int32"), &output_type);
 
-  const std::vector<NodeArg*> input_defs{reduce_sum_input};
-  const std::vector<NodeArg*> output_defs{&reduce_sum_output};
+  const Vector<NodeArg*> input_defs{reduce_sum_input};
+  const Vector<NodeArg*> output_defs{&reduce_sum_output};
   Node& node = graph.AddNode(
       graph.GenerateNodeName("MaskIndex"),
       "ReduceSum",
@@ -380,7 +380,7 @@ After Fusion:
                   Add
 */
 bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer_norm, Graph& graph, int64_t hidden_size, std::map<std::string, NodeArg*>& mask_index_map, const logging::Logger& logger) {
-  std::vector<graph_utils::EdgeEndToMatch> parent_path{
+  Vector<graph_utils::EdgeEndToMatch> parent_path{
       {0, 0, "Add", {7}, kOnnxDomain},
       {0, 0, "MatMul", {1, 9}, kOnnxDomain},
       {0, 0, "Reshape", {5}, kOnnxDomain},
@@ -392,7 +392,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
       {0, 0, "MatMul", {1, 9}, kOnnxDomain},
       {0, 0, "LayerNormalization", {1}, kOnnxDomain}};
 
-  std::vector<const Node::EdgeEnd*> edges;
+  Vector<const Node::EdgeEnd*> edges;
   if (!graph_utils::FindPath(add_after_layer_norm, true, parent_path, edges, logger)) {
     DEBUG_LOG("Faild to find path v");
     return false;
@@ -426,7 +426,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  std::vector<int64_t> perm;
+  Vector<int64_t> perm;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(transpose, "perm", perm) && perm.size() == 4 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1 && perm[3] == 3)) {
     DEBUG_LOG("Failed in match Transpose attribute perm. Expected: 0, 2, 1, 3");
     return false;
@@ -436,7 +436,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  std::vector<int64_t> v_reshape_shape;
+  Vector<int64_t> v_reshape_shape;
   if (!optimizer_utils::AppendTensorFromInitializer(graph, *(v_reshape.InputDefs()[1]), v_reshape_shape) ||
       v_reshape_shape.size() != 4 ||
       v_reshape_shape[2] <= 0 ||
@@ -449,7 +449,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   const int64_t num_attention_head = v_reshape_shape[2];
   const int64_t attention_head_size = v_reshape_shape[3];
 
-  std::vector<int64_t> reshape_shape;
+  Vector<int64_t> reshape_shape;
   if (!optimizer_utils::AppendTensorFromInitializer(graph, *(reshape.InputDefs()[1]), reshape_shape) ||
       reshape_shape.size() != 3 ||
       reshape_shape[2] != hidden_size) {
@@ -467,7 +467,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   }
 
   // path 2 to find mask
-  std::vector<graph_utils::EdgeEndToMatch> mask_path{
+  Vector<graph_utils::EdgeEndToMatch> mask_path{
       {0, 0, "Softmax", {1, 11}, kOnnxDomain},
       {0, 0, "Add", {7}, kOnnxDomain},
       {0, 1, "Mul", {7}, kOnnxDomain},
@@ -504,7 +504,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(mask_unsqueeze_1, "axes", axes) && axes.size() == 1 && axes[0] == 1)) {
     DEBUG_LOG("mask_unsqueeze_1 axes not matched. Expect: 1");
     return false;
@@ -526,7 +526,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   }
 
   // path to q
-  std::vector<graph_utils::EdgeEndToMatch> q_path{
+  Vector<graph_utils::EdgeEndToMatch> q_path{
       {0, 0, "Div", {7}, kOnnxDomain},
       {0, 0, "MatMul", {1, 9}, kOnnxDomain},
       {0, 0, "Transpose", {1}, kOnnxDomain},
@@ -552,7 +552,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  std::vector<int64_t> q_reshape_shape;
+  Vector<int64_t> q_reshape_shape;
   if (!optimizer_utils::AppendTensorFromInitializer(graph, *(q_reshape.InputDefs()[1]), q_reshape_shape) ||
       q_reshape_shape.size() != 4 ||
       q_reshape_shape[2] != num_attention_head ||
@@ -579,7 +579,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   }
 
   // path to k
-  std::vector<graph_utils::EdgeEndToMatch> k_path{
+  Vector<graph_utils::EdgeEndToMatch> k_path{
       {0, 1, "Transpose", {1}, kOnnxDomain},
       {0, 0, "Reshape", {5}, kOnnxDomain},
       {0, 0, "Add", {7}, kOnnxDomain},
@@ -612,7 +612,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  std::vector<int64_t> k_reshape_shape;
+  Vector<int64_t> k_reshape_shape;
   if (!optimizer_utils::AppendTensorFromInitializer(graph, *(k_reshape.InputDefs()[1]), k_reshape_shape) ||
       k_reshape_shape.size() != 4 ||
       k_reshape_shape[2] != num_attention_head ||
@@ -651,8 +651,8 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   NodeArg& qkv_bias = MergeQkvWeights(graph, hidden_size, q_bias_tensor, k_bias_tensor, v_bias_tensor, false);
 
   // Create Attention Node.
-  const std::vector<NodeArg*> input_defs{layer_norm.MutableOutputDefs()[0], &qkv_weights, &qkv_bias, mask_index};
-  const std::vector<NodeArg*> output_defs{graph.GetNode(reshape.Index())->MutableOutputDefs()[0]};
+  const Vector<NodeArg*> input_defs{layer_norm.MutableOutputDefs()[0], &qkv_weights, &qkv_bias, mask_index};
+  const Vector<NodeArg*> output_defs{graph.GetNode(reshape.Index())->MutableOutputDefs()[0]};
   Node& attention_node = graph.AddNode(
       graph.GenerateNodeName("Attention"),
       "Attention",
@@ -667,7 +667,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
   attention_node.SetExecutionProviderType(layer_norm.GetExecutionProviderType());
 
   // Remove nodes that are not used anymore.
-  std::vector<NodeIndex> nodes_to_remove{
+  Vector<NodeIndex> nodes_to_remove{
       reshape.Index(),
       transpose.Index(),
       qkv_matmul.Index(),

@@ -13,30 +13,30 @@ constexpr int PRESET_USE_COUNT_FOR_UNKNOWN = 10;
 constexpr int PRESET_USE_COUNT_FOR_SOFTMAX = 3;
 
 static void CountGemmOp(const onnxruntime::Node& node,
-                        const std::vector<const NodeArg*>& graph_inputs,
+                        const Vector<const NodeArg*>& graph_inputs,
                         std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                         std::unordered_map<NodeKey, int>& node_use_counts);
 
 static void CountMatMulOp(const onnxruntime::Node& node,
-                          const std::vector<const NodeArg*>& graph_inputs,
+                          const Vector<const NodeArg*>& graph_inputs,
                           std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                           std::unordered_map<NodeKey, int>& node_use_counts);
 
 static void CountRecurrentOp(const onnxruntime::Node& node,
-                             const std::vector<const NodeArg*>& graph_inputs,
+                             const Vector<const NodeArg*>& graph_inputs,
                              std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                              std::unordered_map<NodeKey, int>& node_use_counts);
 
 static void CountMatrixArgs(const onnxruntime::NodeArg* A,
                             const onnxruntime::NodeArg* B,
                             const onnxruntime::Node& node,
-                            const std::vector<const NodeArg*>& graph_inputs,
+                            const Vector<const NodeArg*>& graph_inputs,
                             std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                             std::unordered_map<NodeKey, int>& node_use_counts);
 
 static void CountNodeArg(const onnxruntime::NodeArg* input_def,
                          const onnxruntime::Node& node,
-                         const std::vector<const NodeArg*>& graph_inputs,
+                         const Vector<const NodeArg*>& graph_inputs,
                          std::unordered_map<NodeKey, int>& node_use_counts,
                          int use_cnt);
 
@@ -45,7 +45,7 @@ static bool IsMatMulOp(const std::string& op) {
 }
 
 void CountGemmOp(const onnxruntime::Node& node,
-                 const std::vector<const NodeArg*>& graph_inputs,
+                 const Vector<const NodeArg*>& graph_inputs,
                  std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                  std::unordered_map<NodeKey, int>& node_use_counts) {
   ORT_ENFORCE(node.OpType() == "Gemm");
@@ -57,7 +57,7 @@ void CountGemmOp(const onnxruntime::Node& node,
 }
 
 void CountMatMulOp(const onnxruntime::Node& node,
-                   const std::vector<const NodeArg*>& graph_inputs,
+                   const Vector<const NodeArg*>& graph_inputs,
                    std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                    std::unordered_map<NodeKey, int>& node_use_counts) {
   ORT_ENFORCE(IsMatMulOp(node.OpType()));
@@ -66,7 +66,7 @@ void CountMatMulOp(const onnxruntime::Node& node,
 }
 
 void CountRecurrentOp(const onnxruntime::Node& node,
-                      const std::vector<const NodeArg*>& graph_inputs,
+                      const Vector<const NodeArg*>& graph_inputs,
                       std::function<const ShapeExpr*(const onnxruntime::NodeArg*)>,
                       std::unordered_map<NodeKey, int>& node_use_counts) {
   int use_count = PRESET_USE_COUNT_FOR_UNKNOWN;
@@ -84,7 +84,7 @@ static bool IsSoftmaxOp(const std::string& op) {
 }
 
 void CountSoftmaxOp(const onnxruntime::Node& node,
-                    const std::vector<const NodeArg*>& graph_inputs,
+                    const Vector<const NodeArg*>& graph_inputs,
                     std::function<const ShapeExpr*(const onnxruntime::NodeArg*)>,
                     std::unordered_map<NodeKey, int>& node_use_counts) {
   // Use preset use count for Softmax/LogSoftmax input
@@ -101,7 +101,7 @@ void CountSoftmaxOp(const onnxruntime::Node& node,
 void CountMatrixArgs(const onnxruntime::NodeArg* A,
                      const onnxruntime::NodeArg* B,
                      const onnxruntime::Node& node,
-                     const std::vector<const NodeArg*>& graph_inputs,
+                     const Vector<const NodeArg*>& graph_inputs,
                      std::function<const ShapeExpr*(const onnxruntime::NodeArg*)> shape_func,
                      std::unordered_map<NodeKey, int>& node_use_counts) {
   int use_cnt = PRESET_USE_COUNT_FOR_UNKNOWN;
@@ -129,7 +129,7 @@ void CountMatrixArgs(const onnxruntime::NodeArg* A,
 
 void CountNodeArg(const onnxruntime::NodeArg* input_def,
                   const onnxruntime::Node& node,
-                  const std::vector<const NodeArg*>& graph_inputs,
+                  const Vector<const NodeArg*>& graph_inputs,
                   std::unordered_map<NodeKey, int>& node_use_counts,
                   int use_cnt) {
   // Skip graph's input args nodes
@@ -150,9 +150,9 @@ InternalUseCountAnalysis::InternalUseCountAnalysis(const std::shared_ptr<ShapeEx
 }
 
 void InternalUseCountAnalysis::Traverse(
-    const std::vector<const Node*>& nodes,
-    const std::vector<const NodeArg*>& graph_inputs,
-    const std::vector<const NodeArg*>& graph_outputs) {
+    const Vector<const Node*>& nodes,
+    const Vector<const NodeArg*>& graph_inputs,
+    const Vector<const NodeArg*>& graph_outputs) {
   for (auto& node : nodes) {
     auto op_type = node->OpType();
     if (op_type == "Gemm") {

@@ -61,7 +61,7 @@ inline bool HasTyped<GraphProto>(const AttributeProto* attr) {
   template <>                                                                      \
   template <>                                                                      \
   Status OpNodeProtoHelper<IMPL_T>::GetAttrs<T>(                                   \
-      const std::string& name, std::vector<T>& values) const {                     \
+      const std::string& name, Vector<T>& values) const {                     \
     const AttributeProto* attr = TryGetAttribute(name);                            \
     if (!attr) {                                                                   \
       return Status(ONNXRUNTIME, FAIL, "No attribute with this name is defined."); \

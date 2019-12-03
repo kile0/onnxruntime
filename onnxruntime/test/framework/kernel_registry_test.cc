@@ -6,7 +6,7 @@
 #include <core/framework/op_kernel.h>
 
 using namespace onnxruntime;
-static Status RegKernels(KernelRegistry& r, std::vector<std::unique_ptr<KernelDef> >& function_table, const KernelCreateFn& kernel_creator) {
+static Status RegKernels(KernelRegistry& r, Vector<std::unique_ptr<KernelDef> >& function_table, const KernelCreateFn& kernel_creator) {
   for (auto& function_table_entry : function_table) {
     ORT_RETURN_IF_ERROR(r.Register(KernelCreateInfo(std::move(function_table_entry), kernel_creator)));
   }
@@ -27,7 +27,7 @@ OpKernel* CreateFakeKernel(const OpKernelInfo& info) {
 
 TEST(KernelRegistryTests, simple) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
 
   Status st;
@@ -36,7 +36,7 @@ TEST(KernelRegistryTests, simple) {
 
 TEST(KernelRegistryTests, dup_simple) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   Status st;
@@ -46,7 +46,7 @@ TEST(KernelRegistryTests, dup_simple) {
 //duplicated registration. One in default("") domain, another in "ai.onnx" domain
 TEST(KernelRegistryTests, dup_simple2) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("ai.onnx").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   Status st;
@@ -56,7 +56,7 @@ TEST(KernelRegistryTests, dup_simple2) {
 //One in default("") domain, another in ms domain. Should be ok
 TEST(KernelRegistryTests, one_op_name_in_two_domains) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain(kMSDomain).SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   Status st;
@@ -66,7 +66,7 @@ TEST(KernelRegistryTests, one_op_name_in_two_domains) {
 //One op two versions
 TEST(KernelRegistryTests, two_versions) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(1, 5).Provider(kCpuExecutionProvider).Build());
   Status st;
@@ -76,7 +76,7 @@ TEST(KernelRegistryTests, two_versions) {
 //One op two versions
 TEST(KernelRegistryTests, two_versions2) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(1, 6).Provider(kCpuExecutionProvider).Build());
   Status st;
@@ -86,7 +86,7 @@ TEST(KernelRegistryTests, two_versions2) {
 //One op two versions
 TEST(KernelRegistryTests, two_versions3) {
   KernelRegistry r;
-  std::vector<std::unique_ptr<KernelDef> > function_table;
+  Vector<std::unique_ptr<KernelDef> > function_table;
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(6).Provider(kCpuExecutionProvider).Build());
   function_table.emplace_back(KernelDefBuilder().MayInplace(0, 0).TypeConstraint("T", DataTypeImpl::GetTensorType<float>()).SetName("Elu").SetDomain("").SinceVersion(1).Provider(kCpuExecutionProvider).Build());
   Status st;

@@ -13,7 +13,7 @@ namespace ml {
 class LabelEncoder final : public OpKernel {
  public:
   LabelEncoder(const OpKernelInfo& info) : OpKernel(info) {
-    std::vector<std::string> string_classes;
+    Vector<std::string> string_classes;
 
     ORT_ENFORCE(info.GetAttrs<std::string>("classes_strings", string_classes).IsOK());
 
@@ -50,8 +50,8 @@ class LabelEncoder_2 final : public OpKernel {
     // Let the specialized member function to tell which fields to load.
     InitializeSomeFields(info);
 
-    std::vector<TKey> keys;
-    std::vector<TValue> values;
+    Vector<TKey> keys;
+    Vector<TValue> values;
 
     ORT_ENFORCE(info.GetAttrs<TKey>(_key_field_name, keys).IsOK());
     ORT_ENFORCE(info.GetAttrs<TValue>(_value_field_name, values).IsOK());

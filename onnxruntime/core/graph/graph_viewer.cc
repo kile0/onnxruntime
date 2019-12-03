@@ -20,7 +20,7 @@ struct NodeCompare {
 
 GraphViewer::GraphViewer(const Graph& graph) {
   graph_ = &graph;
-  std::vector<const Node*> leaf_nodes;
+  Vector<const Node*> leaf_nodes;
   for (auto& node : graph_->Nodes()) {
     if (node.OutputNodesBegin() == node.OutputNodesEnd()) {
       // This is a leaf node (without any output node).
@@ -60,22 +60,22 @@ bool GraphViewer::CanOverrideInitializer() const noexcept {
 }
 
 // Graph inputs excluding initializers.
-const std::vector<const NodeArg*>& GraphViewer::GetInputs() const noexcept {
+const Vector<const NodeArg*>& GraphViewer::GetInputs() const noexcept {
   return graph_->GetInputs();
 }
 // Graph inputs including initializers. Contains no nullptr values.
 // This will match the number and order of inputs from the GraphProto.
-const std::vector<const NodeArg*>& GraphViewer::GetInputsIncludingInitializers() const noexcept {
+const Vector<const NodeArg*>& GraphViewer::GetInputsIncludingInitializers() const noexcept {
   return graph_->GetInputsIncludingInitializers();
 }
 
 // Graph outputs. Should have no nullptr values.
-const std::vector<const NodeArg*>& GraphViewer::GetOutputs() const noexcept {
+const Vector<const NodeArg*>& GraphViewer::GetOutputs() const noexcept {
   return graph_->GetOutputs();
 }
 
 // Get graph value infos.
-const std::vector<const NodeArg*>& GraphViewer::GetValueInfo() const noexcept {
+const Vector<const NodeArg*>& GraphViewer::GetValueInfo() const noexcept {
   return graph_->GetValueInfo();
 }
 
@@ -96,11 +96,11 @@ int GraphViewer::MaxNodeIndex() const noexcept {
   return graph_->MaxNodeIndex();
 }
 
-const std::vector<NodeIndex>& GraphViewer::GetNodesInTopologicalOrder() const {
+const Vector<NodeIndex>& GraphViewer::GetNodesInTopologicalOrder() const {
   return nodes_in_topological_order_;
 }
 
-const std::vector<NodeIndex>& GraphViewer::GetRootNodes() const {
+const Vector<NodeIndex>& GraphViewer::GetRootNodes() const {
   return root_nodes_;
 }
 

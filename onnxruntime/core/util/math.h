@@ -234,8 +234,8 @@ struct Im2colNd<T, StorageOrder::NCHW> {
       kernel_size *= kernel_shape[i];
     }
     int64_t channels_col = col_shape[0];
-    std::vector<int64_t> d_offset(N, 0);
-    std::vector<int64_t> d_iter(N, 0);
+    Vector<int64_t> d_offset(N, 0);
+    Vector<int64_t> d_iter(N, 0);
     for (int64_t c_col = 0; c_col < channels_col; ++c_col) {
       // Loop over spatial axes in reverse order to compute a per-axis offset.
       int64_t offset = c_col;

@@ -13,7 +13,7 @@ namespace Dml
         GraphPartition() = default;
         ~GraphPartition() = default;
         GraphPartition* GetRootMergedPartition();
-        std::vector<onnxruntime::NodeIndex>& GetNodeIndices();
+        Vector<onnxruntime::NodeIndex>& GetNodeIndices();
         std::set<std::string>& GetInputs();
         std::set<std::string>& GetOutputs();
         bool IsFinalized();
@@ -28,7 +28,7 @@ namespace Dml
         void Merge(gsl::span<GraphPartition*> partitionsToMerge);
 
     private:
-        std::vector<onnxruntime::NodeIndex> m_nodeIndices;
+        Vector<onnxruntime::NodeIndex> m_nodeIndices;
         std::set<std::string> m_inputs;
         std::set<std::string> m_outputs;
         bool m_finalized = false;
@@ -40,21 +40,21 @@ namespace Dml
         GraphPartition* m_mergedPartition = nullptr;
     };
 
-    std::vector<std::unique_ptr<GraphPartition>>
+    Vector<std::unique_ptr<GraphPartition>>
     BuildPartitions(
         const onnxruntime::GraphViewer& graph,
         const winrt::Windows::AI::MachineLearning::implementation::GraphNodeFactoryMap& graphNodeFactoryMap,
-        const std::vector<const onnxruntime::KernelRegistry*>& registries,
+        const Vector<const onnxruntime::KernelRegistry*>& registries,
         uint32_t supportedDeviceDataTypeMask, // Each bit corresponds to each DML_TENSOR_DATA_TYPE.
         std::unordered_map<const onnxruntime::Node*, GraphNodeProperties>& graphNodePropertyMap,
         std::unordered_set<std::string>& requiredInitializerMap,
         std::function<void(const onnxruntime::Node&)> onNodeUnsupportedInGraph = nullptr);
 
-    std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+    Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
     PartitionGraph(
         const onnxruntime::GraphViewer& graph,
         const winrt::Windows::AI::MachineLearning::implementation::GraphNodeFactoryMap& graphNodeFactoryMap,
-        const std::vector<const onnxruntime::KernelRegistry*>& registries,
+        const Vector<const onnxruntime::KernelRegistry*>& registries,
         uint32_t supportedDeviceDataTypeMask, // Each bit corresponds to each DML_TENSOR_DATA_TYPE.
         onnxruntime::KernelRegistry* registryForPartitionKernels,
         const std::string& partitionKernelPrefix

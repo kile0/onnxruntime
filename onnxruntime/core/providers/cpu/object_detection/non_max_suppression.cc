@@ -144,7 +144,7 @@ Status NonMaxSuppression::Compute(OpKernelContext* ctx) const {
 
   const auto center_point_box = GetCenterPointBox();
 
-  std::vector<SelectedIndex> selected_indices;
+  Vector<SelectedIndex> selected_indices;
   for (int64_t batch_index = 0; batch_index < pc.num_batches_; ++batch_index) {
     for (int64_t class_index = 0; class_index < pc.num_classes_; ++class_index) {
       int64_t box_score_offset = (batch_index * pc.num_classes_ + class_index) * pc.num_boxes_;
@@ -165,7 +165,7 @@ Status NonMaxSuppression::Compute(OpKernelContext* ctx) const {
       }
 
       ScoreIndexPair next_top_score;
-      std::vector<int64_t> selected_indices_inside_class;
+      Vector<int64_t> selected_indices_inside_class;
       // Get the next box with top score, filter by iou_threshold
       while (!sorted_scores_with_index.empty()) {
         next_top_score = sorted_scores_with_index.top();

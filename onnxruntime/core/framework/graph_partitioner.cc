@@ -150,8 +150,8 @@ Status GraphPartitioner::Partition(Graph& graph, bool export_dll, FuncManager& f
   // delegate the compute to the functions inside the dlls.
   for (auto& provider : providers_) {
     int count = 0;
-    std::vector<Node*> nodes_need_compile;
-    std::vector<std::unique_ptr<ComputeCapability>> capabilities =
+    Vector<Node*> nodes_need_compile;
+    Vector<std::unique_ptr<ComputeCapability>> capabilities =
         provider->GetCapability(graph_viewer, kernel_registry_mgr_.GetKernelRegistriesByProviderType(provider->Type()));
     for (auto& capability : capabilities) {
       Node* n = PlaceNode(graph, std::move(capability->sub_graph), kernel_registry_mgr_, provider->Type(), count);
@@ -167,7 +167,7 @@ Status GraphPartitioner::Partition(Graph& graph, bool export_dll, FuncManager& f
         for (auto* node : nodes_need_compile)
           ORT_RETURN_IF_ERROR(func_mgr.AddFuncInfo(node->Name(), dll_path));
       } else {
-        std::vector<NodeComputeInfo> node_compute_funcs;
+        Vector<NodeComputeInfo> node_compute_funcs;
         ORT_RETURN_IF_ERROR(provider->Compile(nodes_need_compile, node_compute_funcs));
         ORT_ENFORCE(node_compute_funcs.size() == nodes_need_compile.size(),
                     "Provider doesn't return correct number of compiled functions");

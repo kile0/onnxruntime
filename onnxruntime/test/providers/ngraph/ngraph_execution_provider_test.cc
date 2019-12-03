@@ -63,14 +63,14 @@ ONNX_NAMESPACE::OpSchema GetUnSupportedOpSchema() {
   return schema;
 }
 
-void add_feeds(NameMLValMap& feeds, std::string name, std::vector<int64_t> dims, std::vector<float> value) {
+void add_feeds(NameMLValMap& feeds, std::string name, Vector<int64_t> dims, Vector<float> value) {
   OrtValue ml_value;
   CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), dims, value, &ml_value);
   feeds.insert(std::make_pair(name, ml_value));
 }
 
 //TODO:(nivas) Refractor to use existing code
-void RunTest(const std::string& model_path, const NameMLValMap& feeds, const std::vector<std::string>& output_names, const std::vector<std::vector<int64_t>>& expected_shapes, const std::vector<std::vector<float>>& expected_values) {
+void RunTest(const std::string& model_path, const NameMLValMap& feeds, const Vector<std::string>& output_names, const Vector<Vector<int64_t>>& expected_shapes, const Vector<Vector<float>>& expected_values) {
   SessionOptions so;
   InferenceSession session_object(so, &DefaultLoggingManager());
 
@@ -79,7 +79,7 @@ void RunTest(const std::string& model_path, const NameMLValMap& feeds, const std
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
   auto unsupported_schema = GetUnSupportedOpSchema();
-  std::vector<OpSchema> schemas = {unsupported_schema};
+  Vector<OpSchema> schemas = {unsupported_schema};
   EXPECT_TRUE(registry->RegisterOpSet(schemas, onnxruntime::kOnnxDomain, 7, 8).IsOK());
 
   auto def = UnSupportedOpDef();
@@ -104,7 +104,7 @@ void RunTest(const std::string& model_path, const NameMLValMap& feeds, const std
   run_options.run_tag = "nGraph EP test tag";
   run_options.run_log_verbosity_level = 1;
 
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
   status = session_object.Run(run_options, feeds, output_names, &fetches);
 
   if (!status.IsOK()) {
@@ -142,10 +142,10 @@ TEST(NGraphExecutionProviderTest, Basic_Test) {
   add_feeds(feeds, "A", {4}, {1.0f, 2.0f, 3.0f, 4.0f});
   add_feeds(feeds, "B", {4}, {2.0f, 2.0f, 2.0f, 2.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {4.0f, 8.0f, 12.0f, 16.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4}};
 
   RunTest("testdata/ngraph/Basic_Test.onnx", feeds, {"Z"}, expected_shapes, expected_values);
@@ -171,10 +171,10 @@ TEST(NGraphExecutionProviderTest, Graph_with_UnSupportedOp) {
   add_feeds(feeds, "A", {4}, {1.0f, 2.0f, 3.0f, 4.0f});
   add_feeds(feeds, "B", {4}, {2.0f, 2.0f, 2.0f, 2.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {5.0f, 9.0f, 13.0f, 17.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4}};
 
   RunTest("testdata/ngraph/Graph_with_UnSupportedOp.onnx", feeds, {"Z"}, expected_shapes, expected_values);
@@ -204,10 +204,10 @@ TEST(NGraphExecutionProviderTest, Two_Subgraphs) {
   add_feeds(feeds, "B", {4}, {2.0f, 2.0f, 2.0f, 2.0f});
   add_feeds(feeds, "C", {4}, {1.0f, 1.0f, 1.0f, 1.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {6.0f, 10.0f, 14.0f, 18.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4}};
 
   RunTest("testdata/ngraph/Two_Subgraphs.onnx", feeds, {"Z"}, expected_shapes, expected_values);
@@ -238,11 +238,11 @@ TEST(NGraphExecutionProviderTest, ClusterOut_isAlso_GraphOut) {
   add_feeds(feeds, "B", {4}, {2.0f, 2.0f, 2.0f, 2.0f});
   add_feeds(feeds, "C", {4}, {1.0f, 1.0f, 1.0f, 1.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {2.0f, 4.0f, 6.0f, 8.0f},
       {6.0f, 10.0f, 14.0f, 18.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4},
       {4}};
 
@@ -274,11 +274,11 @@ TEST(NGraphExecutionProviderTest, InOut_isAlso_GraphOut) {
   add_feeds(feeds, "B", {4}, {2.0f, 2.0f, 2.0f, 2.0f});
   add_feeds(feeds, "C", {4}, {1.0f, 1.0f, 1.0f, 1.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {4.0f, 8.0f, 12.0f, 16.0f},
       {6.0f, 10.0f, 14.0f, 18.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4},
       {4}};
 
@@ -308,10 +308,10 @@ TEST(NGraphExecutionProviderTest, Op_with_Optional_or_Unused_Outputs) {
   add_feeds(feeds, "A", {4}, {1.0f, 2.0f, 3.0f, 4.0f});
   add_feeds(feeds, "C", {4}, {1.0f, 1.0f, 1.0f, 1.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {4.0f, 6.0f, 8.0f, 10.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4}};
 
   RunTest("testdata/ngraph/Op_with_Optional_or_Unused_Outputs.onnx", feeds, {"Z"}, expected_shapes, expected_values);
@@ -344,10 +344,10 @@ TEST(NGraphExecutionProviderTest, Independent_SubGraphs) {
   NameMLValMap feeds;
   add_feeds(feeds, "A", {4}, {1.0f, 2.0f, 3.0f, 4.0f});
 
-  std::vector<std::vector<float>> expected_values = {
+  Vector<Vector<float>> expected_values = {
       {7.0f, 11.0f, 15.0f, 19.0f}};
 
-  std::vector<std::vector<int64_t>> expected_shapes = {
+  Vector<Vector<int64_t>> expected_shapes = {
       {4}};
 
   RunTest("testdata/ngraph/Independent_SubGraphs.onnx", feeds, {"Z"}, expected_shapes, expected_values);

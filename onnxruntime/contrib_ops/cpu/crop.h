@@ -69,8 +69,8 @@ class CropBase {
     return Status::OK();
   }
 
-  const std::vector<int64_t> border_;  // (leftBorder, topBorder, rightBorder, bottomBorder)
-  const std::vector<int64_t> scale_;   // (height, width)
+  const Vector<int64_t> border_;  // (leftBorder, topBorder, rightBorder, bottomBorder)
+  const Vector<int64_t> scale_;   // (height, width)
 };
 
 template <typename T>

@@ -294,11 +294,11 @@ TEST(GatherOpTest, Gather_axis1_indices2d_bool) {
 TEST(GatherOpTest, Gather_perf) {
   OpTester test("Gather");
   test.AddAttribute<int64_t>("axis", 0LL);
-  std::vector<int32_t> input(50000 * 100, 1);
+  Vector<int32_t> input(50000 * 100, 1);
 
-  std::vector<int32_t> indices(800, 5);
+  Vector<int32_t> indices(800, 5);
 
-  std::vector<int32_t> output(800 * 100, 1);
+  Vector<int32_t> output(800 * 100, 1);
 
   test.AddInput<int32_t>("data", {50000, 100}, input);
   test.AddInput<int32_t>("indices", {800, 1}, indices);

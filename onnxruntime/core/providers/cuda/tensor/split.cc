@@ -32,7 +32,7 @@ Status Split::ComputeInternal(OpKernelContext* ctx) const {
   int before_dims = 0;
   int block_size_including_axis_dim = 0;
   int block_size_inside_axis_dim = 0;
-  std::vector<int64_t> split_sizes;
+  Vector<int64_t> split_sizes;
 
   ORT_RETURN_IF_ERROR(PrepareForCompute(input_shape,
                                         num_outputs,
@@ -45,11 +45,11 @@ Status Split::ComputeInternal(OpKernelContext* ctx) const {
   auto input_data = input_tensor->DataRaw();
 
   auto& input_dims = input_shape.GetDims();
-  std::vector<int64_t> output_dimensions{input_dims};
+  Vector<int64_t> output_dimensions{input_dims};
 
   CudaAsyncBuffer<void*> output_ptr(this, num_outputs);
   gsl::span<void*> output_ptr_span = output_ptr.CpuSpan();
-  std::vector<int64_t> axis_dimension_input_output_mapping(input_dims[axis]);
+  Vector<int64_t> axis_dimension_input_output_mapping(input_dims[axis]);
   int index = 0;
   for (int i = 0; i < num_outputs; ++i) {
     // update size of dimension for axis we're splitting on
@@ -69,7 +69,7 @@ Status Split::ComputeInternal(OpKernelContext* ctx) const {
   CudaAsyncBuffer<int64_t> split_sizes_gpu(this, split_sizes);
   split_sizes_gpu.CopyToGpu();
 
-  std::vector<int64_t> split_sizes_range(split_sizes);
+  Vector<int64_t> split_sizes_range(split_sizes);
   for (size_t i = 1; i < split_sizes_range.size(); ++i) {
     split_sizes_range[i] += split_sizes_range[i - 1];
   }

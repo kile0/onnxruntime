@@ -8,7 +8,7 @@ namespace onnxruntime {
 namespace test {
 
 template <class T>
-using ShapeAndData = std::pair<const std::vector<int64_t>, const std::vector<T>>;
+using ShapeAndData = std::pair<const Vector<int64_t>, const Vector<T>>;
 
 using ShapeAndFloatData = ShapeAndData<float>;
 using ShapeAndInt32Data = ShapeAndData<int32_t>;
@@ -16,8 +16,8 @@ using ShapeAndStringData = ShapeAndData<std::string>;
 using ExpectResult = OpTester::ExpectResult;
 
 template <typename T>
-void RunTest(int64_t axis, const std::vector<int64_t> split_sizes, const ShapeAndData<T>& input,
-             const std::vector<ShapeAndData<T>>& outputs, bool is_tensorrt_supported = true,
+void RunTest(int64_t axis, const Vector<int64_t> split_sizes, const ShapeAndData<T>& input,
+             const Vector<ShapeAndData<T>>& outputs, bool is_tensorrt_supported = true,
              bool expect_failure = false, const std::string& err_msg = {}) {
   OpTester test("Split");
 
@@ -45,7 +45,7 @@ void RunTest(int64_t axis, const std::vector<int64_t> split_sizes, const ShapeAn
 
 TEST(SplitOperatorTest, Axis0EqualSplitFloat) {
   const int64_t axis = 0;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{4, 2},  // shape
@@ -67,7 +67,7 @@ TEST(SplitOperatorTest, Axis0EqualSplitFloat) {
 
 TEST(SplitOperatorTest, Axis0EqualSplitInt32) {
   const int64_t axis = 0;
-  std::vector<ShapeAndInt32Data> outputs;
+  Vector<ShapeAndInt32Data> outputs;
 
   // input shape and data
   ShapeAndInt32Data input = {{4, 2},  // shape
@@ -89,7 +89,7 @@ TEST(SplitOperatorTest, Axis0EqualSplitInt32) {
 
 TEST(SplitOperatorTest, Axis0EqualSplitString) {
   const int64_t axis = 0;
-  std::vector<ShapeAndStringData> outputs;
+  Vector<ShapeAndStringData> outputs;
 
   // input shape and data
   ShapeAndStringData input = {{4, 2},  // shape
@@ -111,7 +111,7 @@ TEST(SplitOperatorTest, Axis0EqualSplitString) {
 
 TEST(SplitOperatorTest, Axis0UnequalSplitFloat) {
   const int64_t axis = 0;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{4, 2},  // shape
@@ -120,7 +120,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitFloat) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  std::vector<int64_t> splits{1, 3};
+  Vector<int64_t> splits{1, 3};
 
   outputs.push_back({{1, 2}, {1.f, 2.f}});
 
@@ -134,7 +134,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitFloat) {
 
 TEST(SplitOperatorTest, Axis0UnequalSplitString) {
   const int64_t axis = 0;
-  std::vector<ShapeAndStringData> outputs;
+  Vector<ShapeAndStringData> outputs;
 
   // input shape and data
   ShapeAndStringData input = {{4, 2},  // shape
@@ -143,7 +143,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitString) {
                                "e", "f",
                                "g", "h"}};
 
-  std::vector<int64_t> splits{1, 3};
+  Vector<int64_t> splits{1, 3};
 
   outputs.push_back({{1, 2}, {"a", "b"}});
 
@@ -157,7 +157,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitString) {
 
 TEST(SplitOperatorTest, Axis1EqualSplitFloat) {
   const int64_t axis = 1;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{2, 4},
@@ -177,7 +177,7 @@ TEST(SplitOperatorTest, Axis1EqualSplitFloat) {
 
 TEST(SplitOperatorTest, Axis1EqualSplitString) {
   const int64_t axis = 1;
-  std::vector<ShapeAndStringData> outputs;
+  Vector<ShapeAndStringData> outputs;
 
   // input shape and data
   ShapeAndStringData input = {{2, 4},
@@ -197,14 +197,14 @@ TEST(SplitOperatorTest, Axis1EqualSplitString) {
 
 TEST(SplitOperatorTest, Axis1UnequalSplitFloat) {
   const int64_t axis = 1;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{2, 4},
                              {1.f, 2.f, 3.f, 4.f,
                               5.f, 6.f, 7.f, 8.f}};
 
-  std::vector<int64_t> splits{3, 1};
+  Vector<int64_t> splits{3, 1};
 
   outputs.push_back({{2, 3},
                      {1.f, 2.f, 3.f,
@@ -219,14 +219,14 @@ TEST(SplitOperatorTest, Axis1UnequalSplitFloat) {
 
 TEST(SplitOperatorTest, Axis1UnequalSplitString) {
   const int64_t axis = 1;
-  std::vector<ShapeAndStringData> outputs;
+  Vector<ShapeAndStringData> outputs;
 
   // input shape and data
   ShapeAndStringData input = {{2, 4},
                               {"a", "b", "c", "d",
                                "e", "f", "g", "h"}};
 
-  std::vector<int64_t> splits{3, 1};
+  Vector<int64_t> splits{3, 1};
 
   outputs.push_back({{2, 3},
                      {"a", "b", "c",
@@ -239,12 +239,12 @@ TEST(SplitOperatorTest, Axis1UnequalSplitString) {
   RunTest<std::string>(axis, splits, input, outputs, false);
 }
 
-ShapeAndFloatData CreateInput(std::vector<int64_t> shape) {
+ShapeAndFloatData CreateInput(Vector<int64_t> shape) {
   auto size = TensorShape(shape).Size();
 
   float i = 0.f, increment = 1.f;
   // generate the elements for the data starting at 1.f
-  std::vector<float> data;
+  Vector<float> data;
   std::generate_n(std::back_inserter(data), size, [&]() { return i += increment; });
 
   ShapeAndFloatData input = {shape, data};
@@ -254,7 +254,7 @@ ShapeAndFloatData CreateInput(std::vector<int64_t> shape) {
 
 TEST(SplitOperatorTest, Axis2EqualSplit) {
   const int64_t axis = 2;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   ShapeAndFloatData input = CreateInput({2, 2, 6});
 
@@ -284,11 +284,11 @@ TEST(SplitOperatorTest, Axis2EqualSplit) {
 
 TEST(SplitOperatorTest, Axis2UnequalSplit) {
   const int64_t axis = 2;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   ShapeAndFloatData input = CreateInput({2, 2, 6});
 
-  std::vector<int64_t> splits{1, 2, 3};
+  Vector<int64_t> splits{1, 2, 3};
 
   outputs.push_back({{2, 2, 1},
                      {1.f,
@@ -317,7 +317,7 @@ TEST(SplitOperatorTest, Axis2UnequalSplit) {
 // test a split of a dimension that has leading and trailing dimensions
 TEST(SplitOperatorTest, Axis1SplitMiddleDimensionEqually) {
   const int64_t axis = 1;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   ShapeAndFloatData input = CreateInput({2, 4, 4});
 
@@ -341,11 +341,11 @@ TEST(SplitOperatorTest, Axis1SplitMiddleDimensionEqually) {
 // test a split of a dimension that has leading and trailing dimensions
 TEST(SplitOperatorTest, Axis1SplitMiddleDimensionUnequally) {
   const int64_t axis = 1;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   ShapeAndFloatData input = CreateInput({2, 4, 4});
 
-  std::vector<int64_t> splits{1, 3};
+  Vector<int64_t> splits{1, 3};
 
   outputs.push_back({{2, 1, 4},
                      {1.f, 2.f, 3.f, 4.f,
@@ -366,7 +366,7 @@ TEST(SplitOperatorTest, Axis1SplitMiddleDimensionUnequally) {
 
 TEST(SplitOperatorTest, NegativeAxis) {
   const int64_t axis = -1;  // split last axis equally
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{2, 4},
@@ -386,7 +386,7 @@ TEST(SplitOperatorTest, NegativeAxis) {
 
 TEST(SplitOperatorTest, InvalidAxis) {
   const int64_t axis = 2;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{4, 2},  // shape
@@ -403,7 +403,7 @@ TEST(SplitOperatorTest, InvalidAxis) {
 // sum of values in splits is too small
 TEST(SplitOperatorTest, SplitAttributeSumTooSmall) {
   const int64_t axis = 0;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{4, 2},  // shape
@@ -412,7 +412,7 @@ TEST(SplitOperatorTest, SplitAttributeSumTooSmall) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  std::vector<int64_t> splits{1, 2};  // should sum to 4
+  Vector<int64_t> splits{1, 2};  // should sum to 4
 
   outputs.push_back({{1, 2}, {1.f, 2.f}});
   outputs.push_back({{2, 2}, {3.f, 4.f, 5.f, 6.f}});
@@ -422,7 +422,7 @@ TEST(SplitOperatorTest, SplitAttributeSumTooSmall) {
 
 TEST(SplitOperatorTest, InvalidValueInSplitAttribute) {
   const int64_t axis = 0;
-  std::vector<ShapeAndFloatData> outputs;
+  Vector<ShapeAndFloatData> outputs;
 
   // input shape and data
   ShapeAndFloatData input = {{4, 2},  // shape
@@ -431,7 +431,7 @@ TEST(SplitOperatorTest, InvalidValueInSplitAttribute) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  std::vector<int64_t> splits{1, 0, 3};  // 0 is not valid
+  Vector<int64_t> splits{1, 0, 3};  // 0 is not valid
   outputs.push_back({{1, 2}, {1.f, 2.f}});
   outputs.push_back({{3, 2}, {3.f, 4.f, 5.f, 6.f, 7.f, 8.f}});
 

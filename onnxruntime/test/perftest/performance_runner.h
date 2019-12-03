@@ -33,7 +33,7 @@ struct PerformanceResult {
   size_t peak_workingset_size{0};
   short average_CPU_usage{0};
   double total_time_cost{0};
-  std::vector<double> time_costs;
+  Vector<double> time_costs;
   std::string model_name;
 
   void DumpToFile(const std::basic_string<ORTCHAR_T>& path, bool f_include_statistics = false) const {
@@ -49,7 +49,7 @@ struct PerformanceResult {
     }
 
     if (!time_costs.empty() && f_include_statistics) {
-      std::vector<double> sorted_time = time_costs;
+      Vector<double> sorted_time = time_costs;
 
       size_t total = sorted_time.size();
       size_t n50 = static_cast<size_t>(total * 0.5);

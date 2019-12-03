@@ -225,9 +225,9 @@ inline Session::Session(Env& env, const void* model_data, size_t model_data_leng
   ThrowOnError(Global<void>::api_.CreateSessionFromArray(env, model_data, model_data_length, options, &p_));
 }
 
-inline std::vector<Value> Session::Run(const RunOptions& run_options, const char* const* input_names, const Value* input_values, size_t input_count,
+inline Vector<Value> Session::Run(const RunOptions& run_options, const char* const* input_names, const Value* input_values, size_t input_count,
                                        const char* const* output_names, size_t output_names_count) {
-  std::vector<Ort::Value> output_values;
+  Vector<Ort::Value> output_values;
   for (size_t i = 0; i < output_names_count; i++)
     output_values.emplace_back(nullptr);
   Run(run_options, input_names, input_values, input_count, output_names, output_values.data(), output_names_count);
@@ -322,8 +322,8 @@ inline void TensorTypeAndShapeInfo::GetSymbolicDimensions(const char** values, s
   ThrowOnError(Global<void>::api_.GetSymbolicDimensions(p_, values, values_count));
 }
 
-inline std::vector<int64_t> TensorTypeAndShapeInfo::GetShape() const {
-  std::vector<int64_t> out(GetDimensionsCount(), 0);
+inline Vector<int64_t> TensorTypeAndShapeInfo::GetShape() const {
+  Vector<int64_t> out(GetDimensionsCount(), 0);
   GetDimensions(out.data(), out.size());
   return out;
 }
@@ -370,9 +370,9 @@ inline Value Value::CreateMap(Value& keys, Value& values) {
   return Value{out};
 }
 
-inline Value Value::CreateSequence(std::vector<Value>& values) {
+inline Value Value::CreateSequence(Vector<Value>& values) {
   OrtValue* out;
-  std::vector<OrtValue*> values_ort{values.data(), values.data() + values.size()};
+  Vector<OrtValue*> values_ort{values.data(), values.data() + values.size()};
   ThrowOnError(Global<void>::api_.CreateValue(values_ort.data(), values_ort.size(), ONNX_TYPE_SEQUENCE, &out));
   return Value{out};
 }
@@ -519,8 +519,8 @@ inline const T* CustomOpApi::GetTensorData(_Inout_ const OrtValue* value) {
   return GetTensorMutableData<T>(const_cast<OrtValue*>(value));
 }
 
-inline std::vector<int64_t> CustomOpApi::GetTensorShape(const OrtTensorTypeAndShapeInfo* info) {
-  std::vector<int64_t> output(GetDimensionsCount(info));
+inline Vector<int64_t> CustomOpApi::GetTensorShape(const OrtTensorTypeAndShapeInfo* info) {
+  Vector<int64_t> output(GetDimensionsCount(info));
   GetDimensions(info, output.data(), output.size());
   return output;
 }

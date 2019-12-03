@@ -45,8 +45,8 @@ TEST(FeatureVectorizerTest, TraditionalMlOpTest) {
   //                              |
   //                           SinkNode
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   // Type: tensor(float)
   TypeProto tensor_float;
@@ -112,7 +112,7 @@ TEST(OpRegistrationTest, OpsetRegTest) {
   std::shared_ptr<onnxruntime::OnnxRuntimeOpSchemaRegistry> registry = std::make_shared<OnnxRuntimeOpSchemaRegistry>();
 
   // Register op-set version 1 with baseline version 0
-  std::vector<ONNX_NAMESPACE::OpSchema> schema = {CreateTestSchema("Op1", "Domain1", 1), CreateTestSchema("Op2", "Domain1", 1)};
+  Vector<ONNX_NAMESPACE::OpSchema> schema = {CreateTestSchema("Op1", "Domain1", 1), CreateTestSchema("Op2", "Domain1", 1)};
   EXPECT_TRUE(registry->RegisterOpSet(schema, "Domain1", 0, 1).IsOK());
 
   // Get the schema
@@ -127,7 +127,7 @@ TEST(OpRegistrationTest, OpsetRegTest) {
 
   // Registering a new op-set in the same domain will fail.  This (currently) requires the caller to
   // use multiple registry instances and a registry manager.
-  std::vector<ONNX_NAMESPACE::OpSchema> schemaV2 = {CreateTestSchema("Op1", "Domain1", 2)};
+  Vector<ONNX_NAMESPACE::OpSchema> schemaV2 = {CreateTestSchema("Op1", "Domain1", 2)};
   EXPECT_FALSE(registry->RegisterOpSet(schemaV2, "Domain1", 1, 2).IsOK());
 
   // Registering an op-set with schema in a different domain than the op-set will fail
@@ -135,13 +135,13 @@ TEST(OpRegistrationTest, OpsetRegTest) {
   EXPECT_FALSE(temp_reg->RegisterOpSet(schema, "WrongDomain", 0, 1).IsOK());
 
   // Registering a second op-set in a different domain should succeed
-  std::vector<ONNX_NAMESPACE::OpSchema> schemaDomain2 = {CreateTestSchema("Op2", "Domain2", 1)};
+  Vector<ONNX_NAMESPACE::OpSchema> schemaDomain2 = {CreateTestSchema("Op2", "Domain2", 1)};
   EXPECT_TRUE(registry->RegisterOpSet(schemaDomain2, "Domain2", 0, 1).IsOK());
   EXPECT_TRUE(registry->GetSchema("Op1", 1, "Domain1")->Name() == "Op1");
   EXPECT_TRUE(registry->GetSchema("Op2", 1, "Domain2")->Name() == "Op2");
 
   // Overriding existing op-set schema will fail
-  std::vector<ONNX_NAMESPACE::OpSchema> schemaOverride = {CreateTestSchema("Op1", "Domain1", 1)};
+  Vector<ONNX_NAMESPACE::OpSchema> schemaOverride = {CreateTestSchema("Op1", "Domain1", 1)};
   EXPECT_FALSE(registry->RegisterOpSet(schema, "Domain1", 0, 1).IsOK());
 
   // Create a second registry, combined with the first through a manager
@@ -164,7 +164,7 @@ TEST(OpRegistrationTest, OpsetRegTest) {
   // there is a gap at version 3.
   std::shared_ptr<onnxruntime::OnnxRuntimeOpSchemaRegistry> registryV5 = std::make_shared<OnnxRuntimeOpSchemaRegistry>();
   manager.RegisterRegistry(registryV5);
-  std::vector<ONNX_NAMESPACE::OpSchema> schemaV5 = {
+  Vector<ONNX_NAMESPACE::OpSchema> schemaV5 = {
       CreateTestSchema("Op3", "Domain1", 4),
       CreateTestSchema("Op4", "Domain1", 5),
       CreateTestSchema("Op5", "Domain1", 1)};
@@ -259,9 +259,9 @@ TEST(OpRegistrationTest, AttributeDefaultValueTest) {
 TEST(OpRegistrationTest, AttributeDefaultValueListTest) {
   OPERATOR_SCHEMA(__TestAttrDefaultValueList)
       .SetDoc("Op with attributes that have default list of values.")
-      .Attr("my_attr_ints", "attr with default value of [98, 99, 100].", AttrType::AttributeProto_AttributeType_INTS, std::vector<int64_t>{int64_t(98), int64_t(99), int64_t(100)})
-      .Attr("my_attr_floats", "attr with default value of [0.98, 0.99, 1.00].", AttrType::AttributeProto_AttributeType_FLOATS, std::vector<float>{float(0.98), float(0.99), float(1.00)})
-      .Attr("my_attr_strings", "attr with default value of [\"98\", \"99\", \"100\"].", AttrType::AttributeProto_AttributeType_STRINGS, std::vector<std::string>{"98", "99", "100"});
+      .Attr("my_attr_ints", "attr with default value of [98, 99, 100].", AttrType::AttributeProto_AttributeType_INTS, Vector<int64_t>{int64_t(98), int64_t(99), int64_t(100)})
+      .Attr("my_attr_floats", "attr with default value of [0.98, 0.99, 1.00].", AttrType::AttributeProto_AttributeType_FLOATS, Vector<float>{float(0.98), float(0.99), float(1.00)})
+      .Attr("my_attr_strings", "attr with default value of [\"98\", \"99\", \"100\"].", AttrType::AttributeProto_AttributeType_STRINGS, Vector<std::string>{"98", "99", "100"});
   const OpSchema* op_schema = OpSchemaRegistry::Schema("__TestAttrDefaultValueList");
   EXPECT_TRUE(nullptr != op_schema);
   EXPECT_EQ(op_schema->attributes().size(), 3);
@@ -273,7 +273,7 @@ TEST(OpRegistrationTest, AttributeDefaultValueListTest) {
   EXPECT_EQ(attr_ints.default_value.name(), "my_attr_ints");
   int size = attr_ints.default_value.ints_size();
   EXPECT_EQ(size, 3);
-  std::vector<int64_t> expected_ints = {98LL, 99LL, 100LL};
+  Vector<int64_t> expected_ints = {98LL, 99LL, 100LL};
   for (int i = 0; i < size; i++) {
     EXPECT_EQ(attr_ints.default_value.ints(i), expected_ints[i]);
   }
@@ -285,7 +285,7 @@ TEST(OpRegistrationTest, AttributeDefaultValueListTest) {
   EXPECT_EQ(attr.default_value.name(), "my_attr_floats");
   size = attr.default_value.floats_size();
   EXPECT_EQ(size, 3);
-  std::vector<float> expected_floats = {0.98f, 0.99f, 1.00f};
+  Vector<float> expected_floats = {0.98f, 0.99f, 1.00f};
   for (int i = 0; i < size; i++) {
     EXPECT_EQ(attr.default_value.floats(i), expected_floats[i]);
   }
@@ -297,7 +297,7 @@ TEST(OpRegistrationTest, AttributeDefaultValueListTest) {
   EXPECT_EQ(attr2.default_value.name(), "my_attr_strings");
   size = attr2.default_value.strings_size();
   EXPECT_EQ(size, 3);
-  std::vector<std::string> expected_strings = {"98", "99", "100"};
+  Vector<std::string> expected_strings = {"98", "99", "100"};
   for (int i = 0; i < size; i++) {
     EXPECT_EQ(attr2.default_value.strings(i), expected_strings[i]);
   }

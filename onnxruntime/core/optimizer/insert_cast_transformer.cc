@@ -42,8 +42,8 @@ onnxruntime::NodeArg* AddCastNode(onnxruntime::Graph& graph,
 
   auto* new_arg = &graph.GetOrCreateNodeArg(str, new_type);
 
-  std::vector<onnxruntime::NodeArg*> input_defs = {new_on_input ? new_arg : old_arg};
-  std::vector<onnxruntime::NodeArg*> output_defs = {new_on_input ? old_arg : new_arg};
+  Vector<onnxruntime::NodeArg*> input_defs = {new_on_input ? new_arg : old_arg};
+  Vector<onnxruntime::NodeArg*> output_defs = {new_on_input ? old_arg : new_arg};
 
   auto& cast_node = graph.AddNode(str, "Cast", "cast node to cast from float16 to float32 on cpu", input_defs, output_defs);
   cast_node.AddAttribute("to", to_type);
@@ -108,7 +108,7 @@ class RemoveDuplicateCastTransformer : public GraphTransformer {
     for (auto& node : graph.Nodes()) {
       bool removed = false;
       if (node.OpType() == "Cast") {
-        std::vector<std::reference_wrapper<Node>> nodes_to_remove;
+        Vector<std::reference_wrapper<Node>> nodes_to_remove;
 
         // if cast's next node is also cast and next cast's output type equal to cast's input type
         // remove those two cast.
@@ -147,7 +147,7 @@ class RemoveDuplicateCastTransformer : public GraphTransformer {
               NodeIndex node_idx = node_to_remove.Index();
 
               // copy the edges so we can remove as we iterate them
-              std::vector<Node::EdgeEnd> edges(node_to_remove.OutputEdgesBegin(), node_to_remove.OutputEdgesEnd());
+              Vector<Node::EdgeEnd> edges(node_to_remove.OutputEdgesBegin(), node_to_remove.OutputEdgesEnd());
 
               for (auto edge = edges.cbegin(), end = edges.cend(); edge != end; ++edge) {
                 int dst_idx = edge->GetDstArgIndex();

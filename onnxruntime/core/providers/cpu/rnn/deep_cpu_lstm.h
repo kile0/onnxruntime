@@ -25,9 +25,9 @@ class DeepCpuLstmOp final : public OpKernel {
     hidden_size_ = gsl::narrow<int>(int64_value);
 
     // optional attributes
-    std::vector<std::string> activation_func_names = info.GetAttrsOrDefault<std::string>("activations");
-    std::vector<float> activation_func_alphas = info.GetAttrsOrDefault<float>("activation_alpha");
-    std::vector<float> activation_func_betas = info.GetAttrsOrDefault<float>("activation_beta");
+    Vector<std::string> activation_func_names = info.GetAttrsOrDefault<std::string>("activations");
+    Vector<float> activation_func_alphas = info.GetAttrsOrDefault<float>("activation_alpha");
+    Vector<float> activation_func_betas = info.GetAttrsOrDefault<float>("activation_beta");
     ORT_ENFORCE(clip_ > 0.f);
 
     if (info.GetAttr("input_forget", &int64_value).IsOK())

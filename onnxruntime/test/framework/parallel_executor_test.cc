@@ -79,7 +79,7 @@ struct TestOp {
 // test that the status from TestOp is correctly returned from InferenceSession::Run
 TEST(ParallelExecutor, TestStatusPropagation) {
   auto registry = std::make_shared<CustomRegistry>();
-  std::vector<OpSchema> schemas{TestOp::OpSchema()};
+  Vector<OpSchema> schemas{TestOp::OpSchema()};
   Status status;
   ASSERT_TRUE((status = registry->RegisterOpSet(schemas, TestOp::OpDomain, 10, 11)).IsOK()) << status;
   KernelCreateFn kernel_create_fn = [](const OpKernelInfo& info) { return new typename TestOp::OpKernelImpl(info); };
@@ -119,7 +119,7 @@ TEST(ParallelExecutor, TestStatusPropagation) {
 
 TEST(ParallelExecutor, TestNullInterOpThreadPool) {
   auto registry = std::make_shared<CustomRegistry>();
-  std::vector<OpSchema> schemas{TestOp::OpSchema()};
+  Vector<OpSchema> schemas{TestOp::OpSchema()};
   Status status;
   ASSERT_TRUE((status = registry->RegisterOpSet(schemas, TestOp::OpDomain, 10, 11)).IsOK()) << status;
   KernelCreateFn kernel_create_fn = [](const OpKernelInfo& info) { return new typename TestOp::OpKernelImpl(info); };

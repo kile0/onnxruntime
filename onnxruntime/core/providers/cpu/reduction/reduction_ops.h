@@ -24,7 +24,7 @@ class ReduceKernelBase {
     keepdims_ = (keepdims == 1);
   }
 
-  std::vector<int64_t> axes_;
+  Vector<int64_t> axes_;
   bool keepdims_;
 };
 

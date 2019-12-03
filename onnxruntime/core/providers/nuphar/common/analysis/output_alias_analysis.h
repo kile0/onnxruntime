@@ -31,7 +31,7 @@ class OutputAliasAnalysis : public NupharAnalysis {
   // a map from an output alias to its input
   std::map<NodeKey, const onnxruntime::NodeArg*> alias_use_defs_;
 
-  void Traverse(const std::vector<const Node*>& nodes,
+  void Traverse(const Vector<const Node*>& nodes,
                 const std::set<std::string>& graph_inputs,
                 const std::set<std::string>& graph_outputs);
 

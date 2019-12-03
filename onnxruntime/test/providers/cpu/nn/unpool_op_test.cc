@@ -11,19 +11,19 @@ namespace test {
 TEST(UnpoolTest, MaxUnPool1D) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 4};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 4};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 4};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 4};
 
-  std::vector<int64_t> expected_dims = {1, 1, 8};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0};
+  Vector<int64_t> expected_dims = {1, 1, 8};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0};
 
-  std::vector<int64_t> inputDims = {3};
+  Vector<int64_t> inputDims = {3};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -36,19 +36,19 @@ TEST(UnpoolTest, MaxUnPool1D) {
 TEST(UnpoolTest, MaxUnPool2D) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2});
-  test.AddAttribute("kernel_shape", std::vector<int64_t>{2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2});
+  test.AddAttribute("kernel_shape", Vector<int64_t>{2, 2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 4, 4};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Vector<int64_t> expected_dims = {1, 1, 4, 4};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  std::vector<int64_t> inputDims = {4};
+  Vector<int64_t> inputDims = {4};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -61,20 +61,20 @@ TEST(UnpoolTest, MaxUnPool2D) {
 TEST(UnpoolTest, MaxUnPool3D) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
 
   // NOTE: This input doesn't make sense as MaxPool output, but strictly speaking it doesn't need to be
-  std::vector<float> t_vals = {1, 2, 3, 4, 5, 6, 7, 8};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4, 5, 6, 7, 8};
+  Vector<int64_t> t_dims = {1, 1, 2, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 24, 30, 32, 38, 60, 62};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 24, 30, 32, 38, 60, 62};
+  Vector<int64_t> i_dims = {1, 1, 2, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 4, 4, 4};
-  std::vector<int64_t> expectedDims_Size = {5};
+  Vector<int64_t> expected_dims = {1, 1, 4, 4, 4};
+  Vector<int64_t> expectedDims_Size = {5};
 
-  std::vector<float> expected_vals =
+  Vector<float> expected_vals =
       {
           //slice 1
           0, 1, 0, 2,
@@ -111,17 +111,17 @@ TEST(UnpoolTest, MaxUnPool3D) {
 TEST(UnpoolTest, MaxUnPool1D_Without_OutputShape) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 4};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 4};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 4};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 4};
 
-  std::vector<int64_t> expected_dims = {1, 1, 8};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0};
+  Vector<int64_t> expected_dims = {1, 1, 8};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -133,17 +133,17 @@ TEST(UnpoolTest, MaxUnPool1D_Without_OutputShape) {
 TEST(UnpoolTest, MaxUnPool2D_Without_OutputShape) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 4, 4};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Vector<int64_t> expected_dims = {1, 1, 4, 4};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -155,18 +155,18 @@ TEST(UnpoolTest, MaxUnPool2D_Without_OutputShape) {
 TEST(UnpoolTest, MaxUnPool3D_Without_OutputShape) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4, 5, 6, 7, 8};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4, 5, 6, 7, 8};
+  Vector<int64_t> t_dims = {1, 1, 2, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 24, 30, 32, 38, 60, 62};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 24, 30, 32, 38, 60, 62};
+  Vector<int64_t> i_dims = {1, 1, 2, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 4, 4, 4};
+  Vector<int64_t> expected_dims = {1, 1, 4, 4, 4};
 
-  std::vector<float> expected_vals =
+  Vector<float> expected_vals =
       {
           //slice 1
           0, 1, 0, 2,
@@ -202,18 +202,18 @@ TEST(UnpoolTest, MaxUnPool3D_Without_OutputShape) {
 TEST(UnpoolTest, MaxUnPool1D_Padding) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
   test.AddAttribute("pads", vector<int64_t>{1, 0});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 4};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 4};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 4};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 4};
 
-  std::vector<int64_t> expected_dims = {1, 1, 7};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4};
+  Vector<int64_t> expected_dims = {1, 1, 7};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -225,18 +225,18 @@ TEST(UnpoolTest, MaxUnPool1D_Padding) {
 TEST(UnpoolTest, MaxUnPool2D_Padding) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
   test.AddAttribute("pads", vector<int64_t>{1, 1, 0, 0});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 3, 3};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0};
+  Vector<int64_t> expected_dims = {1, 1, 3, 3};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -248,19 +248,19 @@ TEST(UnpoolTest, MaxUnPool2D_Padding) {
 TEST(UnpoolTest, MaxUnPool3D_Padding) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
   test.AddAttribute("pads", vector<int64_t>{0, 1, 1, 0, 0, 0});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 1, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 1, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 4, 8, 12};
-  std::vector<int64_t> i_dims = {1, 1, 1, 2, 2};
+  Vector<int64_t> i_vals = {1, 4, 8, 12};
+  Vector<int64_t> i_dims = {1, 1, 1, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 2, 3, 3};
+  Vector<int64_t> expected_dims = {1, 1, 2, 3, 3};
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0, 1, 0,
       0, 2, 0,
       0, 0, 3,
@@ -278,19 +278,19 @@ TEST(UnpoolTest, MaxUnPool3D_Padding) {
 TEST(UnpoolTest, MaxUnPool1D_WithOutputShape) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2});
+  test.AddAttribute("strides", Vector<int64_t>{2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 4};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 4};
 
-  std::vector<int64_t> i_vals = {1, 3, 4, 6};
-  std::vector<int64_t> i_dims = {1, 1, 4};
+  Vector<int64_t> i_vals = {1, 3, 4, 6};
+  Vector<int64_t> i_dims = {1, 1, 4};
 
-  std::vector<int64_t> expected_dims = {1, 1, 9};
-  std::vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0};
+  Vector<int64_t> expected_dims = {1, 1, 9};
+  Vector<float> expected_vals = {0, 1, 0, 2, 3, 0, 4, 0, 0};
 
-  std::vector<int64_t> expected_dim_size = {3};
+  Vector<int64_t> expected_dim_size = {3};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -303,24 +303,24 @@ TEST(UnpoolTest, MaxUnPool1D_WithOutputShape) {
 TEST(UnpoolTest, MaxUnPool2D_WithOutputShape) {
   OpTester test("MaxUnpool", 9);
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2});
-  test.AddAttribute("kernel_shape", std::vector<int64_t>{2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2});
+  test.AddAttribute("kernel_shape", Vector<int64_t>{2, 2});
 
-  std::vector<float> t_vals = {1, 2, 3, 4};
-  std::vector<int64_t> t_dims = {1, 1, 2, 2};
+  Vector<float> t_vals = {1, 2, 3, 4};
+  Vector<int64_t> t_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> i_vals = {1, 3, 10, 12};
-  std::vector<int64_t> i_dims = {1, 1, 2, 2};
+  Vector<int64_t> i_vals = {1, 3, 10, 12};
+  Vector<int64_t> i_dims = {1, 1, 2, 2};
 
-  std::vector<int64_t> expected_dims = {1, 1, 5, 5};
-  std::vector<float> expected_vals = {
+  Vector<int64_t> expected_dims = {1, 1, 5, 5};
+  Vector<float> expected_vals = {
       0, 1, 0, 2, 0,
       0, 0, 0, 0, 0,
       3, 0, 4, 0, 0,
       0, 0, 0, 0, 0,
       0, 0, 0, 0, 0};
 
-  std::vector<int64_t> expected_dims_size = {4};
+  Vector<int64_t> expected_dims_size = {4};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -361,18 +361,18 @@ print(indices)
   
   */
 
-  test.AddAttribute("strides", std::vector<int64_t>{2, 2, 2});
+  test.AddAttribute("strides", Vector<int64_t>{2, 2, 2});
   test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
 
-  std::vector<float> t_vals = {3};
-  std::vector<int64_t> t_dims = {1, 1, 1, 1, 1};
+  Vector<float> t_vals = {3};
+  Vector<int64_t> t_dims = {1, 1, 1, 1, 1};
 
-  std::vector<int64_t> i_vals = {13};
-  std::vector<int64_t> i_dims = {1, 1, 1, 1, 1};
+  Vector<int64_t> i_vals = {13};
+  Vector<int64_t> i_dims = {1, 1, 1, 1, 1};
 
-  std::vector<int64_t> expected_dims = {1, 1, 3, 3, 3};
+  Vector<int64_t> expected_dims = {1, 1, 3, 3, 3};
 
-  std::vector<float> expected_vals = {
+  Vector<float> expected_vals = {
       0, 0, 0,
       0, 0, 0,
       0, 0, 0,
@@ -385,7 +385,7 @@ print(indices)
       0, 0, 0,
       0, 0, 0};
 
-  std::vector<int64_t> expected_dims_size = {5};
+  Vector<int64_t> expected_dims_size = {5};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);
@@ -400,14 +400,14 @@ TEST(UnpoolTest, MaxUnPool_DefaultStrides) {
 
   test.AddAttribute("kernel_shape", vector<int64_t>{2});
 
-  std::vector<float> t_vals = {1, 2, 4, 8};
-  std::vector<int64_t> t_dims = {1, 1, 4};
+  Vector<float> t_vals = {1, 2, 4, 8};
+  Vector<int64_t> t_dims = {1, 1, 4};
 
-  std::vector<int64_t> i_vals = {1, 2, 3, 4};
-  std::vector<int64_t> i_dims = {1, 1, 4};
+  Vector<int64_t> i_vals = {1, 2, 3, 4};
+  Vector<int64_t> i_dims = {1, 1, 4};
 
-  std::vector<int64_t> expected_dims = {1, 1, 5};
-  std::vector<float> expected_vals = {0, 1, 2, 4, 8};
+  Vector<int64_t> expected_dims = {1, 1, 5};
+  Vector<float> expected_vals = {0, 1, 2, 4, 8};
 
   test.AddInput<float>("xT", t_dims, t_vals);
   test.AddInput<int64_t>("xI", i_dims, i_vals);

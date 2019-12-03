@@ -181,9 +181,9 @@ void MKLDNNExecutionProvider::CreateOrUpdateMklDnnNode(const Node* node,
   }
 }
 
-std::vector<std::unique_ptr<ComputeCapability>> MKLDNNExecutionProvider::GetCapability(
+Vector<std::unique_ptr<ComputeCapability>> MKLDNNExecutionProvider::GetCapability(
     const onnxruntime::GraphViewer& graph_viewer,
-    const std::vector<const KernelRegistry*>& kernel_registries) const {
+    const Vector<const KernelRegistry*>& kernel_registries) const {
   ORT_UNUSED_PARAMETER(kernel_registries);
 
   // temporary switch to toggle between mkldnn-vanilla and mkldnn-subgraph implementation using
@@ -194,7 +194,7 @@ std::vector<std::unique_ptr<ComputeCapability>> MKLDNNExecutionProvider::GetCapa
 
   LOGS_DEFAULT(INFO) << "Using MKL-DNN Subgraph";
   // use sub-graph implementation
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+  Vector<std::unique_ptr<ComputeCapability>> result;
   mkl_dnn::Subgraph::SubgraphVariables sub_var;
   std::shared_ptr<mkl_dnn::Subgraph> subgraph_ptr;
 
@@ -352,7 +352,7 @@ void MKLDNNExecutionProvider::CreateMetaDef(const onnxruntime::GraphViewer& grap
                                             const NodeAttributes& subgraph_attributes,
                                             std::shared_ptr<mkl_dnn::Subgraph>& subgraph_ptr,
                                             mkl_dnn::Subgraph::SubgraphVariables& sub_var,
-                                            std::vector<std::unique_ptr<ComputeCapability>>& result) const {
+                                            Vector<std::unique_ptr<ComputeCapability>>& result) const {
   std::string graph_fused_nodes;
   std::string node_list;
   std::string subgraph_id = std::to_string(subgraph_index_);
@@ -407,8 +407,8 @@ void MKLDNNExecutionProvider::CreateMetaDef(const onnxruntime::GraphViewer& grap
   sub_var.Reset();
 }
 
-Status MKLDNNExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                                        std::vector<NodeComputeInfo>& node_compute_funcs) {
+Status MKLDNNExecutionProvider::Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                                        Vector<NodeComputeInfo>& node_compute_funcs) {
   for (const auto* fused_node : fused_nodes) {
     auto attributes = fused_node->GetAttributes();
     NodeComputeInfo compute_info;

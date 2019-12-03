@@ -20,7 +20,7 @@ struct CPUExecutionProviderInfo {
 };
 
 using FuseRuleFn = std::function<void(const onnxruntime::GraphViewer&,
-                                      std::vector<std::unique_ptr<ComputeCapability>>&)>;
+                                      Vector<std::unique_ptr<ComputeCapability>>&)>;
 
 // Logical device representation.
 class CPUExecutionProvider : public IExecutionProvider {
@@ -59,6 +59,6 @@ class CPUExecutionProvider : public IExecutionProvider {
   std::unique_ptr<IDataTransfer> GetDataTransfer() const override;
 
  private:
-  std::vector<FuseRuleFn> fuse_rules_;
+  Vector<FuseRuleFn> fuse_rules_;
 };
 }  // namespace onnxruntime

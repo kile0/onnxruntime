@@ -13,7 +13,7 @@
 namespace onnxruntime {
 namespace test {
 template <typename T>
-void CPUTensorTest(std::vector<int64_t> dims, const int offset = 0) {
+void CPUTensorTest(Vector<int64_t> dims, const int offset = 0) {
   //not own the buffer
   TensorShape shape(dims);
   auto alloc = TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault);
@@ -50,75 +50,75 @@ void CPUTensorTest(std::vector<int64_t> dims, const int offset = 0) {
 }
 
 TEST(TensorTest, CPUFloatTensorTest) {
-  CPUTensorTest<float>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<float>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUInt32TensorTest) {
-  CPUTensorTest<int32_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<int32_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUUInt8TensorTest) {
-  CPUTensorTest<uint8_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<uint8_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUUInt16TensorTest) {
-  CPUTensorTest<uint16_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<uint16_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUInt16TensorTest) {
-  CPUTensorTest<int16_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<int16_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUInt64TensorTest) {
-  CPUTensorTest<int64_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<int64_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUDoubleTensorTest) {
-  CPUTensorTest<double>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<double>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUUInt32TensorTest) {
-  CPUTensorTest<uint32_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<uint32_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUUInt64TensorTest) {
-  CPUTensorTest<uint64_t>(std::vector<int64_t>({3, 2, 4}));
+  CPUTensorTest<uint64_t>(Vector<int64_t>({3, 2, 4}));
 }
 
 TEST(TensorTest, CPUFloatTensorOffsetTest) {
-  CPUTensorTest<float>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<float>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUInt32TensorOffsetTest) {
-  CPUTensorTest<int32_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<int32_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUUInt8TensorOffsetTest) {
-  CPUTensorTest<uint8_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<uint8_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUUInt16TensorOffsetTest) {
-  CPUTensorTest<uint16_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<uint16_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUInt16TensorOffsetTest) {
-  CPUTensorTest<int16_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<int16_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUInt64TensorOffsetTest) {
-  CPUTensorTest<int64_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<int64_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUDoubleTensorOffsetTest) {
-  CPUTensorTest<double>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<double>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUUInt32TensorOffsetTest) {
-  CPUTensorTest<uint32_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<uint32_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, CPUUInt64TensorOffsetTest) {
-  CPUTensorTest<uint64_t>(std::vector<int64_t>({3, 2, 4}), 5);
+  CPUTensorTest<uint64_t>(Vector<int64_t>({3, 2, 4}), 5);
 }
 
 TEST(TensorTest, EmptyTensorTest) {

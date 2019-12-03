@@ -11,9 +11,9 @@
 namespace onnxruntime {
 namespace tvm_codegen {
 
-tvm::Array<tvm::Expr> ToTvmArray(const std::vector<int64_t>& shape);
+tvm::Array<tvm::Expr> ToTvmArray(const Vector<int64_t>& shape);
 
-tvm::Array<tvm::Integer> ToTvmArrayInt(const std::vector<int64_t>& shape);
+tvm::Array<tvm::Integer> ToTvmArrayInt(const Vector<int64_t>& shape);
 
 // Helper function to compute sub shape size to axis (not included)
 tvm::Expr SizeToDimension(const tvm::Array<tvm::Expr>& shape, int64_t axis);
@@ -32,7 +32,7 @@ tvm::Array<tvm::Expr> ConcatShapes(
 tvm::Tensor Rename(tvm::Tensor X, const std::string& name);
 
 // Helper function to slice TVM shape
-tvm::Array<tvm::Expr> SliceShape(const tvm::Array<tvm::Expr>& shape, const std::vector<int64_t>& axes);
+tvm::Array<tvm::Expr> SliceShape(const tvm::Array<tvm::Expr>& shape, const Vector<int64_t>& axes);
 
 // Helper function to slice TVM shape from axis (inclusive).
 // Basically, this function returns the shape of [axis, shape.size()-1]

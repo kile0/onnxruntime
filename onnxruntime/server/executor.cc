@@ -51,8 +51,8 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
   return protobufutil::Status::OK;
 }
 
-protobufutil::Status Executor::SetNameMLValueMap(std::vector<std::string>& input_names,
-                                                 std::vector<Ort::Value>& input_values,
+protobufutil::Status Executor::SetNameMLValueMap(Vector<std::string>& input_names,
+                                                 Vector<Ort::Value>& input_values,
                                                  const onnxruntime::server::PredictRequest& request,
                                                  MemBufferArray& buffers) {
   auto logger = env_->GetLogger(request_id_);
@@ -85,16 +85,16 @@ protobufutil::Status Executor::SetNameMLValueMap(std::vector<std::string>& input
   return protobufutil::Status::OK;
 }
 
-std::vector<Ort::Value> Run(const Ort::Session& session, const Ort::RunOptions& options, const std::vector<std::string>& input_names, const std::vector<Ort::Value>& input_values, const std::vector<std::string>& output_names) {
+Vector<Ort::Value> Run(const Ort::Session& session, const Ort::RunOptions& options, const Vector<std::string>& input_names, const Vector<Ort::Value>& input_values, const Vector<std::string>& output_names) {
   size_t input_count = input_names.size();
   size_t output_count = output_names.size();
 
-  std::vector<const char*> input_ptrs{};
+  Vector<const char*> input_ptrs{};
   input_ptrs.reserve(input_count);
   for (const auto& input : input_names) {
     input_ptrs.push_back(input.data());
   }
-  std::vector<const char*> output_ptrs{};
+  Vector<const char*> output_ptrs{};
   output_ptrs.reserve(output_count);
   for (const auto& output : output_names) {
     output_ptrs.push_back(output.data());
@@ -111,8 +111,8 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   // Convert PredictRequest to NameMLValMap
   MemBufferArray buffer_array;
-  std::vector<std::string> input_names;
-  std::vector<Ort::Value> input_values;
+  Vector<std::string> input_names;
+  Vector<Ort::Value> input_values;
   auto conversion_status = SetNameMLValueMap(input_names, input_values, request, buffer_array);
   if (conversion_status != protobufutil::Status::OK) {
     return conversion_status;
@@ -123,7 +123,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   run_options.SetRunTag(request_id_.c_str());
 
   // Prepare the output names
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
 
   if (!request.output_filter().empty()) {
     output_names.reserve(request.output_filter_size());
@@ -134,7 +134,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     output_names = env_->GetModelOutputNames(model_name, model_version);
   }
 
-  std::vector<Ort::Value> outputs;
+  Vector<Ort::Value> outputs;
   try {
     outputs = Run(env_->GetSession(model_name, model_version), run_options, input_names, input_values, output_names);
   } catch (const Ort::Exception& e) {

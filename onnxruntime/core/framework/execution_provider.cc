@@ -25,10 +25,10 @@ AllocatorPtr IExecutionProvider::GetAllocator(int id, OrtMemType mem_type) const
   return nullptr;
 }
 
-std::vector<std::unique_ptr<ComputeCapability>>
+Vector<std::unique_ptr<ComputeCapability>>
 IExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph,
-                                  const std::vector<const KernelRegistry*>& kernel_registries) const {
-  std::vector<std::unique_ptr<ComputeCapability>> result;
+                                  const Vector<const KernelRegistry*>& kernel_registries) const {
+  Vector<std::unique_ptr<ComputeCapability>> result;
   for (auto& node : graph.Nodes()) {
     for (auto registry : kernel_registries) {
       if (registry->TryFindKernel(node, Type()) != nullptr) {
@@ -60,12 +60,12 @@ void IExecutionProvider::InsertAllocator(AllocatorPtr allocator) {
   allocator_list_.emplace_back(gsl::not_null<IAllocator*>(allocator.get()));
 }
 
-common::Status IExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& /*fused_node*/,
-                                           std::vector<NodeComputeInfo>& /*node_compute_funcs*/) {
+common::Status IExecutionProvider::Compile(const Vector<onnxruntime::Node*>& /*fused_node*/,
+                                           Vector<NodeComputeInfo>& /*node_compute_funcs*/) {
   return common::Status(common::ONNXRUNTIME, common::NOT_IMPLEMENTED);
 }
 
-common::Status IExecutionProvider::Compile(const std::vector<onnxruntime::Node*>& /*fused_node*/,
+common::Status IExecutionProvider::Compile(const Vector<onnxruntime::Node*>& /*fused_node*/,
                                            std::string& /*dll_path*/) {
   return common::Status(common::ONNXRUNTIME, common::NOT_IMPLEMENTED);
 }

@@ -122,10 +122,10 @@ static std::unordered_map<std::string, std::pair<float, float>>
                          {"elu", {1.0f, 0.f}}};
 
 std::string NormalizeActivationArgumentAndGetAlphaBetaCount(const std::string& activation,
-                                                            std::vector<float>::const_iterator& cur_alpha,
-                                                            const std::vector<float>::const_iterator& end_alpha,
-                                                            std::vector<float>::const_iterator& cur_beta,
-                                                            const std::vector<float>::const_iterator& end_beta,
+                                                            Vector<float>::const_iterator& cur_alpha,
+                                                            const Vector<float>::const_iterator& end_alpha,
+                                                            Vector<float>::const_iterator& cur_beta,
+                                                            const Vector<float>::const_iterator& end_beta,
                                                             float& alpha, float& beta) {
   std::string name(activation);
   std::transform(name.begin(), name.end(), name.begin(),
@@ -144,8 +144,8 @@ std::string NormalizeActivationArgumentAndGetAlphaBetaCount(const std::string& a
   bool needs_beta = usage_entry->second.second;
 
   auto set_if_needed = [](bool needed,
-                          std::vector<float>::const_iterator& in,
-                          const std::vector<float>::const_iterator& in_end,
+                          Vector<float>::const_iterator& in,
+                          const Vector<float>::const_iterator& in_end,
                           const float default_val,
                           float& out) {
     if (needed) {
@@ -170,9 +170,9 @@ std::string NormalizeActivationArgumentAndGetAlphaBetaCount(const std::string& a
   return name;
 }
 
-ActivationFuncs::ActivationFuncs(const std::vector<std::string>& funcs,
-                                 const std::vector<float>& alphas,
-                                 const std::vector<float>& betas) {
+ActivationFuncs::ActivationFuncs(const Vector<std::string>& funcs,
+                                 const Vector<float>& alphas,
+                                 const Vector<float>& betas) {
   auto cur_alpha = alphas.cbegin();
   auto end_alpha = alphas.cend();
   auto cur_beta = betas.cbegin();

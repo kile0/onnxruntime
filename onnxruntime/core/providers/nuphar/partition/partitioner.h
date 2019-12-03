@@ -14,7 +14,7 @@ namespace nuphar {
 
 // A generic Partition data struct for Partitioner
 struct PartitionMeta {
-  std::vector<NodeIndex> nodes;                                  // a list of NodeIndex to represent Nodes in this Partition
+  Vector<NodeIndex> nodes;                                  // a list of NodeIndex to represent Nodes in this Partition
   std::unordered_set<std::string> frontier_node_args;            // a set of string to repsent frontier NodeArgs in this Partition
   std::unordered_set<std::string> rejected_frontiner_node_args;  // a set of string to repsent rejected frontier NodeArgs in this Partition
 
@@ -57,14 +57,14 @@ class Partitioner {
   virtual bool ForcePartition(
       const onnxruntime::GraphViewer& /*graph*/,
       const Node& /*node*/,
-      const std::vector<NodeIndex>& /*candidate_partitions*/,
-      const std::vector<NodeIndex>& /*immedidate_rejected_partitions*/) {
+      const Vector<NodeIndex>& /*candidate_partitions*/,
+      const Vector<NodeIndex>& /*immedidate_rejected_partitions*/) {
     return false;
   }
 
   // Cost Function interface to exstimate Cost of a PartitionMeta.
   // It can be used to trigger FocePartition or any other process.
-  virtual int Cost(const Node&, const std::vector<NodeIndex>&) const { return 0; };
+  virtual int Cost(const Node&, const Vector<NodeIndex>&) const { return 0; };
 
   // Update PartitonMeta to include a node
   void UpdateFrontiers(PartitionMeta& part_meta, const Node& node);
@@ -73,8 +73,8 @@ class Partitioner {
 
   // Merge at least two Partitions when they are connected by a node
   void MergePartitions(const Node& node,
-                       const std::vector<NodeIndex>& candidates,
-                       const std::vector<NodeIndex>& rejected_partitions);
+                       const Vector<NodeIndex>& candidates,
+                       const Vector<NodeIndex>& rejected_partitions);
 
   std::map<NodeIndex, PartitionMeta> partitions_;
 
@@ -90,7 +90,7 @@ class Partitioner {
   virtual void HandleSubgraph(const onnxruntime::GraphViewer& graph) {}
 
  protected:
-  virtual void CreateNewPartition(const Node& node, const std::vector<NodeIndex>& immedidate_rejected_partitions);
+  virtual void CreateNewPartition(const Node& node, const Vector<NodeIndex>& immedidate_rejected_partitions);
 
  private:
   ORT_DISALLOW_COPY_ASSIGNMENT_AND_MOVE(Partitioner);

@@ -18,7 +18,7 @@ class EliminateSlice : public RewriteRule {
  public:
   EliminateSlice() noexcept : RewriteRule("EliminateSlice") {}
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
+  Vector<std::string> TargetOpTypes() const noexcept override {
     return {"Slice"};
   }
 

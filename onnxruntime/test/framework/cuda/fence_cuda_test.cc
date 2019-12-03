@@ -32,7 +32,7 @@ using namespace onnxruntime::logging;
 namespace onnxruntime {
 namespace test {
 
-typedef std::vector<onnxruntime::NodeArg*> ArgMap;
+typedef Vector<onnxruntime::NodeArg*> ArgMap;
 
 class FenceCudaTestInferenceSession : public InferenceSession {
  public:
@@ -57,7 +57,7 @@ static common::Status LoadInferenceSessionFromModel(FenceCudaTestInferenceSessio
 
 #define CREATE_INITIALIZER_FUNC(T, PROTO_DATATYPE, PROTO_ADD_DATA)                                          \
   onnxruntime::NodeArg& CreateInitializer(onnxruntime::Graph& graph, const std::string& name,               \
-                                          const std::vector<int64_t>& shape, const std::vector<T>& value) { \
+                                          const Vector<int64_t>& shape, const Vector<T>& value) { \
     ONNX_NAMESPACE::TensorProto tensor_proto;                                                               \
     for (auto dim : shape) tensor_proto.add_dims(dim);                                                      \
     tensor_proto.set_data_type(PROTO_DATATYPE);                                                             \
@@ -84,7 +84,7 @@ TEST(CUDAFenceTests, DISABLED_PartOnCPU) {
   onnxruntime::NodeArg z_def("Z", &tensor_float);
   onnxruntime::NodeArg out_def("Out", &tensor_float);
 
-  auto& w_def = CreateInitializer(graph, "W", std::vector<int64_t>({2, 2}), std::vector<float>({-1, 2, 3, -4}));
+  auto& w_def = CreateInitializer(graph, "W", Vector<int64_t>({2, 2}), Vector<float>({-1, 2, 3, -4}));
 
   graph.AddNode("node1", "MatMul", "MatMul operator", ArgMap{&w_def, &x1_def}, ArgMap{&y_def})
       .SetExecutionProviderType(onnxruntime::kCudaExecutionProvider);
@@ -124,7 +124,7 @@ TEST(CUDAFenceTests, DISABLED_PartOnCPU) {
   ASSERT_TRUE(1 == CountCopyNodes(graph));
 
   vector<OrtValue> outputs;
-  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, std::vector<std::string>{"Out"}, &outputs);
+  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Out"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();
   EXPECT_EQ(output.Shape(), shape);
@@ -143,7 +143,7 @@ TEST(CUDAFenceTests, TileWithInitializer) {
   tensor_float.mutable_tensor_type()->set_elem_type(TensorProto_DataType_FLOAT);
   onnxruntime::NodeArg x1_def("X1", &tensor_float);
   onnxruntime::NodeArg y_def("Y", &tensor_float);
-  auto& tile_repeat_def = CreateInitializer(graph, "tile_repeat", std::vector<int64_t>({2}), std::vector<int64_t>({1, 2}));
+  auto& tile_repeat_def = CreateInitializer(graph, "tile_repeat", Vector<int64_t>({2}), Vector<int64_t>({1, 2}));
 
   graph.AddNode("node1", "Tile", "Tile operator", ArgMap{&x1_def, &tile_repeat_def}, ArgMap{&y_def})
       .SetExecutionProviderType(onnxruntime::kCudaExecutionProvider);
@@ -176,7 +176,7 @@ TEST(CUDAFenceTests, TileWithInitializer) {
   ASSERT_TRUE(session.Initialize().IsOK());
 
   vector<OrtValue> outputs;
-  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, std::vector<std::string>{"Y"}, &outputs);
+  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Y"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();
   EXPECT_EQ(output.Shape(), TensorShape({2, 4}));
@@ -191,7 +191,7 @@ TEST(CUDAFenceTests, TileWithInitializer) {
 TEST(CUDAFenceTests, TileWithComputedInput) {
   std::unordered_map<std::string, int> domain_to_version;
   domain_to_version[onnxruntime::kOnnxDomain] = 7;
-  std::unique_ptr<onnxruntime::Model> model = onnxruntime::make_unique<onnxruntime::Model>("test", true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), domain_to_version, std::vector<ONNX_NAMESPACE::FunctionProto>(),
+  std::unique_ptr<onnxruntime::Model> model = onnxruntime::make_unique<onnxruntime::Model>("test", true, ModelMetaData(), IOnnxRuntimeOpSchemaRegistryList(), domain_to_version, Vector<ONNX_NAMESPACE::FunctionProto>(),
                                                                                            DefaultLoggingManager().DefaultLogger());
   onnxruntime::Graph& graph = model->MainGraph();
   TypeProto tensor_float;
@@ -202,7 +202,7 @@ TEST(CUDAFenceTests, TileWithComputedInput) {
   onnxruntime::NodeArg y_def("Y", &tensor_float);
   onnxruntime::NodeArg s_def("S", &tensor_int64);
   onnxruntime::NodeArg out_def("Out", &tensor_float);
-  auto& w_def = CreateInitializer(graph, "W", std::vector<int64_t>({2, 2}), std::vector<float>({-1, 2, 3, -4}));
+  auto& w_def = CreateInitializer(graph, "W", Vector<int64_t>({2, 2}), Vector<float>({-1, 2, 3, -4}));
 
   graph.AddNode("node1", "MatMul", "MatMul operator", ArgMap{&x1_def, &w_def}, ArgMap{&y_def})
       .SetExecutionProviderType(onnxruntime::kCudaExecutionProvider);
@@ -239,7 +239,7 @@ TEST(CUDAFenceTests, TileWithComputedInput) {
   ASSERT_TRUE(session.Initialize().IsOK());
 
   vector<OrtValue> outputs;
-  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, std::vector<std::string>{"Out"}, &outputs);
+  session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Out"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();
   EXPECT_EQ(output.Shape(), TensorShape({4, 4}));

@@ -19,7 +19,7 @@ class GatherNDBase {
     uint64_t bytes_to_copy;
     uint64_t element_bytes;
     uint64_t element_to_copy;
-    std::vector<uint64_t> element_offsets;
+    Vector<uint64_t> element_offsets;
 
     Prepare() : input_base(nullptr),
                 input_str_base(nullptr),

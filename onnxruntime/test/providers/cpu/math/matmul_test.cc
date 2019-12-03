@@ -10,16 +10,16 @@ namespace test {
 template <typename T>
 struct MatMulTestData {
   std::string name;
-  std::vector<int64_t> input0_dims;
-  std::vector<int64_t> input1_dims;
-  std::vector<int64_t> expected_dims;
-  std::vector<T> expected_vals;
+  Vector<int64_t> input0_dims;
+  Vector<int64_t> input1_dims;
+  Vector<int64_t> expected_dims;
+  Vector<T> expected_vals;
 };
 
 template <typename T>
-std::vector<MatMulTestData<T>> GenerateTestCases()
+Vector<MatMulTestData<T>> GenerateTestCases()
 {
-  std::vector<MatMulTestData<T>> test_cases;
+  Vector<MatMulTestData<T>> test_cases;
 
   test_cases.push_back(
     {"test padding and broadcast",
@@ -83,16 +83,16 @@ std::vector<MatMulTestData<T>> GenerateTestCases()
 template <typename T>
 void RunMatMulTest(int32_t opset_version = 7)
 {
-  std::vector<T> common_input_vals{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+  Vector<T> common_input_vals{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
   for (auto t : GenerateTestCases<T>()) {
     OpTester test("MatMul", opset_version);
 
     int64_t size0 = TensorShape::ReinterpretBaseType(t.input0_dims).SizeHelper(0, t.input0_dims.size());
-    std::vector<T> input0_vals(common_input_vals.cbegin(), common_input_vals.cbegin() + size0);
+    Vector<T> input0_vals(common_input_vals.cbegin(), common_input_vals.cbegin() + size0);
     test.AddInput<T>("A", t.input0_dims, input0_vals);
 
     int64_t size1 = TensorShape::ReinterpretBaseType(t.input1_dims).SizeHelper(0, t.input1_dims.size());
-    std::vector<T> input1_vals(common_input_vals.cbegin(), common_input_vals.cbegin() + size1);
+    Vector<T> input1_vals(common_input_vals.cbegin(), common_input_vals.cbegin() + size1);
     test.AddInput<T>("B", t.input1_dims, input1_vals);
 
     test.AddOutput<T>("Y", t.expected_dims, t.expected_vals);

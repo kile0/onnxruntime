@@ -131,8 +131,8 @@ class UpsampleBase {
   float extrapolation_value_;
   bool use_nearest2x_optimization_ = false;
 
-  std::vector<float> scales_;
-  std::vector<float> roi_;
+  Vector<float> scales_;
+  Vector<float> roi_;
   bool scales_cached_;
   bool roi_cached_;
   bool need_roi_input_;
@@ -263,7 +263,7 @@ class UpsampleBase {
     }
   }
 
-  void  ScalesValidation(const std::vector<float>& scales, const UpsampleMode mode) const {
+  void  ScalesValidation(const Vector<float>& scales, const UpsampleMode mode) const {
     if (!is_resize_) {
       for (auto& scale : scales) {
         ORT_ENFORCE(scale >= 1, "Scale value should be greater than or equal to 1.");
@@ -282,7 +282,7 @@ class UpsampleBase {
     }
   }
 
-  void ParseScalesData(const Tensor* scale, std::vector<float>& scales) const {
+  void ParseScalesData(const Tensor* scale, Vector<float>& scales) const {
     const auto* scale_data = scale->template Data<float>();
     int64_t scales_size = scale->Shape().Size();
     ORT_ENFORCE(scales_size > 0, "scales size should be greater than 0.");
@@ -293,7 +293,7 @@ class UpsampleBase {
     ScalesValidation(scales, mode_);
   }
 
-  void ParseRoiData(const Tensor* roi, std::vector<float>& roi_array) const {
+  void ParseRoiData(const Tensor* roi, Vector<float>& roi_array) const {
     int64_t roi_size = roi->Shape().Size();
     if (roi_size > 0) {
       roi_array.resize(roi_size);
@@ -301,18 +301,18 @@ class UpsampleBase {
     }
   }
 
-  void ParseScalesDataFromOutputSize(const std::vector<int64_t>& output_dims,
-                                     const std::vector<int64_t>& intput_dims,
-                                     std::vector<float>& scales) const {
+  void ParseScalesDataFromOutputSize(const Vector<int64_t>& output_dims,
+                                     const Vector<int64_t>& intput_dims,
+                                     Vector<float>& scales) const {
     for (size_t i = 0, end = intput_dims.size(); i < end; ++i) {
       scales[i] = static_cast<float>(output_dims[i]) / static_cast<float>(intput_dims[i]);
     }
     ScalesValidation(scales, mode_);
   }
 
-  void ComputeOutputShape(const std::vector<float>& scales,
-                          const std::vector<int64_t>& input_dims,
-                          std::vector<int64_t>& output_dims) const {
+  void ComputeOutputShape(const Vector<float>& scales,
+                          const Vector<int64_t>& input_dims,
+                          Vector<int64_t>& output_dims) const {
     for (std::size_t i = 0; i < input_dims.size(); i++) {
       output_dims[i] = static_cast<int64_t>(scales[i] * input_dims[i]);
     }
@@ -327,8 +327,8 @@ class Upsample : public UpsampleBase, public OpKernel {
 
   Status Compute(OpKernelContext* context) const override;
 
-  Status BaseCompute(OpKernelContext* context, const std::vector<float>& roi, const std::vector<float>& scales,
-                     const std::vector<int64_t>& output_dims) const;
+  Status BaseCompute(OpKernelContext* context, const Vector<float>& roi, const Vector<float>& scales,
+                     const Vector<int64_t>& output_dims) const;
 };
 
 }  // namespace onnxruntime

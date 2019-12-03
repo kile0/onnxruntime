@@ -18,7 +18,7 @@ using namespace std;
 
 namespace onnxruntime {
 namespace test {
-typedef std::vector<onnxruntime::NodeArg*> ArgMap;
+typedef Vector<onnxruntime::NodeArg*> ArgMap;
 
 std::shared_ptr<onnxruntime::Model> DummyGraphWithClip() {
   auto model = std::make_shared<onnxruntime::Model>("test", false, DefaultLoggingManager().DefaultLogger());
@@ -81,7 +81,7 @@ TEST_F(ExecutionFrameTest, TensorAllocationTest) {
   int start_index = frame.GetNodeOffset(node->Index());
   EXPECT_EQ(start_index, 0);
 
-  TensorShape shape(std::vector<int64_t>{2, 3});
+  TensorShape shape(Vector<int64_t>{2, 3});
   OrtValue& mlvalue0 = *frame.GetMutableNodeInputOrOutputMLValue(start_index);
   status = frame.AllocateMLValueTensorSelfOwnBuffer(mlvalue0, start_index, DataTypeImpl::GetType<float>(),
                                                     execution_providers.Get(xp_typ)->GetAllocator(0, OrtMemTypeDefault)->Info(), shape);
@@ -94,7 +94,7 @@ TEST_F(ExecutionFrameTest, TensorAllocationTest) {
   EXPECT_EQ(p_tensor->DataType(), DataTypeImpl::GetType<float>());
 
   //test share memory from tensor
-  TensorShape shape2(std::vector<int64_t>{3, 2});
+  TensorShape shape2(Vector<int64_t>{3, 2});
   OrtValue& mlvalue1 = *frame.GetMutableNodeInputOrOutputMLValue(start_index + 1);
   status = frame.AllocateMLValueTensorPreAllocateBuffer(mlvalue1,
                                                         start_index,
@@ -124,7 +124,7 @@ TEST_F(ExecutionFrameTest, FeedInDataTest) {
   graph.Resolve();
   auto element_type = DataTypeImpl::GetType<float>();
   TensorShape shape({3, 2});
-  std::vector<float> fdata(static_cast<size_t>(shape.Size()));
+  Vector<float> fdata(static_cast<size_t>(shape.Size()));
   //create fake ml value with owned buffer.
   OrtMemoryInfo cpuinfo(kCpuExecutionProvider, OrtDeviceAllocator);
   std::unique_ptr<Tensor> p_tensor = onnxruntime::make_unique<Tensor>(element_type, shape, fdata.data(), cpuinfo);
@@ -212,14 +212,14 @@ TEST_F(ExecutionFrameTest, MemPatternTest) {
 
   OrtValue v1, v2, v3;
   CreateMLValue<float>(cpu_allocator,
-                       std::vector<int64_t>{1, 2},
-                       std::vector<float>{1.0f, 1.0f}, &v1);
+                       Vector<int64_t>{1, 2},
+                       Vector<float>{1.0f, 1.0f}, &v1);
   CreateMLValue<float>(cpu_allocator,
-                       std::vector<int64_t>{2, 2},
-                       std::vector<float>(4, 1.0f), &v2);
+                       Vector<int64_t>{2, 2},
+                       Vector<float>(4, 1.0f), &v2);
   CreateMLValue<float>(cpu_allocator,
-                       std::vector<int64_t>{2, 3},
-                       std::vector<float>(6, 1.0f), &v3);
+                       Vector<int64_t>{2, 3},
+                       Vector<float>(6, 1.0f), &v3);
 
   std::unique_ptr<SequentialExecutionPlan> p_seq_exec_plan = onnxruntime::make_unique<SequentialExecutionPlan>();
   SequentialPlannerContext context(ExecutionMode::ORT_SEQUENTIAL);
@@ -239,19 +239,19 @@ TEST_F(ExecutionFrameTest, MemPatternTest) {
   status = frame.AllocateMLValueTensorSelfOwnBuffer(mlvalue3, 3,
                                                     DataTypeImpl::GetType<float>(),
                                                     cpu_allocator->Info(),
-                                                    TensorShape(std::vector<int64_t>{2, 2}));
+                                                    TensorShape(Vector<int64_t>{2, 2}));
   EXPECT_TRUE(status.IsOK()) << status.ErrorMessage();
 
   status = frame.AllocateMLValueTensorSelfOwnBuffer(mlvalue4, 4,
                                                     DataTypeImpl::GetType<float>(),
                                                     cpu_allocator->Info(),
-                                                    TensorShape(std::vector<int64_t>{2, 3}));
+                                                    TensorShape(Vector<int64_t>{2, 3}));
   EXPECT_TRUE(status.IsOK()) << status.ErrorMessage();
 
   status = frame.AllocateMLValueTensorSelfOwnBuffer(mlvalue5, 5,
                                                     DataTypeImpl::GetType<float>(),
                                                     cpu_allocator->Info(),
-                                                    TensorShape(std::vector<int64_t>{2, 3}));
+                                                    TensorShape(Vector<int64_t>{2, 3}));
   EXPECT_TRUE(status.IsOK()) << status.ErrorMessage();
 
   MemoryPatternGroup pattern;
@@ -278,8 +278,8 @@ TEST(ExecutionFrameTestWithoutSessionState, BadModelInvalidDimParamUsage) {
   ASSERT_TRUE((st = session_object.Load("testdata/invalid_dim_param_value_repetition.onnx")).IsOK()) << st;
   ASSERT_TRUE((st = session_object.Initialize()).IsOK()) << st;
 
-  std::vector<int64_t> dims_X = {10, 6};
-  std::vector<float> values_X;
+  Vector<int64_t> dims_X = {10, 6};
+  Vector<float> values_X;
   values_X.reserve(60);
   for (int i = 0; i < 60; ++i) {
     values_X.push_back(float(i));
@@ -291,9 +291,9 @@ TEST(ExecutionFrameTestWithoutSessionState, BadModelInvalidDimParamUsage) {
   feeds.insert(std::make_pair("X", ml_value));
 
   // prepare outputs
-  std::vector<std::string> output_names;
+  Vector<std::string> output_names;
   output_names.push_back("Y");
-  std::vector<OrtValue> fetches;
+  Vector<OrtValue> fetches;
 
   // Now run
   RunOptions run_options;

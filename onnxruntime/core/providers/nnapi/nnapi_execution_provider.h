@@ -12,14 +12,14 @@ class NnapiExecutionProvider : public IExecutionProvider {
   NnapiExecutionProvider();
   virtual ~NnapiExecutionProvider();
 
-  std::vector<std::unique_ptr<ComputeCapability>>
+  Vector<std::unique_ptr<ComputeCapability>>
   GetCapability(const onnxruntime::GraphViewer& graph,
-                const std::vector<const KernelRegistry*>& /*kernel_registries*/) const override;
-  common::Status Compile(const std::vector<onnxruntime::Node*>& fused_nodes,
-                         std::vector<NodeComputeInfo>& node_compute_funcs) override;
+                const Vector<const KernelRegistry*>& /*kernel_registries*/) const override;
+  common::Status Compile(const Vector<onnxruntime::Node*>& fused_nodes,
+                         Vector<NodeComputeInfo>& node_compute_funcs) override;
 
  private:
   std::unordered_map<std::string, std::unique_ptr<dnn::Model>> dnn_models_;
-  std::vector<std::vector<int>> GetSupportedNodes(const ONNX_NAMESPACE::ModelProto& model_proto) const;
+  Vector<Vector<int>> GetSupportedNodes(const ONNX_NAMESPACE::ModelProto& model_proto) const;
 };
 }  // namespace onnxruntime

@@ -14,13 +14,13 @@ class FixedCountFinishCallbackImpl {
   onnxruntime::OrtMutex m_;
   ORT_EVENT finish_event_;
   bool failed = false;
-  std::vector<std::shared_ptr<T>> results_;
+  Vector<std::shared_ptr<T>> results_;
 
  public:
   FixedCountFinishCallbackImpl(const FixedCountFinishCallbackImpl&) = delete;
   FixedCountFinishCallbackImpl& operator=(const FixedCountFinishCallbackImpl&) = delete;
 
-  const std::vector<std::shared_ptr<T>>& getResults() const {
+  const Vector<std::shared_ptr<T>>& getResults() const {
     return results_;
   }
 

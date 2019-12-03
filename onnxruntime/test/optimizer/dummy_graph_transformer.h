@@ -36,8 +36,8 @@ class DummyRewriteRule : public RewriteRule {
     return rewrite_rule_invoked_;
   }
 
-  std::vector<std::string> TargetOpTypes() const noexcept override {
-    return std::vector<std::string>();
+  Vector<std::string> TargetOpTypes() const noexcept override {
+    return Vector<std::string>();
   }
 
  private:

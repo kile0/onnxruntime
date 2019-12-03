@@ -21,12 +21,12 @@ public:
 
         const MLOperatorEdgeDescription inputEdgeDescription = kernelInfo.GetInputEdgeDescription(0);
 
-        const std::vector<uint32_t> originalSizes = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(0);
+        const Vector<uint32_t> originalSizes = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(0);
         ML_CHECK_VALID_ARGUMENT(m_permutations.size() == originalSizes.size());
 
         // Calculate strides from original shape.
         ML_CHECK_VALID_ARGUMENT(!originalSizes.empty());
-        std::vector<uint32_t> inputStrides(originalSizes.size());
+        Vector<uint32_t> inputStrides(originalSizes.size());
         inputStrides.back() = 1;
         for (int i = gsl::narrow_cast<int>(inputStrides.size()) - 2; i >= 0; i--)
         {
@@ -35,8 +35,8 @@ public:
 
         const int leadingDims = gsl::narrow_cast<int32_t>(m_inputTensorDescs.front().GetDimensionCount() - originalSizes.size());
 
-        std::vector<uint32_t> sizes(m_inputTensorDescs.front().GetDimensionCount());
-        std::vector<uint32_t> strides(m_inputTensorDescs.front().GetDimensionCount());
+        Vector<uint32_t> sizes(m_inputTensorDescs.front().GetDimensionCount());
+        Vector<uint32_t> strides(m_inputTensorDescs.front().GetDimensionCount());
 
         // Fill leading tensor desc sizes/strides with defaults.
         for (int dimDML = 0; dimDML < leadingDims; ++dimDML)
@@ -60,8 +60,8 @@ public:
         m_inputTensorDescs.front() = TensorDesc(m_inputTensorDescs.front().GetDmlDataType(), sizes, strides, 0);
         m_outputTensorDescs.front() = TensorDesc(m_inputTensorDescs.front().GetDmlDataType(), sizes, std::nullopt);
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_ELEMENT_WISE_IDENTITY_OPERATOR_DESC opDesc = {};
         opDesc.InputTensor = inputDescs.data();

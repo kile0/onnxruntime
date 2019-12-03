@@ -17,7 +17,7 @@ TVM_REGISTER_GLOBAL("tvm.contrib.onnxruntime.print")
       DLTensor* Y = args[1];
 
       DLDataType dtype = X->dtype;
-      std::vector<int64_t> shape;
+      Vector<int64_t> shape;
       int64_t total_size = 1;
       for (int i = 0; i < X->ndim; ++i) {
         shape.push_back(X->shape[i]);

@@ -27,8 +27,8 @@ void KernelComputeCtx::CreateFuncComputeCtx(const NupharFuncInfo* func_info, boo
   FuncComputeCtx& func_compute_ctx = func_compute_ctx_map_.at(func_info);
 
   size_t num_input = func_info->ort_input_allocators.size();
-  std::vector<const void*>& ort_input_data = func_compute_ctx.ort_input_data;
-  std::vector<const int64_t*>& ort_input_shapes = func_compute_ctx.ort_input_shapes;
+  Vector<const void*>& ort_input_data = func_compute_ctx.ort_input_data;
+  Vector<const int64_t*>& ort_input_shapes = func_compute_ctx.ort_input_shapes;
   ort_input_data.resize(num_input);
   ort_input_shapes.resize(num_input);
 

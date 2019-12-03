@@ -25,7 +25,7 @@ namespace Dml
         return m_mergedPartition ? m_mergedPartition->GetRootMergedPartition() : this;
     }
 
-    std::vector<onnxruntime::NodeIndex>& GraphPartition::GetNodeIndices()
+    Vector<onnxruntime::NodeIndex>& GraphPartition::GetNodeIndices()
     {
         assert(this == GetRootMergedPartition());
         return m_nodeIndices;
@@ -243,7 +243,7 @@ namespace Dml
     void GetRegistrationProperties(
         const onnxruntime::GraphViewer& graph,
         const onnxruntime::Node& node,    
-        const std::vector<const onnxruntime::KernelRegistry*>& dmlRegistries,
+        const Vector<const onnxruntime::KernelRegistry*>& dmlRegistries,
         uint32_t supportedDeviceDataTypeMask, // Each bit corresponds to each DML_TENSOR_DATA_TYPE.
         const GraphNodeFactoryMap& graphNodeFactoryMap,
         _Inout_ std::unordered_map<const onnxruntime::Node*, GraphNodeProperties>& dmlNodePropertyMap,
@@ -354,12 +354,12 @@ namespace Dml
     }
 
     // Get the partitions which are inputs to the specified node and which are not finalized.
-    std::vector<GraphPartition*> GetNonFinalizedInputPartitions(
+    Vector<GraphPartition*> GetNonFinalizedInputPartitions(
         const onnxruntime::Node& node, 
         std::unordered_map<std::string, GraphPartition*>& nodeNameToPartitionMap
     )
     {
-        std::vector<GraphPartition*> inputNonFinalPartitions;
+        Vector<GraphPartition*> inputNonFinalPartitions;
 
         for (uint32_t i = 0; i < node.InputDefs().size(); ++i) 
         {
@@ -518,7 +518,7 @@ namespace Dml
             return true;
         }
 
-        const std::vector<onnxruntime::NodeIndex>& toplogicalOrder = graph.GetNodesInTopologicalOrder();
+        const Vector<onnxruntime::NodeIndex>& toplogicalOrder = graph.GetNodesInTopologicalOrder();
 
         for (size_t nodeIndex : toplogicalOrder) 
         {
@@ -542,23 +542,23 @@ namespace Dml
     //   as final, which disallows its future extensions.  This ensures that no indirect 
     //   downstream dependencies of the external output node are later merged.
     //
-    std::vector<std::unique_ptr<GraphPartition>>
+    Vector<std::unique_ptr<GraphPartition>>
     BuildPartitions(
         const onnxruntime::GraphViewer& graph,
         const GraphNodeFactoryMap& graphNodeFactoryMap,
-        const std::vector<const onnxruntime::KernelRegistry*>& registries,
+        const Vector<const onnxruntime::KernelRegistry*>& registries,
         uint32_t supportedDeviceDataTypeMask, // Each bit corresponds to each DML_TENSOR_DATA_TYPE.
         std::unordered_map<const onnxruntime::Node*, GraphNodeProperties>& graphNodePropertyMap,
         std::unordered_set<std::string>& requiredInitializerMap,
         std::function<void(const onnxruntime::Node&)> onNodeUnsupportedInGraph)
     {
         // Nodes are uniquely identified by the name of their first output argument
-        std::vector<std::unique_ptr<GraphPartition>> partitions;
+        Vector<std::unique_ptr<GraphPartition>> partitions;
         std::unordered_map<std::string, GraphPartition*> nodeNameToPartitionMap;
 
         // Get the list of node indices in toplogical order, so nodes are visited before.
         // downstream nodes consuming them.
-        const std::vector<onnxruntime::NodeIndex>& toplogicalOrder = graph.GetNodesInTopologicalOrder();
+        const Vector<onnxruntime::NodeIndex>& toplogicalOrder = graph.GetNodesInTopologicalOrder();
 
         // Construct sets with graph inputs and outputs for fast lookup later.
         std::set<std::string> graphInputs;
@@ -629,7 +629,7 @@ namespace Dml
                 continue;
             }
             
-            std::vector<GraphPartition*> inputNonFinalPartitions = GetNonFinalizedInputPartitions(node, nodeNameToPartitionMap);
+            Vector<GraphPartition*> inputNonFinalPartitions = GetNonFinalizedInputPartitions(node, nodeNameToPartitionMap);
                 
             if (inputNonFinalPartitions.empty())
             {
@@ -685,13 +685,13 @@ namespace Dml
         return partitions;
     }
 
-    std::unordered_map<const onnx::TensorProto*, std::vector<uint32_t>>
+    std::unordered_map<const onnx::TensorProto*, Vector<uint32_t>>
     GetInitializerToPartitionMap(
         const onnxruntime::GraphViewer& graph,
         gsl::span<std::unique_ptr<GraphPartition>> partitions
     )
     {
-        std::unordered_map<const onnx::TensorProto*, std::vector<uint32_t>> initializerPartitionMap;
+        std::unordered_map<const onnx::TensorProto*, Vector<uint32_t>> initializerPartitionMap;
 
         for (uint32_t partitionIndex = 0; partitionIndex < gsl::narrow_cast<uint32_t>(partitions.size()); ++partitionIndex)
         {
@@ -718,23 +718,23 @@ namespace Dml
         return initializerPartitionMap;
     }
 
-    std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+    Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
     PartitionGraph(
         const onnxruntime::GraphViewer& graph,
         const GraphNodeFactoryMap& graphNodeFactoryMap,
-        const std::vector<const onnxruntime::KernelRegistry*>& registries,
+        const Vector<const onnxruntime::KernelRegistry*>& registries,
         uint32_t supportedDeviceDataTypeMask, // Each bit corresponds to each DML_TENSOR_DATA_TYPE.
         onnxruntime::KernelRegistry* registryForPartitionKernels,
         const std::string& partitionKernelPrefix
         )
     {
-        std::vector<std::unique_ptr<onnxruntime::ComputeCapability>> result;
+        Vector<std::unique_ptr<onnxruntime::ComputeCapability>> result;
 
         // Initializers needed by any graph partition
         std::unordered_set<std::string> requiredInitializerMap;
 
         std::unordered_map<const onnxruntime::Node*, GraphNodeProperties> graphNodePropertyMap;
-        std::vector<std::unique_ptr<GraphPartition>> partitions = BuildPartitions(
+        Vector<std::unique_ptr<GraphPartition>> partitions = BuildPartitions(
             graph,
             graphNodeFactoryMap, 
             registries,

@@ -81,10 +81,10 @@ namespace Dml
         InsertAllocator(m_impl->GetCpuOutputAllocator());
     }
 
-    std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+    Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
     ExecutionProvider::GetCapability(
         const onnxruntime::GraphViewer& graph,
-        const std::vector<const onnxruntime::KernelRegistry*>& kernel_registries) const
+        const Vector<const onnxruntime::KernelRegistry*>& kernel_registries) const
     {
 #ifdef ENABLE_GRAPH_COMPILATION
         return m_impl->GetCapability(graph, kernel_registries);
@@ -221,7 +221,7 @@ namespace Dml
         assert(!m_closed);
 
         bool hasInputsToBind = false;
-        std::vector<DML_BUFFER_BINDING> inputBufferBindings(inputBindings.size());
+        Vector<DML_BUFFER_BINDING> inputBufferBindings(inputBindings.size());
 
         for (gsl::index i = 0; i < inputBindings.size(); i++)
         {
@@ -263,7 +263,7 @@ namespace Dml
     {
         assert(!m_closed);
 
-        std::vector<uint32_t> shape;
+        Vector<uint32_t> shape;
 
         for (IMLOperatorTensor* tensor : inputTensors)
         {
@@ -314,15 +314,15 @@ namespace Dml
             }
         };
 
-        std::vector<DML_BUFFER_BINDING> inputBufferBindings;
+        Vector<DML_BUFFER_BINDING> inputBufferBindings;
         inputBufferBindings.reserve(inputTensors.size());
-        std::vector<DML_BINDING_DESC> inputBindings;
+        Vector<DML_BINDING_DESC> inputBindings;
         inputBindings.reserve(inputTensors.size());
         FillBindings(inputBufferBindings, inputBindings, inputTensors);
 
-        std::vector<DML_BUFFER_BINDING> outputBufferBindings;
+        Vector<DML_BUFFER_BINDING> outputBufferBindings;
         outputBufferBindings.reserve(outputTensors.size());
-        std::vector<DML_BINDING_DESC> outputBindings;
+        Vector<DML_BINDING_DESC> outputBindings;
         outputBindings.reserve(outputTensors.size());
         FillBindings(outputBufferBindings, outputBindings, outputTensors);
 
@@ -486,10 +486,10 @@ namespace Dml
         return deviceTypeMask;
     }
 
-    std::vector<std::unique_ptr<onnxruntime::ComputeCapability>>
+    Vector<std::unique_ptr<onnxruntime::ComputeCapability>>
     ExecutionProviderImpl::GetCapability(
         const onnxruntime::GraphViewer& graph,
-        const std::vector<const onnxruntime::KernelRegistry*>& registries) const
+        const Vector<const onnxruntime::KernelRegistry*>& registries) const
     {
         std::string partitionKernelPrefix = std::to_string(m_partitionKernelPrefixVal++) + "_";
         uint32_t deviceDataTypeMask = GetSuppportedDeviceDataTypeMask();
@@ -629,7 +629,7 @@ namespace Dml
         IUnknown** resources
     ) 
     {
-        std::vector<D3D12_RESOURCE_BARRIER> barriers;
+        Vector<D3D12_RESOURCE_BARRIER> barriers;
         barriers.reserve(resourceCount);
 
         for (uint32_t i = 0; i < resourceCount; ++i)

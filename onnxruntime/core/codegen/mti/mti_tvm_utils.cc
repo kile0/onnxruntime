@@ -11,7 +11,7 @@
 namespace onnxruntime {
 namespace tvm_codegen {
 
-tvm::Array<tvm::Expr> ToTvmArray(const std::vector<int64_t>& shape) {
+tvm::Array<tvm::Expr> ToTvmArray(const Vector<int64_t>& shape) {
   tvm::Array<tvm::Expr> arr;
   for (size_t i = 0; i < shape.size(); ++i) {
     arr.push_back(tvm::Expr(static_cast<int32_t>(shape[i])));
@@ -19,7 +19,7 @@ tvm::Array<tvm::Expr> ToTvmArray(const std::vector<int64_t>& shape) {
   return arr;
 }
 
-tvm::Array<tvm::Integer> ToTvmArrayInt(const std::vector<int64_t>& shape) {
+tvm::Array<tvm::Integer> ToTvmArrayInt(const Vector<int64_t>& shape) {
   tvm::Array<tvm::Integer> arr;
   for (size_t i = 0; i < shape.size(); ++i) {
     arr.push_back(shape[i]);
@@ -69,7 +69,7 @@ tvm::Tensor Rename(tvm::Tensor X, const std::string& name) {
   return X;
 }
 
-tvm::Array<tvm::Expr> SliceShape(const tvm::Array<tvm::Expr>& shape, const std::vector<int64_t>& axes) {
+tvm::Array<tvm::Expr> SliceShape(const tvm::Array<tvm::Expr>& shape, const Vector<int64_t>& axes) {
   tvm::Array<tvm::Expr> new_shape;
   for (auto axis : axes) {
     CHECK(axis < static_cast<int64_t>(shape.size()));
@@ -81,7 +81,7 @@ tvm::Array<tvm::Expr> SliceShape(const tvm::Array<tvm::Expr>& shape, const std::
 tvm::Array<tvm::Expr> SliceShapeFromDimension(const tvm::Array<tvm::Expr>& shape, int64_t axis) {
   int64_t rank = static_cast<int64_t>(shape.size());
   axis = HandleNegativeAxis(axis, rank);
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   for (auto i = axis; i < rank; ++i)
     axes.push_back(i);
   return SliceShape(shape, axes);
@@ -90,7 +90,7 @@ tvm::Array<tvm::Expr> SliceShapeFromDimension(const tvm::Array<tvm::Expr>& shape
 tvm::Array<tvm::Expr> SliceShapeToDimension(const tvm::Array<tvm::Expr>& shape, int64_t axis) {
   int64_t rank = static_cast<int64_t>(shape.size());
   axis = HandleNegativeAxis(axis, rank);
-  std::vector<int64_t> axes;
+  Vector<int64_t> axes;
   for (auto i = 0; i < axis; ++i)
     axes.push_back(i);
   return SliceShape(shape, axes);

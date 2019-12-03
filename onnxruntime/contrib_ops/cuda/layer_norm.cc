@@ -61,7 +61,7 @@ Status LayerNorm<T, U>::ComputeInternal(OpKernelContext* ctx) const {
   auto Y_data = reinterpret_cast<CudaT*>(Y->template MutableData<T>());
 
   //Mean and variance
-  std::vector<int64_t> mean_inv_std_var_dim;
+  Vector<int64_t> mean_inv_std_var_dim;
   for (int i = 0; i < static_cast<int>(x_shape.NumDimensions()); ++i) {
     if (i < axis) {
       mean_inv_std_var_dim.emplace_back(x_shape.GetDims()[i]);

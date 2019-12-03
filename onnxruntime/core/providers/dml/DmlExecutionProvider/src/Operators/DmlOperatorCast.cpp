@@ -24,8 +24,8 @@ public:
             m_zeroOperator = InitializeZeroInt64Tensor(m_outputTensorDescs[0].GetBufferSizeInBytes());
         }
 
-        std::vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
-        std::vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
+        Vector<DML_TENSOR_DESC> inputDescs = GetDmlInputDescs();
+        Vector<DML_TENSOR_DESC> outputDescs = GetDmlOutputDescs();
 
         DML_CAST_OPERATOR_DESC castDesc = {};
         castDesc.InputTensor = inputDescs.data();
@@ -38,8 +38,8 @@ public:
 
     void Compute(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
 
         // Zero the output tensor's memory for 64-bit integer emulation with strides.
         if (m_toDataType == MLOperatorTensorDataType::UInt64 || m_toDataType == MLOperatorTensorDataType::Int64)

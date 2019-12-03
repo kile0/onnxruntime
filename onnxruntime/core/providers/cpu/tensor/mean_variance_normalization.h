@@ -101,7 +101,7 @@ template <typename T>
 class MeanVarianceNormalization_1 final : public MeanVarianceNormalization_0<T> {
  public:
   MeanVarianceNormalization_1(const OpKernelInfo& info) : MeanVarianceNormalization_0<T>(info, false) {
-    std::vector<int64_t> axes;
+    Vector<int64_t> axes;
     if (!info.GetAttrs("axes", axes).IsOK()) {
       axes = {0, 2, 3};
     }

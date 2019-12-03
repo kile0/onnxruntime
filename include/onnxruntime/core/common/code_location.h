@@ -27,7 +27,7 @@ struct CodeLocation {
      @param func Usually the value of __PRETTY_FUNCTION__ or __FUNCTION__
      @param stacktrace Stacktrace from source of message.
   */
-  CodeLocation(const char* file_path, const int line, const char* func, const std::vector<std::string>& stacktrace)
+  CodeLocation(const char* file_path, const int line, const char* func, const Vector<std::string>& stacktrace)
       : file_and_path{file_path}, line_num{line}, function{func}, stacktrace(stacktrace) {
       }
 
@@ -51,7 +51,7 @@ struct CodeLocation {
   const std::string file_and_path;
   const int line_num;
   const std::string function;
-  const std::vector<std::string> stacktrace;
+  const Vector<std::string> stacktrace;
 };
 
 }  // namespace onnxruntime

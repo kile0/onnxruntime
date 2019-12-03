@@ -18,7 +18,7 @@ ONNX_OPERATOR_KERNEL_EX(Transpose,
                         Transpose);
 
 // special case acceleration using cublas matrix transpose
-static std::tuple<int, int> TryTransposeWithCublas(const std::vector<size_t>& perm, const TensorShape& input_shape) {
+static std::tuple<int, int> TryTransposeWithCublas(const Vector<size_t>& perm, const TensorShape& input_shape) {
   int M = 0;
   int N = 0;
 
@@ -65,7 +65,7 @@ Status TransposeWithCublas(cublasHandle_t cublas_handle, const Tensor& input, Te
 }
 
 Status Transpose::DoTranspose(const Transpose& kernel,
-                              const std::vector<size_t>& permutations, const Tensor& input, Tensor& output) {
+                              const Vector<size_t>& permutations, const Tensor& input, Tensor& output) {
   // special case when there is a dim value of 0 in the shape.
   if (output.Shape().Size() == 0)
     return Status::OK();
@@ -88,8 +88,8 @@ Status Transpose::DoTranspose(const Transpose& kernel,
     }
   }
 
-  const std::vector<int64_t>& input_dims = input.Shape().GetDims();
-  const std::vector<int64_t>& output_dims = output.Shape().GetDims();
+  const Vector<int64_t>& input_dims = input.Shape().GetDims();
+  const Vector<int64_t>& output_dims = output.Shape().GetDims();
 
   auto rank = input_dims.size();
   CudaAsyncBuffer<int64_t> input_strides(&kernel, rank);
@@ -114,12 +114,12 @@ Status Transpose::ComputeInternal(OpKernelContext* ctx) const {
   if (X_ptr == nullptr) return Status(common::ONNXRUNTIME, common::FAIL, "input count mismatch");
   const Tensor& X = *X_ptr;
   const TensorShape& input_shape = X.Shape();
-  const std::vector<int64_t>& input_dims = input_shape.GetDims();
+  const Vector<int64_t>& input_dims = input_shape.GetDims();
   size_t rank = input_dims.size();
 
-  std::vector<int64_t> output_dims(rank);
-  std::vector<size_t> default_perm(rank);
-  const std::vector<size_t>* p_perm = nullptr;
+  Vector<int64_t> output_dims(rank);
+  Vector<size_t> default_perm(rank);
+  const Vector<size_t>* p_perm = nullptr;
   const auto& status = ComputeOutputShape(X, output_dims, default_perm, p_perm);
   if (!status.IsOK())
     return status;

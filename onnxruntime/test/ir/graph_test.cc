@@ -135,8 +135,8 @@ TEST(GraphTraversalTest, ReverseDFS) {
    *                     |
    *                  SinkNode
   */
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto tensor_int32;
   tensor_int32.mutable_tensor_type()->set_elem_type(TensorProto_DataType_INT32);
@@ -177,7 +177,7 @@ TEST(GraphTraversalTest, ReverseDFS) {
   graph.RemoveEdge(node_1.Index(), node_3.Index(), 0, 0);
   graph.AddEdge(node_1.Index(), node_3.Index(), 0, 0);
 
-  std::vector<const Node*> from;
+  Vector<const Node*> from;
   for (auto& node : graph.Nodes()) {
     if (node.OutputEdgesBegin() == node.OutputEdgesEnd()) {
       // This is a leaf node.
@@ -185,7 +185,7 @@ TEST(GraphTraversalTest, ReverseDFS) {
     }
   }
 
-  std::vector<std::string> enter_leave_sequence;
+  Vector<std::string> enter_leave_sequence;
 
   struct NodeCompareName {
     bool operator()(const Node* n1, const Node* n2) const {
@@ -224,8 +224,8 @@ TEST(ResolvingGraphTest, GraphConstruction_VerifyNoDuplicateName) {
 
   EXPECT_EQ("graph_1", graph.Name());
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   // INT32 vector.
   TypeProto output_type;
@@ -255,8 +255,8 @@ TEST(ResolvingGraphTest, GraphConstruction_VerifyNodeAndOpMatch) {
   Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   // INT32 vector.
   TypeProto output_type;
@@ -289,10 +289,10 @@ TEST(ResolvingGraphTest, GraphConstruction_CheckIsAcyclic) {
    *                     |
    *                  SinkNode
    */
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
-  std::unordered_map<std::string, std::pair<std::vector<NodeArg*>, std::vector<NodeArg*>>>
+  std::unordered_map<std::string, std::pair<Vector<NodeArg*>, Vector<NodeArg*>>>
       expected_node_name_to_input_output_args;
 
   TypeProto tensor_int32;
@@ -378,7 +378,7 @@ TEST(ResolvingGraphTest, GraphConstruction_CheckInputNodeOrderMaintained) {
   //                 node_5 (Merge)
   //                     |
 
-  std::unordered_map<std::string, std::pair<std::vector<NodeArg*>, std::vector<NodeArg*>>>
+  std::unordered_map<std::string, std::pair<Vector<NodeArg*>, Vector<NodeArg*>>>
       expected_node_name_to_input_output_args;
 
   TypeProto tensor_int32;
@@ -395,8 +395,8 @@ TEST(ResolvingGraphTest, GraphConstruction_CheckInputNodeOrderMaintained) {
   auto& output_arg4 = graph.GetOrCreateNodeArg("node_4_out_1", &tensor_int32);
   auto& output_arg5 = graph.GetOrCreateNodeArg("node_5_out_1", &tensor_int32);
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   inputs.push_back(&input_arg1);
   outputs.push_back(&output_arg1);
@@ -478,16 +478,16 @@ TEST(ResolvingGraphTest, GraphConstruction_CheckGraphInputOutputOrderMaintained)
 
   auto& output_arg_c = graph.GetOrCreateNodeArg("node_c_out_1", &tensor_int32);
 
-  std::vector<NodeArg*> split_outputs;
-  std::vector<const NodeArg*> graph_outputs;
+  Vector<NodeArg*> split_outputs;
+  Vector<const NodeArg*> graph_outputs;
   for (int i = 0; i < 10; ++i) {
     auto arg = &graph.GetOrCreateNodeArg("node_d_out_" + std::to_string(i + 1), &tensor_int32);
     split_outputs.push_back(arg);
     graph_outputs.push_back(arg);
   }
   std::reverse(graph_outputs.begin(), graph_outputs.end());
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   inputs.push_back(&input_arg_a);
   outputs.push_back(&output_arg_a);
@@ -558,8 +558,8 @@ TEST(ResolvingGraphTest, UnusedInitializerIsIgnored) {
   Model model("UnusedInitializerIsIgnored", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto tensor_int32;
   tensor_int32.mutable_tensor_type()->set_elem_type(TensorProto_DataType_INT32);
@@ -614,8 +614,8 @@ TEST(ResolvingGraphTest, GraphConstruction_CheckIsNotAcyclic) {
 
   ASSERT_TRUE(kSchemasRegistered);
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto tensor_int32;
   tensor_int32.mutable_tensor_type()->set_elem_type(TensorProto_DataType_INT32);
@@ -675,8 +675,8 @@ TEST(ResolvingGraphTest, GraphConstruction_TypeInference) {
    *                             |
    *                          SinkNode
   */
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
 
   TypeProto tensor_int32;
   tensor_int32.mutable_tensor_type()->set_elem_type(TensorProto_DataType_INT32);
@@ -763,8 +763,8 @@ TEST(TestAddAttribute, AddTensorAttribute) {
       .SetDoc("Constant Op.")
       .Attr(kConstantValue, "constant value", AttrType::AttributeProto_AttributeType_TENSOR)
       .Output(0, "output_1", "docstr for output_1.", "tensor(int64)");
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
   Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
   TypeProto output_type;
@@ -808,8 +808,8 @@ void AddAttribute(onnxruntime::Node& p_node, const std::string& attr_name, std::
 
 // Test that output type can be inferred for ops with a type-attribute
 TEST(TypeInferenceTest, TypeAttribute) {
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
   Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
   auto& graph = model.MainGraph();
   auto& output_arg = graph.GetOrCreateNodeArg("node_1_out_1", nullptr);
@@ -830,8 +830,8 @@ void CheckTensorEltType(const TypeProto* ptype, TensorProto_DataType elt_type) {
 
 // Test that output type can be inferred for ops with variadic outputs
 TEST(TypeInferenceTest, VariadicOutput) {
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
   TypeProto tensor_type;
   tensor_type.mutable_tensor_type()->set_elem_type(TensorProto_DataType_FLOAT);
   Model model("graph_1", false, DefaultLoggingManager().DefaultLogger());
@@ -920,8 +920,8 @@ TEST(NameResolutionTest, DuplicateName) {
   weight.set_name("W");
   graph.AddInitializedTensor(weight);
 
-  std::vector<NodeArg*> inputs;
-  std::vector<NodeArg*> outputs;
+  Vector<NodeArg*> inputs;
+  Vector<NodeArg*> outputs;
   TypeProto tensor_type;
   tensor_type.mutable_tensor_type()->set_elem_type(TensorProto_DataType_FLOAT);
   tensor_type.mutable_tensor_type()->mutable_shape()->add_dim()->set_dim_value(2);

@@ -23,7 +23,7 @@ tvm::Expr VectorCombine(tvm::Expr expr1, tvm::Expr expr2);
 
 tvm::Expr Reinterpret(tvm::Type type, tvm::Expr expr);
 
-tvm::Stmt MergeStmts(std::vector<tvm::Stmt>& stmts);
+tvm::Stmt MergeStmts(Vector<tvm::Stmt>& stmts);
 
 }  // namespace tvm_codegen
 }  // namespace onnxruntime

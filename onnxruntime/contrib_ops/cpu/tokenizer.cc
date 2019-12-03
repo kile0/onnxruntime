@@ -24,20 +24,20 @@ class Tokenizer final : public OpKernel {
 
  private:
   Status CharTokenize(OpKernelContext* context, size_t N, size_t C,
-                      const std::vector<int64_t>& input_dims) const;
+                      const Vector<int64_t>& input_dims) const;
 
   Status SeparatorExpressionTokenizer(OpKernelContext* context, size_t N, size_t C,
-                                      const std::vector<int64_t>& input_dims) const;
+                                      const Vector<int64_t>& input_dims) const;
 
   Status TokenExpression(OpKernelContext* ctx,
                          size_t N, size_t C,
-                         const std::vector<int64_t>& input_dims) const;
+                         const Vector<int64_t>& input_dims) const;
 
   bool mark_{false};
   std::string pad_value_;
   int64_t mincharnum_{0};
   bool char_tokenezation_{false};
-  std::vector<std::unique_ptr<re2::RE2>> separators_;
+  Vector<std::unique_ptr<re2::RE2>> separators_;
   std::unique_ptr<re2::RE2> regex_;
 };
 
@@ -72,7 +72,7 @@ Tokenizer::Tokenizer(const OpKernelInfo& info) : OpKernel(info) {
   ORT_ENFORCE(mincharnum_ > 0, "attribute mincharnum must have a positive value");
 
   // Optional attributes either or
-  std::vector<std::string> separators;
+  Vector<std::string> separators;
   std::string tokenexp;
   status = info.GetAttrs("separators", separators);
   if (!status.IsOK()) {
@@ -117,7 +117,7 @@ Tokenizer::Tokenizer(const OpKernelInfo& info) : OpKernel(info) {
 }
 
 Status Tokenizer::CharTokenize(OpKernelContext* ctx, size_t N, size_t C,
-                               const std::vector<int64_t>& input_dims) const {
+                               const Vector<int64_t>& input_dims) const {
   // With char tokenzation we get as many tokens as the number of
   // utf8 characters in the string. So for every string we calculate its character(utf8) length
   // add padding and add start/end test separators if necessary
@@ -138,7 +138,7 @@ Status Tokenizer::CharTokenize(OpKernelContext* ctx, size_t N, size_t C,
     ++curr_input;
   }
 
-  std::vector<int64_t> output_dims(input_dims);
+  Vector<int64_t> output_dims(input_dims);
   // Check if we have no output due to apparently empty strings input.
   if (max_tokens == 0) {
     output_dims.push_back(0);
@@ -194,9 +194,9 @@ Status Tokenizer::CharTokenize(OpKernelContext* ctx, size_t N, size_t C,
 
 Status Tokenizer::SeparatorExpressionTokenizer(OpKernelContext* ctx,
                                                size_t N, size_t C,
-                                               const std::vector<int64_t>& input_dims) const {
+                                               const Vector<int64_t>& input_dims) const {
   using namespace re2;
-  std::vector<std::vector<StringPiece>> rows;
+  Vector<Vector<StringPiece>> rows;
   rows.reserve(N * C);
 
   // We do not constraint the search to match
@@ -219,10 +219,10 @@ Status Tokenizer::SeparatorExpressionTokenizer(OpKernelContext* ctx,
                     "Input string contains invalid utf8 chars: " + s);
     }
 
-    std::vector<StringPiece> row{s};
+    Vector<StringPiece> row{s};
 
     for (const auto& sep : separators_) {
-      std::vector<StringPiece> tokens;
+      Vector<StringPiece> tokens;
       for (const auto& text : row) {
         const auto end_pos = text.length();
         size_t start_pos = 0;
@@ -277,7 +277,7 @@ Status Tokenizer::SeparatorExpressionTokenizer(OpKernelContext* ctx,
     ++curr_input;
   }
 
-  std::vector<int64_t> output_dims(input_dims);
+  Vector<int64_t> output_dims(input_dims);
   // Check if we have no output due to either empty input
   // everything is a separator
   if (max_tokens == 0) {
@@ -335,11 +335,11 @@ Status Tokenizer::SeparatorExpressionTokenizer(OpKernelContext* ctx,
 
 Status Tokenizer::TokenExpression(OpKernelContext* ctx,
                                   size_t N, size_t C,
-                                  const std::vector<int64_t>& input_dims) const {
+                                  const Vector<int64_t>& input_dims) const {
   using namespace re2;
   // Represents a token that will be output after
   // first is the index, second is the size;
-  std::vector<std::vector<StringPiece>> tokens;
+  Vector<Vector<StringPiece>> tokens;
   tokens.reserve(N * C);
 
   size_t max_tokens = 0;
@@ -401,7 +401,7 @@ Status Tokenizer::TokenExpression(OpKernelContext* ctx,
   }
 
   // Check for empty output
-  std::vector<int64_t> output_dims(input_dims);
+  Vector<int64_t> output_dims(input_dims);
   // Check if we have no output due to either empty input
   // everything is a separator
   if (max_tokens == 0) {
@@ -486,7 +486,7 @@ Status Tokenizer::Compute(OpKernelContext* ctx) const {
   // Empty input
   Status s;
   if (input_shape.Size() == 0) {
-    std::vector<int64_t> output_dims;
+    Vector<int64_t> output_dims;
     if (input_dims.size() == 2) {
       output_dims.push_back(input_dims[0]);
     }

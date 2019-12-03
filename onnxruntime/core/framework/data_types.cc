@@ -913,8 +913,8 @@ ORT_REGISTER_PRIM_TYPE(uint64_t);
 ORT_REGISTER_PRIM_TYPE(MLFloat16);
 ORT_REGISTER_PRIM_TYPE(BFloat16);
 
-const std::vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorExceptHalfTypes() {
-  static std::vector<MLDataType> all_fixed_size_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorExceptHalfTypes() {
+  static Vector<MLDataType> all_fixed_size_tensor_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>(),
        DataTypeImpl::GetTensorType<int64_t>(),
@@ -930,16 +930,16 @@ const std::vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorExceptHalfTypes()
   return all_fixed_size_tensor_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllIEEEFloatTensorExceptHalfTypes() {
-  static std::vector<MLDataType> all_IEEE_float_tensor_except_half_types =
+const Vector<MLDataType>& DataTypeImpl::AllIEEEFloatTensorExceptHalfTypes() {
+  static Vector<MLDataType> all_IEEE_float_tensor_except_half_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>()};
 
   return all_IEEE_float_tensor_except_half_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllIEEEFloatTensorTypes() {
-  static std::vector<MLDataType> all_IEEE_float_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllIEEEFloatTensorTypes() {
+  static Vector<MLDataType> all_IEEE_float_tensor_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>(),
        DataTypeImpl::GetTensorType<MLFloat16>()};
@@ -947,8 +947,8 @@ const std::vector<MLDataType>& DataTypeImpl::AllIEEEFloatTensorTypes() {
   return all_IEEE_float_tensor_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorTypes() {
-  static std::vector<MLDataType> all_fixed_size_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorTypes() {
+  static Vector<MLDataType> all_fixed_size_tensor_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>(),
        DataTypeImpl::GetTensorType<int64_t>(),
@@ -966,8 +966,8 @@ const std::vector<MLDataType>& DataTypeImpl::AllFixedSizeTensorTypes() {
   return all_fixed_size_tensor_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllTensorTypes() {
-  static std::vector<MLDataType> all_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllTensorTypes() {
+  static Vector<MLDataType> all_tensor_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>(),
        DataTypeImpl::GetTensorType<int64_t>(),
@@ -986,8 +986,8 @@ const std::vector<MLDataType>& DataTypeImpl::AllTensorTypes() {
   return all_tensor_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllSequenceTensorTypes() {
-  static std::vector<MLDataType> all_sequence_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllSequenceTensorTypes() {
+  static Vector<MLDataType> all_sequence_tensor_types =
       {DataTypeImpl::GetSequenceTensorType<float>(),
        DataTypeImpl::GetSequenceTensorType<double>(),
        DataTypeImpl::GetSequenceTensorType<int64_t>(),
@@ -1006,8 +1006,8 @@ const std::vector<MLDataType>& DataTypeImpl::AllSequenceTensorTypes() {
   return all_sequence_tensor_types;
 }
 
-const std::vector<MLDataType>& DataTypeImpl::AllNumericTensorTypes() {
-  static std::vector<MLDataType> all_numeric_size_tensor_types =
+const Vector<MLDataType>& DataTypeImpl::AllNumericTensorTypes() {
+  static Vector<MLDataType> all_numeric_size_tensor_types =
       {DataTypeImpl::GetTensorType<float>(),
        DataTypeImpl::GetTensorType<double>(),
        DataTypeImpl::GetTensorType<int64_t>(),

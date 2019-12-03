@@ -44,7 +44,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     KernelDefBuilder()
         .TypeConstraint("S", DataTypeImpl::AllSequenceTensorTypes())
         .TypeConstraint("T", DataTypeImpl::AllTensorTypes())
-        .TypeConstraint("I", std::vector<MLDataType>{
+        .TypeConstraint("I", Vector<MLDataType>{
                                  DataTypeImpl::GetTensorType<int32_t>(),
                                  DataTypeImpl::GetTensorType<int64_t>()}),
     SequenceAt);
@@ -177,7 +177,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     11,
     KernelDefBuilder()
         .TypeConstraint("S", DataTypeImpl::AllSequenceTensorTypes())
-        .TypeConstraint("I", std::vector<MLDataType>{
+        .TypeConstraint("I", Vector<MLDataType>{
                                  DataTypeImpl::GetTensorType<int32_t>(),
                                  DataTypeImpl::GetTensorType<int64_t>()}),
     SequenceInsert);
@@ -245,7 +245,7 @@ ONNX_CPU_OPERATOR_KERNEL(
     11,
     KernelDefBuilder()
         .TypeConstraint("S", DataTypeImpl::AllSequenceTensorTypes())
-        .TypeConstraint("I", std::vector<MLDataType>{
+        .TypeConstraint("I", Vector<MLDataType>{
                                  DataTypeImpl::GetTensorType<int32_t>(),
                                  DataTypeImpl::GetTensorType<int64_t>()}),
     SequenceErase);
@@ -325,13 +325,13 @@ ONNX_CPU_OPERATOR_KERNEL(
     SplitToSequence,
     11,
     KernelDefBuilder().TypeConstraint("T",
-                                      std::vector<MLDataType>{
+                                      Vector<MLDataType>{
                                           DataTypeImpl::GetTensorType<float>(),
                                           DataTypeImpl::GetTensorType<double>(),
                                           DataTypeImpl::GetTensorType<int32_t>(),
                                           DataTypeImpl::GetTensorType<std::string>()})
         .TypeConstraint("S", DataTypeImpl::AllSequenceTensorTypes())
-        .TypeConstraint("I", std::vector<MLDataType>{
+        .TypeConstraint("I", Vector<MLDataType>{
                                  DataTypeImpl::GetTensorType<int32_t>(),
                                  DataTypeImpl::GetTensorType<int64_t>()}),
     SplitToSequence);
@@ -366,7 +366,7 @@ Status SplitToSequence::PrepareForCompute(const TensorShape& input_shape, int64_
                                           int64_t& num_outputs, int64_t& axis, int& before_dims,
                                           int& after_dims_including_split_axis, int& after_dims_excluding_split,
                                           bool& is_uneven_split, int& num_remaining_splits,
-                                          std::vector<int64_t>& split_sizes) const {
+                                          Vector<int64_t>& split_sizes) const {
   auto& input_dims = input_shape.GetDims();
   const auto num_dimensions = gsl::narrow_cast<int64_t>(input_shape.NumDimensions());
   axis = HandleNegativeAxis(axis_, num_dimensions);  // handle negative and enforce axis is valid
@@ -394,7 +394,7 @@ Status SplitToSequence::PrepareForCompute(const TensorShape& input_shape, int64_
       // populate split_sizes with the same size for each output
       num_outputs = split_dim_size;
       // https://github.com/onnx/onnx/issues/2396
-      split_sizes = std::vector<int64_t>(static_cast<size_t>(num_outputs), DEFAULT_LENGTH_EACH_OUTPUT_);
+      split_sizes = Vector<int64_t>(static_cast<size_t>(num_outputs), DEFAULT_LENGTH_EACH_OUTPUT_);
     } else {
       auto split_size_sum = std::accumulate(split_sizes.cbegin(), split_sizes.cend(), 0LL);
       if (split_size_sum != split_dim_size) {
@@ -432,7 +432,7 @@ static int64_t GetScalarSplitInput(const Tensor& tensor) {
   return retval;
 }
 
-static void GetSplitSizesInput(const Tensor& tensor, std::vector<int64_t>& split_sizes) {
+static void GetSplitSizesInput(const Tensor& tensor, Vector<int64_t>& split_sizes) {
   auto num_elems = tensor.Shape().Size();
   split_sizes.reserve(num_elems);
   if (tensor.IsDataType<int32_t>()) {
@@ -459,7 +459,7 @@ Status SplitToSequence::ComputeImpl(OpKernelContext& context, const Tensor& inpu
   bool is_split_input_scalar = false;
   bool is_uneven_split = false;
   int num_remaining_splits = 0;
-  std::vector<int64_t> split_sizes;
+  Vector<int64_t> split_sizes;
 
   // figure out split_scalar or split_sizes
   if (p_split_input) {
@@ -495,7 +495,7 @@ Status SplitToSequence::ComputeImpl(OpKernelContext& context, const Tensor& inpu
 
   // copy dimensions so we can update the selected axis in place
   auto& input_dims = input_shape.GetDims();
-  std::vector<int64_t> output_dimensions{input_dims};
+  Vector<int64_t> output_dimensions{input_dims};
 
   int64_t input_offset = 0;
   const T* input_data = input.template Data<T>();
@@ -531,7 +531,7 @@ Status SplitToSequence::ComputeImpl(OpKernelContext& context, const Tensor& inpu
 
     // if keep_dims = 0, reshape the tensor by dropping the dimension corresponding to 'axis'
     if (use_keep_dims && keepdims_ == 0) {
-      std::vector<int64_t> new_dims;
+      Vector<int64_t> new_dims;
       new_dims.reserve(output_dimensions.size() - 1);
       for (int64_t idx = 0, end = static_cast<int64_t>(output_dimensions.size()); idx < end; ++idx) {
         if (idx != axis) {

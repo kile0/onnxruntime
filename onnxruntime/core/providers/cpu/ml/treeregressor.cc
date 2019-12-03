@@ -43,7 +43,7 @@ TreeEnsembleRegressor<T>::TreeEnsembleRegressor(const OpKernelInfo& info)
   //update nodeids to start at 0
   ORT_ENFORCE(!nodes_treeids_.empty());
   int64_t current_tree_id = 1234567891L;
-  std::vector<int64_t> tree_offsets;
+  Vector<int64_t> tree_offsets;
 
   for (size_t i = 0; i < nodes_treeids_.size(); i++) {
     if (nodes_treeids_[i] != current_tree_id) {
@@ -64,7 +64,7 @@ TreeEnsembleRegressor<T>::TreeEnsembleRegressor(const OpKernelInfo& info)
     target_nodeids_[i] = target_nodeids_[i] - offset;
   }
 
-  std::vector<std::string> modes = info.GetAttrsOrDefault<std::string>("nodes_modes");
+  Vector<std::string> modes = info.GetAttrsOrDefault<std::string>("nodes_modes");
 
   for (const auto& mode : modes) {
     nodes_modes_.push_back(::onnxruntime::ml::MakeTreeNodeMode(mode));
@@ -252,7 +252,7 @@ common::Status TreeEnsembleRegressor<T>::Compute(OpKernelContext* context) const
       ORT_RETURN_IF_ERROR(ProcessTreeNode(scores, roots_[j], x_data, current_weight_0));
     }
     //find aggregate, could use a heap here if there are many classes
-    std::vector<float> outputs;
+    Vector<float> outputs;
     for (int64_t j = 0; j < n_targets_; j++) {
       //reweight scores based on number of voters
       auto it_scores = scores.find(j);

@@ -12,8 +12,8 @@ static void RunTest(
     T start,
     T limit,
     T delta,
-    const std::vector<int64_t>& output_dims,
-    const std::vector<T>& output) {
+    const Vector<int64_t>& output_dims,
+    const Vector<T>& output) {
   // ONNX domain opset-11
   OpTester test1("Range", 11);
   test1.AddInput<T>("start", {}, {start});

@@ -54,7 +54,7 @@ class OpKernelContextInternal : public OpKernelContext {
   }
 
   // Get the OrtValue's for all implicit inputs. Order is same as Node::ImplicitInputDefs(). No nullptr entries.
-  const std::vector<const OrtValue*>& GetImplicitInputs() const {
+  const Vector<const OrtValue*>& GetImplicitInputs() const {
     return implicit_input_values_;
   }
 
@@ -63,7 +63,7 @@ class OpKernelContextInternal : public OpKernelContext {
  private:
   const SessionState& session_state_;
   const bool& terminate_flag_;
-  std::vector<const OrtValue*> implicit_input_values_;
+  Vector<const OrtValue*> implicit_input_values_;
 };
 
 }  // namespace onnxruntime

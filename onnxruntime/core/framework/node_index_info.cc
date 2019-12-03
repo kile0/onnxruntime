@@ -20,9 +20,9 @@ NodeIndexInfo::NodeIndexInfo(const GraphNodes& nodes, const OrtValueNameIdxMap& 
   Init(nodes, 0, ort_value_idx_map);
 }
 
-NodeIndexInfo::NodeIndexInfo(const std::vector<const Node*>& nodes, const OrtValueNameIdxMap& ort_value_idx_map)
+NodeIndexInfo::NodeIndexInfo(const Vector<const Node*>& nodes, const OrtValueNameIdxMap& ort_value_idx_map)
     : max_mlvalue_idx_{ort_value_idx_map.MaxIdx()} {
-  Init(ValidNodes<const std::vector<const Node*>>(nodes), 0, ort_value_idx_map);
+  Init(ValidNodes<const Vector<const Node*>>(nodes), 0, ort_value_idx_map);
 }
 
 template <typename TValidNodes>

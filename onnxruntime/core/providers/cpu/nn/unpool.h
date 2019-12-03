@@ -45,9 +45,9 @@ class MaxUnpool : public OpKernel {
   Status Compute(OpKernelContext* context) const override;
 
  private:
-  std::vector<int64_t> kernel_shape_;
-  std::vector<int64_t> pads_;
-  std::vector<int64_t> strides_;
+  Vector<int64_t> kernel_shape_;
+  Vector<int64_t> pads_;
+  Vector<int64_t> strides_;
   int64_t num_inputs_;
 };
 

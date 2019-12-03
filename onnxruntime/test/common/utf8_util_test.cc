@@ -13,7 +13,7 @@ struct Sample {
   bool valid;
 };
 
-const std::vector<Sample> samples = {
+const Vector<Sample> samples = {
     {"a", true},
     {"\xc3\xb1", true},
     {"\xc3\x28", false},

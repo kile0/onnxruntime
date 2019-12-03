@@ -60,7 +60,7 @@ class DataRunner {
     std::shared_ptr<TestCaseResult> res = result;
     CALL_BACK callback = on_finished;
     res->SetSpentTime(spent_time_);
-    const std::vector<EXECUTE_RESULT>& er = res->GetExcutionResult();
+    const Vector<EXECUTE_RESULT>& er = res->GetExcutionResult();
     for (size_t i = 0; i != er.size(); ++i) {
       EXECUTE_RESULT r = er[i];
       if (r == EXECUTE_RESULT::SUCCESS) continue;
@@ -127,8 +127,8 @@ struct DataTask {
   const size_t task_id;
 };
 
-void LoadTests(const std::vector<std::basic_string<PATH_CHAR_TYPE>>& input_paths,
-               const std::vector<std::basic_string<PATH_CHAR_TYPE>>& whitelisted_test_cases,
+void LoadTests(const Vector<std::basic_string<PATH_CHAR_TYPE>>& input_paths,
+               const Vector<std::basic_string<PATH_CHAR_TYPE>>& whitelisted_test_cases,
                double default_per_sample_tolerance, double default_relative_per_sample_tolerance,
                const std::function<void(ITestCase*)>& process_function);
 

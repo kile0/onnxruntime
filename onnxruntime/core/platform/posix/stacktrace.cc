@@ -5,7 +5,7 @@
 
 namespace onnxruntime {
 
-std::vector<std::string> GetStackTrace() {
+Vector<std::string> GetStackTrace() {
   return {"<stacktrace not implemented>"};
 }
 

@@ -130,7 +130,7 @@ namespace Dml
             std::string_view type;
             std::string_view domain;
             int sinceVersion;
-            std::vector<std::string_view> activationFilter;
+            Vector<std::string_view> activationFilter;
             std::optional<uint32_t> inputCountFilter;
         };
 
@@ -333,7 +333,7 @@ namespace Dml
 
     uint32_t GetDmlAdjustedAxis(int32_t onnxAxis, const MLOperatorKernelCreationContext& kernelCreationContext, uint32_t dmlDimCount)
     {
-        const std::vector<DimensionType> inputDimensions = kernelCreationContext.GetTensorShapeDescription().GetInputTensorShape(0);
+        const Vector<DimensionType> inputDimensions = kernelCreationContext.GetTensorShapeDescription().GetInputTensorShape(0);
         uint32_t onnxDimCount = gsl::narrow_cast<uint32_t>(inputDimensions.size());
         onnxAxis = HandleNegativeAxis(onnxAxis, onnxDimCount);
         return GetDmlAdjustedAxis(onnxAxis, onnxDimCount, dmlDimCount);

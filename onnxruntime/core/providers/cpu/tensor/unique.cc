@@ -124,18 +124,18 @@ class Subtensor {
     return items_ < rhs.items_;
   }
 
-  const std::vector<T>& GetItems() const { return items_; }
+  const Vector<T>& GetItems() const { return items_; }
 
  private:
   // TODO: Simple copy for now. std::string would be better as std::reference_wrapper<std::string>
-  std::vector<T> items_;
+  Vector<T> items_;
 };
 
 template <typename T>
 static void CreateFlattenedOutput(OpKernelContext& context,
                                   const std::map<const T, int64_t>& offsets,         // map sorted key to unsorted idx
-                                  const std::vector<std::vector<int64_t>>& indices,  // unsorted
-                                  const std::vector<int64_t>& inverse_index,         // unsorted
+                                  const Vector<Vector<int64_t>>& indices,  // unsorted
+                                  const Vector<int64_t>& inverse_index,         // unsorted
                                   bool sorted) {
   int64_t num_unique = static_cast<int64_t>(indices.size());
   Tensor& Y = *context.Output(0, TensorShape({num_unique}));
@@ -172,7 +172,7 @@ static void CreateFlattenedOutput(OpKernelContext& context,
   if (inverse_indices) {
     if (sorted) {
       // need to convert unsorted entries in the inverse index to their sorted values
-      std::vector<int64_t> unsorted_to_sorted;
+      Vector<int64_t> unsorted_to_sorted;
       unsorted_to_sorted.resize(num_unique);
       int64_t sorted_idx = 0;
       for (const auto& offset : offsets) {
@@ -195,8 +195,8 @@ static void CreateOutput(OpKernelContext& context,
                          const TensorShape& subtensor_shape,
                          int64_t axis,
                          const std::map<const Subtensor<T>, int64_t>& offsets,  // map sorted key to unsorted idx
-                         const std::vector<std::vector<int64_t>>& indices,      // unsorted
-                         const std::vector<int64_t>& inverse_index,             // unsorted
+                         const Vector<Vector<int64_t>>& indices,      // unsorted
+                         const Vector<int64_t>& inverse_index,             // unsorted
                          bool sorted) {
   int64_t num_unique = static_cast<int64_t>(indices.size());
 
@@ -204,8 +204,8 @@ static void CreateOutput(OpKernelContext& context,
   int64_t num_cols = subtensor_shape.SizeFromDimension(axis);
   int64_t num_rows = subtensor_shape.SizeToDimension(axis);
 
-  const std::vector<int64_t> subtensor_dims = subtensor_shape.GetDims();
-  std::vector<int64_t> Y_dims;
+  const Vector<int64_t> subtensor_dims = subtensor_shape.GetDims();
+  Vector<int64_t> Y_dims;
   Y_dims.reserve(subtensor_dims.size());
   for (int64_t i = 0, end = subtensor_dims.size(); i < end; ++i) {
     if (i == axis)
@@ -267,7 +267,7 @@ static void CreateOutput(OpKernelContext& context,
   if (inverse_indices) {
     if (sorted) {
       // need to convert unsorted entries in the inverse index to their sorted values
-      std::vector<int64_t> unsorted_to_sorted;
+      Vector<int64_t> unsorted_to_sorted;
       unsorted_to_sorted.resize(num_unique);
       int64_t sorted_idx = 0;
       for (const auto& offset : offsets) {
@@ -292,8 +292,8 @@ Status Unique::ComputeImpl(OpKernelContext& context) const {
 
   if (flatten_) {
     std::map<const T, int64_t> offsets;  // offset of entry in indices. provides map between sorted and unsorted values
-    std::vector<std::vector<int64_t>> indices;
-    std::vector<int64_t> inverse_index;
+    Vector<Vector<int64_t>> indices;
+    Vector<int64_t> inverse_index;
 
     indices.reserve(data.size() / 2);  // arbitrary value. at worst 1 realloc but could be too large
     inverse_index.reserve(data.size());
@@ -320,7 +320,7 @@ Status Unique::ComputeImpl(OpKernelContext& context) const {
     const int64_t input_dims = static_cast<int64_t>(input_shape.NumDimensions());
     const int64_t axis = HandleNegativeAxis(axis_, input_dims);
 
-    std::vector<int64_t> subtensor_dims;
+    Vector<int64_t> subtensor_dims;
     subtensor_dims.reserve(input_dims);
     for (int64_t i = 0; i < input_dims; ++i) {
       subtensor_dims.push_back(i == axis ? 1 : input_shape[i]);
@@ -329,8 +329,8 @@ Status Unique::ComputeImpl(OpKernelContext& context) const {
     TensorShape subtensor_shape(std::move(subtensor_dims));
 
     std::map<const Subtensor<T>, int64_t> offsets;
-    std::vector<std::vector<int64_t>> indices;
-    std::vector<int64_t> inverse_index;
+    Vector<Vector<int64_t>> indices;
+    Vector<int64_t> inverse_index;
 
     indices.reserve(data.size() / 2);  // arbitrary value. at worst 1 realloc but could be too large
     inverse_index.reserve(data.size());

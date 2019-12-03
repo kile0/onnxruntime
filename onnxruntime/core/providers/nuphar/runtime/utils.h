@@ -11,7 +11,7 @@ namespace onnxruntime {
 namespace nuphar {
 
 inline void ShapeRemoveAxis(
-    std::vector<int64_t>& shape,
+    Vector<int64_t>& shape,
     const int64_t* original_shape,
     size_t rank,
     size_t axis) {
@@ -23,7 +23,7 @@ inline void ShapeRemoveAxis(
 }
 
 inline void ShapeInsertAxis(
-    std::vector<int64_t>& shape,
+    Vector<int64_t>& shape,
     const int64_t* original_shape,
     size_t rank,
     size_t axis,
@@ -39,7 +39,7 @@ inline void ShapeInsertAxis(
   }
 }
 
-inline int64_t BytesOfShape(const std::vector<int64_t>& shape, MLDataType dtype) {
+inline int64_t BytesOfShape(const Vector<int64_t>& shape, MLDataType dtype) {
   int64_t total_size = dtype->Size();
   for (const auto& s : shape) {
     total_size *= s;

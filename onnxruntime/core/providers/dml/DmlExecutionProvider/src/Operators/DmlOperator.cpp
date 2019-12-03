@@ -49,7 +49,7 @@ namespace Dml
             // Create an edge list using sentinels for unused edges, as required by the SetDmlOperator ABI
             auto ReplaceUnusedEdgeIndicesWithSentinel = [](gsl::span<const std::optional<uint32_t>> indices)
             {
-                std::vector<uint32_t> ret;
+                Vector<uint32_t> ret;
                 ret.reserve(indices.size());
                 for (const std::optional<uint32_t>& index : indices)
                 {
@@ -88,7 +88,7 @@ namespace Dml
                 m_persistentResourceBinding = DML_BUFFER_BINDING{ m_persistentResource.Get(), 0, persistentResourceSize };
             }
             
-            std::vector<DML_BUFFER_BINDING> initializationInputBindings(m_kernelInputIndices.size());
+            Vector<DML_BUFFER_BINDING> initializationInputBindings(m_kernelInputIndices.size());
 
             THROW_IF_FAILED(m_executionProvider->InitializeOperator(
                 m_compiledOperator.Get(),
@@ -135,8 +135,8 @@ namespace Dml
 
     void DmlOperator::Initialize(
         const MLOperatorKernelCreationContext& kernelInfo,
-        const std::optional<const std::vector<std::optional<uint32_t>>>& kernelInputIndices,
-        const std::optional<const std::vector<std::optional<uint32_t>>>& kernelOutputIndices,
+        const std::optional<const Vector<std::optional<uint32_t>>>& kernelInputIndices,
+        const std::optional<const Vector<std::optional<uint32_t>>>& kernelOutputIndices,
         const std::optional<gsl::span<const uint32_t>> inputShape,
         const std::optional<gsl::span<const uint32_t>> outputShape
         )
@@ -207,8 +207,8 @@ namespace Dml
 
     void DmlOperator::Compute(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
-        std::vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> inputTensors = GetInputTensorsForExecute(kernelContext);
+        Vector<IMLOperatorTensor*> outputTensors = GetOutputTensorsForExecute(kernelContext);
 
         THROW_IF_FAILED(m_executionProvider->ExecuteOperator(
             m_compiledOperator.Get(),
@@ -264,9 +264,9 @@ namespace Dml
         return flags;
     }
 
-    std::vector<IMLOperatorTensor*> DmlOperator::GetInputTensors(const MLOperatorKernelContext& kernelContext)
+    Vector<IMLOperatorTensor*> DmlOperator::GetInputTensors(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> inputTensors(m_kernelInputIndices.size());
+        Vector<IMLOperatorTensor*> inputTensors(m_kernelInputIndices.size());
         for (uint32_t i = 0; i < inputTensors.size(); i++)
         {
             if (m_kernelInputIndices[i] != std::nullopt)
@@ -279,9 +279,9 @@ namespace Dml
         return inputTensors;
     }
 
-    std::vector<IMLOperatorTensor*> DmlOperator::GetOutputTensors(const MLOperatorKernelContext& kernelContext)
+    Vector<IMLOperatorTensor*> DmlOperator::GetOutputTensors(const MLOperatorKernelContext& kernelContext)
     {
-        std::vector<IMLOperatorTensor*> outputTensors(m_kernelOutputIndices.size());
+        Vector<IMLOperatorTensor*> outputTensors(m_kernelOutputIndices.size());
         for (uint32_t i = 0; i < outputTensors.size(); i++)
         {
             if (m_kernelOutputIndices[i] != std::nullopt)
@@ -294,19 +294,19 @@ namespace Dml
         return outputTensors;
     }
 
-    std::vector<IMLOperatorTensor*> DmlOperator::GetInputTensorsForExecute(const MLOperatorKernelContext& kernelContext)
+    Vector<IMLOperatorTensor*> DmlOperator::GetInputTensorsForExecute(const MLOperatorKernelContext& kernelContext)
     {
         return GetInputTensors(kernelContext);
     }
 
-    std::vector<IMLOperatorTensor*> DmlOperator::GetOutputTensorsForExecute(const MLOperatorKernelContext& kernelContext)
+    Vector<IMLOperatorTensor*> DmlOperator::GetOutputTensorsForExecute(const MLOperatorKernelContext& kernelContext)
     {
         return GetOutputTensors(kernelContext);
     }
 
-    std::vector<DML_TENSOR_DESC> DmlOperator::GetDmlInputDescs()
+    Vector<DML_TENSOR_DESC> DmlOperator::GetDmlInputDescs()
     {
-        std::vector<DML_TENSOR_DESC> descs(m_inputTensorDescs.size());
+        Vector<DML_TENSOR_DESC> descs(m_inputTensorDescs.size());
         for (size_t i = 0; i < descs.size(); i++)
         {
             descs[i] = m_inputTensorDescs[i].GetDmlDesc();
@@ -314,9 +314,9 @@ namespace Dml
         return descs;
     }
 
-    std::vector<DML_TENSOR_DESC> DmlOperator::GetDmlOutputDescs()
+    Vector<DML_TENSOR_DESC> DmlOperator::GetDmlOutputDescs()
     {
-        std::vector<DML_TENSOR_DESC> descs(m_outputTensorDescs.size());
+        Vector<DML_TENSOR_DESC> descs(m_outputTensorDescs.size());
         for (size_t i = 0; i < descs.size(); i++)
         {
             descs[i] = m_outputTensorDescs[i].GetDmlDesc();
@@ -392,7 +392,7 @@ namespace Dml
         auto edgeDesc = kernelInfo.GetInputEdgeDescription(index);
         assert(edgeDesc.edgeType == MLOperatorEdgeType::Tensor);
 
-        std::vector<uint32_t> actualTensorShape;
+        Vector<uint32_t> actualTensorShape;
         if (kernelInfo.HasTensorShapeDescription())
         {
             actualTensorShape = kernelInfo.GetTensorShapeDescription().GetInputTensorShape(index);

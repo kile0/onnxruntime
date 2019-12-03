@@ -39,23 +39,23 @@ class OpenVINOGraph {
   size_t DeduceBatchSize(Ort::CustomOpApi ort, const OrtValue* input_tensor,
                          InferenceEngine::SizeVector graph_dims);
 
-  std::vector<const OrtValue*> GetInputTensors(Ort::CustomOpApi ort, OrtKernelContext* context);
+  Vector<const OrtValue*> GetInputTensors(Ort::CustomOpApi ort, OrtKernelContext* context);
 
-  std::vector<OrtValue*> GetOutputTensors(Ort::CustomOpApi ort, OrtKernelContext* context, size_t batch_size);
+  Vector<OrtValue*> GetOutputTensors(Ort::CustomOpApi ort, OrtKernelContext* context, size_t batch_size);
 
-  void StartAsyncInference(Ort::CustomOpApi ort, std::vector<const OrtValue*> input_tensors, size_t batch_slice_idx, size_t infer_req_idx);
+  void StartAsyncInference(Ort::CustomOpApi ort, Vector<const OrtValue*> input_tensors, size_t batch_slice_idx, size_t infer_req_idx);
 
-  void CompleteAsyncInference(Ort::CustomOpApi ort, std::vector<OrtValue*> output_tensors, size_t batch_slice_idx, size_t infer_req_idx);
+  void CompleteAsyncInference(Ort::CustomOpApi ort, Vector<OrtValue*> output_tensors, size_t batch_slice_idx, size_t infer_req_idx);
 
-  std::vector<std::string> GetEnvLdLibraryPath() const;
+  Vector<std::string> GetEnvLdLibraryPath() const;
 
   const onnxruntime::Node* fused_node_;
   std::shared_ptr<InferenceEngine::CNNNetwork> openvino_network_;
   size_t num_inf_reqs_;
-  std::vector<InferenceEngine::InferRequest::Ptr> infer_requests_;
+  Vector<InferenceEngine::InferRequest::Ptr> infer_requests_;
   std::string device_id_;
   mutable std::mutex compute_lock_;
-  std::vector<int> input_indexes_;
+  Vector<int> input_indexes_;
   InferenceEngine::Precision precision_;
   const onnxruntime::Graph* onnx_graph_;
 };
