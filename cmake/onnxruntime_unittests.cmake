@@ -810,4 +810,10 @@ else()
   set(ONNXRUNTIME_CUSTOM_OP_LIB_LINK_FLAG "-DEF:${REPO_ROOT}/onnxruntime/test/testdata/custom_op_library/custom_op_library.def /IGNORE:4199")
   # need to ignore the linker warning 4199, due to some global linker flags failing here
 endif()
+
+if (onnxruntime_USE_MIMALLOC)
+  message(STATUS "Linking custom_op_library to mimalloc-static")
+  target_link_libraries(custom_op_library mimalloc-static)
+endif()
+
 set_property(TARGET custom_op_library APPEND_STRING PROPERTY LINK_FLAGS ${ONNXRUNTIME_CUSTOM_OP_LIB_LINK_FLAG})
