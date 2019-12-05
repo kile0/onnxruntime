@@ -21,7 +21,7 @@ Status UnsqueezeElimination::Apply(Graph& graph, Node& node, RewriteRuleEffect& 
     return Status::OK();
   }
 
-  Vector<int64_t> axes;
+  std::vector<int64_t> axes;
   if (!graph_utils::GetRepeatedNodeAttributeValues(node, "axes", axes)) {
     // missing 'axes'. should have failed at model load but just in case...
     return Status::OK();

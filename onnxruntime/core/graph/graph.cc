@@ -523,7 +523,7 @@ void Node::AddAttribute(const std::string& attr_name, const AttributeProto& valu
 
 #define ADD_LIST_ATTR_IMPL(type, enumType, field)            \
   void Node::AddAttribute(const std::string& attr_name,      \
-                          const Vector<type>& values) { \
+                          const std::vector<type>& values) { \
     graph_->SetGraphResolveNeeded();                         \
     graph_->SetGraphProtoSyncNeeded();                       \
     AttributeProto a;                                        \
@@ -1303,7 +1303,7 @@ bool FullyDefinedType(const TypeProto& type_proto) {
 // parameters are the Graph instance for the subgraph, the input types from the control flow node that contains
 // the subgraph, and the vector to write the output from the inferencing.
 using SubgraphInferencingFunc =
-    std::function<Status(const Node&, Graph&, const Vector<const TypeProto*>&, Vector<const TypeProto*>&)>;
+    std::function<Status(const Node&, Graph&, const std::vector<const TypeProto*>&, std::vector<const TypeProto*>&)>;
 
 class GraphInferencerImpl : public ONNX_NAMESPACE::GraphInferencer {
  public:
@@ -1314,9 +1314,9 @@ class GraphInferencerImpl : public ONNX_NAMESPACE::GraphInferencer {
   // Perform inferencing on the graph contained in GraphInferencer.
   // Returns the graph output types post-inferencing.
   // We ignore input_data currently as the inferencing happens prior to receiving user input.
-  Vector<const TypeProto*> doInferencing(const Vector<const TypeProto*>& input_types,
-                                              const Vector<const TensorProto*>& /*input_data*/) override {
-    Vector<const TypeProto*> output_types;
+  std::vector<const TypeProto*> doInferencing(const std::vector<const TypeProto*>& input_types,
+                                              const std::vector<const TensorProto*>& /*input_data*/) override {
+    std::vector<const TypeProto*> output_types;
 
     auto status = inferencing_func_(node_, graph_, input_types, output_types);
 
@@ -1426,8 +1426,8 @@ class InferenceContextImpl : public ONNX_NAMESPACE::InferenceContext {
 };
 
 Status Graph::InferAndVerifySubgraphTypes(const Node& node, Graph& subgraph,
-                                          const Vector<const TypeProto*>& input_types,
-                                          Vector<const TypeProto*>& output_types) {
+                                          const std::vector<const TypeProto*>& input_types,
+                                          std::vector<const TypeProto*>& output_types) {
   auto status = Status::OK();
 
   output_types.clear();

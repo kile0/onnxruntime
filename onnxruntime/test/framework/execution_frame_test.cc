@@ -75,7 +75,7 @@ TEST_F(ExecutionFrameTest, TensorAllocationTest) {
   EXPECT_TRUE(status.IsOK()) << status.ErrorMessage();
   state.SetExecutionPlan(std::move(p_seq_exec_plan));
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   ExecutionFrame frame({}, {}, {}, outputs, {}, state);
 
   int start_index = frame.GetNodeOffset(node->Index());
@@ -149,7 +149,7 @@ TEST_F(ExecutionFrameTest, FeedInDataTest) {
   ASSERT_TRUE(mlvalue_name_idx_map.GetIdx("X", x_idx).IsOK());
   ASSERT_TRUE(mlvalue_name_idx_map.GetIdx("Y", y_idx).IsOK());
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   ExecutionFrame frame({x_idx}, {value}, {y_idx}, outputs, {}, state);
 
   OrtValue* p_ml_value = frame.GetMutableNodeInputOrOutputMLValue(0);
@@ -229,7 +229,7 @@ TEST_F(ExecutionFrameTest, MemPatternTest) {
 
   state.SetExecutionPlan(std::move(p_seq_exec_plan));
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   ExecutionFrame frame({x1_idx, x2_idx, x3_idx}, {v1, v2, v3}, {t3_idx}, outputs, {}, state);
 
   OrtValue& mlvalue3 = *frame.GetMutableNodeInputOrOutputMLValue(3);

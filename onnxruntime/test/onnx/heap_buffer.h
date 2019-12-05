@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include <vector>
+#include "core/common/vector.h"
 #include <memory>
 
 namespace onnxruntime {

@@ -103,7 +103,7 @@ bool ReshapeFusion::Fuse_Subgraph1(Node& reshape, Graph& graph, const logging::L
     return false;
   }
 
-  Vector<int64_t> axes;
+  std::vector<int64_t> axes;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(unsqueeze_1, "axes", axes) && axes.size() == 1 && axes[0] == 0)) {
     return false;
   }

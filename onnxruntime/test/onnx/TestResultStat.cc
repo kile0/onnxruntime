@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <sstream>
 #include <algorithm>
-#include <vector>
+#include "core/common/vector.h"
 #include "TestResultStat.h"
 
 namespace {

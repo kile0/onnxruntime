@@ -298,7 +298,7 @@ template <typename T>
 common::Status TreeEnsembleClassifier<T>::Compute(OpKernelContext* context) const {
   const Tensor& X = *context->Input<Tensor>(0);
   const TensorShape& x_shape = X.Shape();
-  vector<int64_t> x_dims = x_shape.GetDims();
+  Vector<int64_t> x_dims = x_shape.GetDims();
   if (x_dims.empty()) {
     return Status(ONNXRUNTIME, INVALID_ARGUMENT, "X dims is empty.");
   }

@@ -262,7 +262,7 @@ Status TopK<10, float>::Compute(OpKernelContext* p_op_kernel_context) const {
                            "the tensor to be processed and a tensor containing k value");
   }
 
-  const vector<int64_t>& y_shape = Y->Shape().GetDims();
+  const Vector<int64_t>& y_shape = Y->Shape().GetDims();
   if (y_shape.size() != 1 || y_shape[0] != 1) {
     return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL, "k tensor should be a 1D tensor of size 1");
   }
@@ -302,7 +302,7 @@ Status TopK<11, float>::Compute(OpKernelContext* p_op_kernel_context) const {
                            "the tensor to be processed and a tensor containing k value");
   }
 
-  const vector<int64_t>& y_shape = Y->Shape().GetDims();
+  const Vector<int64_t>& y_shape = Y->Shape().GetDims();
   if (y_shape.size() != 1 || y_shape[0] != 1) {
     return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL, "k tensor should be a 1D tensor of size 1");
   }

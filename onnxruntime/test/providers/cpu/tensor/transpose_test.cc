@@ -13,7 +13,7 @@ namespace test {
 template <class T>
 void TransposeTest(Vector<int64_t>& input_shape,
                    Vector<T>& input_vals,
-                   Vector<int64_t>* p_perm,
+                   std::vector<int64_t>* p_perm,
                    Vector<int64_t> expected_shape,
                    std::initializer_list<T>& expected_vals,
                    bool is_tensorrt_supported = true,
@@ -74,7 +74,7 @@ TEST(TransposeOpTest, TwoDim) {
   Vector<float> input_vals = {1.0f, 2.0f, 3.0f,
                                    4.0f, 5.0f, 6.0f};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   auto expected_vals = {1.0f, 4.0f,
                         2.0f, 5.0f,
@@ -88,7 +88,7 @@ TEST(TransposeOpTest, TwoDim_double) {
   Vector<double> input_vals = {1.0, 2.0, 3.0,
                                     4.0, 5.0, 6.0};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<double> expected_vals = {1.0, 4.0,
                                                  2.0, 5.0,
@@ -102,7 +102,7 @@ TEST(TransposeOpTest, TwoDim_int32) {
   Vector<int32_t> input_vals = {1, 2, 3,
                                      4, 5, 6};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<int32_t> expected_vals = {1, 4,
                                                   2, 5,
@@ -117,7 +117,7 @@ TEST(TransposeOpTest, TwoDim_int16) {
       1, 2, 3,
       4, 5, 6};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<int16_t> expected_vals = {
       1, 4,
@@ -133,7 +133,7 @@ TEST(TransposeOpTest, TwoDim_mlfloat16) {
   for (uint16_t i = 0; i < 6; ++i)
     input_vals.push_back(MLFloat16(i));
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<MLFloat16> expected_vals = {MLFloat16(1), MLFloat16(4),
                                                     MLFloat16(2), MLFloat16(5),
@@ -147,7 +147,7 @@ TEST(TransposeOpTest, TwoDim_int8) {
   Vector<int8_t> input_vals = {1, 2, 3,
                                     4, 5, 6};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<int8_t> expected_vals = {1, 4,
                                                  2, 5,
@@ -162,7 +162,7 @@ TEST(TransposeOpTest, TwoDimStr) {
       "1", "2", "3",
       "4", "5", "6"};
 
-  Vector<int64_t> perm = {1, 0};
+  std::vector<int64_t> perm = {1, 0};
   Vector<int64_t> expected_shape({3, 2});
   std::initializer_list<std::string> expected_vals = {
       "1", "4",
@@ -188,7 +188,7 @@ TEST(TransposeOpTest, ThreeDim) {
       1.3f, 2.3f, 3.3f,
       4.3f, 5.3f, 6.3f};
 
-  Vector<int64_t> perm = {0, 2, 1};
+  std::vector<int64_t> perm = {0, 2, 1};
   Vector<int64_t> expected_shape({4, 3, 2});
   auto expected_vals = {
       1.0f, 4.0f,
@@ -226,7 +226,7 @@ TEST(TransposeOpTest, ThreeDimSuffix) {
       1.3f, 2.3f, 3.3f,
       4.3f, 5.3f, 6.3f};
 
-  Vector<int64_t> perm = {1, 0, 2};
+  std::vector<int64_t> perm = {1, 0, 2};
   Vector<int64_t> expected_shape({2, 4, 3});
   auto expected_vals = {
       1.0f, 2.0f, 3.0f,
@@ -257,7 +257,7 @@ TEST(TransposeOpTest, ThreeDimStr) {
       "1", "2", "3",
       "4", "5", "6"};
 
-  Vector<int64_t> perm = {0, 2, 1};
+  std::vector<int64_t> perm = {0, 2, 1};
   Vector<int64_t> expected_shape({4, 3, 2});
   std::initializer_list<std::string> expected_vals = {
       "1", "4",
@@ -287,7 +287,7 @@ static void NumericNCHW2NHWC() {
       5, 6, 7, 8,
       9, 10, 11, 12};
 
-  Vector<int64_t> perm = {0, 2, 3, 1};
+  std::vector<int64_t> perm = {0, 2, 3, 1};
   Vector<int64_t> expected_shape({1, 2, 2, 3});
   std::initializer_list<T> expected_vals = {
       1, 5, 9,
@@ -311,7 +311,7 @@ TEST(TransposeOpTest, NCHW2NHWCStr) {
       "5", "6", "7", "8",
       "9", "10", "11", "12"};
 
-  Vector<int64_t> perm = {0, 2, 3, 1};
+  std::vector<int64_t> perm = {0, 2, 3, 1};
   Vector<int64_t> expected_shape({1, 2, 2, 3});
   std::initializer_list<std::string> expected_vals = {
       "1", "5", "9",
@@ -338,7 +338,7 @@ static void NumericNHWC2NCHW() {
       13, 14,
       15, 16};
 
-  Vector<int64_t> perm = {0, 3, 1, 2};
+  std::vector<int64_t> perm = {0, 3, 1, 2};
   Vector<int64_t> expected_shape({2, 2, 2, 2});
   std::initializer_list<T> expected_vals = {
       1, 3,
@@ -371,7 +371,7 @@ TEST(TransposeOpTest, NHWC2NCHW_String) {
       "7", "8", "9",
       "10", "11", "12"};
 
-  Vector<int64_t> perm = {0, 3, 1, 2};
+  std::vector<int64_t> perm = {0, 3, 1, 2};
   Vector<int64_t> expected_shape({1, 3, 2, 2});
   std::initializer_list<std::string> expected_vals = {
       "1", "4", "7", "10",
@@ -397,7 +397,7 @@ TEST(TransposeOpTest, SingleAxisMovingInwardsBlockCopy) {
       13, 14,
       15, 16};
 
-  Vector<int64_t> perm = {1, 2, 0, 3};
+  std::vector<int64_t> perm = {1, 2, 0, 3};
   Vector<int64_t> expected_shape({2, 2, 2, 2});
   std::initializer_list<uint64_t> expected_vals = {
       1, 2,

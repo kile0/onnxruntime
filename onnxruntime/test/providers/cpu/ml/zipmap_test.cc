@@ -9,7 +9,7 @@ namespace test {
 template <typename T>
 void TestHelper(const Vector<T>& classes,
                 const std::string& type,
-                const vector<int64_t>& input_dims,
+                const Vector<int64_t>& input_dims,
                 OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess) {
   OpTester test("ZipMap", 1, onnxruntime::kMLDomain);
 

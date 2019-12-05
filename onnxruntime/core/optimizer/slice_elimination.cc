@@ -27,8 +27,8 @@ bool EliminateSlice::SatisfyCondition(const Graph& graph, const Node& node, cons
     return false;
   }
 
-  Vector<int64_t> starts;
-  Vector<int64_t> ends;
+  std::vector<int64_t> starts;
+  std::vector<int64_t> ends;
 
   if (graph_utils::MatchesOpSinceVersion(node, {1})) {
     // If it is a Slice operator of opset version 1, starts/ends/axes are provided as node attributes.
@@ -37,7 +37,7 @@ bool EliminateSlice::SatisfyCondition(const Graph& graph, const Node& node, cons
         starts.size() != ends.size()) {
       return false;
     }
-    Vector<int64_t> axes;
+    std::vector<int64_t> axes;
     // If there is an axes attribute, it has to be the same size as the starts and ends.
     if (graph_utils::GetRepeatedNodeAttributeValues(node, "axes", axes) && (axes.size() != starts.size())) {
       return false;
@@ -76,10 +76,10 @@ bool EliminateSlice::SatisfyCondition(const Graph& graph, const Node& node, cons
     const ONNX_NAMESPACE::TensorProto* starts_init = get_initializer_if_constant(1);
     const ONNX_NAMESPACE::TensorProto* ends_init = get_initializer_if_constant(2);
     if (starts_init && ends_init) {
-      starts = get_initializer_data(starts_init);
-      ends = get_initializer_data(ends_init);
+      Vector<int64_t> starts_buffer = get_initializer_data(starts_init);
+      Vector<int64_t> ends_buffer = get_initializer_data(ends_init);
 
-      if (starts.size() == 0 || ends.size() == 0 || starts.size() != ends.size()) {
+      if (starts_buffer.size() == 0 || ends_buffer.size() == 0 || starts_buffer.size() != ends_buffer.size()) {
         return false;
       }
 
@@ -87,7 +87,7 @@ bool EliminateSlice::SatisfyCondition(const Graph& graph, const Node& node, cons
       if (get_input_if_exists(3)) {
         const ONNX_NAMESPACE::TensorProto* axes_init = get_initializer_if_constant(3);
         if (!axes_init || axes_init->dims_size() != 1 ||
-            static_cast<size_t>(axes_init->dims().Get(0)) != starts.size()) {
+            static_cast<size_t>(axes_init->dims().Get(0)) != starts_buffer.size()) {
           return false;
         }
 
@@ -98,7 +98,7 @@ bool EliminateSlice::SatisfyCondition(const Graph& graph, const Node& node, cons
             return false;
           }
           Vector<int64_t> steps = get_initializer_data(steps_init);
-          if (steps.size() != starts.size()) {
+          if (steps.size() != starts_buffer.size()) {
             return false;
           }
           for (int64_t step : steps) {

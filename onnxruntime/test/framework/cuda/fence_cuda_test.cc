@@ -123,7 +123,7 @@ TEST(CUDAFenceTests, DISABLED_PartOnCPU) {
   ASSERT_TRUE(session.Initialize().IsOK());
   ASSERT_TRUE(1 == CountCopyNodes(graph));
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Out"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();
@@ -175,7 +175,7 @@ TEST(CUDAFenceTests, TileWithInitializer) {
   session.RegisterExecutionProvider(onnxruntime::make_unique<CUDAExecutionProvider>(xp_info));
   ASSERT_TRUE(session.Initialize().IsOK());
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Y"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();
@@ -238,7 +238,7 @@ TEST(CUDAFenceTests, TileWithComputedInput) {
   session.RegisterExecutionProvider(onnxruntime::make_unique<CUDAExecutionProvider>(xp_info));
   ASSERT_TRUE(session.Initialize().IsOK());
 
-  vector<OrtValue> outputs;
+  Vector<OrtValue> outputs;
   session.Run(std::unordered_map<std::string, OrtValue>{{"X1", value}}, Vector<std::string>{"Out"}, &outputs);
   ASSERT_TRUE(1 == outputs.size());
   const Tensor& output = outputs[0].Get<Tensor>();

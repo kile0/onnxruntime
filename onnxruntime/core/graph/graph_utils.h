@@ -78,7 +78,7 @@ const ONNX_NAMESPACE::AttributeProto* GetNodeAttribute(const Node& node, const s
 template <typename T>
 bool GetRepeatedNodeAttributeValues(const Node& node,
                                     const std::string& attr_name,
-                                    Vector<T>& values) {
+                                    std::vector<T>& values) {
   const auto* attr = graph_utils::GetNodeAttribute(node, attr_name);
   if (attr) {
     values = ONNX_NAMESPACE::RetrieveValues<T>(*attr);

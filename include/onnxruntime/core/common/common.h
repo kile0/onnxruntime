@@ -28,17 +28,17 @@
 #include <string>
 #include <type_traits>
 #include <unordered_map>
-#include <vector>
 #include <chrono>
 
+#include "core/common/vector.h"
 #include "core/common/code_location.h"
 #include "core/common/exceptions.h"
 #include "core/common/make_unique.h"
 #include "core/common/status.h"
-#include "core/framework/allocator_mimalloc.h"
 
 #ifdef USE_MIMALLOC
-//#include <mimalloc.h>
+#include "core/common/allocator_mimalloc.h"
+#include <mimalloc.h>
 #endif
 
 namespace onnxruntime {

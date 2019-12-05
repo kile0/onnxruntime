@@ -12,17 +12,17 @@ TEST(LpNormalizationTest, L1Normalization) {
   test.AddAttribute("axis", (int64_t)1);
   test.AddAttribute("p", (int64_t)1);
 
-  vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
+  Vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
                          4.81289319F, 6.81304702F, 4.9382849F, 9.02595701F,
                          9.67296484F, 4.45097367F, 8.12552534F, 5.76005428F,
 
                          6.11240105F, 9.33036974F, 1.63932452F, 1.7841637F,
                          1.18196558F, 8.49357861F, 8.00341076F, 8.83010933F,
                          9.80756508F, 8.19242708F, 5.15331426F, 8.02476259F};
-  vector<int64_t> input_dims = {2, 3, 4};
+  Vector<int64_t> input_dims = {2, 3, 4};
   test.AddInput<float>("input", input_dims, input);
 
-  vector<float> expected_output = {0.2907843F, 0.3976693F, 0.3296719F, 0.28535331F,
+  Vector<float> expected_output = {0.2907843F, 0.3976693F, 0.3296719F, 0.28535331F,
                                    0.23563529F, 0.36431994F, 0.25339247F, 0.43624816F,
                                    0.47358041F, 0.23801075F, 0.41693563F, 0.27839852F,
 
@@ -38,17 +38,17 @@ TEST(LpNormalizationTest, L2Normalization) {
   test.AddAttribute("axis", (int64_t)1);
   test.AddAttribute("p", (int64_t)2);
 
-  vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
+  Vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
                          4.81289319F, 6.81304702F, 4.9382849F, 9.02595701F,
                          9.67296484F, 4.45097367F, 8.12552534F, 5.76005428F,
 
                          6.11240105F, 9.33036974F, 1.63932452F, 1.7841637F,
                          1.18196558F, 8.49357861F, 8.00341076F, 8.83010933F,
                          9.80756508F, 8.19242708F, 5.15331426F, 8.02476259F};
-  vector<int64_t> input_dims = {2, 3, 4};
+  Vector<int64_t> input_dims = {2, 3, 4};
   test.AddInput<float>("input", input_dims, input);
 
-  vector<float> expected_output = {
+  Vector<float> expected_output = {
       0.48173351F, 0.67457895F, 0.55987147F, 0.48285641F,
       0.39036983F, 0.61800737F, 0.4303285F, 0.73819091F,
       0.78456626F, 0.40374513F, 0.70806873F, 0.47108796F,
@@ -63,16 +63,16 @@ TEST(LpNormalizationTest, L2Normalization) {
 TEST(LpNormalizationTest, LpNormalizationDefaultAxisAndP) {
   OpTester test("LpNormalization");
 
-  vector<float> input = {
+  Vector<float> input = {
       0.0f, 0.5f, 2.0f, 2.0f,
       1.0f, 0.5f, 2.0f, 2.5f,
       1.0f, 1.5f, 3.0f, 3.0f,
       1.5f, 2.0f, 3.5f, 3.5f};
 
-  vector<int64_t> input_dims = {16};
+  Vector<int64_t> input_dims = {16};
   test.AddInput<float>("input", input_dims, input);
 
-  vector<float> expected_output = {
+  Vector<float> expected_output = {
       0.0f, 0.059028134f, 0.236112535f, 0.236112535f,
       0.118056267f, 0.059028134f, 0.236112535f, 0.295140654f,
       0.118056267f, 0.177084401f, 0.354168802f, 0.354168802f,
@@ -86,17 +86,17 @@ TEST(LpNormalizationTest, L1NormalizationWithValidNegativeAxis) {
   test.AddAttribute("axis", static_cast<int64_t>(-2));
   test.AddAttribute("p", static_cast<int64_t>(1));
 
-  vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
+  Vector<float> input = {5.93932154F, 7.4367043F, 6.42487038F, 5.90394865F,
                          4.81289319F, 6.81304702F, 4.9382849F, 9.02595701F,
                          9.67296484F, 4.45097367F, 8.12552534F, 5.76005428F,
 
                          6.11240105F, 9.33036974F, 1.63932452F, 1.7841637F,
                          1.18196558F, 8.49357861F, 8.00341076F, 8.83010933F,
                          9.80756508F, 8.19242708F, 5.15331426F, 8.02476259F};
-  vector<int64_t> input_dims = {2, 3, 4};
+  Vector<int64_t> input_dims = {2, 3, 4};
   test.AddInput<float>("input", input_dims, input);
 
-  vector<float> expected_output = {0.2907843F, 0.3976693F, 0.3296719F, 0.28535331F,
+  Vector<float> expected_output = {0.2907843F, 0.3976693F, 0.3296719F, 0.28535331F,
                                    0.23563529F, 0.36431994F, 0.25339247F, 0.43624816F,
                                    0.47358041F, 0.23801075F, 0.41693563F, 0.27839852F,
 

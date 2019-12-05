@@ -213,7 +213,7 @@ static const ONNX_NAMESPACE::GraphProto CreateSubgraph(const RunOptions& options
     auto& unsqueeze = graph.AddNode("iter_num_unsqueeze", "Unsqueeze",
                                     "Unsqueeze iter_num_float to tensor of single dim",
                                     {&iter_num_float}, {&iter_num_float_tensor});
-    unsqueeze.AddAttribute("axes", Vector<int64_t>{0});
+    unsqueeze.AddAttribute("axes", std::vector<int64_t>{0});
   }
 
   // Concat iter_num and sum to create loop_out_0

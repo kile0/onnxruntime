@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include <vector>
+#include "core/common/vector.h"
 #include <core/platform/env_time.h>
 #include <cstring>
 

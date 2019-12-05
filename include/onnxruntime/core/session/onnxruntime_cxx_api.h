@@ -19,9 +19,9 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <utility>
 #include <type_traits>
+#include "core/common/vector.h"
 
 namespace Ort {
 

@@ -11,15 +11,15 @@ TEST(MLOpTest, BinarizerOp) {
   OpTester test("Binarizer", 1, onnxruntime::kMLDomain);
   float threshold = 0.3f;
   test.AddAttribute("threshold", threshold);
-  vector<float> input{0.8f, -0.5f, 0.2f, 0.8f, -1.0f, 0.1f};
+  Vector<float> input{0.8f, -0.5f, 0.2f, 0.8f, -1.0f, 0.1f};
 
   // setup expected output
-  vector<float> expected_output;
+  Vector<float> expected_output;
   for (auto& elem : input) {
     expected_output.push_back(elem > threshold ? 1.f : 0.f);
   }
 
-  vector<int64_t> dims{2, 3};
+  Vector<int64_t> dims{2, 3};
   test.AddInput<float>("X", dims, input);
   test.AddOutput<float>("Y", dims, expected_output);
   test.Run();

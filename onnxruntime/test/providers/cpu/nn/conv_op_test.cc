@@ -11,19 +11,19 @@ namespace {
 
 struct ConvOpAndTestAttributes {
   string auto_pad;
-  vector<int64_t> dilations;
+  Vector<int64_t> dilations;
   int64_t group;
-  vector<int64_t> kernel_shape;
-  vector<int64_t> pads;
-  vector<int64_t> strides;
+  Vector<int64_t> kernel_shape;
+  Vector<int64_t> pads;
+  Vector<int64_t> strides;
   std::unordered_set<std::string> excluded_providers;
 };
 
 void TestConvOp(const ConvOpAndTestAttributes& attributes,
-                const vector<vector<float>>& inputs,
-                const vector<vector<int64_t>>& input_shapes,
+                const Vector<Vector<float>>& inputs,
+                const Vector<Vector<int64_t>>& input_shapes,
                 const std::initializer_list<float>& expected_output,
-                const vector<int64_t>& expected_output_shape,
+                const Vector<int64_t>& expected_output_shape,
                 OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
                 const std::string& err_str = "",
                 int opset = 7) {
@@ -64,20 +64,20 @@ void TestConvOp(const ConvOpAndTestAttributes& attributes,
 TEST(ConvTest, Conv1D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      vector<int64_t>{1},     // dilations
+      Vector<int64_t>{1},     // dilations
       1,                      // group
-      vector<int64_t>{1},     // kernel_shape
-      vector<int64_t>{0, 0},  // pads
-      vector<int64_t>{1},     // strides
+      Vector<int64_t>{1},     // kernel_shape
+      Vector<int64_t>{0, 0},  // pads
+      Vector<int64_t>{1},     // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = {-0.21559301018714905f, 0.4691687822341919f, 0.4426700472831726f, -0.4517466723918915f,
+  Vector<float> X = {-0.21559301018714905f, 0.4691687822341919f, 0.4426700472831726f, -0.4517466723918915f,
                      -0.05216419696807861f, 0.29067182540893555f, 0.251010000705719f};
-  vector<int64_t> X_shape = {1, 1, 7};
-  vector<float> W = {0.24472862482070923f};
-  vector<int64_t> W_shape = {1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 7};
+  Vector<int64_t> X_shape = {1, 1, 7};
+  Vector<float> W = {0.24472862482070923f};
+  Vector<int64_t> W_shape = {1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 7};
   auto expected_vals = {-0.052761781960725784f, 0.11481902748346329f, 0.10833403468132019f, -0.11055534332990646f,
                         -0.012766072526574135f, 0.07113571465015411f, 0.061429332941770554f};
 
@@ -87,20 +87,20 @@ TEST(ConvTest, Conv1D_1) {
 TEST(ConvTest, Conv1D_1_DefaultStridesAndDilations) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      vector<int64_t>{},      // dilations
+      Vector<int64_t>{},      // dilations
       1,                      // group
-      vector<int64_t>{1},     // kernel_shape
-      vector<int64_t>{0, 0},  // pads
-      vector<int64_t>{},      // strides
+      Vector<int64_t>{1},     // kernel_shape
+      Vector<int64_t>{0, 0},  // pads
+      Vector<int64_t>{},      // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = {-0.21559301018714905f, 0.4691687822341919f, 0.4426700472831726f, -0.4517466723918915f,
+  Vector<float> X = {-0.21559301018714905f, 0.4691687822341919f, 0.4426700472831726f, -0.4517466723918915f,
                      -0.05216419696807861f, 0.29067182540893555f, 0.251010000705719f};
-  vector<int64_t> X_shape = {1, 1, 7};
-  vector<float> W = {0.24472862482070923f};
-  vector<int64_t> W_shape = {1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 7};
+  Vector<int64_t> X_shape = {1, 1, 7};
+  Vector<float> W = {0.24472862482070923f};
+  Vector<int64_t> W_shape = {1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 7};
   auto expected_vals = {-0.052761781960725784f, 0.11481902748346329f, 0.10833403468132019f, -0.11055534332990646f,
                         -0.012766072526574135f, 0.07113571465015411f, 0.061429332941770554f};
 
@@ -111,24 +111,24 @@ TEST(ConvTest, Conv1D_1_DefaultStridesAndDilations) {
 TEST(ConvTest, Conv1D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      vector<int64_t>{2},     // dilations
+      Vector<int64_t>{2},     // dilations
       1,                      // group
-      vector<int64_t>{2},     // kernel_shape
-      vector<int64_t>{2, 2},  // pads
-      vector<int64_t>{2},     // strides
+      Vector<int64_t>{2},     // kernel_shape
+      Vector<int64_t>{2, 2},  // pads
+      Vector<int64_t>{2},     // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = {0.11094123125076294f, -0.0038032233715057373f, 0.3896123170852661f, 0.33259105682373047f,
+  Vector<float> X = {0.11094123125076294f, -0.0038032233715057373f, 0.3896123170852661f, 0.33259105682373047f,
                      0.02794349193572998f, -0.08360505104064941f, -0.4100455045700073f, -0.09502679109573364f,
                      -0.11361867189407349f, -0.025495320558547974f, 0.3696536421775818f, 0.3529144525527954f,
                      -0.34991076588630676f, -0.22024285793304443f, 0.23085933923721313f, -0.4575521945953369f,
                      -0.17685726284980774f, -0.06030535697937012f, -0.3996139168739319f, -0.19385704398155212f,
                      -0.10454908013343811f, -0.14503943920135498f, -0.31941986083984375f, -0.15372398495674133f};
-  vector<int64_t> X_shape = {3, 1, 8};
-  vector<float> W = {0.13225573301315308f, 0.09750443696975708f, 0.3469849228858948f, 0.4743430018424988f};
-  vector<int64_t> W_shape = {2, 1, 2};
-  vector<int64_t> Y_shape = {3, 2, 5};
+  Vector<int64_t> X_shape = {3, 1, 8};
+  Vector<float> W = {0.13225573301315308f, 0.09750443696975708f, 0.3469849228858948f, 0.4743430018424988f};
+  Vector<int64_t> W_shape = {2, 1, 2};
+  Vector<int64_t> Y_shape = {3, 2, 5};
   auto expected_vals = {0.010817262344062328f, 0.05266154557466507f, 0.054253075271844864f, -0.03628557175397873f,
                         -0.05423086881637573f, 0.05262419581413269f, 0.22330480813980103f, 0.14844439923763275f,
                         -0.1848062425851822f, -0.14227961003780365f, -0.011078324168920517f, 0.02101614698767662f,
@@ -145,15 +145,15 @@ TEST(ConvTest, Conv1D_2) {
 TEST(ConvTest, Conv1D_Bias) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      vector<int64_t>{2},     // dilations
+      Vector<int64_t>{2},     // dilations
       1,                      // group
-      vector<int64_t>{1},     // kernel_shape
-      vector<int64_t>{1, 1},  // pads
-      vector<int64_t>{3},     // strides
+      Vector<int64_t>{1},     // kernel_shape
+      Vector<int64_t>{1, 1},  // pads
+      Vector<int64_t>{3},     // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = {0.4582272171974182f, 0.3877705931663513f, -0.05413919687271118f, -0.3013981878757477f,
+  Vector<float> X = {0.4582272171974182f, 0.3877705931663513f, -0.05413919687271118f, -0.3013981878757477f,
                      0.19299334287643433f, -0.4758569598197937f, 0.4670986533164978f, 0.4078403115272522f,
                      0.24010121822357178f, 0.41645896434783936f, -0.038333237171173096f, 0.22969317436218262f,
                      0.3565492033958435f, 0.12812334299087524f, 0.10096627473831177f, 0.25682520866394043f,
@@ -162,12 +162,12 @@ TEST(ConvTest, Conv1D_Bias) {
                      0.38086581230163574f, 0.16378509998321533f, 0.12321442365646362f, -0.19936135411262512f,
                      0.26019394397735596f, -0.18406429886817932f, 0.3110783100128174f, 0.15553230047225952f,
                      -0.14629846811294556f, -0.1779327094554901f, -0.01390346884727478f, -0.09264758229255676f};
-  vector<int64_t> X_shape = {2, 2, 9};
-  vector<float> W = {-0.17206084728240967f, 0.3236315846443176f};
-  vector<int64_t> W_shape = {1, 2, 1};
-  vector<float> B = {0.37892162799835205f};
-  vector<int64_t> B_shape = {1};
-  vector<int64_t> Y_shape = {2, 1, 4};
+  Vector<int64_t> X_shape = {2, 2, 9};
+  Vector<float> W = {-0.17206084728240967f, 0.3236315846443176f};
+  Vector<int64_t> W_shape = {1, 2, 1};
+  Vector<float> B = {0.37892162799835205f};
+  Vector<int64_t> B_shape = {1};
+  Vector<int64_t> Y_shape = {2, 1, 4};
   auto expected_vals = {0.37892162799835205f, 0.4625728130340576f, 0.4934738576412201f, 0.44801419973373413f,
                         0.37892162799835205f, 0.2499445676803589f, 0.31682088971138f, 0.32773756980895996f};
   TestConvOp(attrs, {X, W, B}, {X_shape, W_shape, B_shape}, expected_vals, Y_shape);
@@ -177,23 +177,23 @@ TEST(ConvTest, Conv1D_Bias) {
 TEST(ConvTest, Conv2D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{3, 3},        // kernel_shape
-      vector<int64_t>{1, 1, 1, 2},  // pads
-      vector<int64_t>{3, 1},        // strides
+      Vector<int64_t>{3, 3},        // kernel_shape
+      Vector<int64_t>{1, 1, 1, 2},  // pads
+      Vector<int64_t>{3, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = {-0.09103918075561523f, -0.32513630390167236f};
-  vector<int64_t> X_shape = {2, 1, 1, 1};
-  vector<float> W = {0.4312484860420227f, -0.12559029459953308f, 0.44889551401138306f, -0.3100617825984955f,
+  Vector<float> X = {-0.09103918075561523f, -0.32513630390167236f};
+  Vector<int64_t> X_shape = {2, 1, 1, 1};
+  Vector<float> W = {0.4312484860420227f, -0.12559029459953308f, 0.44889551401138306f, -0.3100617825984955f,
                      0.13522827625274658f, -0.06791308522224426f, 0.22671669721603394f, -0.17391827702522278f,
                      -0.31299442052841187f, -0.31545522809028625f, 0.06560015678405762f, 0.2656586766242981f,
                      0.41363757848739624f, 0.31231558322906494f, -0.376018226146698f, -0.005708813667297363f,
                      0.34922850131988525f, 0.45095211267471313f};
-  vector<int64_t> W_shape = {2, 1, 3, 3};
-  vector<int64_t> Y_shape = {2, 2, 1, 2};
+  Vector<int64_t> W_shape = {2, 1, 3, 3};
+  Vector<int64_t> Y_shape = {2, 2, 1, 2};
   auto expected_vals = {-0.012311071157455444f, 0.02822777070105076f, -0.028432954102754593f, -0.037657227367162704f,
                         -0.04396762326359749f, 0.10081233829259872f, -0.10154513269662857f, -0.13448859751224518f};
 
@@ -204,17 +204,17 @@ TEST(ConvTest, Conv2D_1) {
 TEST(ConvTest, Conv1D_Invalid_Input_Shape) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      vector<int64_t>{1},     // dilations
+      Vector<int64_t>{1},     // dilations
       1,                      // group
-      vector<int64_t>{2},     // kernel_shape
-      vector<int64_t>{0, 0},  // pads
-      vector<int64_t>{1},     // strides
+      Vector<int64_t>{2},     // kernel_shape
+      Vector<int64_t>{0, 0},  // pads
+      Vector<int64_t>{1},     // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = vector<float>(1, 1.0f);
-  vector<int64_t> X_shape = {1, 1, 1};
-  vector<int64_t> dummy_shape = {1, 1, 2};
+  Vector<float> X = Vector<float>(1, 1.0f);
+  Vector<int64_t> X_shape = {1, 1, 1};
+  Vector<int64_t> dummy_shape = {1, 1, 2};
   auto dummy_vals = {0.0f, 0.0f};
   TestConvOp(attrs, {X, dummy_vals}, {X_shape, dummy_shape}, dummy_vals, dummy_shape,
              OpTester::ExpectResult::kExpectFailure,
@@ -226,17 +226,17 @@ TEST(ConvTest, Conv1D_Invalid_Input_Shape) {
 TEST(ConvTest, Conv2D_Invalid_Input_Shape) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{3, 3},        // kernel_shape
-      vector<int64_t>{0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1},        // strides
+      Vector<int64_t>{3, 3},        // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = vector<float>(1 * 3 * 1 * 111, 1.0f);
-  vector<int64_t> X_shape = {1, 3, 1, 111};
-  vector<int64_t> dummy_shape = {2, 2, 1, 2};
+  Vector<float> X = Vector<float>(1 * 3 * 1 * 111, 1.0f);
+  Vector<int64_t> X_shape = {1, 3, 1, 111};
+  Vector<int64_t> dummy_shape = {2, 2, 1, 2};
   auto dummy_vals = {-0.0f, 0.0f, -0.0f, -0.0f,
                      -0.0f, 0.0f, -0.0f, -0.0f};
   TestConvOp(attrs, {X, dummy_vals}, {X_shape, dummy_shape}, dummy_vals, dummy_shape,
@@ -250,15 +250,15 @@ TEST(ConvTest, Conv2D_Invalid_Input_Shape) {
 TEST(ConvTest, Conv2D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{1, 1},        // kernel_shape
-      vector<int64_t>{0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1},        // strides
+      Vector<int64_t>{1, 1},        // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = {0.45246148109436035f, 0.15498268604278564f, 0.11199361085891724f, -0.39421093463897705f,
+  Vector<float> X = {0.45246148109436035f, 0.15498268604278564f, 0.11199361085891724f, -0.39421093463897705f,
                      0.2626858949661255f, 0.13414543867111206f, -0.27184486389160156f, -0.43028733134269714f,
                      -0.26825493574142456f, 0.3893144130706787f, -0.13631996512413025f, -0.009590476751327515f,
                      -0.48771554231643677f, -0.25256502628326416f, -0.2812897562980652f, 0.4043201804161072f,
@@ -271,10 +271,10 @@ TEST(ConvTest, Conv2D_2) {
                      -0.34091079235076904f, 0.006497859954833984f, 0.4537564516067505f, 0.08006560802459717f,
                      -0.14788749814033508f, 0.034442365169525146f, -0.33322954177856445f, 0.06049239635467529f,
                      0.42619407176971436f};
-  vector<int64_t> X_shape = {1, 1, 7, 7};
-  vector<float> W = {-0.4406261742115021f};
-  vector<int64_t> W_shape = {1, 1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 7, 7};
+  Vector<int64_t> X_shape = {1, 1, 7, 7};
+  Vector<float> W = {-0.4406261742115021f};
+  Vector<int64_t> W_shape = {1, 1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 7, 7};
   auto expected_vals = {-0.19936637580394745f, -0.06828942894935608f, -0.04934731498360634f, 0.17369966208934784f,
                         -0.11574628204107285f, -0.05910799279808998f, 0.1197819635272026f, 0.18959586322307587f,
                         0.1182001456618309f, -0.17154212296009064f, 0.06006614491343498f, 0.0042258151806890965f,
@@ -294,21 +294,21 @@ TEST(ConvTest, Conv2D_2) {
 TEST(ConvTest, Conv2D_Bias_1) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{2, 2},        // kernel_shape
-      vector<int64_t>{0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1},        // strides
+      Vector<int64_t>{2, 2},        // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
-  vector<int64_t> X_shape = {1, 1, 3, 3};
-  vector<float> W = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-  vector<int64_t> W_shape = {2, 1, 2, 2};
-  vector<int64_t> Y_shape = {1, 2, 2, 2};
-  vector<float> B = {1.0f, -1.0f};
-  vector<int64_t> B_shape = {2};
+  Vector<float> X = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
+  Vector<int64_t> X_shape = {1, 1, 3, 3};
+  Vector<float> W = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+  Vector<int64_t> W_shape = {2, 1, 2, 2};
+  Vector<int64_t> Y_shape = {1, 2, 2, 2};
+  Vector<float> B = {1.0f, -1.0f};
+  Vector<int64_t> B_shape = {2};
   auto expected_vals = {13.0f, 17.0f, 25.0f, 29.0f, 11.0f, 15.0f, 23.0f, 27.0f};
 
   TestConvOp(attrs, {X, W, B}, {X_shape, W_shape, B_shape}, expected_vals, Y_shape);
@@ -318,15 +318,15 @@ TEST(ConvTest, Conv2D_Bias_1) {
 TEST(ConvTest, Conv2D_Bias_2) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{4, 4},        // kernel_shape
-      vector<int64_t>{1, 2, 3, 1},  // pads
-      vector<int64_t>{2, 3},        // strides
+      Vector<int64_t>{4, 4},        // kernel_shape
+      Vector<int64_t>{1, 2, 3, 1},  // pads
+      Vector<int64_t>{2, 3},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = {-0.22904816269874573f, -0.20278319716453552f, -0.4723144471645355f, 0.027880489826202393f,
+  Vector<float> X = {-0.22904816269874573f, -0.20278319716453552f, -0.4723144471645355f, 0.027880489826202393f,
                      0.2685856819152832f, -0.19361668825149536f, -0.39857280254364014f, 0.40285515785217285f,
                      0.20966708660125732f, -0.39234158396720886f, -0.07502302527427673f, 0.4662899374961853f,
                      -0.2567148208618164f, -0.1186269223690033f, -0.1897754967212677f, -0.3967694342136383f,
@@ -344,8 +344,8 @@ TEST(ConvTest, Conv2D_Bias_2) {
                      -0.45526939630508423f, -0.3007912039756775f, 0.06994932889938354f, -0.0749855637550354f,
                      -0.22754916548728943f, -0.469131737947464f, 0.08644282817840576f, 0.06157493591308594f,
                      -0.3920745849609375f, 0.458797812461853f, 0.18890488147735596f, 0.40145808458328247f};
-  vector<int64_t> X_shape = {1, 2, 6, 6};
-  vector<float> W = {-0.48007914423942566f, -0.21048793196678162f, 0.2505034804344177f, 0.1610567569732666f,
+  Vector<int64_t> X_shape = {1, 2, 6, 6};
+  Vector<float> W = {-0.48007914423942566f, -0.21048793196678162f, 0.2505034804344177f, 0.1610567569732666f,
                      -0.24951639771461487f, 0.1918455958366394f, 0.44247758388519287f, 0.06943017244338989f,
                      -0.10510382056236267f, -0.41663575172424316f, -0.3053555488586426f, -0.19126328825950623f,
                      -0.42332321405410767f, 0.498790979385376f, 0.081226646900177f, -0.21777048707008362f,
@@ -353,10 +353,10 @@ TEST(ConvTest, Conv2D_Bias_2) {
                      -0.17214277386665344f, -0.3650006353855133f, 0.21724021434783936f, 0.1636529564857483f,
                      -0.22924479842185974f, 0.044009625911712646f, 0.274614155292511f, -0.06811442971229553f,
                      0.450619637966156f, 0.4611729383468628f, 0.20782196521759033f, -0.3136714696884155f};
-  vector<int64_t> W_shape = {1, 2, 4, 4};
-  vector<float> B = {-0.40378910303115845f};
-  vector<int64_t> B_shape = {1};
-  vector<int64_t> Y_shape = {1, 1, 4, 2};
+  Vector<int64_t> W_shape = {1, 2, 4, 4};
+  Vector<float> B = {-0.40378910303115845f};
+  Vector<int64_t> B_shape = {1};
+  Vector<int64_t> Y_shape = {1, 1, 4, 2};
   auto expected_vals = {-0.3419531583786011f, -0.6116723418235779f, -0.39677709341049194f, -0.7316848039627075f,
                         -0.5647197365760803f, 0.02788025140762329f, -0.30450713634490967f, -0.6786775588989258f};
 
@@ -368,22 +368,22 @@ TEST(ConvTest, Conv2D_Bias_2) {
 TEST(ConvTest, Conv2D_AutoPad1) {
   ConvOpAndTestAttributes attrs = {
       "SAME_UPPER",           // auto_pad
-      vector<int64_t>{1, 1},  // dilations
+      Vector<int64_t>{1, 1},  // dilations
       1,                      // group
-      vector<int64_t>{3, 3},  // kernel_shape
+      Vector<int64_t>{3, 3},  // kernel_shape
       {},                     // pads
-      vector<int64_t>{1, 1},  // strides
+      Vector<int64_t>{1, 1},  // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = vector<float>(25, 1.0f);
-  vector<int64_t> X_shape = {1, 1, 5, 5};
-  vector<float> W = {0.0f, 1.0f, 2.0f,
+  Vector<float> X = Vector<float>(25, 1.0f);
+  Vector<int64_t> X_shape = {1, 1, 5, 5};
+  Vector<float> W = {0.0f, 1.0f, 2.0f,
                      3.0f, 4.0f, 5.0f,
                      6.0f, 7.0f, 8.0f};
 
-  vector<int64_t> W_shape = {1, 1, 3, 3};
-  vector<int64_t> Y_shape = {1, 1, 5, 5};
+  Vector<int64_t> W_shape = {1, 1, 3, 3};
+  Vector<int64_t> Y_shape = {1, 1, 5, 5};
   auto expected_vals = {24.0f, 33.0f, 33.0f, 33.0f, 20.0f,
                         27.0f, 36.0f, 36.0f, 36.0f, 21.0f,
                         27.0f, 36.0f, 36.0f, 36.0f, 21.0f,
@@ -395,26 +395,26 @@ TEST(ConvTest, Conv2D_AutoPad1) {
 TEST(ConvTest, Conv2D_AutoPad2) {
   ConvOpAndTestAttributes attrs = {
       "SAME_LOWER",           // auto_pad
-      vector<int64_t>{1, 1},  // dilations
+      Vector<int64_t>{1, 1},  // dilations
       1,                      // group
-      vector<int64_t>{3, 3},  // kernel_shape
+      Vector<int64_t>{3, 3},  // kernel_shape
       {},                     // pads
-      vector<int64_t>{1, 1},  // strides
+      Vector<int64_t>{1, 1},  // strides
       {}                      // excluded EPs
   };
 
-  vector<float> X = {1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+  Vector<float> X = {1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
                      1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
                      1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
                      1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
                      1.0f, 0.0f, 1.0f, 0.0f, 1.0f};
-  vector<int64_t> X_shape = {1, 1, 5, 5};
-  vector<float> W = {0.0f, 1.0f, 2.0f,
+  Vector<int64_t> X_shape = {1, 1, 5, 5};
+  Vector<float> W = {0.0f, 1.0f, 2.0f,
                      3.0f, 4.0f, 5.0f,
                      6.0f, 7.0f, 8.0f};
 
-  vector<int64_t> W_shape = {1, 1, 3, 3};
-  vector<int64_t> Y_shape = {1, 1, 5, 5};
+  Vector<int64_t> W_shape = {1, 1, 3, 3};
+  Vector<int64_t> Y_shape = {1, 1, 5, 5};
   auto expected_vals = {11.0f, 22.0f, 11.0f, 22.0f, 11.0f,
                         12.0f, 24.0f, 12.0f, 24.0f, 12.0f,
                         12.0f, 24.0f, 12.0f, 24.0f, 12.0f,
@@ -427,15 +427,15 @@ TEST(ConvTest, Conv2D_AutoPad2) {
 TEST(ConvTest, Conv3D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      vector<int64_t>{1, 1, 1},           // dilations
+      Vector<int64_t>{1, 1, 1},           // dilations
       1,                                  // group
-      vector<int64_t>{1, 1, 1},           // kernel_shape
-      vector<int64_t>{0, 0, 0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1, 1},           // strides
+      Vector<int64_t>{1, 1, 1},           // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1, 1},           // strides
       {}                                  // excluded EPs
   };
 
-  vector<float> X = {-0.43337246775627136f, -0.48385289311408997f, -0.30954962968826294f,
+  Vector<float> X = {-0.43337246775627136f, -0.48385289311408997f, -0.30954962968826294f,
                      0.16074687242507935f, -0.46670910716056824f, 0.46576786041259766f,
                      -0.37056273221969604f, 0.40604978799819946f, -0.035478413105010986f,
                      -0.3125576674938202f, 0.42677170038223267f, 0.39851123094558716f,
@@ -444,10 +444,10 @@ TEST(ConvTest, Conv3D_1) {
                      -0.2413364052772522f, 0.1231224536895752f, 0.032734215259552f,
                      0.29610633850097656f, -0.23117440938949585f, 0.3345826268196106f,
                      0.02567422389984131f, 0.24579226970672607f, 0.11724984645843506f};
-  vector<int64_t> X_shape = {1, 1, 3, 3, 3};
-  vector<float> W = {-0.44214117527008057f};
-  vector<int64_t> W_shape = {1, 1, 1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 3, 3, 3};
+  Vector<int64_t> X_shape = {1, 1, 3, 3, 3};
+  Vector<float> W = {-0.44214117527008057f};
+  Vector<int64_t> W_shape = {1, 1, 1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 3, 3, 3};
   auto expected_vals = {0.19161181151866913f, 0.21393129229545593f, 0.13686463236808777f,
                         -0.07107280939817429f, 0.20635131001472473f, -0.20593515038490295f,
                         0.16384103894233704f, -0.17953133583068848f, 0.01568646728992462f,
@@ -464,15 +464,15 @@ TEST(ConvTest, Conv3D_1) {
 TEST(ConvTest, Conv3D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      vector<int64_t>{1, 1, 1},           // dilations
+      Vector<int64_t>{1, 1, 1},           // dilations
       1,                                  // group
-      vector<int64_t>{1, 1, 1},           // kernel_shape
-      vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
-      vector<int64_t>{2, 2, 2},           // strides
+      Vector<int64_t>{1, 1, 1},           // kernel_shape
+      Vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
+      Vector<int64_t>{2, 2, 2},           // strides
       {}                                  // excluded EPs
   };
 
-  vector<float> X = {0.010772407054901123f, -0.43806642293930054f, 0.455391526222229f, -0.28657248616218567f,
+  Vector<float> X = {0.010772407054901123f, -0.43806642293930054f, 0.455391526222229f, -0.28657248616218567f,
                      0.45676887035369873f, -0.0320507287979126f, 0.4229400157928467f, -0.18730869889259338f,
                      -0.45851585268974304f, 0.042054951190948486f, -0.13332295417785645f, -0.25374430418014526f,
                      -0.23845627903938293f, 0.12214112281799316f, -0.1778157651424408f, 0.1891845464706421f,
@@ -488,10 +488,10 @@ TEST(ConvTest, Conv3D_2) {
                      0.11275297403335571f, 0.49773406982421875f, 0.2686365246772766f, 0.025525271892547607f,
                      -0.3037869930267334f, 0.41126757860183716f, 0.36149072647094727f, 0.00883406400680542f,
                      -0.07959523797035217f, 0.3601323366165161f, 0.17322391271591187f, -0.012007325887680054f};
-  vector<int64_t> X_shape = {1, 1, 4, 4, 4};
-  vector<float> W = {0.32824617624282837f};
-  vector<int64_t> W_shape = {1, 1, 1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 4, 4, 4};
+  Vector<int64_t> X_shape = {1, 1, 4, 4, 4};
+  Vector<float> W = {0.32824617624282837f};
+  Vector<int64_t> W_shape = {1, 1, 1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 4, 4, 4};
   auto expected_vals = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0035360013134777546f, 0.14948052167892456f, 0.0f,
@@ -507,15 +507,15 @@ TEST(ConvTest, Conv3D_2) {
 TEST(ConvTest, Conv3D_Bias) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      vector<int64_t>{2, 2, 2},           // dilations
+      Vector<int64_t>{2, 2, 2},           // dilations
       1,                                  // group
-      vector<int64_t>{2, 2, 2},           // kernel_shape
-      vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
-      vector<int64_t>{2, 2, 2},           // strides
+      Vector<int64_t>{2, 2, 2},           // kernel_shape
+      Vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
+      Vector<int64_t>{2, 2, 2},           // strides
       {}                                  // excluded EPs
   };
 
-  vector<float> X = {0.46796226501464844f, -0.4613912105560303f, 0.33512794971466064f, -0.4010460674762726f,
+  Vector<float> X = {0.46796226501464844f, -0.4613912105560303f, 0.33512794971466064f, -0.4010460674762726f,
                      0.41722816228866577f, -0.048133403062820435f, 0.20415884256362915f, 0.03189706802368164f,
                      -0.04779183864593506f, -0.0795503556728363f, 0.4987630844116211f, 0.3506373167037964f,
                      0.48065757751464844f, 0.269855260848999f, -0.2463444471359253f, 0.19044137001037598f,
@@ -547,15 +547,15 @@ TEST(ConvTest, Conv3D_Bias) {
                      -0.31819307804107666f, 0.14515334367752075f, 0.3157258629798889f, 0.33179205656051636f,
                      -0.2558857202529907f, 0.11888682842254639f, 0.12824326753616333f, -0.33106181025505066f,
                      0.2549159526824951f, -0.46760573983192444f, -0.11983257532119751f, 0.1834418773651123f};
-  vector<int64_t> X_shape = {2, 1, 4, 4, 4};
-  vector<float> W = {0.388077974319458f, -0.16366064548492432f, -0.42871910333633423f, 0.4276432394981384f,
+  Vector<int64_t> X_shape = {2, 1, 4, 4, 4};
+  Vector<float> W = {0.388077974319458f, -0.16366064548492432f, -0.42871910333633423f, 0.4276432394981384f,
                      0.21517693996429443f, 0.007908165454864502f, 0.33897721767425537f, 0.21843165159225464f,
                      0.34095364809036255f, -0.17043980956077576f, -0.013571739196777344f, -0.26793742179870605f,
                      -0.34863436222076416f, -0.2672275900840759f, -0.36691007018089294f, 0.37296557426452637f};
-  vector<int64_t> W_shape = {2, 1, 2, 2, 2};
-  vector<float> B = {0.4310183525085449f, -0.4564093053340912f};
-  vector<int64_t> B_shape = {2};
-  vector<int64_t> Y_shape = {2, 2, 3, 3, 3};
+  Vector<int64_t> W_shape = {2, 1, 2, 2, 2};
+  Vector<float> B = {0.4310183525085449f, -0.4564093053340912f};
+  Vector<int64_t> B_shape = {2};
+  Vector<int64_t> Y_shape = {2, 2, 3, 3, 3};
 
   auto expected_vals = {0.5332361459732056f, 0.6628494262695312f, 0.544619083404541f, 0.4242798388004303f,
                         0.6271085739135742f, 0.6721994876861572f, 0.43064039945602417f, 0.4246789515018463f,
@@ -590,19 +590,19 @@ TEST(ConvTest, Conv3D_Bias) {
 TEST(ConvTest, Conv2D_group) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       2,                            // group
-      vector<int64_t>{1, 1},        // kernel_shape
-      vector<int64_t>{0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1},        // strides
+      Vector<int64_t>{1, 1},        // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f};
-  vector<int64_t> X_shape = {1, 2, 3, 3};
-  vector<float> W = {1.0f, 2.0f};
-  vector<int64_t> W_shape = {2, 1, 1, 1};
-  vector<int64_t> Y_shape = {1, 2, 3, 3};
+  Vector<float> X = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f};
+  Vector<int64_t> X_shape = {1, 2, 3, 3};
+  Vector<float> W = {1.0f, 2.0f};
+  Vector<int64_t> W_shape = {2, 1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 2, 3, 3};
   auto expected_vals = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f, 34.0f};
 
   TestConvOp(attrs, {X, W}, {X_shape, W_shape}, expected_vals, Y_shape);
@@ -611,19 +611,19 @@ TEST(ConvTest, Conv2D_group) {
 TEST(ConvTest, ConvDimWithZero) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      vector<int64_t>{1, 1},        // dilations
+      Vector<int64_t>{1, 1},        // dilations
       1,                            // group
-      vector<int64_t>{1, 1},        // kernel_shape
-      vector<int64_t>{0, 0, 0, 0},  // pads
-      vector<int64_t>{1, 1},        // strides
+      Vector<int64_t>{1, 1},        // kernel_shape
+      Vector<int64_t>{0, 0, 0, 0},  // pads
+      Vector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
-  vector<float> X = vector<float>();
-  vector<int64_t> X_shape = {0, 2, 4, 4};  // N of 0 should be handled
-  vector<float> W = {1.0f, 2.0f, 1.0f, 2.0f};
-  vector<int64_t> W_shape = {2, 2, 1, 1};
-  vector<int64_t> out_shape = {0, 2, 4, 4};
+  Vector<float> X = Vector<float>();
+  Vector<int64_t> X_shape = {0, 2, 4, 4};  // N of 0 should be handled
+  Vector<float> W = {1.0f, 2.0f, 1.0f, 2.0f};
+  Vector<int64_t> W_shape = {2, 2, 1, 1};
+  Vector<int64_t> out_shape = {0, 2, 4, 4};
 
   // not handled by NGraph and ACL
   attrs.excluded_providers.insert(kNGraphExecutionProvider);

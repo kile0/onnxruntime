@@ -14,9 +14,9 @@ void IOTypeConstraintHelper(const ONNX_NAMESPACE::FunctionProto& onnx_func_proto
                             std::unique_ptr<ONNX_NAMESPACE::OpSchema>& op_schema_,
                             const std::unordered_map<std::string, int>& input_name_idx_map,
                             const std::unordered_map<std::string, int>& output_name_idx_map) {
-  Vector<std::pair<std::string, std::string>> input_types_list(onnx_func_proto_.input_size());
-  Vector<std::pair<std::string, std::string>> output_types_list(onnx_func_proto_.output_size());
-  std::unordered_map<std::string, Vector<std::string>> type_constraint_map;
+  std::vector<std::pair<std::string, std::string>> input_types_list(onnx_func_proto_.input_size());
+  std::vector<std::pair<std::string, std::string>> output_types_list(onnx_func_proto_.output_size());
+  std::unordered_map<std::string, std::vector<std::string>> type_constraint_map;
   std::unordered_map<std::string, ONNX_NAMESPACE::AttributeProto_AttributeType> attribute_type_map;
   auto schema_registry = ONNX_NAMESPACE::OpSchemaRegistry::Instance();
   for (auto& node : onnx_func_proto_.node()) {

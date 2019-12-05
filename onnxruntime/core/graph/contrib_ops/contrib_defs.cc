@@ -456,7 +456,7 @@ Example 2:
         // and may need to be fixed.
         if (getAttribute(ctx, "input_as_shape", 0) != 0)  // dynamic shape
           return;
-        Vector<int64_t> extra_shape;
+        std::vector<int64_t> extra_shape;
         getRepeatedAttribute(ctx, "extra_shape", extra_shape);
         if (hasInputShape(ctx, 0)) {
           ONNX_NAMESPACE::TensorShapeProto shape = ctx.getInputType(0)->tensor_type().shape();
@@ -550,7 +550,7 @@ value at X[t][n] >= seqLengths[n].
         // and may need to be fixed.
         if (getAttribute(ctx, "input_as_shape", 0) != 0)  // dynamic shape
           return;
-        Vector<int64_t> extra_shape;
+        std::vector<int64_t> extra_shape;
         getRepeatedAttribute(ctx, "extra_shape", extra_shape);
         if (hasInputShape(ctx, 0)) {
           ONNX_NAMESPACE::TensorShapeProto shape = ctx.getInputType(0)->tensor_type().shape();
@@ -701,7 +701,7 @@ value at X[t][n] >= seqLengths[n].
             fail_shape_inference("Input's shape must be 4-D");
 
           // parse necessary attributes for futher processing
-          Vector<int64_t> border;
+          std::vector<int64_t> border;
           bool border_present =
               getRepeatedAttribute(ctx, "border", border);
           if (!border_present || border.size() != 4)
@@ -709,7 +709,7 @@ value at X[t][n] >= seqLengths[n].
                 "'Border' attribute must be present and must contain exactly 4 values - "
                 "(left_border, top_border, right_border, bottom_border)");
 
-          Vector<int64_t> scale;
+          std::vector<int64_t> scale;
           bool scale_present =
               getRepeatedAttribute(ctx, "scale", scale);
           if (scale_present && scale.size() != 2)
@@ -1607,7 +1607,7 @@ Example 4:
 
           // make a copy of the returned const vector - may have to resize
           // this in next step
-          Vector<int64_t> pads_data;
+          std::vector<int64_t> pads_data;
           if (utils::HasRawData(*pads_initializer))
             return;
           else

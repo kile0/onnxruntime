@@ -323,7 +323,7 @@ void RegisterDmlSchemas() {
     .TypeAndShapeInferenceFunction([](ONNX_NAMESPACE::InferenceContext& ctx) {
       ONNX_NAMESPACE::propagateElemTypeFromInputToOutput(ctx, 0, 0);
       int num_inputs = static_cast<int>(ctx.getNumInputs());
-      Vector<const ONNX_NAMESPACE::TensorShapeProto*> shapes;
+      std::vector<const ONNX_NAMESPACE::TensorShapeProto*> shapes;
       for (int i = 0; i < num_inputs; ++i) {
         auto input_type = ctx.getInputType(i);
         if (nullptr == input_type || !input_type->has_tensor_type() ||

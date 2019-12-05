@@ -426,7 +426,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  Vector<int64_t> perm;
+  std::vector<int64_t> perm;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(transpose, "perm", perm) && perm.size() == 4 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1 && perm[3] == 3)) {
     DEBUG_LOG("Failed in match Transpose attribute perm. Expected: 0, 2, 1, 3");
     return false;
@@ -504,7 +504,7 @@ bool AttentionFusion::FuseSubGraph(Node& layer_norm, const Node& add_after_layer
     return false;
   }
 
-  Vector<int64_t> axes;
+  std::vector<int64_t> axes;
   if (!(graph_utils::GetRepeatedNodeAttributeValues(mask_unsqueeze_1, "axes", axes) && axes.size() == 1 && axes[0] == 1)) {
     DEBUG_LOG("mask_unsqueeze_1 axes not matched. Expect: 1");
     return false;

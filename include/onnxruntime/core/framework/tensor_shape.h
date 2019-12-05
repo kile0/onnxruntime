@@ -3,10 +3,10 @@
 
 #pragma once
 #include <iosfwd>
-#include <vector>
 #include <algorithm>
 #include <string>
 #include <cstring>
+#include "core/common/vector.h"
 #include "onnxruntime_config.h"
 
 namespace onnxruntime {

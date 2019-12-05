@@ -8,10 +8,10 @@ namespace onnxruntime {
 namespace test {
 TEST(ContribOpTest, ConvTransposeWithDynamicPads) {
   OpTester test("ConvTransposeWithDynamicPads", 1, onnxruntime::kMSDomain);
-  test.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
-  test.AddAttribute("output_padding", Vector<int64_t>{1, 1});
-  test.AddAttribute("strides", Vector<int64_t>{2, 2});
-  test.AddAttribute("dilations", Vector<int64_t>{1, 1});
+  test.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
+  test.AddAttribute("output_padding", std::vector<int64_t>{1, 1});
+  test.AddAttribute("strides", std::vector<int64_t>{2, 2});
+  test.AddAttribute("dilations", std::vector<int64_t>{1, 1});
 
   test.AddInput<float>("X", {1, 1, 3, 3}, Vector<float>{0.16857791f, -0.15161794f, 0.08540368f, 0.1820628f, -0.21746576f, 0.08245695f, 0.1431433f, -0.43156421f, 0.30591947f});
   test.AddInput<float>("W", {1, 1, 3, 3}, Vector<float>{-0.06230065f, 0.37932432f, -0.25388849f, 0.33878803f, 0.43709868f, -0.22477469f, 0.04118127f, -0.44696793f, 0.06373066f});

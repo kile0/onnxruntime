@@ -304,7 +304,7 @@ void RunModelWithBindingMatMul(InferenceSession& session_object,
       allocation_provider == kCudaExecutionProvider) {
 #ifdef USE_CUDA
     // in this case we need to copy the tensor from cuda to cpu
-    vector<OrtValue>& outputs = io_binding->GetOutputs();
+    Vector<OrtValue>& outputs = io_binding->GetOutputs();
     ASSERT_EQ(1, outputs.size());
     auto& rtensor = outputs.front().Get<Tensor>();
     auto element_type = rtensor.DataType();
@@ -811,7 +811,7 @@ TEST(InferenceSessionTests, TestIOBindingReuse) {
   ASSERT_TRUE(st.IsOK());
 
   OrtValue ml_value1;
-  vector<float> v1{2.f};
+  Vector<float> v1{2.f};
   CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), {1}, v1, &ml_value1);
   io_binding->BindOutput("foo", ml_value1);
   ASSERT_TRUE(io_binding->GetOutputs().size() == 1);
@@ -822,7 +822,7 @@ TEST(InferenceSessionTests, TestIOBindingReuse) {
   }
 
   OrtValue ml_value2;
-  vector<float> v2{3.f};
+  Vector<float> v2{3.f};
   CreateMLValue<float>(TestCPUExecutionProvider()->GetAllocator(0, OrtMemTypeDefault), {1}, v2, &ml_value2);
   io_binding->BindOutput("foo", ml_value2);
   ASSERT_TRUE(io_binding->GetOutputs().size() == 1);
@@ -1507,7 +1507,7 @@ TEST(InferenceSessionTests, TestLenientShapeInferencing) {
       // add Unsqueeze node to fix the output shape
 
       auto& unsqueeze = graph.AddNode("unsqueeze", "Unsqueeze", "Fix output shape", tmp_output_defs, graph_output_defs);
-      unsqueeze.AddAttribute("axes", Vector<int64_t>{0});
+      unsqueeze.AddAttribute("axes", std::vector<int64_t>{0});
     }
   };
 

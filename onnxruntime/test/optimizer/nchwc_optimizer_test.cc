@@ -241,8 +241,8 @@ TEST(NchwcOptimizerTests, ConvNchw) {
       }
 
       auto& conv_node = helper.AddConvNode(input_arg, conv_output_arg, {130, 3, 3, 3});
-      conv_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
-      conv_node.AddAttribute("strides", Vector<int64_t>{2, 2});
+      conv_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
+      conv_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
     };
 
     auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -415,8 +415,8 @@ TEST(NchwcOptimizerTests, ConvMaxPool) {
     helper.AddConvNode(input_arg, conv_output_arg, {160, 48, 5, 5});
 
     auto& pool_node = helper.AddNode("MaxPool", {conv_output_arg}, {output_arg});
-    pool_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
-    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{5, 5});
+    pool_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
+    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{5, 5});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -439,8 +439,8 @@ TEST(NchwcOptimizerTests, ConvMaxPoolDilations) {
     helper.AddConvNode(input_arg, conv_output_arg, {160, 48, 5, 5});
 
     auto& pool_node = helper.AddNode("MaxPool", {conv_output_arg}, {output_arg});
-    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
-    pool_node.AddAttribute("dilations", Vector<int64_t>{2, 2});
+    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
+    pool_node.AddAttribute("dilations", std::vector<int64_t>{2, 2});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {
@@ -465,7 +465,7 @@ TEST(NchwcOptimizerTests, ConvAveragePool) {
 
       auto& pool_node = helper.AddNode("AveragePool", {conv_output_arg}, {output_arg});
       pool_node.AddAttribute("auto_pad", "SAME_UPPER");
-      pool_node.AddAttribute("kernel_shape", Vector<int64_t>{4, 4});
+      pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{4, 4});
       if (count_include_pad) {
         pool_node.AddAttribute("count_include_pad", static_cast<int64_t>(1));
       }
@@ -494,7 +494,7 @@ TEST(NchwcOptimizerTests, ConvGlobalPool) {
       auto* output_arg = helper.MakeOutput();
 
       auto& conv_node = helper.AddConvNode(input_arg, conv_output_arg, {160, 96, 3, 3});
-      conv_node.AddAttribute("dilations", Vector<int64_t>{2, 2});
+      conv_node.AddAttribute("dilations", std::vector<int64_t>{2, 2});
 
       helper.AddNode(op_type, {conv_output_arg}, {output_arg});
     };
@@ -776,21 +776,21 @@ TEST(NchwcOptimizerTests, ShapeInferencing) {
     // dimension is unchanged.
     auto* conv1_output_arg = helper.MakeIntermediate();
     auto& conv1_node = helper.AddConvNode(input_arg, conv1_output_arg, {48, 3, 3, 3});
-    conv1_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
+    conv1_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
 
     auto* pool2a_output_arg = helper.MakeIntermediate();
     auto& pool2a_node = helper.AddNode("MaxPool", {conv1_output_arg}, {pool2a_output_arg});
-    pool2a_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
-    pool2a_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
+    pool2a_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
+    pool2a_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
 
     auto* pool2b_output_arg = helper.MakeIntermediate();
     auto& pool2b_node = helper.AddNode("MaxPool", {conv1_output_arg}, {pool2b_output_arg});
-    pool2b_node.AddAttribute("kernel_shape", Vector<int64_t>{3, 3});
+    pool2b_node.AddAttribute("kernel_shape", std::vector<int64_t>{3, 3});
     pool2b_node.AddAttribute("auto_pad", "SAME_LOWER");
 
     auto* conv3a_output_arg = helper.MakeIntermediate();
     auto& conv3a_node = helper.AddConvNode(pool2a_output_arg, conv3a_output_arg, {64, 48, 3, 3});
-    conv3a_node.AddAttribute("pads", Vector<int64_t>{1, 1, 1, 1});
+    conv3a_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 1, 1});
 
     auto* conv3b_output_arg = helper.MakeIntermediate();
     auto& conv3b_node = helper.AddConvNode(pool2b_output_arg, conv3b_output_arg, {64, 48, 3, 3});
@@ -833,8 +833,8 @@ TEST(NchwcOptimizerTests, ShapeInferencing2) {
 
     auto* conv2a1_output_arg = helper.MakeIntermediate();
     auto& conv2a1_node = helper.AddConvNode(conv1_output_arg, conv2a1_output_arg, {16, 16, 2, 2});
-    conv2a1_node.AddAttribute("pads", Vector<int64_t>{1, 1, 0, 0});
-    conv2a1_node.AddAttribute("strides", Vector<int64_t>{2, 2});
+    conv2a1_node.AddAttribute("pads", std::vector<int64_t>{1, 1, 0, 0});
+    conv2a1_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
 
     auto* conv2a_output_arg = helper.MakeIntermediate();
     auto& conv2a2_node = helper.AddConvNode(conv2a1_output_arg, conv2a_output_arg, {16, 16, 2, 2});
@@ -842,7 +842,7 @@ TEST(NchwcOptimizerTests, ShapeInferencing2) {
 
     auto* conv2b_output_arg = helper.MakeIntermediate();
     auto& conv2b_node = helper.AddConvNode(conv1_output_arg, conv2b_output_arg, {16, 16, 1, 1});
-    conv2b_node.AddAttribute("strides", Vector<int64_t>{2, 2});
+    conv2b_node.AddAttribute("strides", std::vector<int64_t>{2, 2});
 
     helper.AddNode("Add", {conv2a_output_arg, conv2b_output_arg}, {output_arg});
   };
@@ -915,7 +915,7 @@ TEST(NchwcOptimizerTests, TensorAlignment) {
     auto* input4_arg = helper.MakeInput({1, 60, 12, 12});
     auto* output4_arg = helper.MakeOutput();
     auto& pool_node = helper.AddNode("MaxPool", {input4_arg}, {output4_arg});
-    pool_node.AddAttribute("kernel_shape", Vector<int64_t>{2, 2});
+    pool_node.AddAttribute("kernel_shape", std::vector<int64_t>{2, 2});
   };
 
   auto check_nchwc_graph = [&](NchwcInferenceSession& session) {

@@ -9,7 +9,7 @@ namespace test {
 
 namespace {
 
-void FindMinMax(const vector<float>& vec, float* min,
+void FindMinMax(const Vector<float>& vec, float* min,
                 float* max) {
   *min = *max = 0;
   *min = *std::min_element(vec.begin(), vec.end());
@@ -39,7 +39,7 @@ void Quantize(float scale, uint8_t zero_point,
 TEST(ConvTest, QLinearConv2DTest) {
   OpTester test("QLinearConv", 10);
 
-  vector<float> X = {0.45246148109436035f, 0.15498268604278564f, 0.11199361085891724f, -0.39421093463897705f,
+  Vector<float> X = {0.45246148109436035f, 0.15498268604278564f, 0.11199361085891724f, -0.39421093463897705f,
                      0.2626858949661255f, 0.13414543867111206f, -0.27184486389160156f, -0.43028733134269714f,
                      -0.26825493574142456f, 0.3893144130706787f, -0.13631996512413025f, -0.009590476751327515f,
                      -0.48771554231643677f, -0.25256502628326416f, -0.2812897562980652f, 0.4043201804161072f,
@@ -52,10 +52,10 @@ TEST(ConvTest, QLinearConv2DTest) {
                      -0.34091079235076904f, 0.006497859954833984f, 0.4537564516067505f, 0.08006560802459717f,
                      -0.14788749814033508f, 0.034442365169525146f, -0.33322954177856445f, 0.06049239635467529f,
                      0.42619407176971436f};
-  vector<int64_t> X_shape = {1, 1, 7, 7};
+  Vector<int64_t> X_shape = {1, 1, 7, 7};
 
-  vector<float> W = {-0.4406261742115021f};
-  vector<int64_t> W_shape = {1, 1, 1, 1};
+  Vector<float> W = {-0.4406261742115021f};
+  Vector<int64_t> W_shape = {1, 1, 1, 1};
 
   auto expected_vals = {-0.19936637580394745f, -0.06828942894935608f, -0.04934731498360634f, 0.17369966208934784f,
                         -0.11574628204107285f, -0.05910799279808998f, 0.1197819635272026f, 0.18959586322307587f,
@@ -70,7 +70,7 @@ TEST(ConvTest, QLinearConv2DTest) {
                         0.15021422505378723f, -0.0028631272725760937f, -0.19993697106838226f, -0.03527900204062462f,
                         0.06516310572624207f, -0.015176207758486271f, 0.14682966470718384f, -0.02665453404188156f,
                         -0.18779225647449493f};
-  vector<int64_t> Y_shape = {1, 1, 7, 7};
+  Vector<int64_t> Y_shape = {1, 1, 7, 7};
 
   // Calculate quantization params and quantize the inputs and expected output
   float lhs_min, lhs_max, rhs_min, rhs_max, result_min, result_max;
@@ -84,7 +84,7 @@ TEST(ConvTest, QLinearConv2DTest) {
   FindScaleAndZeroPoint(rhs_min, rhs_max, &rhs_scale, &rhs_zero_point);
   FindScaleAndZeroPoint(result_min, result_max, &result_scale, &result_zero_point);
 
-  vector<uint8_t> x_quantized(X.size()), w_quantized(W.size()), result_quantized(expected_vals.size());
+  Vector<uint8_t> x_quantized(X.size()), w_quantized(W.size()), result_quantized(expected_vals.size());
   Quantize(lhs_scale, lhs_zero_point, X, &x_quantized);
   Quantize(rhs_scale, rhs_zero_point, W, &w_quantized);
   Quantize(result_scale, result_zero_point, expected_vals, &result_quantized);
@@ -108,7 +108,7 @@ TEST(ConvTest, QLinearConv2DTest) {
 TEST(ConvTest, QLinearConv3DTest) {
   OpTester test("QLinearConv", 10);
 
-  vector<float> X = {0.010772407054901123f, -0.43806642293930054f, 0.455391526222229f, -0.28657248616218567f,
+  Vector<float> X = {0.010772407054901123f, -0.43806642293930054f, 0.455391526222229f, -0.28657248616218567f,
                      0.45676887035369873f, -0.0320507287979126f, 0.4229400157928467f, -0.18730869889259338f,
                      -0.45851585268974304f, 0.042054951190948486f, -0.13332295417785645f, -0.25374430418014526f,
                      -0.23845627903938293f, 0.12214112281799316f, -0.1778157651424408f, 0.1891845464706421f,
@@ -124,10 +124,10 @@ TEST(ConvTest, QLinearConv3DTest) {
                      0.11275297403335571f, 0.49773406982421875f, 0.2686365246772766f, 0.025525271892547607f,
                      -0.3037869930267334f, 0.41126757860183716f, 0.36149072647094727f, 0.00883406400680542f,
                      -0.07959523797035217f, 0.3601323366165161f, 0.17322391271591187f, -0.012007325887680054f};
-  vector<int64_t> X_shape = {1, 1, 4, 4, 4};
-  vector<float> W = {0.32824617624282837f};
-  vector<int64_t> W_shape = {1, 1, 1, 1, 1};
-  vector<int64_t> Y_shape = {1, 1, 4, 4, 4};
+  Vector<int64_t> X_shape = {1, 1, 4, 4, 4};
+  Vector<float> W = {0.32824617624282837f};
+  Vector<int64_t> W_shape = {1, 1, 1, 1, 1};
+  Vector<int64_t> Y_shape = {1, 1, 4, 4, 4};
   auto expected_vals = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0035360013134777546f, 0.14948052167892456f, 0.0f,
@@ -137,8 +137,8 @@ TEST(ConvTest, QLinearConv3DTest) {
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
-  vector<int64_t> pads = {2, 2, 2, 2, 2, 2};
-  vector<int64_t>strides = {2, 2, 2};
+  Vector<int64_t> pads = {2, 2, 2, 2, 2, 2};
+  Vector<int64_t>strides = {2, 2, 2};
 
   // Calculate quantization params and quantize the inputs and expected output
   float lhs_min, lhs_max, rhs_min, rhs_max, result_min, result_max;
@@ -152,7 +152,7 @@ TEST(ConvTest, QLinearConv3DTest) {
   FindScaleAndZeroPoint(rhs_min, rhs_max, &rhs_scale, &rhs_zero_point);
   FindScaleAndZeroPoint(result_min, result_max, &result_scale, &result_zero_point);
 
-  vector<uint8_t> x_quantized(X.size()), w_quantized(W.size()), result_quantized(expected_vals.size());
+  Vector<uint8_t> x_quantized(X.size()), w_quantized(W.size()), result_quantized(expected_vals.size());
   Quantize(lhs_scale, lhs_zero_point, X, &x_quantized);
   Quantize(rhs_scale, rhs_zero_point, W, &w_quantized);
   Quantize(result_scale, result_zero_point, expected_vals, &result_quantized);

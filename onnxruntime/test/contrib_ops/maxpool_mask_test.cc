@@ -11,9 +11,9 @@ TEST(ContribOpTest, MaxPoolWithMask) {
   OpTester test("MaxpoolWithMask", 1, onnxruntime::kMSDomain);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", Vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", Vector<int64_t>{8, 8});
+  test.AddAttribute("strides", std::vector<int64_t>{1, 1});
+  test.AddAttribute("pads", std::vector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", std::vector<int64_t>{8, 8});
 
   Vector<float> x_vals = {
       0.19151945412158966, 0.6221087574958801, 0.43772774934768677, 0.7853586077690125, 0.7799758315086365, 0.27259260416030884, 0.2764642536640167, 0.801872193813324,

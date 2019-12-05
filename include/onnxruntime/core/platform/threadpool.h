@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include <vector>
+#include "core/common/vector.h"
 #include <functional>
 #include <memory>
 

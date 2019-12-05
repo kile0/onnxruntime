@@ -247,7 +247,7 @@ class Node {
 #define ADD_ATTR_INTERFACES(TypeName)                                     \
   void AddAttribute(const std::string& attr_name, const TypeName& value); \
   void AddAttribute(const std::string& attr_name,                         \
-                    const Vector<TypeName>& values);
+                    const std::vector<TypeName>& values);
 
   ADD_ATTR_INTERFACES(int64_t)
   ADD_ATTR_INTERFACES(float)
@@ -919,8 +919,8 @@ class Graph {
 
   // perform type and shape inferencing on the subgraph and Resolve to validate
   static common::Status InferAndVerifySubgraphTypes(const Node& node, Graph& subgraph,
-                                                    const Vector<const ONNX_NAMESPACE::TypeProto*>& input_types,
-                                                    Vector<const ONNX_NAMESPACE::TypeProto*>& output_types);
+                                                    const std::vector<const ONNX_NAMESPACE::TypeProto*>& input_types,
+                                                    std::vector<const ONNX_NAMESPACE::TypeProto*>& output_types);
 
   // Apply type-inference and type-checking to all inputs and initializers:
   common::Status TypeCheckInputsAndInitializers();

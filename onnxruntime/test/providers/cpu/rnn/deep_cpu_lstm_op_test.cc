@@ -43,9 +43,9 @@ static void RunLstmTest(const Vector<float>& X_data,
                         bool output_sequence = true,
                         bool input_forget = false,
                         // copy the following vectors as we may modify them
-                        Vector<string> activations = {},
-                        Vector<float> activation_alphas = {},
-                        Vector<float> activation_betas = {},
+                        std::vector<string> activations = {},
+                        std::vector<float> activation_alphas = {},
+                        std::vector<float> activation_betas = {},
                         bool hasClip = true) {
   OpTester test("LSTM");
 
@@ -59,11 +59,11 @@ static void RunLstmTest(const Vector<float>& X_data,
     activations = DuplicateContainer(activations);
   }
 
-  test.AddAttribute<Vector<string>>("activations", activations);
+  test.AddAttribute<std::vector<string>>("activations", activations);
   if (!activation_alphas.empty())
-    test.AddAttribute<Vector<float>>("activation_alpha", activation_alphas);
+    test.AddAttribute<std::vector<float>>("activation_alpha", activation_alphas);
   if (!activation_betas.empty())
-    test.AddAttribute<Vector<float>>("activation_beta", activation_betas);
+    test.AddAttribute<std::vector<float>>("activation_beta", activation_betas);
 
   test.AddAttribute("direction", direction);
   test.AddAttribute("hidden_size", hidden_size);

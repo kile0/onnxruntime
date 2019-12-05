@@ -10,15 +10,15 @@ namespace test {
 template <typename T>
 void TestScalar() {
   OpTester test("Scaler", 1, onnxruntime::kMLDomain);
-  vector<float> scale{3.f, -4.f, 3.0f};
-  vector<float> offset{4.8f, -0.5f, 77.0f};
+  Vector<float> scale{3.f, -4.f, 3.0f};
+  Vector<float> offset{4.8f, -0.5f, 77.0f};
   test.AddAttribute("scale", scale);
   test.AddAttribute("offset", offset);
-  vector<T> input{1, -2, 3, 4, 5, -6};
-  vector<int64_t> dims{2, 3};
+  Vector<T> input{1, -2, 3, 4, 5, -6};
+  Vector<int64_t> dims{2, 3};
 
   // prepare expected output
-  vector<float> expected_output;
+  Vector<float> expected_output;
   for (size_t i = 0; i < input.size(); ++i) {
     expected_output.push_back((static_cast<float>(input[i]) - offset[i % dims[1]]) * scale[i % dims[1]]);
   }
@@ -37,15 +37,15 @@ TEST(MLOpTest, ScalerOp) {
 
 TEST(MLOpTest, ScalerOpScaleOffsetSize1) {
   OpTester test("Scaler", 1, onnxruntime::kMLDomain);
-  vector<float> scale{3.f};
-  vector<float> offset{4.8f};
+  Vector<float> scale{3.f};
+  Vector<float> offset{4.8f};
   test.AddAttribute("scale", scale);
   test.AddAttribute("offset", offset);
-  vector<float> input{0.8f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f};
-  vector<int64_t> dims{2, 3};
+  Vector<float> input{0.8f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f};
+  Vector<int64_t> dims{2, 3};
 
   // prepare expected output
-  vector<float> expected_output;
+  Vector<float> expected_output;
   for (size_t i = 0; i < input.size(); ++i) {
     expected_output.push_back((input[i] - offset[0]) * scale[0]);
   }

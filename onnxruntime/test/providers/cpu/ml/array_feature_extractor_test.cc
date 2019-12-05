@@ -21,22 +21,22 @@ TEST_F(ArrayFeatureExtractorTest, Basic) {
                                 6.8f, -7.5f, 8.0f, 9.8f, -9.0f, 4.0f,
                                 4.8f, -4.5f, 4.0f, 4.8f, -4.0f, 4.0f};
   const int kCols = 6;
-  const vector<int64_t> x_dims = {N, kCols};
+  const Vector<int64_t> x_dims = {N, kCols};
   test_.AddInput<float>("X", x_dims, X);
 
   const Vector<int64_t> Y = {1L, 2L, 4L};
-  const vector<int64_t> y_dims = {1, 3};
+  const Vector<int64_t> y_dims = {1, 3};
   test_.AddInput<int64_t>("Y", y_dims, Y);
 
   // prepare expected output
-  vector<float> expected_output;
+  Vector<float> expected_output;
   for (int i = 0; i < N; ++i) {
     auto offset = i * kCols;
     for (size_t j = 0; j < Y.size(); ++j) {
       expected_output.push_back(X[offset + Y[j]]);
     }
   }
-  const vector<int64_t> expected_dims{N, gsl::narrow_cast<int64_t>(Y.size())};
+  const Vector<int64_t> expected_dims{N, gsl::narrow_cast<int64_t>(Y.size())};
   test_.AddOutput<float>("Z", expected_dims, expected_output);
 
   test_.Run();

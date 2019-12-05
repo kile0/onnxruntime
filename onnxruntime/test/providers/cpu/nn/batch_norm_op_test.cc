@@ -13,14 +13,14 @@ using namespace std;
 namespace onnxruntime {
 namespace test {
 
-using InputDataMap = unordered_map<string, vector<float>>;
-using InputShapesMap = unordered_map<string, vector<int64_t>>;
+using InputDataMap = unordered_map<string, Vector<float>>;
+using InputShapesMap = unordered_map<string, Vector<int64_t>>;
 
 void TestBatchNorm(const InputDataMap& input_data_map,
                    const InputShapesMap& input_shapes_map,
                    optional<float> epsilon,
                    const std::initializer_list<float>& expected_output,
-                   const vector<int64_t>& expected_output_shape,
+                   const Vector<int64_t>& expected_output_shape,
                    int64_t spatial_mode = 1,
                    OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
                    const std::string& err_str = "",
@@ -48,15 +48,15 @@ void TestBatchNorm(const InputDataMap& input_data_map,
 
 TEST(BatchNormTest, PositiveTestCase) {
   // This input was taken from the SpatialBN_1.pb, SpatialBN_1_input.pb and SpatialBN_1_output.pb files.
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f};
-  vector<float> B{-0.384622f};
-  vector<float> mean{-2.45673f};
-  vector<float> var{1.37998f};
+  Vector<float> scale{0.589433f};
+  Vector<float> B{-0.384622f};
+  Vector<float> mean{-2.45673f};
+  Vector<float> var{1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -66,7 +66,7 @@ TEST(BatchNormTest, PositiveTestCase) {
   input_data_map.insert({"var", var});
 
   InputShapesMap input_shapes_map;
-  vector<int64_t> input_shape{1, 1, 7, 7, 1};
+  Vector<int64_t> input_shape{1, 1, 7, 7, 1};
   input_shapes_map.insert({"X", input_shape});
   input_shapes_map.insert({"scale", {1}});
   input_shapes_map.insert({"B", {1}});
@@ -85,15 +85,15 @@ TEST(BatchNormTest, PositiveTestCase) {
 
 TEST(BatchNormTest, PositiveTestCaseDefaultEpsilon) {
   // This input was taken from the SpatialBN_1.pb, SpatialBN_1_input.pb and SpatialBN_1_output.pb files from an older version of this project
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f};
-  vector<float> B{-0.384622f};
-  vector<float> mean{-2.45673f};
-  vector<float> var{1.37998f};
+  Vector<float> scale{0.589433f};
+  Vector<float> B{-0.384622f};
+  Vector<float> mean{-2.45673f};
+  Vector<float> var{1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -103,7 +103,7 @@ TEST(BatchNormTest, PositiveTestCaseDefaultEpsilon) {
   input_data_map.insert({"var", var});
 
   InputShapesMap input_shapes_map;
-  vector<int64_t> input_shape{1, 1, 7, 7, 1};
+  Vector<int64_t> input_shape{1, 1, 7, 7, 1};
   input_shapes_map.insert({"X", input_shape});
   input_shapes_map.insert({"scale", {1}});
   input_shapes_map.insert({"B", {1}});
@@ -121,17 +121,17 @@ TEST(BatchNormTest, PositiveTestCaseDefaultEpsilon) {
 }
 
 TEST(BatchNormTest, BatchNorm1d_3d_Pytorch) {
-  vector<float> X{0.948241f, 1.23591f, -0.39321f, 1.4254f, -0.730771f, 0.439872f, 0.0265089f, 0.8748f,
+  Vector<float> X{0.948241f, 1.23591f, -0.39321f, 1.4254f, -0.730771f, 0.439872f, 0.0265089f, 0.8748f,
                   -0.197505f, 0.962646f, 0.421469f, 1.94512f, 0.234179f, -0.931897f, -0.214905f, -0.982965f,
                   -0.495436f, 0.81949f, -0.796605f, -0.758605f, 0.665557f, 0.0909539f, 1.10448f, 1.91214f, -1.97433f,
                   -2.26429f, -0.384419f, -0.226564f, 0.230568f, 0.533968f, -1.31382f, -0.156257f, 0.532323f,
                   -0.16714f, 0.971087f, 0.600249f, 0.858778f, 0.423108f, -0.414433f, -1.17608f, 0.673753f, 0.278517f,
                   -2.19044f, -0.161453f, 1.17092f, -0.155138f, -0.094729f, 0.19479f, -1.17344f, -0.213813f, 0.118659f,
                   -2.39525f, 0.257687f, 0.784609f, 0.297942f, 1.10277f, -1.58026f, 0.197625f, 0.0432784f, 1.12924f};
-  vector<float> scale{0.36102f, 0.592982f, 0.808513f, 0.0531484f, 0.0960613f};
-  vector<float> B{0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-  vector<float> mean{0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-  vector<float> var{1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+  Vector<float> scale{0.36102f, 0.592982f, 0.808513f, 0.0531484f, 0.0960613f};
+  Vector<float> B{0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  Vector<float> mean{0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  Vector<float> var{1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -141,7 +141,7 @@ TEST(BatchNormTest, BatchNorm1d_3d_Pytorch) {
   input_data_map.insert({"var", var});
 
   InputShapesMap input_shapes_map;
-  vector<int64_t> input_shape{4, 5, 3};
+  Vector<int64_t> input_shape{4, 5, 3};
   input_shapes_map.insert({"X", input_shape});
   input_shapes_map.insert({"scale", {5}});
   input_shapes_map.insert({"B", {5}});
@@ -161,7 +161,7 @@ TEST(BatchNormTest, BatchNorm1d_3d_Pytorch) {
 }
 
 TEST(BatchNormTest, BatchNorm2d_Pytorch) {
-  vector<float> X{-0.91221f, -0.283559f, 0.937637f, 2.09818f, -0.100199f, -0.608113f, 0.444562f, -1.07505f, 0.940591f,
+  Vector<float> X{-0.91221f, -0.283559f, 0.937637f, 2.09818f, -0.100199f, -0.608113f, 0.444562f, -1.07505f, 0.940591f,
                   -0.922262f, 0.0931303f, 0.69611f, 1.55187f, 0.159808f, 0.914874f, -1.24856f, -1.98928f, -0.331621f,
                   2.33131f, 0.260409f, 0.0944811f, 0.442397f, 0.76461f, -0.203334f, -0.244228f, -0.387267f, -1.65039f,
                   -0.815409f, 0.931696f, -1.15328f, 0.773952f, -1.28195f, -0.437349f, 0.0644882f, -0.087637f, 1.74999f,
@@ -186,10 +186,10 @@ TEST(BatchNormTest, BatchNorm2d_Pytorch) {
                   -0.788814f, -0.910318f, 1.16345f, -1.98542f, 0.742905f, -0.749476f, -0.110805f, 0.307949f, -1.66811f,
                   0.294031f, -0.522837f, -0.774399f, -0.264072f, -0.426894f, 0.965971f, 0.173348f, -0.991018f, 1.9406f,
                   0.0853744f};
-  vector<float> scale{0.736494f, 0.580251f, 0.374834f};
-  vector<float> B{0.0f, 0.0f, 0.0f};
-  vector<float> mean{0.0f, 0.0f, 0.0f};
-  vector<float> var{1.0f, 1.0f, 1.0f};
+  Vector<float> scale{0.736494f, 0.580251f, 0.374834f};
+  Vector<float> B{0.0f, 0.0f, 0.0f};
+  Vector<float> mean{0.0f, 0.0f, 0.0f};
+  Vector<float> var{1.0f, 1.0f, 1.0f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -199,7 +199,7 @@ TEST(BatchNormTest, BatchNorm2d_Pytorch) {
   input_data_map.insert({"var", var});
 
   InputShapesMap input_shapes_map;
-  vector<int64_t> input_shape{2, 3, 6, 6};
+  Vector<int64_t> input_shape{2, 3, 6, 6};
   input_shapes_map.insert({"X", input_shape});
   input_shapes_map.insert({"scale", {3}});
   input_shapes_map.insert({"B", {3}});
@@ -238,7 +238,7 @@ TEST(BatchNormTest, BatchNorm2d_Pytorch) {
 }
 
 TEST(BatchNormTest, BatchNorm3d_Pytorch) {
-  vector<float> X{2.02384f, -0.935186f, 0.488569f, -0.513934f, -1.27082f, -0.131913f, -1.806f, -0.37904f, 0.667796f,
+  Vector<float> X{2.02384f, -0.935186f, 0.488569f, -0.513934f, -1.27082f, -0.131913f, -1.806f, -0.37904f, 0.667796f,
                   -1.14826f, 1.2522f, 0.0300339f, 2.4758f, 1.55511f, 0.385341f, 1.46645f, -1.09355f, -2.56309f,
                   0.976015f, -1.47036f, 0.89486f, 0.580989f, -1.12418f, -0.339189f, 1.3314f, 0.418893f, -0.301401f,
                   -1.2983f, -0.839063f, 0.170261f, 1.15486f, -0.255735f, -0.589851f, -0.416289f, -0.952648f, -0.360487f,
@@ -281,10 +281,10 @@ TEST(BatchNormTest, BatchNorm3d_Pytorch) {
                   -0.318567f, -0.16644f, 0.887062f, -0.0264821f, -0.740725f, 0.0797577f, -1.1037f, 0.90236f, 1.13427f,
                   0.364186f, -2.01043f, -0.415748f, 0.116046f, 0.369949f, 0.317886f, 0.530332f, 1.48341f, 0.74666f,
                   -1.64142f, 0.22569f, 1.18015f, 1.31827f, -1.33904f, -0.101125f};
-  vector<float> scale{0.241661f, 0.960798f, 0.474727f};
-  vector<float> B{0.0f, 0.0f, 0.0f};
-  vector<float> mean{0.0f, 0.0f, 0.0f};
-  vector<float> var{1.0f, 1.0f, 1.0f};
+  Vector<float> scale{0.241661f, 0.960798f, 0.474727f};
+  Vector<float> B{0.0f, 0.0f, 0.0f};
+  Vector<float> mean{0.0f, 0.0f, 0.0f};
+  Vector<float> var{1.0f, 1.0f, 1.0f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -294,7 +294,7 @@ TEST(BatchNormTest, BatchNorm3d_Pytorch) {
   input_data_map.insert({"var", var});
 
   InputShapesMap input_shapes_map;
-  vector<int64_t> input_shape{2, 3, 4, 4, 4};
+  Vector<int64_t> input_shape{2, 3, 4, 4, 4};
   input_shapes_map.insert({"X", input_shape});
   input_shapes_map.insert({"scale", {3}});
   input_shapes_map.insert({"B", {3}});
@@ -354,15 +354,15 @@ TEST(BatchNormTest, BatchNorm3d_Pytorch) {
 }
 
 TEST(BatchNormTest, InvalidScaleDim) {
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f, 0.589433f};
-  vector<float> B{-0.384622f};
-  vector<float> mean{-2.45673f};
-  vector<float> var{1.37998f};
+  Vector<float> scale{0.589433f, 0.589433f};
+  Vector<float> B{-0.384622f};
+  Vector<float> mean{-2.45673f};
+  Vector<float> var{1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -378,7 +378,7 @@ TEST(BatchNormTest, InvalidScaleDim) {
   input_shapes_map.insert({"mean", {1}});
   input_shapes_map.insert({"var", {1}});
 
-  vector<int64_t> expected_output_shape{1, 1, 7, 7};
+  Vector<int64_t> expected_output_shape{1, 1, 7, 7};
   auto expected_output = {1.01359f, 0.703983f, 0.641631f, 1.08571f, 0.939167f, 0.762469f, 0.682729f, 0.762401f, 0.787021f,
                           1.06744f, 0.604378f, 0.957476f, 0.667302f, 0.901764f, 1.07566f, 1.01117f, 0.928324f, 0.897667f,
                           0.705842f, 0.660885f, 0.977291f, 0.878918f, 0.818345f, 1.06608f, 0.839057f, 1.04796f, 0.621471f,
@@ -396,15 +396,15 @@ TEST(BatchNormTest, InvalidScaleDim) {
 }
 
 TEST(BatchNormTest, InvalidBDim) {
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f};
-  vector<float> B{-0.384622f, -0.384622f};
-  vector<float> mean{-2.45673f};
-  vector<float> var{1.37998f};
+  Vector<float> scale{0.589433f};
+  Vector<float> B{-0.384622f, -0.384622f};
+  Vector<float> mean{-2.45673f};
+  Vector<float> var{1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -420,7 +420,7 @@ TEST(BatchNormTest, InvalidBDim) {
   input_shapes_map.insert({"mean", {1}});
   input_shapes_map.insert({"var", {1}});
 
-  vector<int64_t> expected_output_shape{1, 1, 7, 7};
+  Vector<int64_t> expected_output_shape{1, 1, 7, 7};
   auto expected_output = {1.01359f, 0.703983f, 0.641631f, 1.08571f, 0.939167f, 0.762469f, 0.682729f, 0.762401f, 0.787021f,
                           1.06744f, 0.604378f, 0.957476f, 0.667302f, 0.901764f, 1.07566f, 1.01117f, 0.928324f, 0.897667f,
                           0.705842f, 0.660885f, 0.977291f, 0.878918f, 0.818345f, 1.06608f, 0.839057f, 1.04796f, 0.621471f,
@@ -438,15 +438,15 @@ TEST(BatchNormTest, InvalidBDim) {
 }
 
 TEST(BatchNormTest, InvalidMeanDim) {
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f};
-  vector<float> B{-0.384622f};
-  vector<float> mean{-2.45673f, -2.45673f};
-  vector<float> var{1.37998f};
+  Vector<float> scale{0.589433f};
+  Vector<float> B{-0.384622f};
+  Vector<float> mean{-2.45673f, -2.45673f};
+  Vector<float> var{1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -462,7 +462,7 @@ TEST(BatchNormTest, InvalidMeanDim) {
   input_shapes_map.insert({"mean", {1, 2}});  // invalid
   input_shapes_map.insert({"var", {1}});
 
-  vector<int64_t> expected_output_shape{1, 1, 7, 7};
+  Vector<int64_t> expected_output_shape{1, 1, 7, 7};
   auto expected_output = {1.01359f, 0.703983f, 0.641631f, 1.08571f, 0.939167f, 0.762469f, 0.682729f, 0.762401f, 0.787021f,
                           1.06744f, 0.604378f, 0.957476f, 0.667302f, 0.901764f, 1.07566f, 1.01117f, 0.928324f, 0.897667f,
                           0.705842f, 0.660885f, 0.977291f, 0.878918f, 0.818345f, 1.06608f, 0.839057f, 1.04796f, 0.621471f,
@@ -480,15 +480,15 @@ TEST(BatchNormTest, InvalidMeanDim) {
 }
 
 TEST(BatchNormTest, InvalidVarDim) {
-  vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
+  Vector<float> X{0.329876f, -0.287158f, -0.411425f, 0.473621f, 0.18156f, -0.170596f, -0.329516f, -0.170733f, -0.121664f, 0.4372f,
                   -0.485668f, 0.218049f, -0.360263f, 0.107016f, 0.45358f, 0.325056f, 0.15995f, 0.098852f, -0.283453f, -0.373051f,
                   0.257542f, 0.0614853f, -0.0592363f, 0.434488f, -0.0179583f, 0.398374f, -0.451602f, -0.132009f, -0.174468f,
                   -0.0247169f, 0.418897f, -0.47159f, -0.131925f, 0.470943f, 0.118357f, 0.155664f, 0.370062f, -0.279229f, 0.240311f,
                   -0.451034f, 0.249178f, -0.294496f, 0.13683f, -0.0806475f, -0.309849f, -0.450604f, -0.28048f, -0.420197f, -0.433369f};
-  vector<float> scale{0.589433f};
-  vector<float> B{-0.384622f};
-  vector<float> mean{-2.45673f};
-  vector<float> var{1.37998f, 1.37998f};
+  Vector<float> scale{0.589433f};
+  Vector<float> B{-0.384622f};
+  Vector<float> mean{-2.45673f};
+  Vector<float> var{1.37998f, 1.37998f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -504,7 +504,7 @@ TEST(BatchNormTest, InvalidVarDim) {
   input_shapes_map.insert({"mean", {1}});
   input_shapes_map.insert({"var", {1, 2}});  // invalid
 
-  vector<int64_t> expected_output_shape{1, 1, 7, 7};
+  Vector<int64_t> expected_output_shape{1, 1, 7, 7};
   auto expected_output = {1.01359f, 0.703983f, 0.641631f, 1.08571f, 0.939167f, 0.762469f, 0.682729f, 0.762401f, 0.787021f,
                           1.06744f, 0.604378f, 0.957476f, 0.667302f, 0.901764f, 1.07566f, 1.01117f, 0.928324f, 0.897667f,
                           0.705842f, 0.660885f, 0.977291f, 0.878918f, 0.818345f, 1.06608f, 0.839057f, 1.04796f, 0.621471f,
@@ -522,11 +522,11 @@ TEST(BatchNormTest, InvalidVarDim) {
 }
 
 TEST(BatchNormTest, NonSpatial_Simple) {
-  vector<float> X{1.f, 2.f, 3.f, 4.f, 1.f, 2.f, 3.f, 4.f};
-  vector<float> scale{1.f, 1.f, 1.f, 1.f};
-  vector<float> B{1.f, 0.f, 0.f, 1.f};
-  vector<float> mean{0.f, 0.f, 0.f, 0.f};
-  vector<float> var{1.f, 1.f, 1.f, 1.f};
+  Vector<float> X{1.f, 2.f, 3.f, 4.f, 1.f, 2.f, 3.f, 4.f};
+  Vector<float> scale{1.f, 1.f, 1.f, 1.f};
+  Vector<float> B{1.f, 0.f, 0.f, 1.f};
+  Vector<float> mean{0.f, 0.f, 0.f, 0.f};
+  Vector<float> var{1.f, 1.f, 1.f, 1.f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -542,7 +542,7 @@ TEST(BatchNormTest, NonSpatial_Simple) {
   input_shapes_map.insert({"mean", {2, 2}});
   input_shapes_map.insert({"var", {2, 2}});
 
-  vector<int64_t> expected_output_shape{2, 2, 2};
+  Vector<int64_t> expected_output_shape{2, 2, 2};
   auto expected_output = {2.f, 2.f, 3.f, 5.f, 2.f, 2.f, 3.f, 5.f};
   float epsilon = 0.f;
   TestBatchNorm(input_data_map,
@@ -557,11 +557,11 @@ TEST(BatchNormTest, NonSpatial_Simple) {
 }
 
 TEST(BatchNormTest, NonSpatial_Complicated) {
-  vector<float> X{0.2134f, 0.32434f, 0.5644f, 0.3234f, 0.4545f, 0.3445f};
-  vector<float> scale{0.5f, 0.6f};
-  vector<float> B{0.2f, 0.1f};
-  vector<float> mean{0.034f, 0.342f};
-  vector<float> var{1.f, 1.f};
+  Vector<float> X{0.2134f, 0.32434f, 0.5644f, 0.3234f, 0.4545f, 0.3445f};
+  Vector<float> scale{0.5f, 0.6f};
+  Vector<float> B{0.2f, 0.1f};
+  Vector<float> mean{0.034f, 0.342f};
+  Vector<float> var{1.f, 1.f};
 
   InputDataMap input_data_map;
   input_data_map.insert({"X", X});
@@ -577,7 +577,7 @@ TEST(BatchNormTest, NonSpatial_Complicated) {
   input_shapes_map.insert({"mean", {1, 2}});
   input_shapes_map.insert({"var", {1, 2}});
 
-  vector<int64_t> expected_output_shape{3, 1, 2};
+  Vector<int64_t> expected_output_shape{3, 1, 2};
   auto expected_output = {0.2897f, 0.089404f, 0.4652f, 0.08884f, 0.41025f, 0.1015f};
   float epsilon = 1e-05f;
   TestBatchNorm(input_data_map,
@@ -594,7 +594,7 @@ TEST(BatchNormTest, NonSpatial_Complicated) {
 // Only CUDA kernel has float 16 support
 #ifdef USE_CUDA
 TEST(BatchNormTest, BatchNorm2d_fp16) {
-  vector<float> X{-0.91221f, -0.283559f, 0.937637f, 2.09818f, -0.100199f, -0.608113f, 0.444562f, -1.07505f, 0.940591f,
+  Vector<float> X{-0.91221f, -0.283559f, 0.937637f, 2.09818f, -0.100199f, -0.608113f, 0.444562f, -1.07505f, 0.940591f,
                   -0.922262f, 0.0931303f, 0.69611f, 1.55187f, 0.159808f, 0.914874f, -1.24856f, -1.98928f, -0.331621f,
                   2.33131f, 0.260409f, 0.0944811f, 0.442397f, 0.76461f, -0.203334f, -0.244228f, -0.387267f, -1.65039f,
                   -0.815409f, 0.931696f, -1.15328f, 0.773952f, -1.28195f, -0.437349f, 0.0644882f, -0.087637f, 1.74999f,
@@ -619,12 +619,12 @@ TEST(BatchNormTest, BatchNorm2d_fp16) {
                   -0.788814f, -0.910318f, 1.16345f, -1.98542f, 0.742905f, -0.749476f, -0.110805f, 0.307949f, -1.66811f,
                   0.294031f, -0.522837f, -0.774399f, -0.264072f, -0.426894f, 0.965971f, 0.173348f, -0.991018f, 1.9406f,
                   0.0853744f};
-  vector<float> scale{0.736494f, 0.580251f, 0.374834f};
-  vector<float> B{0.0f, 0.0f, 0.0f};
-  vector<float> mean{0.0f, 0.0f, 0.0f};
-  vector<float> var{1.0f, 1.0f, 1.0f};
+  Vector<float> scale{0.736494f, 0.580251f, 0.374834f};
+  Vector<float> B{0.0f, 0.0f, 0.0f};
+  Vector<float> mean{0.0f, 0.0f, 0.0f};
+  Vector<float> var{1.0f, 1.0f, 1.0f};
 
-  vector<float> expected_output{-0.671834f, -0.208838f, 0.69056f, 1.54529f, -0.0737958f, -0.447869f, 0.327415f, -0.791764f,
+  Vector<float> expected_output{-0.671834f, -0.208838f, 0.69056f, 1.54529f, -0.0737958f, -0.447869f, 0.327415f, -0.791764f,
                                 0.692736f, -0.679237f, 0.0685895f, 0.512678f, 1.14294f, 0.117697f, 0.673796f, -0.91955f,
                                 -1.46508f, -0.244235f, 1.71699f, 0.191789f, 0.0695843f, 0.325821f, 0.563128f, -0.149753f,
                                 -0.179871f, -0.285218f, -1.2155f, -0.60054f, 0.686185f, -0.84938f, 0.570008f, -0.944146f,
@@ -656,15 +656,15 @@ TEST(BatchNormTest, BatchNorm2d_fp16) {
   OpTester test("BatchNormalization");
   test.AddAttribute("epsilon", epsilon);
 
-  vector<int64_t> input_shape{2, 3, 6, 6};
+  Vector<int64_t> input_shape{2, 3, 6, 6};
   int input_size = 2 * 3 * 6 * 6;
 
-  vector<MLFloat16> f_X(input_size);
-  vector<MLFloat16> f_output(input_size);
-  vector<MLFloat16> f_scale(3);
-  vector<MLFloat16> f_B(3);
-  vector<MLFloat16> f_mean(3);
-  vector<MLFloat16> f_var(3);
+  Vector<MLFloat16> f_X(input_size);
+  Vector<MLFloat16> f_output(input_size);
+  Vector<MLFloat16> f_scale(3);
+  Vector<MLFloat16> f_B(3);
+  Vector<MLFloat16> f_mean(3);
+  Vector<MLFloat16> f_var(3);
 
   ConvertFloatToMLFloat16(X.data(), f_X.data(), input_size);
   ConvertFloatToMLFloat16(scale.data(), f_scale.data(), 3);

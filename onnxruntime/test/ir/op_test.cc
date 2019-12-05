@@ -259,9 +259,9 @@ TEST(OpRegistrationTest, AttributeDefaultValueTest) {
 TEST(OpRegistrationTest, AttributeDefaultValueListTest) {
   OPERATOR_SCHEMA(__TestAttrDefaultValueList)
       .SetDoc("Op with attributes that have default list of values.")
-      .Attr("my_attr_ints", "attr with default value of [98, 99, 100].", AttrType::AttributeProto_AttributeType_INTS, Vector<int64_t>{int64_t(98), int64_t(99), int64_t(100)})
-      .Attr("my_attr_floats", "attr with default value of [0.98, 0.99, 1.00].", AttrType::AttributeProto_AttributeType_FLOATS, Vector<float>{float(0.98), float(0.99), float(1.00)})
-      .Attr("my_attr_strings", "attr with default value of [\"98\", \"99\", \"100\"].", AttrType::AttributeProto_AttributeType_STRINGS, Vector<std::string>{"98", "99", "100"});
+      .Attr("my_attr_ints", "attr with default value of [98, 99, 100].", AttrType::AttributeProto_AttributeType_INTS, std::vector<int64_t>{int64_t(98), int64_t(99), int64_t(100)})
+      .Attr("my_attr_floats", "attr with default value of [0.98, 0.99, 1.00].", AttrType::AttributeProto_AttributeType_FLOATS, std::vector<float>{float(0.98), float(0.99), float(1.00)})
+      .Attr("my_attr_strings", "attr with default value of [\"98\", \"99\", \"100\"].", AttrType::AttributeProto_AttributeType_STRINGS, std::vector<std::string>{"98", "99", "100"});
   const OpSchema* op_schema = OpSchemaRegistry::Schema("__TestAttrDefaultValueList");
   EXPECT_TRUE(nullptr != op_schema);
   EXPECT_EQ(op_schema->attributes().size(), 3);

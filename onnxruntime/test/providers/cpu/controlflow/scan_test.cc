@@ -343,19 +343,19 @@ static void RunTest_v9(const std::string test_name, int64_t sequence_len, int64_
   test.AddAttribute<int64_t>("num_scan_inputs", 2);
 
   if (input_directions != nullptr) {
-    test.AddAttribute<Vector<int64_t>>("scan_input_directions", *input_directions);
+    test.AddAttribute<std::vector<int64_t>>("scan_input_directions", *input_directions);
   }
 
   if (output_directions != nullptr) {
-    test.AddAttribute<Vector<int64_t>>("scan_output_directions", *output_directions);
+    test.AddAttribute<std::vector<int64_t>>("scan_output_directions", *output_directions);
   }
 
   if (input_axes != nullptr) {
-    test.AddAttribute<Vector<int64_t>>("scan_input_axes", *input_axes);
+    test.AddAttribute<std::vector<int64_t>>("scan_input_axes", *input_axes);
   }
 
   if (output_axes != nullptr) {
-    test.AddAttribute<Vector<int64_t>>("scan_output_axes", *output_axes);
+    test.AddAttribute<std::vector<int64_t>>("scan_output_axes", *output_axes);
   }
 
   test.AddShapeToTensorData(options.include_dim_values_in_main_graph);

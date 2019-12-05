@@ -56,27 +56,27 @@ void TestIntCategory(Vector<T>& input) {
 }
 
 TEST(OneHotEncoderOpTest, IntegerWithInt64) {
-  vector<int64_t> input{8, 1, 0, 0, 3, 7, 4};
+  Vector<int64_t> input{8, 1, 0, 0, 3, 7, 4};
   TestIntCategory<int64_t>(input);
 }
 
 /*
 // TODO: Support int32_t type kernel for the op and uncomment the test 
 TEST(OneHotEncoderOpTest, IntegerWithInt32) {
-  vector<int32_t> input{ 8, 1, 0, 0, 3, 7, 4 };
+  Vector<int32_t> input{ 8, 1, 0, 0, 3, 7, 4 };
   TestIntCategory<int32_t>(input);
 }
 */
 
 TEST(OneHotEncoderOpTest, IntegerWithDouble) {
-  vector<double> input{ 8.1f, 1.2f, 0.0f, 0.7f, 3.4f, 7.9f, 4.4f };
+  Vector<double> input{ 8.1f, 1.2f, 0.0f, 0.7f, 3.4f, 7.9f, 4.4f };
   TestIntCategory<double>(input);
 }
 
 TEST(OneHotEncoderOpTest, String) {
   Vector<std::string> categories{"Apple", "Orange", "Watermelon", "Blueberry", "Coconut", "Mango", "Tangerine"};
-  vector<std::string> input{"Watermelon", "Orange", "Tangerine", "Apple", "Kit"};
-  vector<float> expected_output;
+  Vector<std::string> input{"Watermelon", "Orange", "Tangerine", "Apple", "Kit"};
+  Vector<float> expected_output;
 
   for (size_t i = 0; i < input.size(); ++i)
     for (size_t j = 0; j < categories.size(); ++j)

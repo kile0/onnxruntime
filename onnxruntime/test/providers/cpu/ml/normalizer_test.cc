@@ -8,9 +8,9 @@ namespace onnxruntime {
 namespace test {
 
 template <typename T>
-static void RunTest(const vector<T>& input,
-                    const vector<int64_t>& dims,
-                    const vector<float>& output,
+static void RunTest(const Vector<T>& input,
+                    const Vector<int64_t>& dims,
+                    const Vector<float>& output,
                     const std::string& norm,
                     OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess,
                     const std::string& expect_error_message = "") {
@@ -25,11 +25,11 @@ static void RunTest(const vector<T>& input,
 }
 
 template <typename T>
-static void RunTests(const vector<T>& input,
-                     const vector<int64_t>& dims,
-                     const vector<float>& max_output,
-                     const vector<float>& l1_output,
-                     const vector<float>& l2_output) {
+static void RunTests(const Vector<T>& input,
+                     const Vector<int64_t>& dims,
+                     const Vector<float>& max_output,
+                     const Vector<float>& l1_output,
+                     const Vector<float>& l2_output) {
   RunTest(input, dims, max_output, "MAX");
   RunTest(input, dims, l1_output, "L1");
   RunTest(input, dims, l2_output, "L2");
