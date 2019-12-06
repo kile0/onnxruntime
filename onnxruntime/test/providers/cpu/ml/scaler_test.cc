@@ -10,8 +10,8 @@ namespace test {
 template <typename T>
 void TestScalar() {
   OpTester test("Scaler", 1, onnxruntime::kMLDomain);
-  Vector<float> scale{3.f, -4.f, 3.0f};
-  Vector<float> offset{4.8f, -0.5f, 77.0f};
+  AttributeVector<float> scale{3.f, -4.f, 3.0f};
+  AttributeVector<float> offset{4.8f, -0.5f, 77.0f};
   test.AddAttribute("scale", scale);
   test.AddAttribute("offset", offset);
   Vector<T> input{1, -2, 3, 4, 5, -6};
@@ -37,8 +37,8 @@ TEST(MLOpTest, ScalerOp) {
 
 TEST(MLOpTest, ScalerOpScaleOffsetSize1) {
   OpTester test("Scaler", 1, onnxruntime::kMLDomain);
-  Vector<float> scale{3.f};
-  Vector<float> offset{4.8f};
+  AttributeVector<float> scale{3.f};
+  AttributeVector<float> offset{4.8f};
   test.AddAttribute("scale", scale);
   test.AddAttribute("offset", offset);
   Vector<float> input{0.8f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f};

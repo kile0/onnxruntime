@@ -10,7 +10,7 @@ namespace test {
 TEST(FeatureVectorizer, BasicFunctionality) {
   OpTester test("FeatureVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("inputdimensions", Vector<int64_t>{3, 2, 1, 4});
+  test.AddAttribute("inputdimensions", AttributeVector<int64_t>{3, 2, 1, 4});
 
   Vector<int64_t> input0_dims = {1, 3};
   test.AddInput<int32_t>("X0", input0_dims, {1, 2, 3});
@@ -32,7 +32,7 @@ TEST(FeatureVectorizer, BasicFunctionality) {
 TEST(FeatureVectorizer, HandleInputDimensionMismatch) {
   OpTester test("FeatureVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("inputdimensions", Vector<int64_t>{2, 3});
+  test.AddAttribute("inputdimensions", AttributeVector<int64_t>{2, 3});
 
   Vector<int64_t> input0_dims = {1, 3};  // long - ignore extra
   test.AddInput<int32_t>("X0", input0_dims, {1, 2, 3});
@@ -49,7 +49,7 @@ TEST(FeatureVectorizer, HandleInputDimensionMismatch) {
 TEST(FeatureVectorizer, Batch) {
   OpTester test("FeatureVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("inputdimensions", Vector<int64_t>{2, 2});
+  test.AddAttribute("inputdimensions", AttributeVector<int64_t>{2, 2});
 
   Vector<int64_t> input0_dims = {2, 2};
   test.AddInput<double>("X0", input0_dims, {1., 2., 3., 4.});
@@ -68,7 +68,7 @@ TEST(FeatureVectorizer, Batch) {
 TEST(FeatureVectorizer, BatchWith3DInput) {
   OpTester test("FeatureVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("inputdimensions", Vector<int64_t>{2, 4});
+  test.AddAttribute("inputdimensions", AttributeVector<int64_t>{2, 4});
 
   Vector<int64_t> input0_dims = {2, 2};
   test.AddInput<double>("X0", input0_dims, {1., 2., 3., 4.});

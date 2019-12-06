@@ -10,21 +10,21 @@ namespace test {
 TEST(MLOpTest, TreeEnsembleClassifier) {
   OpTester test("TreeEnsembleClassifier", 1, onnxruntime::kMLDomain);
 
-  Vector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
-  Vector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
-  Vector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
-  Vector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
-  Vector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
-  Vector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f,
+  AttributeVector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
+  AttributeVector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
+  AttributeVector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
+  AttributeVector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
+  AttributeVector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
+  AttributeVector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f,
                                    -2.f, -2.f, -2.f, 27.5f, -172.f, -2.f, 8.10000038f, -2.f, -2.f, -2.f};
-  Vector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
+  AttributeVector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
                                     "LEAF", "BRANCH_LEQ", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF",
                                     "BRANCH_LEQ", "BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF"};
-  Vector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
-  Vector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
-  Vector<int64_t> class_classids = {2, 0, 1, 0, 2, 3, 1, 2, 0, 1, 3};
-  Vector<float> class_weights = {1.f, 4.f, 1.f, 2.f, 1.f, 1.f, 2.f, 1.f, 1.f, 1.f, 3.f};
-  Vector<int64_t> classes = {0, 1, 2, 3};
+  AttributeVector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
+  AttributeVector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
+  AttributeVector<int64_t> class_classids = {2, 0, 1, 0, 2, 3, 1, 2, 0, 1, 3};
+  AttributeVector<float> class_weights = {1.f, 4.f, 1.f, 2.f, 1.f, 1.f, 2.f, 1.f, 1.f, 1.f, 3.f};
+  AttributeVector<int64_t> classes = {0, 1, 2, 3};
   Vector<float> X = {1.f, 0.0f, 0.4f, 3.0f, 44.0f, -3.f, 12.0f, 12.9f, -312.f, 23.0f, 11.3f, -222.f, 23.0f,
                           11.3f, -222.f, 23.0f, 3311.3f, -222.f, 23.0f, 11.3f, -222.f, 43.0f, 413.3f, -114.f};
   Vector<int64_t> results = {0, 1, 2, 2, 2, 2, 2, 3};
@@ -57,22 +57,22 @@ TEST(MLOpTest, TreeEnsembleClassifier) {
 TEST(MLOpTest, TreeEnsembleClassifierLabels) {
   OpTester test("TreeEnsembleClassifier", 1, onnxruntime::kMLDomain);
 
-  Vector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
-  Vector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
-  Vector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
-  Vector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
-  Vector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
-  Vector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f,
+  AttributeVector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
+  AttributeVector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
+  AttributeVector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
+  AttributeVector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
+  AttributeVector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
+  AttributeVector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f,
                                    -2.f, -2.f, -2.f, 27.5f, -172.f, -2.f, 8.10000038f, -2.f, -2.f, -2.f};
-  Vector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
+  AttributeVector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
                                     "LEAF", "BRANCH_LEQ", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF", "BRANCH_LEQ",
                                     "BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF"};
 
-  Vector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
-  Vector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
-  Vector<int64_t> class_classids = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  Vector<float> class_weights = {-1.f, 4.f, -1.f, 2.f, -1.f, +1.f, -2.f, 1.f, -1.f, 2.f, -3.f};
-  Vector<std::string> labels = {"label0", "label1"};
+  AttributeVector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
+  AttributeVector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
+  AttributeVector<int64_t> class_classids = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  AttributeVector<float> class_weights = {-1.f, 4.f, -1.f, 2.f, -1.f, +1.f, -2.f, 1.f, -1.f, 2.f, -3.f};
+  AttributeVector<std::string> labels = {"label0", "label1"};
   Vector<float> X = {1.f, 0.0f, 0.4f, 3.0f, 44.0f, -3.f, 12.0f, 12.9f, -312.f, 23.0f, 11.3f, -222.f, 23.0f,
                           11.3f, -222.f, 23.0f, 3311.3f, -222.f, 23.0f, 11.3f, -222.f, 43.0f, 413.3f, -114.f};
   Vector<std::string> results = {"label1", "label0", "label0", "label0", "label0", "label1", "label0", "label0"};
@@ -105,22 +105,22 @@ TEST(MLOpTest, TreeEnsembleClassifierLabels) {
 TEST(MLOpTest, TreeEnsembleClassifierBinary) {
   OpTester test("TreeEnsembleClassifier", 1, onnxruntime::kMLDomain);
 
-  Vector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
-  Vector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
-  Vector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
-  Vector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
-  Vector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
-  Vector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f, -2.f,
+  AttributeVector<int64_t> lefts = {1, -1, 3, -1, -1, 1, -1, 3, 4, -1, -1, -1, 1, 2, -1, 4, -1, -1, -1};
+  AttributeVector<int64_t> rights = {2, -1, 4, -1, -1, 2, -1, 6, 5, -1, -1, -1, 6, 3, -1, 5, -1, -1, -1};
+  AttributeVector<int64_t> treeids = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
+  AttributeVector<int64_t> nodeids = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6};
+  AttributeVector<int64_t> featureids = {2, -2, 0, -2, -2, 0, -2, 2, 1, -2, -2, -2, 0, 2, -2, 1, -2, -2, -2};
+  AttributeVector<float> thresholds = {-172.f, -2.f, 2.5f, -2.f, -2.f, 1.5f, -2.f, -62.5f, 213.09999084f, -2.f,
                                    -2.f, -2.f, 27.5f, -172.f, -2.f, 8.10000038f, -2.f, -2.f, -2.f};
-  Vector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
+  AttributeVector<std::string> modes = {"BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "BRANCH_LEQ",
                                     "LEAF", "BRANCH_LEQ", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF",
                                     "BRANCH_LEQ", "BRANCH_LEQ", "LEAF", "BRANCH_LEQ", "LEAF", "LEAF", "LEAF"};
-  //Vector<int64_t> classes = {0, 1, 2, 3};
-  Vector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
-  Vector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
-  Vector<int64_t> class_classids = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  Vector<float> class_weights = {-1.f, 4.f, -1.f, 2.f, -1.f, +1.f, -2.f, 1.f, -1.f, 2.f, -3.f};
-  Vector<int64_t> classes = {1};
+  //AttributeVector<int64_t> classes = {0, 1, 2, 3};
+  AttributeVector<int64_t> class_treeids = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2};
+  AttributeVector<int64_t> class_nodeids = {1, 3, 4, 1, 4, 5, 6, 2, 4, 5, 6};
+  AttributeVector<int64_t> class_classids = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  AttributeVector<float> class_weights = {-1.f, 4.f, -1.f, 2.f, -1.f, +1.f, -2.f, 1.f, -1.f, 2.f, -3.f};
+  AttributeVector<int64_t> classes = {1};
   Vector<float> X = {1.f, 0.0f, 0.4f, 3.0f, 44.0f, -3.f, 12.0f, 12.9f, -312.f, 23.0f, 11.3f, -222.f,
                           23.0f, 11.3f, -222.f, 23.0f, 3311.3f, -222.f, 23.0f, 11.3f, -222.f, 43.0f, 413.3f,
                           -114.f};

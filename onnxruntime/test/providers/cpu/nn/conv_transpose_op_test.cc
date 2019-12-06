@@ -10,12 +10,12 @@ namespace test {
 namespace {
 
 struct ConvTransposeOpAttributes {
-  Vector<int64_t> kernel_shape;
-  Vector<int64_t> output_padding;
-  Vector<int64_t> output_shape;
-  Vector<int64_t> pads;
-  Vector<int64_t> strides;
-  Vector<int64_t> dilations;
+  AttributeVector<int64_t> kernel_shape;
+  AttributeVector<int64_t> output_padding;
+  AttributeVector<int64_t> output_shape;
+  AttributeVector<int64_t> pads;
+  AttributeVector<int64_t> strides;
+  AttributeVector<int64_t> dilations;
   int64_t group;
 };
 
@@ -58,12 +58,12 @@ void TestConvTransposeOp(const ConvTransposeOpAttributes& attributes,
 
 TEST(ConvTransposeTest, ConvTranspose_2D) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{3, 3},        // kernel_shape
-      Vector<int64_t>{1, 1},        // output_padding
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{1, 1},        // output_padding
       {},                           // output_shape
-      Vector<int64_t>{1, 1, 1, 1},  // pads
-      Vector<int64_t>{2, 2},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1, 1, 1},  // pads
+      AttributeVector<int64_t>{2, 2},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   Vector<float> X = {0.16857791f, -0.15161794f, 0.08540368f,
@@ -86,12 +86,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Bias_1) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{3, 3},        // kernel_shape
-      Vector<int64_t>{0, 0},        // output_padding
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{0, 0},        // output_padding
       {},                           // output_shape
-      Vector<int64_t>{1, 1, 1, 1},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1, 1, 1},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   Vector<float> X = {0.22572887f, -0.07105902f, -0.40399021f, -0.14461157f, 0.05367219f,
@@ -117,12 +117,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Bias_1) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Bias_2) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},        // kernel_shape
-      Vector<int64_t>{0, 0},        // output_padding
+      AttributeVector<int64_t>{2, 2},        // kernel_shape
+      AttributeVector<int64_t>{0, 0},        // output_padding
       {},                           // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   Vector<float> X = {0.01270282f, 0.09657472f, -0.36909008f, -0.08085269f,
@@ -165,12 +165,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Bias_2) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_OutputShape_1) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
       {},                           // output_padding
-      Vector<int64_t>{1, 3, 4, 4},  // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 3, 4, 4},  // output_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   int image_size = 4 * 4;
@@ -205,12 +205,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_OutputShape_1) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_OutputShape_2) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{1, 5},         // kernel_shape
+      AttributeVector<int64_t>{1, 5},         // kernel_shape
       {},                            // output_padding
-      Vector<int64_t>{1, 1, 1, 14},  // output_shape
-      Vector<int64_t>{0, 0, 0, 0},   // pads
-      Vector<int64_t>{1, 1},         // strides
-      Vector<int64_t>{1, 1},         // dilations
+      AttributeVector<int64_t>{1, 1, 1, 14},  // output_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},   // pads
+      AttributeVector<int64_t>{1, 1},         // strides
+      AttributeVector<int64_t>{1, 1},         // dilations
       1                              // group
   };
   Vector<float> X = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f};
@@ -226,12 +226,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_OutputShape_2) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_OutputShapeWithBatchSize) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{1, 5},         // kernel_shape
+      AttributeVector<int64_t>{1, 5},         // kernel_shape
       {},                            // output_padding
-      Vector<int64_t>{2, 1, 1, 14},  // output_shape
-      Vector<int64_t>{0, 0, 0, 0},   // pads
-      Vector<int64_t>{1, 1},         // strides
-      Vector<int64_t>{1, 1},         // dilations
+      AttributeVector<int64_t>{2, 1, 1, 14},  // output_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},   // pads
+      AttributeVector<int64_t>{1, 1},         // strides
+      AttributeVector<int64_t>{1, 1},         // dilations
       1                              // group
   };
   Vector<float> X = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f,
@@ -250,12 +250,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_OutputShapeWithBatchSize) {
 #ifndef USE_NGRAPH
 TEST(ConvTransposeTest, ConvTranspose_InvalidKernelShape) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{1, 1, 1, 5},   // invalid kernel_shape, should be [1, 5]
+      AttributeVector<int64_t>{1, 1, 1, 5},   // invalid kernel_shape, should be [1, 5]
       {},                            // output_padding
-      Vector<int64_t>{2, 1, 1, 14},  // output_shape
-      Vector<int64_t>{0, 0, 0, 0},   // pads
-      Vector<int64_t>{1, 1},         // strides
-      Vector<int64_t>{1, 1},         // dilations
+      AttributeVector<int64_t>{2, 1, 1, 14},  // output_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},   // pads
+      AttributeVector<int64_t>{1, 1},         // strides
+      AttributeVector<int64_t>{1, 1},         // dilations
       1                              // group
   };
   Vector<float> X = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f,
@@ -276,12 +276,12 @@ TEST(ConvTransposeTest, ConvTranspose_InvalidKernelShape) {
 
 TEST(ConvTransposeTest, ConvTranspose_onnx) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
       {},                           // output_padding
       {},                           // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   Vector<float> X = {0., 1., 2., 3., 4., 5., 6., 7., 8.};
@@ -306,12 +306,12 @@ TEST(ConvTransposeTest, ConvTranspose_onnx) {
 
 TEST(ConvTransposeTest, ConvTranspose_onnx2) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},        // kernel_shape
+      AttributeVector<int64_t>{2, 2},        // kernel_shape
       {},                           // output_padding
       {},                           // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       1                             // group
   };
   Vector<float> X = {0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15., 16., 17.};
@@ -338,12 +338,12 @@ TEST(ConvTransposeTest, ConvTranspose_onnx2) {
 
 TEST(ConvTransposeTest, ConvTranspose_onnx_group) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{1, 1},        // kernel_shape
+      AttributeVector<int64_t>{1, 1},        // kernel_shape
       {},                           // output_padding
       {},                           // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // dilations
       4                             // group
   };
   Vector<float> X = {0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f};
@@ -357,11 +357,11 @@ TEST(ConvTransposeTest, ConvTranspose_onnx_group) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_1) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},
+      AttributeVector<int64_t>{2, 2},
       {},
       {},
-      Vector<int64_t>{0, 0, 0, 0},
-      Vector<int64_t>{1, 1},
+      AttributeVector<int64_t>{0, 0, 0, 0},
+      AttributeVector<int64_t>{1, 1},
       {2, 2},
       1};
 
@@ -379,11 +379,11 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_1) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_2) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},
+      AttributeVector<int64_t>{2, 2},
       {},
       {},
-      Vector<int64_t>{0, 0, 0, 0},
-      Vector<int64_t>{1, 1},
+      AttributeVector<int64_t>{0, 0, 0, 0},
+      AttributeVector<int64_t>{1, 1},
       {3, 3},
       1};
 
@@ -402,11 +402,11 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_2) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_3) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},
+      AttributeVector<int64_t>{2, 2},
       {},
       {},
-      Vector<int64_t>{0, 0, 0, 0},
-      Vector<int64_t>{1, 1},
+      AttributeVector<int64_t>{0, 0, 0, 0},
+      AttributeVector<int64_t>{1, 1},
       {2, 2},
       1};
 
@@ -426,11 +426,11 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_3) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_4) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},
+      AttributeVector<int64_t>{2, 2},
       {},
       {},
-      Vector<int64_t>{0, 0, 0, 0},
-      Vector<int64_t>{1, 1},
+      AttributeVector<int64_t>{0, 0, 0, 0},
+      AttributeVector<int64_t>{1, 1},
       {3, 3},
       1};
 
@@ -451,11 +451,11 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_4) {
 
 TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_Group_1) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},
+      AttributeVector<int64_t>{2, 2},
       {},
       {},
-      Vector<int64_t>{0, 0, 0, 0},
-      Vector<int64_t>{1, 1},
+      AttributeVector<int64_t>{0, 0, 0, 0},
+      AttributeVector<int64_t>{1, 1},
       {2, 2},
       2};
 
@@ -480,12 +480,12 @@ TEST(ConvTransposeTest, ConvTranspose_2D_Dilation_Group_1) {
 
 TEST(ConvTransposeTest, ConvTranspose_DefaultStridesAndDilations) {
   ConvTransposeOpAttributes attrs = {
-      Vector<int64_t>{2, 2},        // kernel_shape
+      AttributeVector<int64_t>{2, 2},        // kernel_shape
       {},                           // output_padding
       {},                           // output_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{},            // strides
-      Vector<int64_t>{},            // dilations
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{},            // strides
+      AttributeVector<int64_t>{},            // dilations
       1                             // group
   };
   Vector<float> X = {0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15., 16., 17.};

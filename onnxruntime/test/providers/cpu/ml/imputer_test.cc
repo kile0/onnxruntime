@@ -10,7 +10,7 @@ namespace test {
 TEST(MLOpTest, ImputerOpFloat) {
   OpTester test("Imputer", 1, onnxruntime::kMLDomain);
   const int N = 5;
-  Vector<float> impute = {10.0f};
+  AttributeVector<float> impute = {10.0f};
   float replace = 1.f;
   test.AddAttribute("imputed_value_floats", impute);
   test.AddAttribute("replaced_value_float", replace);
@@ -32,7 +32,7 @@ TEST(MLOpTest, ImputerOpFloat) {
 
 TEST(MLOpTest, ImputerOpInts) {
   OpTester test("Imputer", 1, onnxruntime::kMLDomain);
-  Vector<int64_t> impute = {10, 20, 30, 40, 50};
+  AttributeVector<int64_t> impute = {10, 20, 30, 40, 50};
   int64_t replace = 2;
   test.AddAttribute("imputed_value_int64s", impute);
   test.AddAttribute("replaced_value_int64", replace);

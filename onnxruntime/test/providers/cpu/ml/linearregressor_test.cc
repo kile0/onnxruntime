@@ -51,7 +51,7 @@ array([[ 1., 32.],[ 3., 14.],[ 23., -166.]])
 TEST_P(LinearRegressorTest, LinearRegressorUniTarget) {
   const LinearRegressorParam& param = GetParam();
   OpTester test("LinearRegressor", 1, onnxruntime::kMLDomain);
-  Vector<float> coefficients, intercepts;
+  AttributeVector<float> coefficients, intercepts;
   if (param.targets == 1) {
     coefficients = {-9.00000000f, -1.99600736e-16f};
     intercepts = {41.0000000f};

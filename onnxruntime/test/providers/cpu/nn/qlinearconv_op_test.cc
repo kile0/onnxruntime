@@ -137,8 +137,8 @@ TEST(ConvTest, QLinearConv3DTest) {
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
-  Vector<int64_t> pads = {2, 2, 2, 2, 2, 2};
-  Vector<int64_t>strides = {2, 2, 2};
+  AttributeVector<int64_t> pads = {2, 2, 2, 2, 2, 2};
+  AttributeVector<int64_t>strides = {2, 2, 2};
 
   // Calculate quantization params and quantize the inputs and expected output
   float lhs_min, lhs_max, rhs_min, rhs_max, result_min, result_max;

@@ -11,8 +11,8 @@ template <typename TInput, typename TOutput>
 static void RunTest(const Vector<int64_t>& dims, const Vector<TInput>& input, const Vector<TOutput>& output) {
   OpTester test("CategoryMapper", 1, onnxruntime::kMLDomain);
 
-  static const Vector<std::string> categories = {"Three", "Two", "One"};
-  static const Vector<int64_t> indexes = {3, 2, 1};
+  static const AttributeVector<std::string> categories = {"Three", "Two", "One"};
+  static const AttributeVector<int64_t> indexes = {3, 2, 1};
 
   test.AddAttribute("cats_strings", categories);
   test.AddAttribute("cats_int64s", indexes);

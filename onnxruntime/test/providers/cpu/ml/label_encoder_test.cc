@@ -11,7 +11,7 @@ template <typename TInput, typename TOutput>
 static void RunTest(const Vector<int64_t>& dims, const Vector<TInput>& input, const Vector<TOutput>& output) {
   OpTester test("LabelEncoder", 1, onnxruntime::kMLDomain);
 
-  static const Vector<std::string> labels = {"Beer", "Wine", "Tequila"};
+  static const AttributeVector<std::string> labels = {"Beer", "Wine", "Tequila"};
 
   test.AddAttribute("classes_strings", labels);
 
@@ -50,8 +50,8 @@ TEST(LabelEncoder, StringToIntOpset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<std::string> keys{"AA", "BB", "DD"};
-  const Vector<std::int64_t> values{9, 1, 4};
+  const AttributeVector<std::string> keys{"AA", "BB", "DD"};
+  const AttributeVector<std::int64_t> values{9, 1, 4};
 
   test.AddAttribute("keys_strings", keys);
   test.AddAttribute("values_int64s", values);
@@ -71,8 +71,8 @@ TEST(LabelEncoder, IntToStringOpset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<std::int64_t> keys{9, 1, 4};
-  const Vector<std::string> values{"AA", "BB", "DD"};
+  const AttributeVector<std::int64_t> keys{9, 1, 4};
+  const AttributeVector<std::string> values{"AA", "BB", "DD"};
 
   test.AddAttribute("keys_int64s", keys);
   test.AddAttribute("values_strings", values);
@@ -92,8 +92,8 @@ TEST(LabelEncoder, FloatToStringOpset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<float> keys{9.4f, 1.7f, 3.6f};
-  const Vector<std::string> values{"AA", "BB", "DD"};
+  const AttributeVector<float> keys{9.4f, 1.7f, 3.6f};
+  const AttributeVector<std::string> values{"AA", "BB", "DD"};
 
   test.AddAttribute("keys_floats", keys);
   test.AddAttribute("values_strings", values);
@@ -113,8 +113,8 @@ TEST(LabelEncoder, StringToFloatOpset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<std::string> keys{"AA", "BB", "DD"};
-  const Vector<float> values{9.4f, 1.7f, 3.6f};
+  const AttributeVector<std::string> keys{"AA", "BB", "DD"};
+  const AttributeVector<float> values{9.4f, 1.7f, 3.6f};
 
   test.AddAttribute("keys_strings", keys);
   test.AddAttribute("values_floats", values);
@@ -134,8 +134,8 @@ TEST(LabelEncoder, FloatToInt64Opset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<float> keys{9.4f, 1.7f, 3.6f};
-  const Vector<std::int64_t> values{1, 9, 3};
+  const AttributeVector<float> keys{9.4f, 1.7f, 3.6f};
+  const AttributeVector<std::int64_t> values{1, 9, 3};
 
   test.AddAttribute("keys_floats", keys);
   test.AddAttribute("values_int64s", values);
@@ -155,8 +155,8 @@ TEST(LabelEncoder, Int64ToFloatOpset2) {
 
   OpTester test("LabelEncoder", 2, onnxruntime::kMLDomain);
 
-  const Vector<std::int64_t> keys{1, 9, 3};
-  const Vector<float> values{9.4f, 1.7f, 3.6f};
+  const AttributeVector<std::int64_t> keys{1, 9, 3};
+  const AttributeVector<float> values{9.4f, 1.7f, 3.6f};
 
   test.AddAttribute("keys_int64s", keys);
   test.AddAttribute("values_floats", values);

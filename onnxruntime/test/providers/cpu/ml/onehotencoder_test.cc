@@ -9,7 +9,7 @@ namespace test {
 
 template <typename T>
 void TestIntCategory(Vector<T>& input) {
-  Vector<int64_t> categories{0, 1, 2, 3, 4, 5, 6, 7};
+  AttributeVector<int64_t> categories{0, 1, 2, 3, 4, 5, 6, 7};
   Vector<float> expected_output;
   for (size_t i = 0; i < input.size(); ++i)
     for (size_t j = 0; j < categories.size(); ++j)
@@ -74,7 +74,7 @@ TEST(OneHotEncoderOpTest, IntegerWithDouble) {
 }
 
 TEST(OneHotEncoderOpTest, String) {
-  Vector<std::string> categories{"Apple", "Orange", "Watermelon", "Blueberry", "Coconut", "Mango", "Tangerine"};
+  AttributeVector<std::string> categories{"Apple", "Orange", "Watermelon", "Blueberry", "Coconut", "Mango", "Tangerine"};
   Vector<std::string> input{"Watermelon", "Orange", "Tangerine", "Apple", "Kit"};
   Vector<float> expected_output;
 

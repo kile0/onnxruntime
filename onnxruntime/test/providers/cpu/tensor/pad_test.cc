@@ -35,7 +35,7 @@ static void RunOpset11TypedTest(
 static void RunAllOpsetAllDomainPadTests(
     const Vector<int64_t>& input_dims,
     const Vector<float>& input,
-    const Vector<int64_t>& pads,
+    const AttributeVector<int64_t>& pads,
     float value,
     const Vector<int64_t>& output_dims,
     const Vector<float>& output,
@@ -51,10 +51,15 @@ static void RunAllOpsetAllDomainPadTests(
   test1.AddOutput<float>("output", output_dims, output);
   test1.Run(expect, error_msg);
 
+
+  Vector<int64_t> pads_copy;
+  for(auto p : pads) {
+    pads_copy.push_back(p);
+  }
   // ONNX domain opset-11
   RunOpset11TypedTest<float>(input_dims,
                              input,
-                             pads,
+                             pads_copy,
                              value,
                              output_dims,
                              output,
@@ -66,7 +71,7 @@ static void RunAllOpsetAllDomainPadTests(
   OpTester test3("Pad", 1, kMSDomain);
   if (mode != "constant") test3.AddAttribute("mode", mode);
   test3.AddInput<float>("data", input_dims, input);
-  test3.AddInput<int64_t>("pads", {static_cast<int64_t>(pads.size())}, pads);
+  test3.AddInput<int64_t>("pads", {static_cast<int64_t>(pads.size())}, pads_copy);
   test3.AddInput<float>("value", {1}, {value});
   test3.AddOutput<float>("output", output_dims, output);
   //TensorRT does not support pads as an input

@@ -478,9 +478,9 @@ TEST(LSTMTest, LargeBatchWithClip) {
 class LstmOpContext2x1x2x2 {
  public:
   LstmOpContext2x1x2x2(const std::string direction,
-                       const Vector<std::string>& activations = {},
-                       const Vector<float>& activation_alphas = {},
-                       const Vector<float>& activation_betas = {})
+                       const AttributeVector<std::string>& activations = {},
+                       const AttributeVector<float>& activation_alphas = {},
+                       const AttributeVector<float>& activation_betas = {})
       : direction_(direction),
         num_directions_(direction == "bidirectional" ? 2 : 1),
         activation_func_names_{activations},
@@ -650,9 +650,9 @@ class LstmOpContext2x1x2x2 {
   const int hidden_size_ = 2;
   const std::string direction_;
   int num_directions_;
-  const Vector<std::string> activation_func_names_;
-  const Vector<float> activation_alphas_;
-  const Vector<float> activation_betas_;
+  const AttributeVector<std::string> activation_func_names_;
+  const AttributeVector<float> activation_alphas_;
+  const AttributeVector<float> activation_betas_;
   Vector<float> input_weights_;
   Vector<float> recurrent_weights_;
   Vector<float> bias_;
@@ -822,7 +822,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMForwardCellState) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMActivation) {
   const int seq_len = 2, batch_size = 1;
 
-  Vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
+  AttributeVector<std::string> activations = {"tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
@@ -850,7 +850,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMBatchReallocation) {
   bool use_bias = true;
   bool use_peepholes = false;
 
-  Vector<std::string> activations = {"tanh", "sigmoid", "tanh"};
+  AttributeVector<std::string> activations = {"tanh", "sigmoid", "tanh"};
 
   //////////////////Inputs///////////////////////////////////
   std::string direction = "forward";
@@ -906,7 +906,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMBatchReallocation) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMOutputWrite) {
   const int seq_len = 2;
   int batch_size = 1;
-  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  AttributeVector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
@@ -978,7 +978,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMOutputWrite) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthAllZeros) {
   const int seq_len = 2;
   int batch_size = 2;
-  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  AttributeVector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
@@ -1022,7 +1022,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthAllZeros) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthPartialZeros) {
   const int seq_len = 2;
   int batch_size = 2;
-  Vector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
+  AttributeVector<std::string> activations = {"tanh", "sigmoid", "tanh", "tanh", "sigmoid", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
@@ -1131,7 +1131,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMSequenceLengthShorterThanInputSequenceLengthN
 TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
   const int seq_len = 2;
   int batch_size = 3;
-  Vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
+  AttributeVector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;
@@ -1171,7 +1171,7 @@ TEST(LSTMTest, ONNXRuntime_TestLSTMShorterSeqInMiddle) {
 TEST(LSTMTest, ONNXRuntime_TestLSTMZeroSeqInMiddle) {
   const int seq_len = 2;
   int batch_size = 4;
-  Vector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
+  AttributeVector<std::string> activations = {"sigmoid", "tanh", "tanh", "sigmoid", "tanh", "tanh"};
 
   bool use_bias = true;
   bool use_peepholes = false;

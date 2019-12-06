@@ -10,7 +10,7 @@ namespace test {
 TEST(MLOpTest, DictVectorizerStringInput) {
   OpTester test("DictVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("string_vocabulary", Vector<std::string>{"a", "b", "c", "d"});
+  test.AddAttribute("string_vocabulary", AttributeVector<std::string>{"a", "b", "c", "d"});
 
   std::map<std::string, int64_t> map;
   map["a"] = 1;
@@ -28,7 +28,7 @@ TEST(MLOpTest, DictVectorizerStringInput) {
 TEST(MLOpTest, DictVectorizerInt64Input) {
   OpTester test("DictVectorizer", 1, onnxruntime::kMLDomain);
 
-  test.AddAttribute("int64_vocabulary", Vector<int64_t>{1, 2, 3, 4});
+  test.AddAttribute("int64_vocabulary", AttributeVector<int64_t>{1, 2, 3, 4});
 
   std::map<int64_t, std::string> map;
   map[1] = "a";

@@ -14,11 +14,11 @@ const int opset_ver = 9;
 
 void InitTestAttr(OpTester& test, const std::string& mode,
                   int64_t min_gram_length, int64_t max_gram_length, int64_t max_skip_count,
-                  const Vector<int64_t>& ngram_counts,
-                  const Vector<int64_t>& ngram_indexes,
-                  const Vector<float>& weights,
-                  const Vector<int64_t>& pool_int64s,
-                  const Vector<std::string>& pool_strings) {
+                  const AttributeVector<int64_t>& ngram_counts,
+                  const AttributeVector<int64_t>& ngram_indexes,
+                  const AttributeVector<float>& weights,
+                  const AttributeVector<int64_t>& pool_int64s,
+                  const AttributeVector<std::string>& pool_strings) {
   test.AddAttribute("mode", mode);
   test.AddAttribute("min_gram_length", min_gram_length);
   test.AddAttribute("max_gram_length", max_gram_length);

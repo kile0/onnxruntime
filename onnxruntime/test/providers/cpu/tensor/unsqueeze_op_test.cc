@@ -12,7 +12,7 @@ namespace test {
 TEST(TensorOpTest, Unsqueeze_1) {
   OpTester test("Unsqueeze");
 
-  test.AddAttribute("axes", Vector<int64_t>{1});
+  test.AddAttribute("axes", AttributeVector<int64_t>{1});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {2, 1, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});
@@ -21,7 +21,7 @@ TEST(TensorOpTest, Unsqueeze_1) {
 TEST(TensorOpTest, Unsqueeze_1_int32) {
   OpTester test("Unsqueeze");
 
-  test.AddAttribute("axes", Vector<int64_t>{1});
+  test.AddAttribute("axes", AttributeVector<int64_t>{1});
   test.AddInput<int32_t>("input", {2, 3, 4}, Vector<int32_t>(2 * 3 * 4, 1));
   test.AddOutput<int32_t>("output", {2, 1, 3, 4}, Vector<int32_t>(2 * 3 * 4, 1));
   test.Run(OpTester::ExpectResult::kExpectSuccess, "", {kTensorrtExecutionProvider});
@@ -30,7 +30,7 @@ TEST(TensorOpTest, Unsqueeze_1_int32) {
 TEST(TensorOpTest, Unsqueeze_2) {
   OpTester test("Unsqueeze");
 
-  test.AddAttribute("axes", Vector<int64_t>{0, 4});
+  test.AddAttribute("axes", AttributeVector<int64_t>{0, 4});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {1, 2, 3, 4, 1}, Vector<float>(2 * 3 * 4, 1.0f));
   test.Run();
@@ -39,7 +39,7 @@ TEST(TensorOpTest, Unsqueeze_2) {
 TEST(TensorOpTest, Unsqueeze_3) {
   OpTester test("Unsqueeze");
 
-  test.AddAttribute("axes", Vector<int64_t>{2, 1, 0});
+  test.AddAttribute("axes", AttributeVector<int64_t>{2, 1, 0});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {1, 1, 1, 2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.Run();
@@ -48,7 +48,7 @@ TEST(TensorOpTest, Unsqueeze_3) {
 TEST(TensorOpTest, Unsqueeze_Duplicate) {
   OpTester test("Unsqueeze", -1);  // use latest opset for shape inference errors
 
-  test.AddAttribute("axes", Vector<int64_t>{2, 1, 0, 2});
+  test.AddAttribute("axes", AttributeVector<int64_t>{2, 1, 0, 2});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {1, 1, 1, 2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -59,7 +59,7 @@ TEST(TensorOpTest, Unsqueeze_Duplicate) {
 TEST(TensorOpTest, Unsqueeze_OutOfRange) {
   OpTester test("Unsqueeze", -1);  // use latest opset for shape inference errors
 
-  test.AddAttribute("axes", Vector<int64_t>{4});
+  test.AddAttribute("axes", AttributeVector<int64_t>{4});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {2, 1, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.Run(OpTester::ExpectResult::kExpectFailure,
@@ -69,7 +69,7 @@ TEST(TensorOpTest, Unsqueeze_OutOfRange) {
 TEST(TensorOpTest, UnsqueezeNegAxis_3) {
   OpTester test("Unsqueeze", -1);  // use latest opset for shape inference errors
 
-  test.AddAttribute("axes", Vector<int64_t>{-4, 1, -6});
+  test.AddAttribute("axes", AttributeVector<int64_t>{-4, 1, -6});
   test.AddInput<float>("input", {2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   test.AddOutput<float>("output", {1, 1, 1, 2, 3, 4}, Vector<float>(2 * 3 * 4, 1.0f));
   // nGraph and TensorRT does not support negative axis.

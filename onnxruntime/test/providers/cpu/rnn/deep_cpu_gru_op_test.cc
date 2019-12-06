@@ -12,7 +12,7 @@ using namespace std;
 namespace onnxruntime {
 namespace test {
 
-static const Vector<string> default_activations = {"sigmoid", "tanh"};
+static const AttributeVector<string> default_activations = {"sigmoid", "tanh"};
 
 static void RunGruTest(const Vector<float>& X_data,
                        const Vector<float>& W_data,
@@ -31,9 +31,9 @@ static void RunGruTest(const Vector<float>& X_data,
                        bool output_sequence = true,
                        bool linear_before_reset = false,
                        // copy the following vectors as we may modify them
-                       Vector<string> activations = default_activations,
-                       Vector<float> activation_alphas = {},
-                       Vector<float> activation_betas = {}) {
+                       AttributeVector<string> activations = default_activations,
+                       AttributeVector<float> activation_alphas = {},
+                       AttributeVector<float> activation_betas = {}) {
   OpTester test("GRU");
 
   test.AddShapeToTensorData();
@@ -46,11 +46,11 @@ static void RunGruTest(const Vector<float>& X_data,
     std::copy(activations.cbegin(), activations.cend(), std::back_inserter(activations));
   }
 
-  test.AddAttribute<Vector<string>>("activations", activations);
+  test.AddAttribute<AttributeVector<string>>("activations", activations);
   if (!activation_alphas.empty())
-    test.AddAttribute<Vector<float>>("activation_alpha", activation_alphas);
+    test.AddAttribute<AttributeVector<float>>("activation_alpha", activation_alphas);
   if (!activation_betas.empty())
-    test.AddAttribute<Vector<float>>("activation_beta", activation_betas);
+    test.AddAttribute<AttributeVector<float>>("activation_beta", activation_betas);
 
   test.AddAttribute("direction", direction);
   test.AddAttribute("hidden_size", hidden_size);
@@ -308,10 +308,10 @@ TEST(GRUTest, ReverseDefaultActivationsSimpleWeightsWithBiasLinearBeforeReset) {
 class DeepCpuGruOpTestContext {
  public:
   DeepCpuGruOpTestContext(std::string direction,
-                          const Vector<std::string>& activations,
+                          const AttributeVector<std::string>& activations,
                           const bool use_bias = true,
-                          const Vector<float>& alpha = {},
-                          const Vector<float>& beta = {},
+                          const AttributeVector<float>& alpha = {},
+                          const AttributeVector<float>& beta = {},
                           bool large_hidden = false,
                           int input_size = 2);
 
@@ -332,19 +332,19 @@ class DeepCpuGruOpTestContext {
   const bool use_bias_;
   const std::string direction_;
   int num_directions_;
-  const Vector<std::string> activation_func_names_;
-  const Vector<float> alphas_;
-  const Vector<float> betas_;
+  const AttributeVector<std::string> activation_func_names_;
+  const AttributeVector<float> alphas_;
+  const AttributeVector<float> betas_;
   Vector<float> gru_input_weights_;
   Vector<float> gru_recurrent_weights_;
   Vector<float> gru_bias_;
 };
 
 DeepCpuGruOpTestContext::DeepCpuGruOpTestContext(const std::string direction,
-                                                 const Vector<std::string>& activations,
+                                                 const AttributeVector<std::string>& activations,
                                                  const bool use_bias,
-                                                 const Vector<float>& alpha,
-                                                 const Vector<float>& beta,
+                                                 const AttributeVector<float>& alpha,
+                                                 const AttributeVector<float>& beta,
                                                  bool large_hidden,
                                                  int input_size)
     : input_size_(input_size),
@@ -493,7 +493,7 @@ void DeepCpuGruOpTestContext::RunTest(const Vector<float>& X,
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBasic) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -511,7 +511,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBasic) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpBackwardBasic) {
   const std::string direction = "reverse";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -530,7 +530,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpBackwardBasic) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpBidirectionalBasic) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -553,7 +553,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpBidirectionalBasic) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpForwardActivation) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"tanh", "sigmoid"};
+  const AttributeVector<std::string> activations = {"tanh", "sigmoid"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -572,7 +572,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpForwardActivation) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpForwardInitialHiddenState) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -591,7 +591,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpForwardInitialHiddenState) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBatch) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -618,7 +618,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBatch) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBatchLinearBeforeReset) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -645,7 +645,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpForwardBatchLinearBeforeReset) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpGrowBatchSequenceLength) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -685,7 +685,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpGrowBatchSequenceLength) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpGrowBatchSequenceLengthLinearBeforeReset) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -725,7 +725,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpGrowBatchSequenceLengthLinearBeforeReset) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeResetB1) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -746,7 +746,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeRe
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeResetB2) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -766,7 +766,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeRe
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeReset) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -794,7 +794,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithBidirectionalLinearBeforeRe
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpShorterSeqInMiddle) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -827,7 +827,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpShorterSeqInMiddle) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpZeroSeqInMiddle) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -860,7 +860,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpZeroSeqInMiddle) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithPartialZero) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -888,7 +888,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthWithPartialZero) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthShorterThanInputSequenceLength) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh", "sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -917,7 +917,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthShorterThanInputSequenceLength)
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthAllZeros) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations);
 
@@ -945,7 +945,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSequenceLengthAllZeros) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUOpSingleBatchMultipleHiddenThreads) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations, true, {}, {}, /*large_hidden*/ true);
 
@@ -975,7 +975,7 @@ TEST(GRUTest, ONNXRuntime_TestGRUOpSingleBatchMultipleHiddenThreads) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUPositiveActivationClipping) {
   const std::string direction = "forward";
-  const Vector<std::string> activations = {"sigmoid", "tanh"};
+  const AttributeVector<std::string> activations = {"sigmoid", "tanh"};
 
   DeepCpuGruOpTestContext ctx(direction, activations, true, {}, {}, /*large_hidden*/ true);
 
@@ -1004,9 +1004,9 @@ TEST(GRUTest, ONNXRuntime_TestGRUPositiveActivationClipping) {
 
 TEST(GRUTest, ONNXRuntime_TestGRUPositiveActivationAlphaBeta) {
   const std::string direction = "bidirectional";
-  const Vector<std::string> activations = {"LeakyRelu", "Tanh", "Sigmoid", "ScaledTanh"};
-  const Vector<float> alpha = {0.5f, 2.0f};
-  const Vector<float> beta = {2.0f};
+  const AttributeVector<std::string> activations = {"LeakyRelu", "Tanh", "Sigmoid", "ScaledTanh"};
+  const AttributeVector<float> alpha = {0.5f, 2.0f};
+  const AttributeVector<float> beta = {2.0f};
 
   const int input_size = 2;  //  4;
   const int batch_size = 1;

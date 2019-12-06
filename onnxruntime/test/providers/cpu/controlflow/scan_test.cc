@@ -242,7 +242,7 @@ static void CreateSubgraph(Graph& graph, RunOptions& options, const std::string&
 
     auto& split = graph.AddNode("split", "Split", "split into 4 outputs", inputs, outputs);
     split.AddAttribute("axis", int64_t{0});
-    split.AddAttribute("split", Vector<int64_t>{1, 1, 1, 1});
+    split.AddAttribute("split", AttributeVector<int64_t>{1, 1, 1, 1});
   }
 
   auto status = graph.Resolve();
@@ -256,7 +256,7 @@ static void CreateSubgraph(Graph& graph, RunOptions& options, const std::string&
 }
 
 static void RunTest_v8(const std::string test_name, int64_t batch_size, int64_t max_sequence_len, int64_t input_size,
-                       Vector<int64_t>* directions,
+                       AttributeVector<int64_t>* directions,
                        Vector<int64_t>* sequence_lens,
                        Vector<float>& loop_state_in_0,
                        Vector<float> input_0,
@@ -281,7 +281,7 @@ static void RunTest_v8(const std::string test_name, int64_t batch_size, int64_t 
   test.AddAttribute<int64_t>("num_scan_inputs", 2);
 
   if (directions != nullptr) {
-    test.AddAttribute<Vector<int64_t>>("directions", *directions);
+    test.AddAttribute<AttributeVector<int64_t>>("directions", *directions);
   }
 
   if (sequence_lens == nullptr) {
@@ -316,10 +316,10 @@ static void RunTest_v8(const std::string test_name, int64_t batch_size, int64_t 
 }
 
 static void RunTest_v9(const std::string test_name, int64_t sequence_len, int64_t input_size,
-                       Vector<int64_t>* input_directions,
-                       Vector<int64_t>* output_directions,
-                       Vector<int64_t>* input_axes,
-                       Vector<int64_t>* output_axes,
+                       AttributeVector<int64_t>* input_directions,
+                       AttributeVector<int64_t>* output_directions,
+                       AttributeVector<int64_t>* input_axes,
+                       AttributeVector<int64_t>* output_axes,
                        Vector<float>& loop_state_in_0,
                        Vector<float> input_0,
                        Vector<float> input_1,
@@ -657,7 +657,7 @@ TEST(Scan8, MixedSequenceLensReverse) {
   const int64_t input_size = 2;
 
   Vector<int64_t> sequence_lens{1, 2};
-  Vector<int64_t> directions{1, 1};  // reverse both inputs
+  AttributeVector<int64_t> directions{1, 1};  // reverse both inputs
 
   Vector<float> iteration_count_in{0.f, 10.f};  // start at 0 for first item in batch, and 10 for second
 
@@ -702,7 +702,7 @@ TEST(Scan8, ShortSequenceTwoInBatchOneLoopStateVarReverseFirstInput) {
 
   Vector<float> iteration_count_in{0.f, 10.f};  // start at 0 for first item in batch, and 10 for second
 
-  Vector<int64_t> directions{1, 0};  // reverse for input_0, forward for input_1
+  AttributeVector<int64_t> directions{1, 0};  // reverse for input_0, forward for input_1
 
   // batch_size, max_sequence_len, input_size
   Vector<float> input_0{1.f, 2.f,
@@ -739,7 +739,7 @@ TEST(Scan9, ReversedInput) {
 
   Vector<float> iteration_count_in{0.f};
 
-  Vector<int64_t> input_directions{0, 1};  // reverse second input
+  AttributeVector<int64_t> input_directions{0, 1};  // reverse second input
 
   // max_sequence_len, input_size
   Vector<float> input_0{1.f, 2.f,
@@ -768,7 +768,7 @@ TEST(Scan9, ReversedOutput) {
 
   Vector<float> iteration_count_in{0.f};
 
-  Vector<int64_t> output_directions{0, 1, 1, 0};  // reverse 2 out of the 4 outputs
+  AttributeVector<int64_t> output_directions{0, 1, 1, 0};  // reverse 2 out of the 4 outputs
 
   // max_sequence_len, input_size
   Vector<float> input_0{1.f, 2.f,
@@ -798,7 +798,7 @@ TEST(Scan9, TransposeInput) {
   Vector<float> iteration_count_in{0.f};
 
   // transpose should also support negative axis
-  Vector<int64_t> input_axes{1, -1};  // transpose both inputs on axis 1
+  AttributeVector<int64_t> input_axes{1, -1};  // transpose both inputs on axis 1
 
   // inputs are {input_size, sequence_len}, but will be transposed to {sequence_len, input_size} by the axes values
   Vector<float> input_0{1.f, 3.f,
@@ -829,7 +829,7 @@ TEST(Scan9, TransposeOutput) {
   Vector<float> iteration_count_in{0.f};
 
   // transpose also supports negative axis
-  Vector<int64_t> output_axes{1, -1, 0, 0};  // transpose two outputs on axis 1, and leave 2 as is by using axis 0
+  AttributeVector<int64_t> output_axes{1, -1, 0, 0};  // transpose two outputs on axis 1, and leave 2 as is by using axis 0
 
   Vector<float> input_0{1.f, 2.f,
                              3.f, 4.f};
@@ -878,12 +878,12 @@ TEST(Scan9, TransposeOutputDim2) {
 
   // transpose on axis 2, so dim 0 of the output (copied directly from input of {2, 1, 1})
   // will move to dim 2 of the output giving shape {1, 1, 2}
-  Vector<int64_t> output_axes{2};
+  AttributeVector<int64_t> output_axes{2};
   Vector<int64_t> output_shape{1, 1, 2};
 
   test.AddAttribute("body", scan_body);
   test.AddAttribute<int64_t>("num_scan_inputs", 1);
-  test.AddAttribute<Vector<int64_t>>("scan_output_axes", output_axes);
+  test.AddAttribute<AttributeVector<int64_t>>("scan_output_axes", output_axes);
 
   // the data won't change, but the shape should be transposed from 2, 1, 1 to 1, 1, 2, which
   // OpTester::Run will validate
@@ -913,7 +913,7 @@ static void InvalidInput(bool is_v8) {
   Vector<float> output_3{0.f, 0.f};
 
   // invalid direction value - only 0 or 1 are valid
-  Vector<int64_t> directions = {2, 1};
+  AttributeVector<int64_t> directions = {2, 1};
 
   if (is_v8) {
     RunTest_v8("InvalidDirectionsValue", batch_size, sequence_len, input_size,
@@ -932,7 +932,7 @@ static void InvalidInput(bool is_v8) {
                OpTester::ExpectResult::kExpectFailure,
                "Invalid values in 'scan_input_directions'.");
 
-    Vector<int64_t> output_directions = {0, 2, 1, 0};
+    AttributeVector<int64_t> output_directions = {0, 2, 1, 0};
 
     RunTest_v9("InvalidOutputDirectionsValue", sequence_len, input_size,
                nullptr, &output_directions, nullptr, nullptr,
@@ -973,7 +973,7 @@ static void InvalidInput(bool is_v8) {
   }
 
   if (!is_v8) {
-    Vector<int64_t> input_axes = {2, -1};  // only 2 dims in input so 2 is invalid
+    AttributeVector<int64_t> input_axes = {2, -1};  // only 2 dims in input so 2 is invalid
     RunTest_v9("InvalidEntryInInputAxes", sequence_len, input_size,
                nullptr, nullptr, &input_axes, nullptr,
                iteration_count_in, input_0, input_1,
@@ -991,7 +991,7 @@ static void InvalidInput(bool is_v8) {
                OpTester::ExpectResult::kExpectFailure,
                "[ShapeInferenceError] Number of scan input axes specified (3) is not equal to number of scan inputs (2).");
 
-    Vector<int64_t> output_axes = {3, -1, 0, 0};  // 2 dims in output so 3 is invalid
+    AttributeVector<int64_t> output_axes = {3, -1, 0, 0};  // 2 dims in output so 3 is invalid
     RunTest_v9("InvalidEntryInOutputAxes", sequence_len, input_size,
                nullptr, nullptr, nullptr, &output_axes,
                iteration_count_in, input_0, input_1,

@@ -12,7 +12,7 @@ TEST(RoIPoolTest, MaxRoiPool) {
   OpTester test("MaxRoiPool");
 
   const int64_t pooled_height = 1, pooled_width = 1;
-  test.AddAttribute("pooled_shape", Vector<int64_t>{pooled_height, pooled_width});
+  test.AddAttribute("pooled_shape", AttributeVector<int64_t>{pooled_height, pooled_width});
 
   const int H = 6, W = 6;
   const int image_size = H * W;

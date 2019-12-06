@@ -12,9 +12,9 @@ namespace test {
 template <typename T>
 void RunSliceTest(const Vector<int64_t>& input_dims,
                   const Vector<T>& input_vals,
-                  const Vector<int64_t>& starts,
-                  const Vector<int64_t>& ends,
-                  const Vector<int64_t>& axes,
+                  const AttributeVector<int64_t>& starts,
+                  const AttributeVector<int64_t>& ends,
+                  const AttributeVector<int64_t>& axes,
                   const Vector<int64_t>& steps,
                   const Vector<int64_t>& output_dims,
                   const Vector<T>& output_vals,
@@ -34,10 +34,26 @@ void RunSliceTest(const Vector<int64_t>& input_dims,
   // V10
   OpTester testv10("Slice", 10);
   testv10.AddInput<T>("data", input_dims, input_vals);
-  testv10.AddInput<int64_t>("starts", {static_cast<int64_t>(starts.size())}, starts);
-  testv10.AddInput<int64_t>("ends", {static_cast<int64_t>(ends.size())}, ends);
-  if (axes.size() != 0)
-    testv10.AddInput<int64_t>("axes", {static_cast<int64_t>(axes.size())}, axes);
+
+  Vector<int64_t> starts_copy;
+  for (auto s : starts) {
+    starts_copy.push_back(s);
+  }
+  testv10.AddInput<int64_t>("starts", {static_cast<int64_t>(starts.size())}, starts_copy);
+
+  Vector<int64_t> ends_copy;
+  for (auto e : ends) {
+    ends_copy.push_back(e);
+  }
+  testv10.AddInput<int64_t>("ends", {static_cast<int64_t>(ends.size())}, ends_copy);
+  if (axes.size() != 0) {
+    // hack to get around std::vector and Vector differences
+    Vector<int64_t> axes_copy;
+    for (auto a : axes) {
+      axes_copy.push_back(a);
+    }
+    testv10.AddInput<int64_t>("axes", {static_cast<int64_t>(axes.size())}, axes_copy);
+  }
   if (steps.size() != 0)
     testv10.AddInput<int64_t>("steps", {static_cast<int64_t>(steps.size())}, steps);
   testv10.AddOutput<T>("output", output_dims, output_vals);

@@ -6,7 +6,7 @@
 namespace onnxruntime {
 namespace test {
 struct ReductionAttribute {
-  Vector<int64_t> axes_;
+  AttributeVector<int64_t> axes_;
   int64_t keep_dims_;
 };
 

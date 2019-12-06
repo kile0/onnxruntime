@@ -16,7 +16,7 @@ using ShapeAndStringData = ShapeAndData<std::string>;
 using ExpectResult = OpTester::ExpectResult;
 
 template <typename T>
-void RunTest(int64_t axis, const Vector<int64_t> split_sizes, const ShapeAndData<T>& input,
+void RunTest(int64_t axis, const AttributeVector<int64_t> split_sizes, const ShapeAndData<T>& input,
              const Vector<ShapeAndData<T>>& outputs, bool is_tensorrt_supported = true,
              bool expect_failure = false, const std::string& err_msg = {}) {
   OpTester test("Split");
@@ -120,7 +120,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitFloat) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  Vector<int64_t> splits{1, 3};
+  AttributeVector<int64_t> splits{1, 3};
 
   outputs.push_back({{1, 2}, {1.f, 2.f}});
 
@@ -143,7 +143,7 @@ TEST(SplitOperatorTest, Axis0UnequalSplitString) {
                                "e", "f",
                                "g", "h"}};
 
-  Vector<int64_t> splits{1, 3};
+  AttributeVector<int64_t> splits{1, 3};
 
   outputs.push_back({{1, 2}, {"a", "b"}});
 
@@ -204,7 +204,7 @@ TEST(SplitOperatorTest, Axis1UnequalSplitFloat) {
                              {1.f, 2.f, 3.f, 4.f,
                               5.f, 6.f, 7.f, 8.f}};
 
-  Vector<int64_t> splits{3, 1};
+  AttributeVector<int64_t> splits{3, 1};
 
   outputs.push_back({{2, 3},
                      {1.f, 2.f, 3.f,
@@ -226,7 +226,7 @@ TEST(SplitOperatorTest, Axis1UnequalSplitString) {
                               {"a", "b", "c", "d",
                                "e", "f", "g", "h"}};
 
-  Vector<int64_t> splits{3, 1};
+  AttributeVector<int64_t> splits{3, 1};
 
   outputs.push_back({{2, 3},
                      {"a", "b", "c",
@@ -288,7 +288,7 @@ TEST(SplitOperatorTest, Axis2UnequalSplit) {
 
   ShapeAndFloatData input = CreateInput({2, 2, 6});
 
-  Vector<int64_t> splits{1, 2, 3};
+  AttributeVector<int64_t> splits{1, 2, 3};
 
   outputs.push_back({{2, 2, 1},
                      {1.f,
@@ -345,7 +345,7 @@ TEST(SplitOperatorTest, Axis1SplitMiddleDimensionUnequally) {
 
   ShapeAndFloatData input = CreateInput({2, 4, 4});
 
-  Vector<int64_t> splits{1, 3};
+  AttributeVector<int64_t> splits{1, 3};
 
   outputs.push_back({{2, 1, 4},
                      {1.f, 2.f, 3.f, 4.f,
@@ -412,7 +412,7 @@ TEST(SplitOperatorTest, SplitAttributeSumTooSmall) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  Vector<int64_t> splits{1, 2};  // should sum to 4
+  AttributeVector<int64_t> splits{1, 2};  // should sum to 4
 
   outputs.push_back({{1, 2}, {1.f, 2.f}});
   outputs.push_back({{2, 2}, {3.f, 4.f, 5.f, 6.f}});
@@ -431,7 +431,7 @@ TEST(SplitOperatorTest, InvalidValueInSplitAttribute) {
                               5.f, 6.f,
                               7.f, 8.f}};
 
-  Vector<int64_t> splits{1, 0, 3};  // 0 is not valid
+  AttributeVector<int64_t> splits{1, 0, 3};  // 0 is not valid
   outputs.push_back({{1, 2}, {1.f, 2.f}});
   outputs.push_back({{3, 2}, {3.f, 4.f, 5.f, 6.f, 7.f, 8.f}});
 

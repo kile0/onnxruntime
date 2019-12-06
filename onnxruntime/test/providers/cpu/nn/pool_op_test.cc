@@ -15,9 +15,9 @@ TEST(PoolTest, MaxPool) {
   OpTester test("MaxPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{8, 8});
 
   Vector<float> x_vals = {
       0.19151945412158966, 0.6221087574958801, 0.43772774934768677, 0.7853586077690125, 0.7799758315086365, 0.27259260416030884, 0.2764642536640167, 0.801872193813324,
@@ -118,9 +118,9 @@ static void MaxPool_8_WithIndexTest(bool has_index, int64_t storage_order = 0) {
   OpTester test("MaxPool", 8);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{8, 8});
   test.AddAttribute("storage_order", storage_order);
 
   Vector<float> x_vals = {
@@ -175,9 +175,9 @@ TEST(PoolTest, MaxPool1D) {
   OpTester test("MaxPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{2});
-  test.AddAttribute("pads", vector<int64_t>{0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{2});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2});
 
   Vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
   Vector<int64_t> x_dims = {1, 2, 4};
@@ -193,9 +193,9 @@ static void MaxPool1D_8_WithIndexTest(int64_t storage_order) {
   OpTester test("MaxPool", 8);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{2});
-  test.AddAttribute("pads", vector<int64_t>{0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{2});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2});
   test.AddAttribute("storage_order", storage_order);
 
   Vector<float> x_vals = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -219,10 +219,10 @@ TEST(PoolTest, MaxPool_10_Dilation_1d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{3});
-  test.AddAttribute("dilations", vector<int64_t>{3});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{3});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{3});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1, -3, -2, -4, -6, -5, -4, -2};
@@ -238,7 +238,7 @@ TEST(PoolTest, MaxPool_10_Dilation_1d) {
 TEST(PoolTest, MaxPool_DefaultDilations) {
   OpTester test("MaxPool");
 
-  test.AddAttribute("kernel_shape", vector<int64_t>{2});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2});
 
   Vector<int64_t> x_dims = {1, 3, 3};
   Vector<float> x_vals = {0.f, 1.f, 2.f,
@@ -259,10 +259,10 @@ TEST(PoolTest, MaxPool_10_DilationPadding_1d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1});
-  test.AddAttribute("pads", vector<int64_t>{1, 1});
-  test.AddAttribute("kernel_shape", vector<int64_t>{3});
-  test.AddAttribute("dilations", vector<int64_t>{3});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{3});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{3});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1, -3, -2, -4, -6, -5, -4, -2};
@@ -279,10 +279,10 @@ TEST(PoolTest, MaxPool_10_Dilation_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
-  test.AddAttribute("dilations", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{2, 2});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1,
@@ -302,10 +302,10 @@ TEST(PoolTest, MaxPool_10_DilationPadding_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
-  test.AddAttribute("dilations", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{1, 1, 1, 1});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{2, 2});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1,
@@ -330,10 +330,10 @@ TEST(PoolTest, MaxPool_10_Dilation_Ceil0_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{2, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
-  test.AddAttribute("dilations", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{2, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{2, 2});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1,
@@ -353,10 +353,10 @@ TEST(PoolTest, MaxPool_10_Dilation_Ceil1_2d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{2, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
-  test.AddAttribute("dilations", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{2, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{2, 2});
   test.AddAttribute("ceil_mode", (int64_t)1);
 
   Vector<float> x_vals = {
@@ -377,10 +377,10 @@ TEST(PoolTest, MaxPool_10_DilationPadding_3d) {
   OpTester test("MaxPool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1, 1});
-  test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1, 1, 1});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2, 2});
-  test.AddAttribute("dilations", vector<int64_t>{2, 2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{1, 1, 1, 1, 1, 1});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2, 2});
+  test.AddAttribute("dilations", AttributeVector<int64_t>{2, 2, 2});
 
   Vector<float> x_vals = {
       1, 3, 2, 4, -1,
@@ -564,9 +564,9 @@ TEST(PoolTest, AveragePool) {
   OpTester test("AveragePool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{8, 8});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{8, 8});
 
   Vector<float> x_vals = {0.3337382376194, 0.8794041872024536, 0.33745908737182617,
                                0.666634202003479, 0.44255536794662476, 0.6473854184150696,
@@ -645,9 +645,9 @@ TEST(PoolTest, AveragePool_IncludePadPixel) {
   OpTester test("AveragePool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{1, 1, 1, 1});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{1, 1, 1, 1});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
   test.AddAttribute("count_include_pad", (int64_t)1);
   Vector<float> x_vals = {0.3337f, 0.8794f, 0.3375f,
                                0.6666f, 0.4426f, 0.6474f,
@@ -668,7 +668,7 @@ TEST(PoolTest, AveragePool_IncludePadPixel) {
 // test 'strides' attribute not specified
 TEST(PoolTest, AveragePool_DefaultStrides) {
   OpTester test("AveragePool");
-  test.AddAttribute("kernel_shape", vector<int64_t>{2});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2});
   Vector<float> x_vals = {0.f, 1.f, 2.f,
                                3.f, 4.f, 5.f,
                                6.f, 7.f, 8.f};
@@ -688,9 +688,9 @@ TEST(PoolTest, AveragePool_10_ceil1_2d) {
   OpTester test("AveragePool", 10);
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{3, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2, 2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{3, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2, 2});
   test.AddAttribute("ceil_mode", (int64_t)1);
 
   Vector<float> x_vals = {
@@ -787,9 +787,9 @@ TEST(PoolTest, LpPool) {
   OpTester test("LpPool");
 
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{1, 1});
-  test.AddAttribute("pads", vector<int64_t>{0, 0, 0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{3, 3});
+  test.AddAttribute("strides", AttributeVector<int64_t>{1, 1});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0, 0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{3, 3});
 
   Vector<float> x_vals = {0.688458621501922607421875,
                                0.8835647106170654296875,
@@ -1348,9 +1348,9 @@ TEST(PoolTest, GlobalLpPool) {
 TEST(PoolTest, MaxPoolDimWithZeroForN) {
   OpTester test("MaxPool", 10);
   test.AddAttribute("auto_pad", "");
-  test.AddAttribute("strides", Vector<int64_t>{2});
-  test.AddAttribute("pads", vector<int64_t>{0, 0});
-  test.AddAttribute("kernel_shape", vector<int64_t>{2});
+  test.AddAttribute("strides", AttributeVector<int64_t>{2});
+  test.AddAttribute("pads", AttributeVector<int64_t>{0, 0});
+  test.AddAttribute("kernel_shape", AttributeVector<int64_t>{2});
 
   Vector<float> x_vals = {};
   Vector<int64_t> x_dims = {0, 2, 4};  // N of 0 should be handled

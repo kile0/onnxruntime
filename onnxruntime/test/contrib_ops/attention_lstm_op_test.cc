@@ -61,9 +61,9 @@ static void RunAttnLstmTest(
     bool output_sequence = true,
     bool input_forget = false,
     // copy the following vectors as we may modify them
-    Vector<std::string> activations = {},
-    Vector<float> activation_alphas = {},
-    Vector<float> activation_betas = {}) {
+    AttributeVector<std::string> activations = {},
+    AttributeVector<float> activation_alphas = {},
+    AttributeVector<float> activation_betas = {}) {
   const int64_t input_size = x_depth + aw_attn_size;
 
   OpTester test("AttnLSTM", 1, onnxruntime::kMSDomain);
@@ -78,11 +78,11 @@ static void RunAttnLstmTest(
     activations = DuplicateContainer(activations);
   }
 
-  test.AddAttribute<Vector<std::string>>("activations", activations);
+  test.AddAttribute<AttributeVector<std::string>>("activations", activations);
   if (!activation_alphas.empty())
-    test.AddAttribute<Vector<float>>("activation_alpha", activation_alphas);
+    test.AddAttribute<AttributeVector<float>>("activation_alpha", activation_alphas);
   if (!activation_betas.empty())
-    test.AddAttribute<Vector<float>>("activation_beta", activation_betas);
+    test.AddAttribute<AttributeVector<float>>("activation_beta", activation_betas);
 
   test.AddAttribute("direction", direction);
   test.AddAttribute("hidden_size", hidden_size);

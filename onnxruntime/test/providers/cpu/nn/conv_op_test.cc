@@ -11,11 +11,11 @@ namespace {
 
 struct ConvOpAndTestAttributes {
   string auto_pad;
-  Vector<int64_t> dilations;
+  AttributeVector<int64_t> dilations;
   int64_t group;
-  Vector<int64_t> kernel_shape;
-  Vector<int64_t> pads;
-  Vector<int64_t> strides;
+  AttributeVector<int64_t> kernel_shape;
+  AttributeVector<int64_t> pads;
+  AttributeVector<int64_t> strides;
   std::unordered_set<std::string> excluded_providers;
 };
 
@@ -64,11 +64,11 @@ void TestConvOp(const ConvOpAndTestAttributes& attributes,
 TEST(ConvTest, Conv1D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      Vector<int64_t>{1},     // dilations
+      AttributeVector<int64_t>{1},     // dilations
       1,                      // group
-      Vector<int64_t>{1},     // kernel_shape
-      Vector<int64_t>{0, 0},  // pads
-      Vector<int64_t>{1},     // strides
+      AttributeVector<int64_t>{1},     // kernel_shape
+      AttributeVector<int64_t>{0, 0},  // pads
+      AttributeVector<int64_t>{1},     // strides
       {}                      // excluded EPs
   };
 
@@ -87,11 +87,11 @@ TEST(ConvTest, Conv1D_1) {
 TEST(ConvTest, Conv1D_1_DefaultStridesAndDilations) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      Vector<int64_t>{},      // dilations
+      AttributeVector<int64_t>{},      // dilations
       1,                      // group
-      Vector<int64_t>{1},     // kernel_shape
-      Vector<int64_t>{0, 0},  // pads
-      Vector<int64_t>{},      // strides
+      AttributeVector<int64_t>{1},     // kernel_shape
+      AttributeVector<int64_t>{0, 0},  // pads
+      AttributeVector<int64_t>{},      // strides
       {}                      // excluded EPs
   };
 
@@ -111,11 +111,11 @@ TEST(ConvTest, Conv1D_1_DefaultStridesAndDilations) {
 TEST(ConvTest, Conv1D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      Vector<int64_t>{2},     // dilations
+      AttributeVector<int64_t>{2},     // dilations
       1,                      // group
-      Vector<int64_t>{2},     // kernel_shape
-      Vector<int64_t>{2, 2},  // pads
-      Vector<int64_t>{2},     // strides
+      AttributeVector<int64_t>{2},     // kernel_shape
+      AttributeVector<int64_t>{2, 2},  // pads
+      AttributeVector<int64_t>{2},     // strides
       {}                      // excluded EPs
   };
 
@@ -145,11 +145,11 @@ TEST(ConvTest, Conv1D_2) {
 TEST(ConvTest, Conv1D_Bias) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      Vector<int64_t>{2},     // dilations
+      AttributeVector<int64_t>{2},     // dilations
       1,                      // group
-      Vector<int64_t>{1},     // kernel_shape
-      Vector<int64_t>{1, 1},  // pads
-      Vector<int64_t>{3},     // strides
+      AttributeVector<int64_t>{1},     // kernel_shape
+      AttributeVector<int64_t>{1, 1},  // pads
+      AttributeVector<int64_t>{3},     // strides
       {}                      // excluded EPs
   };
 
@@ -177,11 +177,11 @@ TEST(ConvTest, Conv1D_Bias) {
 TEST(ConvTest, Conv2D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{3, 3},        // kernel_shape
-      Vector<int64_t>{1, 1, 1, 2},  // pads
-      Vector<int64_t>{3, 1},        // strides
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{1, 1, 1, 2},  // pads
+      AttributeVector<int64_t>{3, 1},        // strides
       {}                            // excluded EPs
   };
 
@@ -204,11 +204,11 @@ TEST(ConvTest, Conv2D_1) {
 TEST(ConvTest, Conv1D_Invalid_Input_Shape) {
   ConvOpAndTestAttributes attrs = {
       "",                     // auto_pad
-      Vector<int64_t>{1},     // dilations
+      AttributeVector<int64_t>{1},     // dilations
       1,                      // group
-      Vector<int64_t>{2},     // kernel_shape
-      Vector<int64_t>{0, 0},  // pads
-      Vector<int64_t>{1},     // strides
+      AttributeVector<int64_t>{2},     // kernel_shape
+      AttributeVector<int64_t>{0, 0},  // pads
+      AttributeVector<int64_t>{1},     // strides
       {}                      // excluded EPs
   };
 
@@ -226,11 +226,11 @@ TEST(ConvTest, Conv1D_Invalid_Input_Shape) {
 TEST(ConvTest, Conv2D_Invalid_Input_Shape) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{3, 3},        // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{3, 3},        // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
@@ -250,11 +250,11 @@ TEST(ConvTest, Conv2D_Invalid_Input_Shape) {
 TEST(ConvTest, Conv2D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{1, 1},        // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
@@ -294,11 +294,11 @@ TEST(ConvTest, Conv2D_2) {
 TEST(ConvTest, Conv2D_Bias_1) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{2, 2},        // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{2, 2},        // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
@@ -318,11 +318,11 @@ TEST(ConvTest, Conv2D_Bias_1) {
 TEST(ConvTest, Conv2D_Bias_2) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{4, 4},        // kernel_shape
-      Vector<int64_t>{1, 2, 3, 1},  // pads
-      Vector<int64_t>{2, 3},        // strides
+      AttributeVector<int64_t>{4, 4},        // kernel_shape
+      AttributeVector<int64_t>{1, 2, 3, 1},  // pads
+      AttributeVector<int64_t>{2, 3},        // strides
       {}                            // excluded EPs
   };
 
@@ -368,11 +368,11 @@ TEST(ConvTest, Conv2D_Bias_2) {
 TEST(ConvTest, Conv2D_AutoPad1) {
   ConvOpAndTestAttributes attrs = {
       "SAME_UPPER",           // auto_pad
-      Vector<int64_t>{1, 1},  // dilations
+      AttributeVector<int64_t>{1, 1},  // dilations
       1,                      // group
-      Vector<int64_t>{3, 3},  // kernel_shape
+      AttributeVector<int64_t>{3, 3},  // kernel_shape
       {},                     // pads
-      Vector<int64_t>{1, 1},  // strides
+      AttributeVector<int64_t>{1, 1},  // strides
       {}                      // excluded EPs
   };
 
@@ -395,11 +395,11 @@ TEST(ConvTest, Conv2D_AutoPad1) {
 TEST(ConvTest, Conv2D_AutoPad2) {
   ConvOpAndTestAttributes attrs = {
       "SAME_LOWER",           // auto_pad
-      Vector<int64_t>{1, 1},  // dilations
+      AttributeVector<int64_t>{1, 1},  // dilations
       1,                      // group
-      Vector<int64_t>{3, 3},  // kernel_shape
+      AttributeVector<int64_t>{3, 3},  // kernel_shape
       {},                     // pads
-      Vector<int64_t>{1, 1},  // strides
+      AttributeVector<int64_t>{1, 1},  // strides
       {}                      // excluded EPs
   };
 
@@ -427,11 +427,11 @@ TEST(ConvTest, Conv2D_AutoPad2) {
 TEST(ConvTest, Conv3D_1) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      Vector<int64_t>{1, 1, 1},           // dilations
+      AttributeVector<int64_t>{1, 1, 1},           // dilations
       1,                                  // group
-      Vector<int64_t>{1, 1, 1},           // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1, 1},           // strides
+      AttributeVector<int64_t>{1, 1, 1},           // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1, 1},           // strides
       {}                                  // excluded EPs
   };
 
@@ -464,11 +464,11 @@ TEST(ConvTest, Conv3D_1) {
 TEST(ConvTest, Conv3D_2) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      Vector<int64_t>{1, 1, 1},           // dilations
+      AttributeVector<int64_t>{1, 1, 1},           // dilations
       1,                                  // group
-      Vector<int64_t>{1, 1, 1},           // kernel_shape
-      Vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
-      Vector<int64_t>{2, 2, 2},           // strides
+      AttributeVector<int64_t>{1, 1, 1},           // kernel_shape
+      AttributeVector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
+      AttributeVector<int64_t>{2, 2, 2},           // strides
       {}                                  // excluded EPs
   };
 
@@ -507,11 +507,11 @@ TEST(ConvTest, Conv3D_2) {
 TEST(ConvTest, Conv3D_Bias) {
   ConvOpAndTestAttributes attrs = {
       "",                                 // auto_pad
-      Vector<int64_t>{2, 2, 2},           // dilations
+      AttributeVector<int64_t>{2, 2, 2},           // dilations
       1,                                  // group
-      Vector<int64_t>{2, 2, 2},           // kernel_shape
-      Vector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
-      Vector<int64_t>{2, 2, 2},           // strides
+      AttributeVector<int64_t>{2, 2, 2},           // kernel_shape
+      AttributeVector<int64_t>{2, 2, 2, 2, 2, 2},  // pads
+      AttributeVector<int64_t>{2, 2, 2},           // strides
       {}                                  // excluded EPs
   };
 
@@ -590,11 +590,11 @@ TEST(ConvTest, Conv3D_Bias) {
 TEST(ConvTest, Conv2D_group) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       2,                            // group
-      Vector<int64_t>{1, 1},        // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 
@@ -611,11 +611,11 @@ TEST(ConvTest, Conv2D_group) {
 TEST(ConvTest, ConvDimWithZero) {
   ConvOpAndTestAttributes attrs = {
       "",                           // auto_pad
-      Vector<int64_t>{1, 1},        // dilations
+      AttributeVector<int64_t>{1, 1},        // dilations
       1,                            // group
-      Vector<int64_t>{1, 1},        // kernel_shape
-      Vector<int64_t>{0, 0, 0, 0},  // pads
-      Vector<int64_t>{1, 1},        // strides
+      AttributeVector<int64_t>{1, 1},        // kernel_shape
+      AttributeVector<int64_t>{0, 0, 0, 0},  // pads
+      AttributeVector<int64_t>{1, 1},        // strides
       {}                            // excluded EPs
   };
 

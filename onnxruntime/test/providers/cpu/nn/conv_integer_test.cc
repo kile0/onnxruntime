@@ -37,7 +37,7 @@ TEST(ConvIntegerTest_with_padding, ConvIntegerTest) {
                          {1, 1,
                           1, 1});
   test.AddInput<uint8_t>("x_zero_point", {}, {1});
-  test.AddAttribute<Vector<int64_t>>("pads", {1, 1, 1, 1});
+  test.AddAttribute<AttributeVector<int64_t>>("pads", {1, 1, 1, 1});
   Vector<int64_t> y_dims{1, 1, 4, 4};
   test.AddOutput<int32_t>("y", y_dims,
                           {1, 3, 5, 3,

@@ -7,7 +7,7 @@ using namespace std;
 namespace onnxruntime {
 namespace test {
 template <typename T>
-void TestHelper(const Vector<T>& classes,
+void TestHelper(const AttributeVector<T>& classes,
                 const std::string& type,
                 const Vector<int64_t>& input_dims,
                 OpTester::ExpectResult expect_result = OpTester::ExpectResult::kExpectSuccess) {

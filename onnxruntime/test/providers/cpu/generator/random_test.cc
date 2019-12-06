@@ -13,7 +13,8 @@ namespace test {
 TEST(Random, RandomNormal2DDouble) {
   OpTester test("RandomNormal");
 
-  Vector<int64_t> dims{20, 50};
+  AttributeVector<int64_t> dims{20, 50};
+  Vector<int64_t> dims_copy{20, 50};
 
   float scale = 10.f;
   float mean = 0.f;
@@ -28,11 +29,11 @@ TEST(Random, RandomNormal2DDouble) {
   std::default_random_engine generator{gsl::narrow_cast<uint32_t>(seed)};
   std::normal_distribution<double> distribution{mean, scale};
 
-  Vector<double> expected_output(TensorShape(dims).Size());
+  Vector<double> expected_output(TensorShape(dims_copy).Size());
   std::for_each(expected_output.begin(), expected_output.end(),
                 [&generator, &distribution](double& value) { value = distribution(generator); });
 
-  test.AddOutput<double>("Y", dims, expected_output);
+  test.AddOutput<double>("Y", dims_copy, expected_output);
   test.Run();
 }
 
@@ -84,6 +85,7 @@ TEST(Random, RandomUniform1DFloat) {
   OpTester test("RandomUniform");
 
   Vector<int64_t> dims{10};
+  AttributeVector<int64_t> dims_attribute{10};
 
   float low = 0.f;
   float high = 100.f;
@@ -93,7 +95,7 @@ TEST(Random, RandomUniform1DFloat) {
   test.AddAttribute("high", high);
   test.AddAttribute("seed", seed);
   test.AddAttribute<int64_t>("dtype", TensorProto::FLOAT);
-  test.AddAttribute("shape", dims);
+  test.AddAttribute("shape", dims_attribute);
 
   std::default_random_engine generator{gsl::narrow_cast<uint32_t>(seed)};
   std::uniform_real_distribution<float> distribution{low, high};
@@ -152,6 +154,7 @@ TEST(Random, InvalidDType) {
   float seed = 123.f;
 
   Vector<int64_t> dims{1, 4};
+  AttributeVector<int64_t> dims_attribute{1, 4};
   Vector<int32_t> input{0, 0, 0, 0};
   Vector<double> expected_output{0., 0., 0., 0.};
 
@@ -165,7 +168,7 @@ TEST(Random, InvalidDType) {
     test.AddAttribute("mean", mean);
     test.AddAttribute("seed", seed);
     test.AddAttribute<int64_t>("dtype", 999);
-    test.AddAttribute("shape", dims);
+    test.AddAttribute("shape", dims_attribute);
 
     test.AddOutput<double>("Y", dims, expected_output);
     test.Run(OpTester::ExpectResult::kExpectFailure, "Attribute dtype does not specify a valid type.");
@@ -181,7 +184,7 @@ TEST(Random, InvalidDType) {
     test.AddAttribute("high", high);
     test.AddAttribute("seed", seed);
     test.AddAttribute<int64_t>("dtype", 999);
-    test.AddAttribute("shape", dims);
+    test.AddAttribute("shape", dims_attribute);
 
     test.AddOutput<double>("Y", dims, expected_output);
     test.Run(OpTester::ExpectResult::kExpectFailure, "Attribute dtype does not specify a valid type.");

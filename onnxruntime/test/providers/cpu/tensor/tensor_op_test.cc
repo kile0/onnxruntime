@@ -360,7 +360,7 @@ void MeanVarianceNormalizationFunctionDefaultPerChannel() {
   test.Run();
 }
 
-void MeanVarianceNormalizationFunctionAcrossChannels(Vector<int64_t> axes) {
+void MeanVarianceNormalizationFunctionAcrossChannels(AttributeVector<int64_t> axes) {
   const int64_t N = 2, C = 2, H = 2, W = 3;
 
   Vector<float> X = {3.0f, -3.0f, -1.0f,

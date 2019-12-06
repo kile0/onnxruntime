@@ -22,7 +22,7 @@ TEST(CropContribOpTest, CropBorderOnly) {
                           5.0f, 6.0f, 7.0f, 8.0f,
                           6.0f, 7.0f, 8.0f, 9.0f};
 
-  const Vector<int64_t> border{0, 1, 2, 1};
+  const AttributeVector<int64_t> border{0, 1, 2, 1};
   Vector<float> output = {
       2.0f, 3.0f,
 
@@ -45,8 +45,8 @@ TEST(CropContribOpTest, CropBorderAndScale) {
                           5.0f, 6.0f, 7.0f, 8.0f,
                           6.0f, 7.0f, 8.0f, 9.0f};
 
-  const Vector<int64_t> border = {0, 0, 0, 0};
-  const Vector<int64_t> scale = {2, 2};
+  const AttributeVector<int64_t> border = {0, 0, 0, 0};
+  const AttributeVector<int64_t> scale = {2, 2};
 
   Vector<float> output = {
       1.0f, 2.0f,
@@ -73,7 +73,7 @@ TEST(ImageScalerContribOpTest, ImageScalerTest) {
       7.0f, 9.0f};
 
   float scale = 2.0f;
-  Vector<float> bias = {1.0f, 2.0f};
+  AttributeVector<float> bias = {1.0f, 2.0f};
 
   Vector<float> result = {
       3.0f, 7.0f,
