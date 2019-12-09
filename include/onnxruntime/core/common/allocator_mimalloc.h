@@ -71,19 +71,19 @@ bool operator==(const allocator_mimalloc<T1>& lhs, const allocator_mimalloc<T2>&
 template <class T1, class T2>
 bool operator!=(const allocator_mimalloc<T1>& lhs, const allocator_mimalloc<T2>& rhs) noexcept { return false; }
 
-template <typename T>
-using Ty_Alloc = allocator_mimalloc<T>;
+// template <typename T>
+// using Ty_Alloc = allocator_mimalloc<T>;
 
-template <typename T>
-using Vector = std::vector<T,allocator_mimalloc<T>>;
+// template <typename T>
+// using Vector = std::vector<T,allocator_mimalloc<T>>;
 
 #else
-template <typename T>
-using Ty_Alloc = std::allocator<T>;
 
-template <typename T>
-using Vector = std::vector<T,std::allocator<T>>;
+// template <typename T>
+// using Ty_Alloc = std::allocator<T>;
 
+// template <typename T>
+// using Vector = std::vector<T,std::allocator<T>>;
 #endif
 
 // std::vector<int, Tensor_Alloc<int> > x;

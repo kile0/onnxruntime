@@ -143,8 +143,8 @@ Status PerformanceRunner::ForkJoinRepeat() {
   std::condition_variable cv;
 
   // Fork
-  counter.load(std::memory_order_seq_cst);
-  requests.load(std::memory_order_seq_cst);
+  auto loadResult = counter.load(std::memory_order_seq_cst);
+  loadResult = requests.load(std::memory_order_seq_cst);
 
   for (size_t i = 0; i != run_config.concurrent_session_runs; ++i) {
     counter++;
