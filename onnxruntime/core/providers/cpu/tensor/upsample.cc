@@ -61,8 +61,8 @@ Status UpsampleNearest(const T* input,
                        T* output,
                        const TensorShape& input_shape,
                        const TensorShape& output_shape,
-                       const vector<float>& scales,
-                       const vector<float>& roi,
+                       const Vector<float>& scales,
+                       const Vector<float>& roi,
                        bool is_resize,
                        bool extrapolation_enabled,
                        float extrapolation_value,
@@ -85,9 +85,9 @@ Status UpsampleNearest(const T* input,
 
   int64_t n_dim = static_cast<int64_t>(input_shape.NumDimensions());
 
-  std::vector<int64_t> input_dim_counters(n_dim);
-  std::vector<int64_t> input_dim_factor(n_dim);
-  std::vector<bool> use_extrapolation_value(n_dim);
+  Vector<int64_t> input_dim_counters(n_dim);
+  Vector<int64_t> input_dim_factor(n_dim);
+  Vector<bool> use_extrapolation_value(n_dim);
   input_dim_factor[n_dim - 1] = 1;  // initialize dimension factor
   for (int64_t dim_idx = n_dim - 2; dim_idx >= 0; dim_idx--) {
     input_dim_factor[dim_idx] = input_dim_factor[dim_idx + 1] * input_shape[dim_idx + 1];
@@ -176,7 +176,7 @@ Status UpsampleNearest(const T* input,
 
 #undef OneDimensionProcessor
 
-  std::vector<int64_t> output_dim_counter(n_dim);
+  Vector<int64_t> output_dim_counter(n_dim);
   output_dim_counter[n_dim - 1] = -1;  // initialize dimension counter
 
   for (; output_idx < output_shape.Size(); output_idx++) {
@@ -219,7 +219,7 @@ Status UpsampleLinear(const T* input,
                       const TensorShape& output_shape,
                       const vector<float>& scales,
                       bool is_resize,
-                      const std::vector<float>& roi,
+                      const Vector<float>& roi,
                       GetOriginalCoordinateFunc get_original_coordinate) {
   if (!input || !output)
     return Status(ONNXRUNTIME, FAIL,
@@ -292,7 +292,7 @@ void UpsampleBilinear(int64_t batch_size,
                       int64_t output_width,
                       float height_scale,
                       float width_scale,
-                      const std::vector<float>& roi,
+                      const Vector<float>& roi,
                       bool use_extrapolation,
                       float extrapolation_value,
                       const T* Xdata,
@@ -457,7 +457,7 @@ void ResizeBiCubic(
     bool use_extrapolation,
     float extrapolation_value,
     bool exclude_outside,
-    const std::vector<float>& roi,
+    const Vector<float>& roi,
     const T* Xdata,
     T* Ydata,
     GetOriginalCoordinateFunc get_original_coordinate) {
@@ -583,12 +583,12 @@ void ResizeBiCubic(
 
 template <typename T>
 Status Upsample<T>::BaseCompute(OpKernelContext* context,
-                                const std::vector<float>& roi,
-                                const std::vector<float>& scales,
-                                const std::vector<int64_t>& output_dims) const {
+                                const Vector<float>& roi,
+                                const Vector<float>& scales,
+                                const Vector<int64_t>& output_dims) const {
   const auto* X = context->Input<Tensor>(0);
   ORT_ENFORCE(X != nullptr);
-  const std::vector<int64_t>& dims = X->Shape().GetDims();
+  const Vector<int64_t>& dims = X->Shape().GetDims();
   ORT_ENFORCE(output_dims.size() == dims.size(), "Rank of input and output tensor should be same.");
 
   Tensor* Y = context->Output(0, output_dims);
@@ -669,14 +669,14 @@ Status Upsample<T>::Compute(OpKernelContext* context) const {
   const auto* X = context->Input<Tensor>(0);
   ORT_ENFORCE(X != nullptr);
 
-  std::vector<int64_t> output_dims(X->Shape().GetDims().size());
+  Vector<int64_t> output_dims(X->Shape().GetDims().size());
 
   // Get roi data
   // Initialize the roi array to all zeros as this will be the most common case
   // Roi data is needed only when coordinate transformation mode is set to tf_crop_and_resize
   // for all other cases we need a 0 initialized roi array
-  std::vector<float> roi_array;
-  const std::vector<float>* roi_ptr = roi_cached_ ? &roi_ : &roi_array;
+  Vector<float> roi_array;
+  const Vector<float>* roi_ptr = roi_cached_ ? &roi_ : &roi_array;
 
   if (!roi_cached_) {
     if (need_roi_input_) {
@@ -709,7 +709,7 @@ Status Upsample<T>::Compute(OpKernelContext* context) const {
   }
 
   // Get scales data
-  std::vector<float> scales_array(X->Shape().GetDims().size());
+  Vector<float> scales_array(X->Shape().GetDims().size());
 
   if (scales != nullptr && scales->Shape().Size() != 0) {
     ORT_ENFORCE(sizes == nullptr,

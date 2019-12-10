@@ -122,13 +122,13 @@ Status DeepCpuAttnLstmOp::ComputeImpl(OpKernelContext& context) const {
   const gsl::span<const int> memory_seq_lens_span = (attn_memory_seq_lens != nullptr) ? attn_memory_seq_lens->DataAsSpan<int>() : gsl::span<const int>();
 
   // LSTM outputs are optional but must be in the same order
-  std::vector<int64_t> Y_dims{seq_length, num_directions_, batch_size, hidden_size_};
+  Vector<int64_t> Y_dims{seq_length, num_directions_, batch_size, hidden_size_};
   Tensor* Y = context.Output(/*index*/ 0, Y_dims);
 
-  std::vector<int64_t> Y_h_dims{num_directions_, batch_size, hidden_size_};
+  Vector<int64_t> Y_h_dims{num_directions_, batch_size, hidden_size_};
   Tensor* Y_h = context.Output(/*index*/ 1, Y_h_dims);
 
-  std::vector<int64_t> Y_c_dims{num_directions_, batch_size, hidden_size_};
+  Vector<int64_t> Y_c_dims{num_directions_, batch_size, hidden_size_};
   Tensor* Y_c = context.Output(/*index*/ 2, Y_c_dims);
 
   AllocatorPtr alloc;

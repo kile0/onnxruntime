@@ -83,7 +83,7 @@ Status ConcatBase::PrepareForCompute(OpKernelContext* ctx,
   }
 
   // Calculate the shape of the output tensor
-  std::vector<int64_t> output_dims = inputs_0_dims;
+  Vector<int64_t> output_dims = inputs_0_dims;
   // 'Concat' mode
   if (!is_stack_) {
     // While concating, the rank of the output is the same as the input rank(s)

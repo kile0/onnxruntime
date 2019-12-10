@@ -103,7 +103,7 @@ struct ConvAttributes {
 
   ~ConvAttributes() = default;
 
-  Status ComputeKernelShape(const TensorShape& weight_shape, std::vector<int64_t>& kernel_shape) const {
+  Status ComputeKernelShape(const TensorShape& weight_shape, Vector<int64_t>& kernel_shape) const {
     if (kernel_shape_specified) {
       kernel_shape = kernel_shape_;
       if (kernel_shape.size() + 2 != weight_shape.NumDimensions()) {
@@ -120,7 +120,7 @@ struct ConvAttributes {
       }
     } else {
       auto& weight_dims = weight_shape.GetDims();
-      kernel_shape = std::vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
+      kernel_shape = Vector<int64_t>(weight_dims.begin() + 2, weight_dims.end());
     }
 
     return Status::OK();
@@ -153,11 +153,11 @@ struct ConvAttributes {
 
   template <bool ForceSymmetricAutoPadding = false>
   Status InferOutputShape(const TensorShape& input_shape,
-                          const std::vector<int64_t>& kernel_shape,
-                          const std::vector<int64_t>& strides_p,
-                          const std::vector<int64_t>& dilations_p,
+                          const Vector<int64_t>& kernel_shape,
+                          const Vector<int64_t>& strides_p,
+                          const Vector<int64_t>& dilations_p,
                           std::vector<int64_t>* pads_p,
-                          std::vector<int64_t>* output_shape) const {
+                          Vector<int64_t>* output_shape) const {
     size_t rank = input_shape.NumDimensions();
     for (size_t dim = 0; dim < rank; ++dim) {
       if (dim >= strides_p.size() || dim >= kernel_shape.size() ||
@@ -186,14 +186,14 @@ struct ConvAttributes {
   AutoPadType auto_pad;
   int64_t group;
   bool kernel_shape_specified;
-  std::vector<int64_t> strides;
+  Vector<int64_t> strides;
   std::vector<int64_t> pads;
-  std::vector<int64_t> dilations;
+  Vector<int64_t> dilations;
   std::string activation;
   float alpha;
 
  private:
-  std::vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
+  Vector<int64_t> kernel_shape_;  // must use ComputeKernelShape(...), instead of kernel_shape_
 };
 
 }  // namespace onnxruntime

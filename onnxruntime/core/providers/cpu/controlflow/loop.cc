@@ -377,7 +377,7 @@ Status LoopImpl::ConcatenateLoopOutput(std::vector<OrtValue>& per_iteration_outp
 
   // prepend number of iterations to the dimensions
   auto num_iterations = gsl::narrow_cast<int64_t>(per_iteration_output.size());
-  std::vector<int64_t> dims{num_iterations};
+  Vector<int64_t> dims{num_iterations};
   std::copy(per_iteration_dims.cbegin(), per_iteration_dims.cend(), std::back_inserter(dims));
   TensorShape output_shape{dims};
 
@@ -472,7 +472,7 @@ Status LoopImpl::Execute(const FeedsFetchesManager& ffm) {
       auto* graph_output = graph_outputs.at(i + 1);  // + 1 as first subgraph output is condition value
       auto* graph_output_shape = graph_output->Shape();
 
-      std::vector<int64_t> output_dims;
+      Vector<int64_t> output_dims;
       output_dims.reserve((graph_output_shape ? graph_output_shape->dim_size() : 0) + 1);
       output_dims.push_back(0);  // num iterations is first dim
 

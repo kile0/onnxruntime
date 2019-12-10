@@ -119,7 +119,7 @@ Status Split::ComputeImpl(OpKernelContext& context, const Tensor& input) const {
 
   // copy dimensions so we can update the selected axis in place
   auto& input_dims = input_shape.GetDims();
-  std::vector<int64_t> output_dimensions{input_dims};
+  Vector<int64_t> output_dimensions{input_dims};
 
   int64_t input_offset = 0;
   const T* input_data = input.template Data<T>();

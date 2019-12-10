@@ -868,7 +868,7 @@ ONNX_CPU_OPERATOR_VERSIONED_KERNEL(
 // This is a special case version of TBroadcaster just for Expand that only has a shape as the second parameter
 template <typename T>
 struct TBroadcasterExpand {
-  TBroadcasterExpand(const Tensor& input, const std::vector<int64_t>& shape)
+  TBroadcasterExpand(const Tensor& input, const Vector<int64_t>& shape)
       : input_tensor_(input),
         broadcaster_(input.Shape().GetDims(), shape) {
   }
@@ -899,7 +899,7 @@ Status Expand_8<T>::Compute(OpKernelContext* context) const {
 
   // Turn the shape tensor data into an actual shape
   const auto* p_shape = tensor_shape.template Data<int64_t>();
-  std::vector<int64_t> shape{p_shape, p_shape + tensor_shape.Shape().Size()};
+  Vector<int64_t> shape{p_shape, p_shape + tensor_shape.Shape().Size()};
 
   TBroadcasterExpand<T> bc(*context->Input<Tensor>(0), shape);
   TBroadcastOutput<T> output(bc.GetSpanSize(), *context->Output(0, bc.GetOutputShape()));

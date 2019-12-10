@@ -115,7 +115,7 @@ Status ConstantOfShapeBase::PrepareCompute(OpKernelContext* ctx, Tensor** output
   // If empty the output is a scalar with empty shape
   // TensorShape::Size() will still return 1 and we will output
   // one value
-  std::vector<int64_t> output_dims;
+  Vector<int64_t> output_dims;
   ORT_ENFORCE(input_shape.NumDimensions() > 0, "Must have a valid input shape.");
 
   const auto span = gsl::make_span(shape_tensor->Data<int64_t>(), input_shape.Size());

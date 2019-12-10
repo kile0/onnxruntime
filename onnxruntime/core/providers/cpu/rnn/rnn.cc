@@ -122,10 +122,10 @@ Status RNN<float>::Compute(OpKernelContext* ctx) const {
   ORT_RETURN_IF_ERROR(status);
 
   // RNN outputs are optional
-  std::vector<int64_t> Y_dims({seq_length, num_directions, batch_size, hidden_size_});
+  Vector<int64_t> Y_dims({seq_length, num_directions, batch_size, hidden_size_});
   Tensor* Y = ctx->Output(0, Y_dims);
 
-  std::vector<int64_t> Y_h_dims({num_directions, batch_size, hidden_size_});
+  Vector<int64_t> Y_h_dims({num_directions, batch_size, hidden_size_});
   Tensor* Y_h = ctx->Output(1, Y_h_dims);
 
   AllocatorPtr alloc;

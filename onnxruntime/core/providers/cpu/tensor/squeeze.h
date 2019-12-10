@@ -13,7 +13,7 @@ namespace onnxruntime {
 class SqueezeBase {
  protected:
   explicit SqueezeBase(const OpKernelInfo& info) {
-    std::vector<int64_t> axes;
+    Vector<int64_t> axes;
     // Parse attribute 'axes'
     Status status = info.GetAttrs<int64_t>("axes", axes); 
 
@@ -25,11 +25,11 @@ class SqueezeBase {
     }
   }
 
-  static std::vector<int64_t> ComputeOutputShape(
+  static Vector<int64_t> ComputeOutputShape(
       const TensorShape& input_shape,
       const TensorShape& axes) {
     size_t j = 0;
-    std::vector<int64_t> output_shape;
+    Vector<int64_t> output_shape;
     auto num_dimensions = input_shape.NumDimensions();
 
     // Handle negtive axis, then resort and uniq.
@@ -63,7 +63,7 @@ class Squeeze final : public OpKernel, public SqueezeBase {
   Status Compute(OpKernelContext* context) const override {
     const auto* X = context->Input<Tensor>(0);
     const TensorShape& X_shape = X->Shape();
-    std::vector<int64_t> output_shape = ComputeOutputShape(X_shape.GetDims(), axes_);
+    Vector<int64_t> output_shape = ComputeOutputShape(X_shape.GetDims(), axes_);
 
     Tensor* Y = context->Output(0, TensorShape(output_shape));
 

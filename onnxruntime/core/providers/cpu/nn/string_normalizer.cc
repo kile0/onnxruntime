@@ -194,7 +194,7 @@ Status CopyCaseAction(ForwardIter first, ForwardIter end, OpKernelContext* ctx,
                       Utf8Converter& converter,
                       size_t N, size_t C,
                       StringNormalizer::CaseAction caseaction) {
-  std::vector<int64_t> output_dims;
+  Vector<int64_t> output_dims;
   if (N == 1) {
     output_dims.push_back(1);
   }

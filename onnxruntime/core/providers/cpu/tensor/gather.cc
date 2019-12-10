@@ -35,7 +35,7 @@ Status GatherBase::PrepareForCompute(OpKernelContext* context, Prepare& p) const
   const auto input_rank = input_data_shape.NumDimensions();
   p.axis = HandleNegativeAxis(axis_, input_rank);
 
-  std::vector<int64_t> shape;
+  Vector<int64_t> shape;
   shape.reserve(input_rank - 1 + indices_shape.NumDimensions());
 
   // replace the dimension for p.axis with the shape from the indices

@@ -50,7 +50,7 @@ Status Compress::Compute(OpKernelContext* ctx) const {
     }
   }
 
-  std::vector<int64_t> output_dims(input_dimensions);
+  Vector<int64_t> output_dims(input_dimensions);
   if (has_axis_) {
     output_dims[axis] = positive_condition_count;
   } else {

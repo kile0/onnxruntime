@@ -104,7 +104,7 @@ class BatchNormHelper {
     return common::Status::OK();
   }
 
-  static void NormalizeDims(const TensorShape& x_shape, std::vector<int64_t>& new_dims) {
+  static void NormalizeDims(const TensorShape& x_shape, Vector<int64_t>& new_dims) {
     new_dims.clear();
     auto& orig_dims = x_shape.GetDims();
     if (orig_dims.size() == 4 /*supported size by CUDA*/ ||

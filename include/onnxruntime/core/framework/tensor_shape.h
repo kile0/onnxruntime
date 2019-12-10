@@ -3,7 +3,7 @@
 
 #pragma once
 #include <iosfwd>
-#include <vector>
+#include "core/common/vector.h"
 #include <algorithm>
 #include <string>
 #include <cstring>
@@ -16,7 +16,7 @@ namespace onnxruntime {
 #pragma GCC diagnostic ignored "-Wnull-dereference"
 #endif
 #endif
-class TensorShape : private std::vector<int64_t> {
+class TensorShape : private Vector<int64_t> {
   // TODO - Use a custom STL allocator to avoid heap allocations in the common case.
   // We use negative numbers for unknown symbolic dimension. Each negative
   // number represents a unique symbolic dimension.
@@ -30,30 +30,30 @@ class TensorShape : private std::vector<int64_t> {
   TensorShape(TensorShape&& /*other*/) = default;
   TensorShape& operator=(TensorShape&& /*other*/) = default;
 
-  TensorShape(const std::vector<int64_t>& dims) : std::vector<int64_t>(dims) {}
+  TensorShape(const Vector<int64_t>& dims) : Vector<int64_t>(dims) {}
 
-  TensorShape(std::vector<int64_t>&& dims) : std::vector<int64_t>(std::move(dims)) {}
+  TensorShape(Vector<int64_t>&& dims) : Vector<int64_t>(std::move(dims)) {}
 
-  TensorShape(const std::initializer_list<int64_t>& dims) : std::vector<int64_t>(dims) {}
+  TensorShape(const std::initializer_list<int64_t>& dims) : Vector<int64_t>(dims) {}
 
   TensorShape(const int64_t* dimension_sizes, size_t dimension_count);
 
-  TensorShape(const std::vector<int64_t>& dims, size_t start, size_t end);
+  TensorShape(const Vector<int64_t>& dims, size_t start, size_t end);
 
   /**
      Return the dimension specified by <idx>.
   */
   const int64_t& operator[](size_t idx) const {
-    return std::vector<int64_t>::operator[](static_cast<int>(idx));
+    return Vector<int64_t>::operator[](static_cast<int>(idx));
   }
 
   int64_t& operator[](size_t idx) {
-    return std::vector<int64_t>::operator[](static_cast<int>(idx));
+    return Vector<int64_t>::operator[](static_cast<int>(idx));
   }
 
   bool operator==(const TensorShape& other) const noexcept {
-    auto thisVector = static_cast<const std::vector<int64_t>*>(this);
-    auto otherVector = static_cast<const std::vector<int64_t>*>(&other);
+    auto thisVector = static_cast<const Vector<int64_t>*>(this);
+    auto otherVector = static_cast<const Vector<int64_t>*>(&other);
     return *thisVector == *otherVector;
   }
 
@@ -75,7 +75,7 @@ class TensorShape : private std::vector<int64_t> {
   /**
      Return underlying vector representation.
   */
-  const std::vector<int64_t>& GetDims() const { return *this; }
+  const Vector<int64_t>& GetDims() const { return *this; }
 
   /**
    * Return the total number of elements. Returns 1 for an empty (rank 0) TensorShape.
@@ -129,8 +129,8 @@ class TensorShape : private std::vector<int64_t> {
     return len == 0 || (len == 1 && operator[](0) == 1);
   }
 
-  static const TensorShape& ReinterpretBaseType(const std::vector<int64_t>& dimensions) {
-    static_assert(sizeof(TensorShape) == sizeof(std::vector<int64_t>), "Size of TensorShape prevents safe casting from vector");
+  static const TensorShape& ReinterpretBaseType(const Vector<int64_t>& dimensions) {
+    static_assert(sizeof(TensorShape) == sizeof(Vector<int64_t>), "Size of TensorShape prevents safe casting from vector");
     return *static_cast<const TensorShape*>(&dimensions);
   }
 };

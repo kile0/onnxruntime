@@ -495,7 +495,7 @@ Status SplitToSequence::ComputeImpl(OpKernelContext& context, const Tensor& inpu
 
   // copy dimensions so we can update the selected axis in place
   auto& input_dims = input_shape.GetDims();
-  std::vector<int64_t> output_dimensions{input_dims};
+  Vector<int64_t> output_dimensions{input_dims};
 
   int64_t input_offset = 0;
   const T* input_data = input.template Data<T>();
@@ -531,7 +531,7 @@ Status SplitToSequence::ComputeImpl(OpKernelContext& context, const Tensor& inpu
 
     // if keep_dims = 0, reshape the tensor by dropping the dimension corresponding to 'axis'
     if (use_keep_dims && keepdims_ == 0) {
-      std::vector<int64_t> new_dims;
+      Vector<int64_t> new_dims;
       new_dims.reserve(output_dimensions.size() - 1);
       for (int64_t idx = 0, end = static_cast<int64_t>(output_dimensions.size()); idx < end; ++idx) {
         if (idx != axis) {

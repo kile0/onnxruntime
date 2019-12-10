@@ -28,7 +28,7 @@
 #include <string>
 #include <type_traits>
 #include <unordered_map>
-#include <vector>
+#include "core/common/vector.h"
 #include <chrono>
 
 #include "core/common/code_location.h"

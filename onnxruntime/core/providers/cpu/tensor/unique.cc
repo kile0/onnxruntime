@@ -204,8 +204,8 @@ static void CreateOutput(OpKernelContext& context,
   int64_t num_cols = subtensor_shape.SizeFromDimension(axis);
   int64_t num_rows = subtensor_shape.SizeToDimension(axis);
 
-  const std::vector<int64_t> subtensor_dims = subtensor_shape.GetDims();
-  std::vector<int64_t> Y_dims;
+  const Vector<int64_t> subtensor_dims = subtensor_shape.GetDims();
+  Vector<int64_t> Y_dims;
   Y_dims.reserve(subtensor_dims.size());
   for (int64_t i = 0, end = subtensor_dims.size(); i < end; ++i) {
     if (i == axis)
@@ -320,7 +320,7 @@ Status Unique::ComputeImpl(OpKernelContext& context) const {
     const int64_t input_dims = static_cast<int64_t>(input_shape.NumDimensions());
     const int64_t axis = HandleNegativeAxis(axis_, input_dims);
 
-    std::vector<int64_t> subtensor_dims;
+    Vector<int64_t> subtensor_dims;
     subtensor_dims.reserve(input_dims);
     for (int64_t i = 0; i < input_dims; ++i) {
       subtensor_dims.push_back(i == axis ? 1 : input_shape[i]);

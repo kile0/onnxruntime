@@ -50,7 +50,7 @@ Status LayerNorm<T>::Compute(OpKernelContext* p_ctx) const {
   Tensor* Y = p_ctx->Output(0, x_shape);
   auto Y_data = Y->template MutableData<T>();
 
-  std::vector<int64_t> mean_inv_std_var_dim;
+  Vector<int64_t> mean_inv_std_var_dim;
   mean_inv_std_var_dim.reserve(x_shape.NumDimensions());
   for (int i = 0; i < static_cast<int>(x_shape.NumDimensions()); ++i) {
     if (i < axis) {

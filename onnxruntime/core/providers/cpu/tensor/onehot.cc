@@ -138,7 +138,7 @@ Status OneHotOp<in_type, out_type, depth_type>::Compute(OpKernelContext* p_op_ke
   const auto& indices_shape = indices->Shape();
   const auto& indices_dims = indices_shape.GetDims();
   const auto indices_num_dims = indices_shape.NumDimensions();
-  std::vector<int64_t> output_shape(indices_shape.GetDims());
+  Vector<int64_t> output_shape(indices_shape.GetDims());
 
   // output rank is always 1 more than the input rank as a new dimension is added to the input shape
   const auto output_rank = static_cast<int64_t>(indices_num_dims + 1);

@@ -97,7 +97,7 @@ Status AllocateOutput(OpKernelContextInternal& context, const GraphViewer& subgr
   TensorShape output_shape = onnxruntime::utils::GetTensorShapeFromTensorShapeProto(*graph_output_shape);
   auto& graph_output_dims(output_shape.GetDims());
 
-  std::vector<int64_t> scan_output_dims;
+  Vector<int64_t> scan_output_dims;
   scan_output_dims.reserve(graph_output_dims.size() + 2);
 
   // v8 has batch size. v9 and later do not.
@@ -302,7 +302,7 @@ OrtValue AllocateTensorInMLValue(const MLDataType data_type, const TensorShape& 
 };
 
 void CalculateTransposedShapeForInput(const TensorShape& original_shape, int64_t axis,
-                                      std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape) {
+                                      Vector<size_t>& permutations, Vector<int64_t>& transposed_shape) {
   int64_t rank = original_shape.NumDimensions();
   const auto& dims = original_shape.GetDims();
 
@@ -321,7 +321,7 @@ void CalculateTransposedShapeForInput(const TensorShape& original_shape, int64_t
 }
 
 void CalculateTransposedShapeForOutput(const TensorShape& original_shape, int64_t axis,
-                                       std::vector<size_t>& permutations, std::vector<int64_t>& transposed_shape) {
+                                       Vector<size_t>& permutations, Vector<int64_t>& transposed_shape) {
   int64_t rank = original_shape.NumDimensions();
   const auto& dims = original_shape.GetDims();
 

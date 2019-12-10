@@ -210,7 +210,7 @@ ORT_API_STATUS_IMPL(OrtApis::DisableTelemetryEvents, _In_ const OrtEnv* ort_env)
 template <typename T>
 OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, OrtAllocator* allocator,
                             std::unique_ptr<Tensor>* out) {
-  std::vector<int64_t> shapes(shape_len);
+  Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     shapes[i] = shape[i];
   }
@@ -222,7 +222,7 @@ OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, OrtAllocator
 template <typename T>
 OrtStatus* CreateTensorImplForSeq(const int64_t* shape, size_t shape_len,
                                   Tensor& out) {
-  std::vector<int64_t> shapes(shape_len);
+  Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     shapes[i] = shape[i];
   }
@@ -246,7 +246,7 @@ template <typename T>
 OrtStatus* CreateTensorImpl(const int64_t* shape, size_t shape_len, const OrtMemoryInfo* info,
                             void* p_data, size_t p_data_len, std::unique_ptr<Tensor>* out) {
   size_t elem_count = 1;
-  std::vector<int64_t> shapes(shape_len);
+  Vector<int64_t> shapes(shape_len);
   for (size_t i = 0; i != shape_len; ++i) {
     elem_count *= shape[i];
     shapes[i] = shape[i];

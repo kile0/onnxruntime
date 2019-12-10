@@ -72,7 +72,7 @@ class MatMulComputeHelper {
     }
 
     // validate input shape and generate output shape
-    std::vector<int64_t> output_dims(num_output_dims);
+    Vector<int64_t> output_dims(num_output_dims);
 
     // broadcasting for all output dims except last two
     for (size_t idx_dim = 0; idx_dim < num_dims_with_pad - 2; ++idx_dim) {

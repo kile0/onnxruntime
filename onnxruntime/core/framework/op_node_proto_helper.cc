@@ -75,6 +75,20 @@ inline bool HasTyped<GraphProto>(const AttributeProto* attr) {
   template <>                                                                      \
   template <>                                                                      \
   Status OpNodeProtoHelper<IMPL_T>::GetAttrs<T>(                                   \
+      const std::string& name, Vector<T>& values) const {                          \
+    const AttributeProto* attr = TryGetAttribute(name);                            \
+    if (!attr) {                                                                   \
+      return Status(ONNXRUNTIME, FAIL, "No attribute with this name is defined."); \
+    }                                                                              \
+    values.reserve(attr->list##_size());                                           \
+    for (int i = 0; i < attr->list##_size(); ++i) {                                \
+      values.push_back(static_cast<T>(attr->list(i)));                             \
+    }                                                                              \
+    return Status::OK();                                                           \
+  }                                                                                \
+  template <>                                                                      \
+  template <>                                                                      \
+  Status OpNodeProtoHelper<IMPL_T>::GetAttrs<T>(                                   \
       const std::string& name, gsl::span<T> values) const {                        \
     const AttributeProto* attr = TryGetAttribute(name);                            \
     if (!attr) {                                                                   \

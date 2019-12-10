@@ -53,7 +53,7 @@ Status EyeLike::Compute(OpKernelContext* context) const {
 
 template <typename T>
 Status EyeLike::ComputeImpl(OpKernelContext* context, const Tensor* T1) const {
-  const std::vector<int64_t>& input_dims = T1->Shape().GetDims();
+  const Vector<int64_t>& input_dims = T1->Shape().GetDims();
   if (input_dims.size() != 2) {
     return Status(ONNXRUNTIME, INVALID_ARGUMENT, "EyeLike : Input tensor dimension is not 2");
   }

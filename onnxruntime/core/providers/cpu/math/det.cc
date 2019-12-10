@@ -44,7 +44,7 @@ Status Det<T>::Compute(OpKernelContext* context) const {
     *Y_data = get_determinant(X_data);
   } else {
     // calculate batch size and output shape
-    std::vector<int64_t> output_shape;
+    Vector<int64_t> output_shape;
     output_shape.reserve(X_num_dims - 2);
     int64_t batch_size = 1;
     for (int i = 0; i < X_num_dims - 2; ++i) {

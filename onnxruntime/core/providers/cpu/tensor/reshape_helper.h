@@ -12,7 +12,7 @@ namespace onnxruntime {
 // Verify and convert unknown dim during reshape
 class ReshapeHelper {
  public:
-  ReshapeHelper(const TensorShape& input_shape, std::vector<int64_t>& requested_shape) {
+  ReshapeHelper(const TensorShape& input_shape, Vector<int64_t>& requested_shape) {
     auto nDims = requested_shape.size();
     ptrdiff_t unknown_dim = -1;
     int64_t size = 1;

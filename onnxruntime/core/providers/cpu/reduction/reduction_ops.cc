@@ -198,7 +198,7 @@ bool PrepareForReduce(OpKernelContext* ctx,
 
   //set to-be-reduced axes to one. squeeze is keepdims_ is false
   int64_t first_dim = 1;
-  std::vector<int64_t> reduced_dims;
+  Vector<int64_t> reduced_dims;
   reduced_dims.reserve(in_dims.size());
 
   for (size_t i = 0; i < in_dims.size(); i++) {

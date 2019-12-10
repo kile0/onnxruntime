@@ -49,7 +49,7 @@ common::Status ZipMapOp::Compute(OpKernelContext* context) const {
   if (tensor_pointer == nullptr) return Status(common::ONNXRUNTIME, common::FAIL, "input count mismatch");
   const Tensor& X = *tensor_pointer;
   const TensorShape& x_shape = X.Shape();
-  const vector<int64_t>& x_dims = x_shape.GetDims();
+  const Vector<int64_t>& x_dims = x_shape.GetDims();
 
   if (x_dims.empty()) {
     return Status(ONNXRUNTIME,

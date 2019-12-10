@@ -6,15 +6,15 @@
 #include "core/framework/utils.h"
 namespace onnxruntime {
 
-struct TensorPitches : std::vector<int64_t> {
+struct TensorPitches : Vector<int64_t> {
   TensorPitches(const Tensor& tensor, size_t rank = 0) : TensorPitches(tensor.Shape(), rank) {}
   TensorPitches(const TensorShape& shape, size_t rank = 0) : TensorPitches(shape.GetDims(), rank) {}
-  TensorPitches(const std::vector<int64_t>& dims, size_t rank = 0)
-      : std::vector<int64_t>(std::max(rank, dims.size()), 0) {
+  TensorPitches(const Vector<int64_t>& dims, size_t rank = 0)
+      : Vector<int64_t>(std::max(rank, dims.size()), 0) {
     Calculate(gsl::span<int64_t>(data(), size()), dims);
   }
 
-  static bool Calculate(gsl::span<int64_t> p, const std::vector<int64_t>& dims) {
+  static bool Calculate(gsl::span<int64_t> p, const Vector<int64_t>& dims) {
     // The pitches is the size of the next inner axis. Aka the amount to move by one of the next inner axis.
     // For a tensor with shape(2,3,4,5) the values would be: (3*4*5, 4*5, 5, 1)
     // Note that the outermost '2' is never used, as you never need to move by the entire size of the outermost axis
@@ -81,7 +81,7 @@ struct TensorAxisCounters {
   const Tensor& tensor_;
   bool running_{true};
   size_t axis_;
-  std::vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
+  Vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
 };
 
 struct ExtentAxisCounters {
@@ -116,16 +116,16 @@ struct ExtentAxisCounters {
  private:
   bool running_{true};
   size_t axis_;
-  std::vector<int64_t> indices_;      // There is no index for innermost axis since it's a special case
+  Vector<int64_t> indices_;      // There is no index for innermost axis since it's a special case
   gsl::span<const int64_t> extents_;  // The extents of each axis
 };
 
 // A std::vector that holds the number of entries to skip to go to the next axis start given an extent
 // and optionally steps along each axis:
 // This is used by the SliceIterator to iterate over a slice of a tensor
-struct SliceSkips : std::vector<int64_t> {
+struct SliceSkips : Vector<int64_t> {
   SliceSkips(const TensorShape& input_shape, gsl::span<const int64_t> extents, gsl::span<const int64_t> steps)
-      : std::vector<int64_t>(input_shape.NumDimensions(), 0) {
+      : Vector<int64_t>(input_shape.NumDimensions(), 0) {
     auto& dims = input_shape.GetDims();
     ORT_ENFORCE(dims.size() == extents.size() &&
                 dims.size() >= steps.size());
@@ -178,7 +178,7 @@ struct SliceIterator {
   }
 
   // Initialize initial skip and inner_extent.
-  void Init(const std::vector<int64_t>& dims, gsl::span<const int64_t> starts,
+  void Init(const Vector<int64_t>& dims, gsl::span<const int64_t> starts,
             gsl::span<const int64_t> steps) {
     ORT_ENFORCE(dims.size() == starts.size() &&
                 dims.size() == extents_.size() &&
@@ -262,7 +262,7 @@ struct SliceIterator {
   gsl::span<const int64_t> extents_;
   size_t inner_counter_{}, inner_extent_, inner_step_;
   SliceSkips skips_;
-  std::vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
+  Vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
 };
 
 inline void CopyCpuTensor(const Tensor* src, Tensor* tgt) {
@@ -302,7 +302,7 @@ struct WritableSliceIterator {
   }
 
   // Initialize initial skip and inner_extent.
-  void Init(const std::vector<int64_t>& dims, gsl::span<const int64_t> starts,
+  void Init(const Vector<int64_t>& dims, gsl::span<const int64_t> starts,
             gsl::span<const int64_t> steps) {
     ORT_ENFORCE(dims.size() == starts.size(),
                 "dims.size()=", dims.size(), " != ", "starts.size()=", starts.size());
@@ -393,7 +393,7 @@ struct WritableSliceIterator {
   gsl::span<const int64_t> extents_;
   size_t inner_counter_{}, inner_extent_, inner_step_;
   SliceSkips skips_;
-  std::vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
+  Vector<int64_t> indices_;  // There is no index for innermost axis since it's a special case
 };
 
 }  // namespace onnxruntime

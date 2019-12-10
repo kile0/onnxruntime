@@ -402,7 +402,7 @@ TfIdfVectorizer::~TfIdfVectorizer() = default;
 
 void TfIdfVectorizer::OutputResult(OpKernelContext* ctx, size_t B, const std::vector<uint32_t>& frequences) const {
   const Impl& impl = *impl_;
-  std::vector<int64_t> output_dims;
+  Vector<int64_t> output_dims;
   if (B == 0) {
     output_dims.push_back(impl.output_size_);
   } else {

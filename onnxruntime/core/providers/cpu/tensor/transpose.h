@@ -16,7 +16,7 @@ class TransposeBase {
   Transpose the input Tensor into the output Tensor using the provided permutations.
   Both Tensors must have the same data type. 
   */
-  static Status DoTranspose(const std::vector<size_t>& permutations, const Tensor& input, Tensor& output);
+  static Status DoTranspose(const Vector<size_t>& permutations, const Tensor& input, Tensor& output);
 
  protected:
   TransposeBase(const OpKernelInfo& info) {
@@ -43,8 +43,8 @@ class TransposeBase {
     }
   }
 
-  Status ComputeOutputShape(const Tensor& X, std::vector<int64_t>& output_dims, std::vector<size_t>& default_perm,
-                            const std::vector<size_t>*& p_perm) const {
+  Status ComputeOutputShape(const Tensor& X, Vector<int64_t>& output_dims, Vector<size_t>& default_perm,
+                            const Vector<size_t>*& p_perm) const {
     size_t rank = X.Shape().NumDimensions();
     const auto& input_dims = X.Shape().GetDims();
 
@@ -78,7 +78,7 @@ class TransposeBase {
   }
 
   bool perm_specified_ = false;
-  std::vector<size_t> perm_;
+  Vector<size_t> perm_;
 };
 
 class Transpose final : public OpKernel, public TransposeBase {

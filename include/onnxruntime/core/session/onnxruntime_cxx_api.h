@@ -13,13 +13,13 @@
 // methods for this purpose.
 
 #pragma once
+#include "core/common/vector.h"
 #include "onnxruntime_c_api.h"
 #include <cstddef>
 #include <array>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <utility>
 #include <type_traits>
 

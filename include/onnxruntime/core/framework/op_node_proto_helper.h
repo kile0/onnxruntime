@@ -67,6 +67,12 @@ class OpNodeProtoHelper {
      Call this function only when a default value for an optional attribute isn't specified in the op schema
   */
   template <typename T>
+  MUST_USE_RESULT Vector<T> GetAttrsOrDefault_CustomAllocator(const std::string& name, const Vector<T>& default_value = Vector<T>{}) const {
+    Vector<T> tmp;
+    return GetAttrs<T>(name, tmp).IsOK() ? tmp : default_value;
+  }
+
+  template <typename T>
   MUST_USE_RESULT std::vector<T> GetAttrsOrDefault(const std::string& name, const std::vector<T>& default_value = std::vector<T>{}) const {
     std::vector<T> tmp;
     return GetAttrs<T>(name, tmp).IsOK() ? tmp : default_value;
@@ -77,6 +83,9 @@ class OpNodeProtoHelper {
   */
   template <typename T>
   MUST_USE_RESULT Status GetAttrs(const std::string& name, std::vector<T>& values) const;
+
+  template <typename T>
+  MUST_USE_RESULT Status GetAttrs(const std::string& name, Vector<T>& values) const;
 
   template <typename T>
   MUST_USE_RESULT Status GetAttrs(const std::string& name, gsl::span<T> values) const;

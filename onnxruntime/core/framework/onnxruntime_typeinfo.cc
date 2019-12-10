@@ -175,7 +175,7 @@ OrtStatus* OrtTypeInfo::FromTypeProto(const ONNX_NAMESPACE::TypeProto* input, Or
       OrtTensorTypeAndShapeInfo* info = nullptr;
       if (sp != nullptr) {
         const on::TensorShapeProto& s = *sp;
-        std::vector<int64_t> dims(s.dim_size());
+        Vector<int64_t> dims(s.dim_size());
         std::vector<std::string> dim_params(s.dim_size());
         TensorShape shape_data(std::move(dims));
         for (int i = 0; i < s.dim_size(); ++i) {

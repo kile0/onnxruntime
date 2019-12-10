@@ -24,8 +24,8 @@ namespace onnxruntime {
 struct ConvTransposeAttributes : public ConvAttributes {
   explicit ConvTransposeAttributes(const OpNodeProtoHelper<ProtoHelperNodeContext>& info)
       : ConvAttributes(info),
-        output_padding(info.GetAttrsOrDefault<int64_t>("output_padding")),
-        output_shape(info.GetAttrsOrDefault<int64_t>("output_shape")) {
+        output_padding(info.GetAttrsOrDefault_CustomAllocator<int64_t>("output_padding")),
+        output_shape(info.GetAttrsOrDefault_CustomAllocator<int64_t>("output_shape")) {
   }
 
   struct Prepare {
@@ -38,10 +38,10 @@ struct ConvTransposeAttributes : public ConvAttributes {
     int64_t W;
     int64_t num_input_channels;
     int64_t num_output_channels;
-    std::vector<int64_t> kernel_shape;
-    std::vector<int64_t> pads;
-    std::vector<int64_t> dilations;
-    std::vector<int64_t> strides;
+    Vector<int64_t> kernel_shape;
+    Vector<int64_t> pads;
+    Vector<int64_t> dilations;
+    Vector<int64_t> strides;
   };
 
   Status PrepareForCompute(OpKernelContext* context, bool has_bias, Prepare& p, bool dynamic_padding = false) const {
@@ -94,14 +94,14 @@ struct ConvTransposeAttributes : public ConvAttributes {
                              " group: ", group);
     }
 
-    std::vector<int64_t> kernel_shape;
+    Vector<int64_t> kernel_shape;
     ORT_RETURN_IF_ERROR(ComputeKernelShape(F->Shape(), kernel_shape));
 
-    std::vector<int64_t> local_output_padding(output_padding);
+    Vector<int64_t> local_output_padding(output_padding);
     if (local_output_padding.empty()) {
       local_output_padding.resize(kernel_shape.size(), 0);
     }
-    std::vector<int64_t> local_pads;
+    Vector<int64_t> local_pads;
     local_pads.reserve(2 * (input_shape.NumDimensions() - 2));
     if (dynamic_padding) {
       for (int64_t i = 0; i < Pads->Shape().SizeFromDimension(0); ++i) {
@@ -113,16 +113,16 @@ struct ConvTransposeAttributes : public ConvAttributes {
     if (local_pads.empty()) {
       local_pads.resize(kernel_shape.size() * 2, 0);
     }
-    std::vector<int64_t> local_dilations(dilations);
+    Vector<int64_t> local_dilations(dilations);
     if (local_dilations.empty()) {
       local_dilations.resize(kernel_shape.size(), 1);
     }
-    std::vector<int64_t> local_strides(strides);
+    Vector<int64_t> local_strides(strides);
     if (local_strides.empty()) {
       local_strides.resize(kernel_shape.size(), 1);
     }
 
-    std::vector<int64_t> Y_dims;
+    Vector<int64_t> Y_dims;
 
     ComputePadsAndOutputShape(input_shape, num_output_channels, kernel_shape,
                               local_strides, local_dilations, local_output_padding, &local_pads, &Y_dims);
@@ -146,9 +146,9 @@ struct ConvTransposeAttributes : public ConvAttributes {
   }
 
   void ComputePadsAndOutputShape(TensorShape input_shape, int64_t output_channel,
-                                 const std::vector<int64_t>& kernel_shape, const std::vector<int64_t>& p_strides,
-                                 const std::vector<int64_t>& p_dilations, const std::vector<int64_t>& p_output_padding,
-                                 std::vector<int64_t>* p_pads, std::vector<int64_t>* output_shape_p) const {
+                                 const Vector<int64_t>& kernel_shape, const Vector<int64_t>& p_strides,
+                                 const Vector<int64_t>& p_dilations, const Vector<int64_t>& p_output_padding,
+                                 Vector<int64_t>* p_pads, Vector<int64_t>* output_shape_p) const {
     const int64_t N = input_shape[0];
     const int64_t H = input_shape[2];
     const int64_t W = input_shape[3];
@@ -188,8 +188,8 @@ struct ConvTransposeAttributes : public ConvAttributes {
     output_shape_p->insert(output_shape_p->begin(), {N, output_channel, output_height, output_width});
   }
 
-  const std::vector<int64_t> output_padding;
-  const std::vector<int64_t> output_shape;
+  const Vector<int64_t> output_padding;
+  const Vector<int64_t> output_shape;
 
 private:
   void ComputeTransposePadAndOutputShape (

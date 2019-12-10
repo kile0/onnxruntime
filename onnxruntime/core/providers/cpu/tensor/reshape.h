@@ -24,7 +24,7 @@ class Reshape final : public OpKernel {
                 "A shape tensor must be a vector tensor.");
     auto nDims = static_cast<size_t>(shapeTensor->Shape()[0]);
     const auto* data = shapeTensor->template Data<int64_t>();
-    std::vector<int64_t> shape(data, data + nDims);
+    Vector<int64_t> shape(data, data + nDims);
 
     const auto* X = context->Input<Tensor>(0);
     const TensorShape& X_shape = X->Shape();
@@ -47,7 +47,7 @@ class Reshape_1 final : public OpKernel {
   }
 
   Status Compute(OpKernelContext* context) const override {
-    std::vector<int64_t> shape = shape_;
+    Vector<int64_t> shape = shape_;
     const auto* X = context->Input<Tensor>(0);
     const TensorShape& X_shape = X->Shape();
 
@@ -61,7 +61,7 @@ class Reshape_1 final : public OpKernel {
   }
 
  private:
-  std::vector<int64_t> shape_;
+  Vector<int64_t> shape_;
 };
 
 }  //namespace onnxruntime

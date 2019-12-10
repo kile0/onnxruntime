@@ -25,22 +25,22 @@ class SliceBase {
   Status PrepareForCompute(const std::vector<int64_t>& raw_starts,
                            const std::vector<int64_t>& raw_ends,
                            const std::vector<int64_t>& raw_axes,
-                           const std::vector<int64_t>& input_dimensions,
+                           const Vector<int64_t>& input_dimensions,
                            std::vector<int64_t>& starts,
                            std::vector<int64_t>& steps,
-                           std::vector<int64_t>& output_dims,
-                           std::vector<int64_t>*& flattened_output_dims) const;
+                           Vector<int64_t>& output_dims,
+                           Vector<int64_t>*& flattened_output_dims) const;
 
   // compute output_dims with steps (Slice V10)
   Status PrepareForCompute(const std::vector<int64_t>& raw_starts,
                            const std::vector<int64_t>& raw_ends,
                            const std::vector<int64_t>& raw_axes,
                            const std::vector<int64_t>& raw_steps,
-                           const std::vector<int64_t>& input_dimensions,
+                           const Vector<int64_t>& input_dimensions,
                            std::vector<int64_t>& starts,
                            std::vector<int64_t>& steps,
-                           std::vector<int64_t>& output_dims,
-                           std::vector<int64_t>*& flattened_output_dims) const;
+                           Vector<int64_t>& output_dims,
+                           Vector<int64_t>*& flattened_output_dims) const;
 
   // Slice V10 & DynamicSlice
   void FillVectorsFromInput(const OpKernelContext* context,

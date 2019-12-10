@@ -95,11 +95,11 @@ const T& clamp(const T& v, const T& lo, const T& hi) {
 // Updates starts and steps to match flattened_output_dims if it is.
 // e.g. if input shape is { 2, 2, 2 }, output shape is { 1, 2, 2 }, and the 'steps' value for the last two dims is 1,
 // we are keeping all the data of the inner most two dimensions so can combine those into dims of { 1, 4 }
-static void FlattenOutputDims(const std::vector<int64_t>& input_dimensions,
-                              const std::vector<int64_t>& output_dims,
+static void FlattenOutputDims(const Vector<int64_t>& input_dimensions,
+                              const Vector<int64_t>& output_dims,
                               std::vector<int64_t>& starts,
                               std::vector<int64_t>& steps,
-                              std::vector<int64_t>*& flattened_output_dims) {
+                              Vector<int64_t>*& flattened_output_dims) {
   int num_to_combine = 0;
   for (int64_t i = static_cast<int64_t>(starts.size()) - 1; i >= 0; --i) {
     // if we're keeping all the data for the dimension and not reversing the direction we can potentially combine it
@@ -134,11 +134,11 @@ static void FlattenOutputDims(const std::vector<int64_t>& input_dimensions,
 Status SliceBase::PrepareForCompute(const std::vector<int64_t>& raw_starts,
                                     const std::vector<int64_t>& raw_ends,
                                     const std::vector<int64_t>& raw_axes,
-                                    const std::vector<int64_t>& input_dimensions,
+                                    const Vector<int64_t>& input_dimensions,
                                     std::vector<int64_t>& starts,
                                     std::vector<int64_t>& steps,
-                                    std::vector<int64_t>& output_dims,
-                                    std::vector<int64_t>*& flattened_output_dims) const {
+                                    Vector<int64_t>& output_dims,
+                                    Vector<int64_t>*& flattened_output_dims) const {
   // Initialize axes to the provided axes attribute or to the default sequence
   std::vector<int64_t> axes(raw_axes);
   if (axes.empty()) {
@@ -187,11 +187,11 @@ Status SliceBase::PrepareForCompute(const std::vector<int64_t>& raw_starts,
                                     const std::vector<int64_t>& raw_ends,
                                     const std::vector<int64_t>& raw_axes,
                                     const std::vector<int64_t>& raw_steps,
-                                    const std::vector<int64_t>& input_dimensions,
+                                    const Vector<int64_t>& input_dimensions,
                                     std::vector<int64_t>& starts,
                                     std::vector<int64_t>& steps,
-                                    std::vector<int64_t>& output_dims,
-                                    std::vector<int64_t>*& flattened_output_dims) const {
+                                    Vector<int64_t>& output_dims,
+                                    Vector<int64_t>*& flattened_output_dims) const {
   // Initialize axes to the provided axes attribute or to the default sequence
   std::vector<int64_t> axes(raw_axes);
 
@@ -318,8 +318,8 @@ void SliceBase::FillVectorsFromInput(const OpKernelContext* context,
 template <typename T>
 Status SliceImpl(OpKernelContext* ctx,
                  const Tensor& input_tensor,
-                 std::vector<int64_t>& output_dims,
-                 std::vector<int64_t>* flattened_output_dims,
+                 Vector<int64_t>& output_dims,
+                 Vector<int64_t>* flattened_output_dims,
                  const std::vector<int64_t>& starts,
                  const std::vector<int64_t>& steps) {
   TensorShape output_shape(output_dims);
@@ -349,7 +349,7 @@ Status SliceImpl(OpKernelContext* ctx,
   if (flattened_output_dims) {
     // if we have flattened output dims we need to also flatten the input dims.
     // as we're combining the innermost dims and keeping all values we can just copy the size of the last dim
-    std::vector<int64_t> flattened_input_dims(input_tensor.Shape().GetDims());
+    Vector<int64_t> flattened_input_dims(input_tensor.Shape().GetDims());
     flattened_input_dims.resize(flattened_output_dims->size());
     flattened_input_dims.back() = flattened_output_dims->back();
     TensorShape input_shape(std::move(flattened_input_dims));
@@ -375,9 +375,9 @@ Status Slice<T, dynamic>::Compute(OpKernelContext* ctx) const {
   // Initialize the starts & ends to the actual tensor shape
   std::vector<int64_t> starts(input_dimensions.size(), 0);
   std::vector<int64_t> steps(input_dimensions.size(), 1);
-  std::vector<int64_t> output_dims(input_dimensions);
-  std::vector<int64_t> flattened_output_dims;
-  std::vector<int64_t>* p_flattened_output_dims = &flattened_output_dims;
+  Vector<int64_t> output_dims(input_dimensions);
+  Vector<int64_t> flattened_output_dims;
+  Vector<int64_t>* p_flattened_output_dims = &flattened_output_dims;
 
   // Slice V10 & DynamicSlice
   if (dynamic) {

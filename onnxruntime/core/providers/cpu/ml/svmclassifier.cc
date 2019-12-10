@@ -118,7 +118,7 @@ Status SVMClassifier<T>::Compute(OpKernelContext* ctx) const {
       nb_columns = 2;
   }
 
-  std::vector<int64_t> dims{N, nb_columns};
+  Vector<int64_t> dims{N, nb_columns};
   Tensor* Z = ctx->Output(1, TensorShape(dims));
 
   const T* x_data = X->template Data<T>();
